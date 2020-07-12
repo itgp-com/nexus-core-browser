@@ -1,0 +1,99 @@
+
+.core-alert-bottom{
+  z-index: 999999 ;
+  position: absolute !important;
+  width: 100%;
+  bottom: 0px;
+}
+
+.core_vertical_spacer{
+  margin-bottom: 8px;
+}
+
+.core-horizontal-spacer{
+  margin-right: 10px;
+}
+
+.core-full {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-grow: 1;
+}
+
+.core_height_width_100_percent{
+  height: 100%;
+  width: 100%;
+}
+
+/*----------------- Flex ------------------------*/
+
+.flex-component-max {
+  flex-grow: 1;
+}
+
+.flex-full-height {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.flex-container-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-container-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-mainAxis-center {
+  justify-content: center;
+}
+
+.flex-crossAxis-center {
+  align-items: center;
+}
+
+.flex-align-self-center {
+  align-self: center;
+}
+
+.flex-container-lcr {
+  display: flex;
+  flex: 1;
+}
+
+.flex-lcr-box {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.flex-lcr-box-left  > span { margin-right: auto; }
+.flex-lcr-box-right > span { margin-left: auto;  }
+
+
+
+.ej2-icon-menu-hamburger:before {
+  content: '\e99a';
+}
+.ej2-icon-close:before {
+  content:'\e7fc';
+}
+
+.ej2-icon-add:before {
+  content:'\e95c';
+}
+
+.ej2-icon-search:before {
+  content: '\e993';
+}
+.ej2-icon-excel-export:before {
+  content: '\e242';
+}
+
+.wgt-radiobutton-li {
+  list-style: none;
+  margin-bottom: 10px;
+}

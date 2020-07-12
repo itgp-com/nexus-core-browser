@@ -1,6 +1,5 @@
 /node_modules
 /.gradle
-/.idea/workspace.xml
+/.idea
 /build
 /package-lock.json
-/.idea/modules.xml

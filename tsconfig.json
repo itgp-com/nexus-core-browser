@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "*": ["types/*"] },
+    "target": "es6",
+    "module": "amd",
+    "removeComments": true,
+    "noLib": false,
+    "outDir": "./build/js/",
+    "sourceMap": true,
+    "pretty": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitUseStrict": false,
+    "noFallthroughCasesInSwitch": true,
+    "allowJs": false,
+//    "noEmitOnError": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "suppressImplicitAnyIndexErrors": true,
+    "lib": ["es5", "es6", "dom"],
+    "types": ["jquery", "node"],
+    // typeRoots option has been previously configured
+    "typeRoots": [
+      // add path to @types
+      "./node_modules/@types"
+    ],
+  },
+  "compileOnSave": false
+}

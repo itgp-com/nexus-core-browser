@@ -1,0 +1,155 @@
+import {AnyWidget}       from "./AnyWidget";
+import {Args_AnyWidget}  from "./Args_AnyWidget";
+import {getRandomString} from "../ej2/WidgetUtils";
+import {AbstractWidget}  from "./AbstractWidget";
+import set = Reflect.set;
+
+export class Args_AnyScreen {
+   extraTagIdCount ?: number = 0;
+   tagName ?: string         = 'div';
+   classAttrReplacement ?: string;
+   classAttrPrefix ?: string;
+   classAttrSuffix ?: string;
+   title ?: string           = '';
+   children ?: AbstractWidget[];
+
+} //AnyScreenParams
+
+/**
+ * The base component of any screen - be it in the base window itself or inside a Dialog/Popup
+ *
+ * Default HTML is:
+ * <div id="contentXYZ" class="flex-component-max flex-full-height">
+ * </div>
+ *
+ * @author David Pociu - InsiTech
+ * @since 0.1
+ */
+export abstract class AnyScreen<DATA_TYPE = any>
+   extends AnyWidget<HTMLElement, Args_AnyWidget, DATA_TYPE> {
+
+   private _anyScreenDescriptor: Args_AnyScreen;
+   private _extraTagIdList: string[] = [];
+   protected insideInitRefreshAnyScreen = false;
+
+   protected constructor() {
+      super();
+   }
+
+
+   initialize_AnyScreen(anyScreenDescriptor ?: Args_AnyScreen) {
+      let thisX = this;
+
+      if (anyScreenDescriptor) {
+         // ensure that default fields are filled, but overwritten by contents of parameter passed in
+         anyScreenDescriptor = {...new Args_AnyScreen(), ...anyScreenDescriptor};
+      } else {
+         anyScreenDescriptor = new Args_AnyScreen();
+      }
+
+      this.anyScreenDescriptor = anyScreenDescriptor;
+
+      // this.title = anyScreenDescriptor.title; //Commented out 2020-06-05 DDP because it's now transferred to AnyWidget
+
+      // -------------- prepare the descriptor so we can properly initialize the super component ---------------
+      let descriptor: Args_AnyWidget = new Args_AnyWidget();
+
+      // ------------------ straight property movement -----------------
+      descriptor.extraTagIdCount = anyScreenDescriptor.extraTagIdCount;
+      descriptor.children        = anyScreenDescriptor.children;
+      descriptor.title           = anyScreenDescriptor.title;
+
+      // ------------------ initContentBegin --------------------------
+      let classAttrPrefix = (anyScreenDescriptor.classAttrPrefix ? anyScreenDescriptor.classAttrPrefix : '');
+      let classAttrSuffix = (anyScreenDescriptor.classAttrSuffix ? anyScreenDescriptor.classAttrSuffix : '');
+      let classAttrMain   = (anyScreenDescriptor.classAttrReplacement ? anyScreenDescriptor.classAttrReplacement : 'flex-component-max flex-full-height');
+
+      let classAttr = `${classAttrPrefix} ${classAttrMain} ${classAttrSuffix}`;
+
+      descriptor.initContentBegin = () => {
+         return `
+<${anyScreenDescriptor.tagName} id="${this.tagId}" class="${classAttr}">
+   `
+      };
+
+
+      // ------------------ initContentEnd --------------------------
+      descriptor.initContentEnd = () => {
+         let b: string = '';
+
+         if (anyScreenDescriptor.extraTagIdCount > 0) {
+            for (let i = 0; i < anyScreenDescriptor.extraTagIdCount; i++) {
+               let extraTagId = getRandomString(`extraTagId${i}`);
+
+               // store the tag id in the list
+               this.extraTagIdList.push(extraTagId);
+
+               // add the div tag in the HTML
+               b += `
+<div id="${extraTagId}"></div>
+`;
+
+            } //for anyScreenDescriptor.extraTagIdCount
+         } //if (descriptor.extraTagIdCount > 0)
+
+         b += `</${anyScreenDescriptor.tagName}>`;
+         return b;
+      };
+
+      // ------------------ initLogic --------------------------
+      descriptor.initLogic = () => {
+         //2020-05-11 - The refresh MUST be AFTER the form is done painting if we want the spinner to show up in the grids of the screen
+         setImmediate(() => {
+             thisX.insideInitRefreshAnyScreen = true;
+             /* await */ thisX.refresh(); // a screen should always refresh the controls at the end of their being instantiated
+            thisX.insideInitRefreshAnyScreen = false;
+         });
+      };
+
+
+      // -------------- NOW properly initialize the super component ---------------
+      super.initialize_AnyWidget(descriptor);
+   } // initAnyScreen
+
+
+   // noinspection JSUnusedGlobalSymbols
+   extraTagId(position: number): string {
+      if (position < 0 || position > this.extraTagIdList.length)
+         return null;
+      return this.extraTagIdList[position];
+   } // extraTagId
+
+
+   // noinspection JSUnusedGlobalSymbols
+   get anyScreenDescriptor(): Args_AnyScreen {
+      return this._anyScreenDescriptor;
+   }
+
+   set anyScreenDescriptor(value: Args_AnyScreen) {
+      this._anyScreenDescriptor = value;
+   }
+
+   get extraTagIdList(): string[] {
+      return this._extraTagIdList;
+   }
+
+   // noinspection JSUnusedGlobalSymbols
+   set extraTagIdList(value: string[]) {
+      this._extraTagIdList = value;
+   }
+
+   get contentTagId(): string {
+      return this.tagId;
+   }
+
+   isInsideRefreshAnyScreen():boolean {
+      if (this.insideInitRefreshAnyScreen)
+         return true;
+      let parent = this.parent;
+      while(parent != null && parent instanceof AnyScreen){
+         return parent.isInsideRefreshAnyScreen()
+      }
+      return false;
+   }
+
+} // AnyScreen
