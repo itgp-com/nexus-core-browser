@@ -21,6 +21,12 @@ export class Args_WgtTab implements IArgs_HtmlTag {
    onCreate ?: voidFunction;
 }
 
+export class Args_WgtTab_SelectedAsTab {
+   initialized: boolean;
+   index: number;
+   wgtTab: WgtTab;
+}
+
 
 export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
 
@@ -184,21 +190,15 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
          // error about parts of the widgets being undefined during refresh
          let tabObj: AbstractWidget = this.args.children[index];
          if (tabObj) {
+            let initialized: boolean = tabObj.initialized;
             if (!tabObj.initialized) {
                try {
                   tabObj.initLogic(); // this includes a refresh
-                  tabObj.initLogicAsTab();
+                  tabObj.initLogicAsTab(); // trigger this on the component inside the tab
                } catch (error) {
                   console.log(error);
                   // this.handleError(error);
                }
-            }
-
-            try {
-               tabObj.selectedAsTab();
-            } catch (error) {
-               console.log(error);
-               // this.handleError(error);
             }
 
             /**
@@ -210,6 +210,18 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
                }
             } catch (ex) {
                console.log(ex)
+            }
+
+            try {
+               // trigger this on the component inside the tab
+               tabObj.selectedAsTab({
+                                       index:       index,
+                                       initialized: initialized,
+                                       wgtTab:      thisX,
+                                    });
+            } catch (error) {
+               console.log(error);
+               // this.handleError(error);
             }
 
             try {

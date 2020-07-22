@@ -9,17 +9,18 @@ import {Err}                                                     from "../Core";
 import {AxiosResponse}                                           from "axios";
 import {getErrorHandler}                                         from "../CoreErrorHandling";
 import {getRandomString, htmlToElement, StringArg, stringArgVal} from "../CoreUtils";
-import {cu}                                                      from "../index";
-import {ListenerHandler}                                         from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}           from "./BeforeInitLogicListener";
-import {AfterInitLogicEvent, AfterInitLogicListener}             from "./AfterInitLogicListener";
-import {ExceptionEvent}                                          from "../ExceptionEvent";
-import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}     from "./AfterRepaintWidgetListener";
-import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener}   from "./BeforeRepaintWidgetListener";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}            from "../WidgetErrorHandler";
-import {DialogWindow}                                            from "../ej2/DialogWindow";
-import {ParentAddedEvent, ParentAddedListener}                   from "./ParentAddedListener";
-import {DialogInfo}                                              from "../ej2/DialogInfo";
+import {cu}                                                    from "../index";
+import {ListenerHandler}                                       from "../ListenerHandler";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}         from "./BeforeInitLogicListener";
+import {AfterInitLogicEvent, AfterInitLogicListener}           from "./AfterInitLogicListener";
+import {ExceptionEvent}                                        from "../ExceptionEvent";
+import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}   from "./AfterRepaintWidgetListener";
+import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener} from "./BeforeRepaintWidgetListener";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}          from "../WidgetErrorHandler";
+import {DialogWindow}                                          from "../ej2/DialogWindow";
+import {ParentAddedEvent, ParentAddedListener}                 from "./ParentAddedListener";
+import {DialogInfo}                                            from "../ej2/DialogInfo";
+import {Args_WgtTab_SelectedAsTab}                             from "./panels/WgtTab";
 
 export class Args_AbstractWidget {
    // was AbstractWidget
@@ -326,7 +327,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
    /**
     * Gets called every time the tab is selected
     */
-   selectedAsTab():void{
+   selectedAsTab(arg: Args_WgtTab_SelectedAsTab):void{
    }
 
 
