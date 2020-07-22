@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "include": [
+        "core/**/*"
+    ],
     "baseUrl": ".",
     "paths": { "*": ["types/*"] },
     "target": "es6",
@@ -15,8 +18,7 @@
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
     "noFallthroughCasesInSwitch": true,
-    "allowJs": false,
-//    "noEmitOnError": true,
+    "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "suppressImplicitAnyIndexErrors": true,
@@ -26,7 +28,7 @@
     "typeRoots": [
       // add path to @types
       "./node_modules/@types"
-    ],
+    ]
   },
   "compileOnSave": false
 }
