@@ -26,6 +26,9 @@ export class WgtCheckBoxSimple extends WgtCheckBox {
       if (args.modelFalseValue == undefined)
          args.modelFalseValue = 'No';
 
+      if (args.modelTrueValueAlternates == undefined)
+         args.modelTrueValueAlternates = ['1', 'True', 'true', 'yes'];
+
       this.initialize_WgtCheckBox(args);
    }
 }
