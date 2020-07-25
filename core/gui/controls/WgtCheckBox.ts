@@ -15,6 +15,7 @@ export abstract class Args_WgtCheckBox extends Args_WgtSimple<CheckBoxModel> {
 
    modelIndeterminateValue ?: WgtCheckBoxDataType = null;
 
+   enabled ?: boolean;
 } // Args class
 
 export type WgtCheckBoxDataType = number | string | boolean;
@@ -43,6 +44,9 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
          this._modelTrueValue = args.modelTrueValue;
       if (args.modelFalseValue != null)
          this._modelFalseValue = args.modelFalseValue;
+
+      if ( args.enabled != null)
+         args.ej.disabled = !args.enabled;
 
       this.previousValue = this.indeterminateValue;
 
