@@ -11,6 +11,8 @@ export abstract class Args_WgtCheckBox extends Args_WgtSimple<CheckBoxModel> {
 
    modelTrueValue ?: WgtCheckBoxDataType;
 
+   modelTrueValueAlternates ?: WgtCheckBoxDataType[];
+
    modelFalseValue ?: WgtCheckBoxDataType;
 
    modelIndeterminateValue ?: WgtCheckBoxDataType = null;
@@ -22,9 +24,10 @@ export type WgtCheckBoxDataType = number | string | boolean;
 
 export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtCheckBox> extends WgtSimple <CheckBox, Args_AnyWidget, WgtCheckBoxDataType> {
    args: Args_WgtCheckBox;
-   private _indeterminateValue: any              = null;
-   private _modelTrueValue: WgtCheckBoxDataType  = true;
-   private _modelFalseValue: WgtCheckBoxDataType = false;
+   private _indeterminateValue: any                         = null;
+   private _modelTrueValue: WgtCheckBoxDataType             = true;
+   private _modelFalseValue: WgtCheckBoxDataType            = false;
+   private _modelTrueValueAlternates: WgtCheckBoxDataType[] = [];
 
    protected constructor() {
       super();
@@ -45,7 +48,7 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
       if (args.modelFalseValue != null)
          this._modelFalseValue = args.modelFalseValue;
 
-      if ( args.enabled != null)
+      if (args.enabled != null)
          args.ej.disabled = !args.enabled;
 
       this.previousValue = this.indeterminateValue;
@@ -77,7 +80,7 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
       let ej   = args.ej;
 
       let argsChange = ej.change;
-      ej.change = (ev) => {
+      ej.change      = (ev) => {
          if (argsChange) {
             argsChange(ev); // invoke the args-defined change first
          }
@@ -95,7 +98,7 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
          let dataProvider = this.getDataProviderSimple();
          let record       = this.getRecord();
          if (dataProvider != null && record != null) {
-            let modelPreviousDataValue = record[this.args.propertyName];
+            let modelPreviousDataValue     = record[this.args.propertyName];
             let modelCurrentValue          = this.convertViewToModel(currentValue);
             // make the change
             record[this.args.propertyName] = modelCurrentValue;
@@ -181,9 +184,27 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
    convertModelToView(modelValue: WgtCheckBoxDataType): (boolean | null) {
       if (modelValue == null)
          return null
-      return (modelValue == this.modelTrueValue);
 
-      // return null; // indeterminate if the value not recognized
+      let value: boolean = (modelValue == this.modelTrueValue);
+      if (value == false) {
+         let length: number = 0;
+
+         if (this.modelTrueValueAlternates != null) {
+            length = this.modelTrueValueAlternates.length;
+         }
+
+         if (length > 0) {
+            for (let i = 0; i < length; i++) {
+               let possibleValue = this.modelTrueValueAlternates[i];
+               if (modelValue == possibleValue) {
+                  return true;
+               }
+            } // for
+         } // length > 0
+
+      } // value == false
+
+      return value;
    }
 
 
@@ -211,4 +232,14 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
    set modelFalseValue(value: WgtCheckBoxDataType) {
       this._modelFalseValue = value;
    }
+
+
+   get modelTrueValueAlternates(): WgtCheckBoxDataType[] {
+      return this._modelTrueValueAlternates;
+   }
+
+   set modelTrueValueAlternates(value: WgtCheckBoxDataType[]) {
+      this._modelTrueValueAlternates = value;
+   }
+
 }
