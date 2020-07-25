@@ -1,11 +1,9 @@
-import {AnyWidget}                                                  from "../AnyWidget";
-import {Args_AnyWidget, IArgs_HtmlTag}                              from "../Args_AnyWidget";
-import {
-   Args_AnyWidget_Initialized_Event,
-   Args_AnyWidget_Initialized_Listener
-}                                                                   from "../Args_AnyWidget_Initialized_Listener";
-import {WgtForm}                                                    from "../panels/WgtForm";
-import {DataProvider, DataProviderChangeEvent, IDataProviderSimple} from "../../data/DataProvider";
+import {AnyWidget}                                                             from "../AnyWidget";
+import {Args_AnyWidget, IArgs_HtmlTag}                                         from "../Args_AnyWidget";
+import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
+import {WgtForm}                                                               from "../panels/WgtForm";
+import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}            from "../../data/DataProvider";
+import {classArgInstanceVal}                                                   from "../../CoreUtils";
 
 export interface ISimpleValue<T> {
    value: T;
@@ -36,7 +34,7 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
 
    abstract value: DATA_CLASS; // findForm
 
-   abstract getDataProviderSimple(): IDataProviderSimple;
+   // abstract getDataProviderSimple(): IDataProviderSimple;
 
    private _propertyName: string        = null;
    private _previousValue: DATA_CLASS;
@@ -196,6 +194,23 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
       } // if (currentValue != this.previousValue)
    } // onBlur
 
+
+   getRecord(): any {
+      let dataProvider: IDataProviderSimple = this.getDataProviderSimple()
+      if (dataProvider != null) {
+         return classArgInstanceVal(dataProvider.dataValue);
+      }
+      return null;
+   }
+
+
+   getDataProviderSimple(): IDataProviderSimple {
+      let dataProvider: IDataProviderSimple = null;
+      if (this.argsWgtSimple.dataProviderName != null) {
+         dataProvider = DataProvider.dataProviderByName(this, this.argsWgtSimple.dataProviderName);
+      }
+      return dataProvider;
+   }
 
    get previousValue(): DATA_CLASS {
       return this._previousValue;

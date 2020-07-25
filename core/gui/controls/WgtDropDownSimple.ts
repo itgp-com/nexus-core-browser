@@ -9,7 +9,7 @@ export class WgtDropDownSimple extends WgtDropDown  {
    }
 
    static create<T>(args: Args_WgtDropDownSimple){
-      let instance = new WgtDropDownSimple()
+      let instance = new WgtDropDownSimple();
       instance.initialize_WgtDropDownSimple(args);
       return instance;
    } // create

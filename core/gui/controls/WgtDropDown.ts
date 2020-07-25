@@ -1,7 +1,7 @@
-import {DropDownList, DropDownListModel}                            from '@syncfusion/ej2-dropdowns';
-import {Args_AnyWidget, IArgs_HtmlTag_Utils}                        from "../Args_AnyWidget";
-import {Args_WgtSimple, WgtSimple}                                  from "./WgtSimple";
-import {DataProvider, DataProviderChangeEvent, IDataProviderSimple} from "../../data/DataProvider";
+import {DropDownList, DropDownListModel}       from '@syncfusion/ej2-dropdowns';
+import {Args_AnyWidget, IArgs_HtmlTag_Utils}   from "../Args_AnyWidget";
+import {Args_WgtSimple, WgtSimple}             from "./WgtSimple";
+import {DataProvider, DataProviderChangeEvent} from "../../data/DataProvider";
 
 export abstract class Args_WgtDropDown extends Args_WgtSimple<DropDownListModel> {
 
@@ -35,7 +35,6 @@ export abstract class WgtDropDown<ARG_CLASS extends Args_WgtDropDown = Args_WgtD
    }
 
    initialize_WgtDropDown(args: ARG_CLASS) {
-      let thisX = this;
       if (!args)
          throw "There are no args in call to initialize_WgtDropDown(args) !";
 
@@ -167,12 +166,5 @@ export abstract class WgtDropDown<ARG_CLASS extends Args_WgtDropDown = Args_WgtD
          this.handleError(ex);
       }
    }
-
-
-   getDataProviderSimple(): IDataProviderSimple {
-      let dataProvider = DataProvider.dataProviderByName(this, this.args.dataProviderName);
-      return dataProvider;
-   }
-
 
 } // abstract WgtDropDown
