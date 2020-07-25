@@ -57,7 +57,7 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
       x += `<div id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(this.args.wrapper)}>`;
 
       if (this.args.label) {
-         x += `    <div id="${this.labelTagID}" class="e-float-text e-label-top">${this.args.label.escapeHTML()}</div>`;
+         x += `    <div id="${this.labelTagID}" class="e-float-text e-label-top" style="padding-bottom: 5px;">${this.args.label.escapeHTML()}</div>`;
       }
 
       x += `<input type="checkbox" id="${this.tagId}" name="${this.args.propertyName}"/>`;
