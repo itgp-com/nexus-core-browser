@@ -1,17 +1,9 @@
-import {AnyWidget}                               from "../AnyWidget";
-import {Args_AnyWidget}                          from "../Args_AnyWidget";
-import {DataManager, Query}                      from "@syncfusion/ej2-data";
-import {
-   ColumnModel,
-   DataResult,
-   Grid,
-   GridModel,
-   QueryCellInfoEventArgs,
-   SortSettingsModel
-}                                                from "@syncfusion/ej2-grids";
-import {AbstractWidget, Args_AbstractWidget}     from "../AbstractWidget";
-import {ClassArg, classArgInstanceVal, hget}     from "../../CoreUtils";
-import {createSpinner, hideSpinner, showSpinner} from "@syncfusion/ej2-popups";
+import {AnyWidget}                                                                           from "../AnyWidget";
+import {Args_AnyWidget}                                                                      from "../Args_AnyWidget";
+import {DataManager, Query}                                                                  from "@syncfusion/ej2-data";
+import {ColumnModel, DataResult, Grid, GridModel, QueryCellInfoEventArgs, SortSettingsModel} from "@syncfusion/ej2-grids";
+import {AbstractWidget, Args_AbstractWidget}                                                 from "../AbstractWidget";
+import {ClassArg, classArgInstanceVal, hget}                                                 from "../../CoreUtils";
 
 export class Args_WgtGrid extends Args_AbstractWidget {
 
@@ -93,8 +85,16 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
       if (args.created)
          this.gridModel.created = args.created;
 
-      if (args.dataBound)
-         this.gridModel.dataBound = args.dataBound;
+      if (args.dataBound) {
+         // if default has databound, execute that after the args databound
+         let ejLevel_DataBound = this.gridModel.dataBound;
+         this.gridModel.dataBound =               (arg) => {
+            if (ejLevel_DataBound != null)
+               ejLevel_DataBound(arg);
+
+            args.dataBound();
+         }
+      }
 
       if (args.queryCellInfo)
          this.gridModel.queryCellInfo = args.queryCellInfo;
@@ -144,7 +144,7 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
       }
       try {
          this.obj = new Grid(this.gridModel, hget(this.tagId));
-      } catch (ex){
+      } catch (ex) {
          this.handleError(ex);
       }
       this.tagColumns(); // only tag at initialization time

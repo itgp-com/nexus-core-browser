@@ -22,7 +22,7 @@ export interface Args_PopupDialog {
    sortSettings?: ClassArg<SortSettingsModel>; // () => SortSettingsModel;
    queryCellInfo?: (args: (QueryCellInfoEventArgs | undefined)) => void;
    created?: () => void;
-   dataBound?: () => void;
+   dataBound?: (args?:Object | undefined) => void;
    ej?: GridModel;
 
    onClose?(instance: PopupDialog): void;
@@ -32,7 +32,12 @@ export interface Args_PopupDialog {
    popupDialog?: PopupDialog;
    popupTitle?: StringArg;
    hideLinkButton?: boolean;
-   showOkCancelPanel?: boolean
+   showOkCancelPanel?: boolean;
+   /**
+    * Disable autosizing the columns of the Popup Dialog Grid
+    */
+   disableAutosize?:boolean;
+   autosizeColumnNames?:string[];
 
 } // Args_PopupDialog
 
@@ -54,6 +59,27 @@ export class PopupDialog {
    static create(args: Args_PopupDialog) {
       let instance     = new PopupDialog();
       args.popupDialog = instance;
+
+         // if default has databound, execute that after the args databound
+         let userDataBound = args.dataBound;
+         args.dataBound =               (arg) => {
+            if (userDataBound != null)
+               userDataBound(arg);
+
+            if (args.disableAutosize) {
+               // do nothing - autosize disabled
+            } else {
+               if (args.autosizeColumnNames){
+                instance?.ej2Grid?.autoFitColumns(args.autosizeColumnNames);
+               } else {
+                  instance?.ej2Grid?.autoFitColumns();
+               }
+            }
+         }
+
+
+
+
       instance.init_PopupDialog(args);
       return instance;
    } // static create
