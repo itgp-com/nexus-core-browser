@@ -1,11 +1,10 @@
-import {Dialog, DialogModel}                                                                                                               from '@syncfusion/ej2-popups';
-import {ColumnModel, GridModel, PredicateModel, QueryCellInfoEventArgs, RecordDoubleClickEventArgs, RowSelectEventArgs, SortSettingsModel} from "@syncfusion/ej2-grids";
-import {DataManager, DataResult, Query}                                                                                                    from "@syncfusion/ej2-data";
-import {AbstractWidget}                                                                                                                    from "../AbstractWidget";
-import {Args_WgtPopupDialog_Content, WgtPopupDialog_Content}                                                                               from "./WgtPopupDialog_Content";
-import {WgtPopupDialog_Grid}                                                                                                               from "./WgtPopupDialog_Grid";
-import {ClassArg, classArgArrayVal, hget, StringArg, stringArgVal}                                                                         from "../../CoreUtils";
-import {btnLinkGridColumnModel, btnLinkInstantiate}                                                                                        from "../buttons/ButtonUtils";
+import {Dialog, DialogModel}                                                                                                                     from '@syncfusion/ej2-popups';
+import {ColumnModel, Grid, GridModel, PredicateModel, QueryCellInfoEventArgs, RecordDoubleClickEventArgs, RowSelectEventArgs, SortSettingsModel} from "@syncfusion/ej2-grids";
+import {DataManager, DataResult, Query}                                                                                                          from "@syncfusion/ej2-data";
+import {Args_WgtPopupDialog_Content, WgtPopupDialog_Content}                                                                                     from "./WgtPopupDialog_Content";
+import {WgtPopupDialog_Grid}                                                                                                                     from "./WgtPopupDialog_Grid";
+import {ClassArg, classArgArrayVal, hget, StringArg, stringArgVal}                                                                               from "../../CoreUtils";
+import {btnLinkGridColumnModel, btnLinkInstantiate}                                                                                              from "../buttons/ButtonUtils";
 
 
 export interface Args_PopupDialog {
@@ -46,7 +45,7 @@ export class PopupDialog {
    private _selectedData: any;
    private _hasData: boolean      = false;
 
-   private _contentWidget: AbstractWidget;
+   private _contentWidget: WgtPopupDialog_Content;
 
 
    protected constructor() {
@@ -274,11 +273,22 @@ export class PopupDialog {
       this._hasData = value;
    }
 
-   get contentWidget(): AbstractWidget {
+   get contentWidget(): WgtPopupDialog_Content {
       return this._contentWidget;
    }
 
-   set contentWidget(value: AbstractWidget) {
+   set contentWidget(value: WgtPopupDialog_Content) {
       this._contentWidget = value;
+   }
+
+   /**
+    * Extends WgtGrid and contains Grid as obj property. See ej2Grid for actual Grid
+    */
+   get wgtPopupDialog_Grid():WgtPopupDialog_Grid {
+      return this.contentWidget?.args?.wgtPopupDialogGrid;
+   }
+
+   get ej2Grid(): Grid {
+      return this.wgtPopupDialog_Grid?.obj;
    }
 }
