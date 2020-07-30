@@ -85,14 +85,15 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
       if (args.created)
          this.gridModel.created = args.created;
 
-      if (args.dataBound) {
-         // if default has databound, execute that after the args databound
-         let ejLevel_DataBound = this.gridModel.dataBound;
-         this.gridModel.dataBound =               (arg) => {
+      // if default has databound, execute that after the args databound
+      let ejLevel_DataBound    = this.gridModel.dataBound;
+      if (ejLevel_DataBound != null ||args.dataBound != null ) {
+         this.gridModel.dataBound = (arg) => {
             if (ejLevel_DataBound != null)
                ejLevel_DataBound(arg);
 
-            args.dataBound();
+            if (args.dataBound)
+               args.dataBound();
          }
       }
 
