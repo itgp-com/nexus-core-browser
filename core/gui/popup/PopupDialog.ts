@@ -183,7 +183,9 @@ export class PopupDialog {
       }
       thisX._dialogObj.content = x;
 
-      let header = 'Please select:' || stringArgVal(this.args.popupTitle);
+      let header = stringArgVal(this?.args?.popupTitle);
+      if (header == null)
+         header = 'Please select:';
 
       thisX._dialogObj.header = header;
 

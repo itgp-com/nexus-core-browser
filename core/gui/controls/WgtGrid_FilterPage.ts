@@ -33,6 +33,7 @@ export class WgtGrid_FilterPage<T = any> extends WgtGrid {
 
          allowFiltering: true,
          filterSettings: {
+            columns : (thisX.args as any)?.filters, // if filters are set, use them
             showFilterBarStatus: true,
             mode:                "Immediate",
             immediateModeDelay: IMMEDIATE_MODE_DELAY,
