@@ -319,4 +319,28 @@ export class PopupDialog {
    get ej2Grid(): Grid {
       return this.wgtPopupDialog_Grid?.obj;
    }
+
+   /**
+    * Get the current filters used in the popup.
+    *
+    * Hint: know if data has been selected or not by checking the selectedData property of the popup
+    */
+   currentFilterColumns():PredicateModel[]{
+      let popup_filter_predicate_array:PredicateModel[] = null;
+
+      let ejGrid = this.wgtPopupDialog_Grid.obj;
+      let filterPredicateMap = (ejGrid.filterModule as any).actualPredicate;
+      if (filterPredicateMap) {
+         let filterArray: PredicateModel[] = [];
+         let keys                          = Object.keys(filterPredicateMap);
+         keys.map(colName => {
+            let colArray: PredicateModel[] = filterPredicateMap[colName];
+            if (colArray) {
+               filterArray.push(...colArray);
+            }
+         });
+         popup_filter_predicate_array = filterArray;
+      }
+      return popup_filter_predicate_array;
+   }
 }
