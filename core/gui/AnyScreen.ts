@@ -32,6 +32,11 @@ export abstract class AnyScreen<DATA_TYPE = any>
    private _extraTagIdList: string[] = [];
    protected insideInitRefreshAnyScreen = false;
 
+   /**
+    * Unique uuid that will uniquely identify this screen even after any future refactoring changes the name of the class
+    */
+   private _ui_uuid:string;
+
    protected constructor() {
       super();
    }
@@ -152,4 +157,14 @@ export abstract class AnyScreen<DATA_TYPE = any>
       return false;
    }
 
+   /**
+    * Unique uuid that will uniquely identify this screen even after any future refactoring changes the name of the class
+    */
+   get ui_uuid(): string {
+      return this._ui_uuid;
+   }
+
+   set ui_uuid(value: string) {
+      this._ui_uuid = value;
+   }
 } // AnyScreen

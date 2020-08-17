@@ -10,7 +10,7 @@
     "@syncfusion/ej2": "^17.4.46",
     "@types/sockjs-client": "^1.1.1",
     "axios": "^0.18.1",
-    "bootstrap": "^4.5.0",
+    "bootstrap": "4.3.1",
     "jquery": "^3.5.1",
     "js-file-download": "^0.4.12",
     "lodash": "^4.17.18",
