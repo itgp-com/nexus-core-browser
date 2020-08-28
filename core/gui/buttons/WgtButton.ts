@@ -26,7 +26,7 @@ export class Args_WgtButton implements IArgs_HtmlTag{
    label ?: StringArg;
    iconPosition ?: ButtonIconPosition;
 
-   onClick ?: (ex: MouseEvent) => void;
+   onClick ?: (ev: MouseEvent) => void;
 
    ej ?: ButtonModel;
 
