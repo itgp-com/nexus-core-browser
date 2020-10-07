@@ -2,8 +2,12 @@ import {AnyWidget}                                                              
 import {Args_AnyWidget}                                                                      from "../Args_AnyWidget";
 import {DataManager, Query}                                                                  from "@syncfusion/ej2-data";
 import {ColumnModel, DataResult, Grid, GridModel, QueryCellInfoEventArgs, SortSettingsModel} from "@syncfusion/ej2-grids";
+import {ExcelExport, Page, Resize, Toolbar, Filter, Aggregate}                               from "@syncfusion/ej2-grids";
 import {AbstractWidget, Args_AbstractWidget}                                                 from "../AbstractWidget";
 import {ClassArg, classArgInstanceVal, hget}                                                 from "../../CoreUtils";
+import {AggregateRowModel}                                                                   from "@syncfusion/ej2-grids/src/grid/models/models";
+
+Grid.Inject(Toolbar, ExcelExport, Page, Resize, Filter, Aggregate);
 
 export class Args_WgtGrid extends Args_AbstractWidget {
 
@@ -17,6 +21,7 @@ export class Args_WgtGrid extends Args_AbstractWidget {
    queryCellInfo ?: (args: (QueryCellInfoEventArgs | undefined)) => void;
    created?: () => void;
    dataBound?: () => void;
+   aggregates?: AggregateRowModel[];
    ej?: GridModel;
    beforeGridInstantiated ?: { (wgtGrid: WgtGrid): void }; // allows model to be changed at the last moment
 
@@ -81,13 +86,16 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
       if (args.query)
          this.gridModel.query = args.query;
 
+      if ( args.aggregates)
+         this.gridModel.aggregates = args.aggregates;
+
       //--------------- function / events from here down
       if (args.created)
          this.gridModel.created = args.created;
 
       // if default has databound, execute that after the args databound
-      let ejLevel_DataBound    = this.gridModel.dataBound;
-      if (ejLevel_DataBound != null ||args.dataBound != null ) {
+      let ejLevel_DataBound = this.gridModel.dataBound;
+      if (ejLevel_DataBound != null || args.dataBound != null) {
          this.gridModel.dataBound = (arg) => {
             if (ejLevel_DataBound != null)
                ejLevel_DataBound(arg);
@@ -110,6 +118,7 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
          this.gridModel.width = "100%"; // default to 100%
       }
 
+      args.ej.aggregates
 
       let descriptor: Args_AnyWidget = {
          afterInitLogicListener:  args.afterInitLogicListener,

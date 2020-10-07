@@ -8,7 +8,7 @@ export interface DialogYesNoModel {
    content?: string;
    yes ?: voidFunction,
    no ?: voidFunction,
-
+   ej ?: DialogModel,
 } // DialogYesNoModel
 
 // noinspection JSUnusedGlobalSymbols
@@ -23,13 +23,14 @@ export class DialogYesNo {
    constructor(options: DialogYesNoModel) {
       let thisX     = this;
       thisX.options = options;
-      // thisX.
+      if (thisX.options?.ej == null)
+         thisX.options.ej = {};
 
       thisX._dialogModel = {
          header:            'Please confirm',
          content:           "Are you sure?",
-         isModal:           true,
-         showCloseIcon:     true,
+         isModal:            (options.ej.isModal == null ? true: options.ej.isModal),
+         showCloseIcon:      (options.ej.showCloseIcon == null ? true: options.ej.isModal),
          buttons:           [{
             buttonModel: {
                isPrimary: true,
@@ -65,10 +66,10 @@ export class DialogYesNo {
             }
          }],
          target:            document.body,
-         height:            'auto',
-         width:             '300px',
-         animationSettings: {effect: 'Zoom'},
-         closeOnEscape:     true,
+         height:            (options.ej.height ? options.ej.height : 'auto'),
+         width:             (options.ej.width ? options.ej.width : '300px'),
+         animationSettings: (options.ej.animationSettings ? options.ej.animationSettings :{effect: 'Zoom'}),
+         closeOnEscape:     (options.ej.closeOnEscape ? options.ej.closeOnEscape :true),
          close:             () => {
             thisX.dialogObj.destroy();
          }
