@@ -28,18 +28,29 @@ export interface Args_PopupDialog {
    onClose?(instance: PopupDialog): void;
 
    width?: string | number | undefined;  // popup width
-   disableRowDblClick?: boolean;
    popupDialog?: PopupDialog;
    popupTitle?: StringArg;
-   hideLinkButton?: boolean;
-   showOkCancelPanel?: boolean;
    /**
     * Disable autosizing the columns of the Popup Dialog Grid
     */
    disableAutosize?:boolean;
    autosizeColumnNames?:string[];
 
+   multiSelect?:boolean;
+   multiSelectSettings ?: Args_MultiSelect_PopupDialog
+   singleSelectSettings ?: Args_SingleSelect_PopupDialog
+
 } // Args_PopupDialog
+
+export interface Args_SingleSelect_PopupDialog {
+   hideLinkButton?: boolean;
+   showOkCancelPanel?: boolean;
+   disableRowDblClick?: boolean;
+}
+
+export interface Args_MultiSelect_PopupDialog {
+   disablePaging?:boolean;
+}
 
 
 export class PopupDialog {
@@ -106,7 +117,15 @@ export class PopupDialog {
    createWgtPopupDialog_Grid(): WgtPopupDialog_Grid {
       let thisX = this;
 
-      if (!this.args.hideLinkButton) {
+      let hideLinkButton:boolean = false;
+
+      if ( this.args.multiSelect){
+         hideLinkButton = true;
+      } else {
+         hideLinkButton = this.args?.singleSelectSettings?.hideLinkButton;
+      }
+
+      if (!hideLinkButton) {
          // if link to be shown
          let argcolumns: ColumnModel[] = classArgArrayVal(this.args.columns);
          let columns: ColumnModel[];
@@ -128,6 +147,9 @@ export class PopupDialog {
             } // if (argsQueryCellInfo)
          } // this.args.queryCellInfo = (args)
       }  // if ( !this.args.hideLinkButton)
+
+
+
       return WgtPopupDialog_Grid.create(this.args);
    } // createWgtPopupDialog_Grid
 
@@ -135,7 +157,6 @@ export class PopupDialog {
       let args: Args_WgtPopupDialog_Content = {
          wgtPopupDialogGrid: this.createWgtPopupDialog_Grid(),
          popupDialog:        this,
-         showOkCancelPanel:  this.args.showOkCancelPanel,
       };
       this.contentWidget                    = WgtPopupDialog_Content.create(args);
    } // createDialogWidget

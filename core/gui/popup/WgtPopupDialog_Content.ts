@@ -2,7 +2,6 @@ import {AnyScreen, Args_AnyScreen} from "../AnyScreen";
 import {AbstractWidget}            from "../AbstractWidget";
 import {WgtPanel_Row_Bootstrap}    from "../panels/WgtPanel_Row_Bootstrap";
 import {WgtPopupDialog_Grid}       from "./WgtPopupDialog_Grid";
-import {WgtPanel_Generic}          from "../panels/WgtPanel_Generic";
 import {WgtPanel_ColumnFlex}       from "../panels/WgtPanel_ColumnFlex";
 import {WgtButton_Primary}         from "../buttons/WgtButton_Primary";
 import {PopupDialog}               from "./PopupDialog";
@@ -12,7 +11,6 @@ export class Args_WgtPopupDialog_Content {
    topPanel?: AbstractWidget;
    wgtPopupDialogGrid: WgtPopupDialog_Grid;
    popupDialog: PopupDialog;
-   showOkCancelPanel?: boolean;
 }
 
 export class WgtPopupDialog_Content extends AnyScreen {
@@ -32,6 +30,15 @@ export class WgtPopupDialog_Content extends AnyScreen {
    initialize_WgtPopupDialog_Content(args: Args_WgtPopupDialog_Content) {
       let thisX                      = this;
       this.args                      = args;
+
+      let popupArgs = args?.popupDialog.args;
+      let showOkCancelPanel:boolean = false;
+      if (popupArgs.multiSelect){
+         showOkCancelPanel = true;
+      } else {
+         showOkCancelPanel = popupArgs?.singleSelectSettings?.showOkCancelPanel;
+      }
+
       let children: AbstractWidget[] = [];
 
       if (args.topPanel) {
@@ -46,7 +53,7 @@ export class WgtPopupDialog_Content extends AnyScreen {
          WgtPanel_SpacerVertical.create(),
          WgtPanel_Row_Bootstrap.create({
                                           children:
-                                             (args.showOkCancelPanel ? [
+                                             (showOkCancelPanel ? [
                                                    WgtPanel_ColumnFlex.create({
                                                                                  suffixClasses: 'col-11 col-sm-10',
                                                                                  children:      [
