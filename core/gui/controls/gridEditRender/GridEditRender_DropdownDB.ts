@@ -118,6 +118,7 @@ export class GridEditRender_DropdownDB {
             ddArgs.ej.itemTemplate = itemTemplate;
 
          let wgtDD: WgtDropDownDB = WgtDropDownDB.create(ddArgs);
+         wgtDD.initLogic();
          dataProvider.children    = [wgtDD];
 
          this.dropDownInstance       = wgtDD.obj; //new DropDownList(dropdown_options);
