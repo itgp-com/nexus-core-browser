@@ -22,7 +22,7 @@ export interface Args_PopupDialog {
    sortSettings?: ClassArg<SortSettingsModel>; // () => SortSettingsModel;
    queryCellInfo?: (args: (QueryCellInfoEventArgs | undefined)) => void;
    created?: () => void;
-   dataBound?: (args?:Object | undefined) => void;
+   dataBound?: (args?: Object | undefined) => void;
    ej?: GridModel;
 
    onClose?(instance: PopupDialog): void;
@@ -33,12 +33,14 @@ export interface Args_PopupDialog {
    /**
     * Disable autosizing the columns of the Popup Dialog Grid
     */
-   disableAutosize?:boolean;
-   autosizeColumnNames?:string[];
+   disableAutosize?: boolean;
+   autosizeColumnNames?: string[];
 
-   multiSelect?:boolean;
-   multiSelectSettings ?: Args_MultiSelect_PopupDialog
-   singleSelectSettings ?: Args_SingleSelect_PopupDialog
+   pagingDisabled?: boolean;
+
+   multiSelect?: boolean;
+   multiSelectSettings?: Args_MultiSelect_PopupDialog
+   singleSelectSettings?: Args_SingleSelect_PopupDialog
 
 } // Args_PopupDialog
 
@@ -49,7 +51,6 @@ export interface Args_SingleSelect_PopupDialog {
 }
 
 export interface Args_MultiSelect_PopupDialog {
-   disablePaging?:boolean;
 }
 
 
@@ -57,8 +58,8 @@ export class PopupDialog {
 
    private _dialogObj: Dialog;
    private _args: Args_PopupDialog;
-   private _selectedIndex: number = -1;
-   private _selectedData: any;
+   private _selectedIndex: number|number[]
+   private _selectedData: any|any[];
    private _hasData: boolean      = false;
 
    private _contentWidget: WgtPopupDialog_Content;
@@ -71,24 +72,22 @@ export class PopupDialog {
       let instance     = new PopupDialog();
       args.popupDialog = instance;
 
-         // if default has databound, execute that after the args databound
-         let userDataBound = args.dataBound;
-         args.dataBound =               (arg) => {
-            if (userDataBound != null)
-               userDataBound(arg);
+      // if default has databound, execute that after the args databound
+      let userDataBound = args.dataBound;
+      args.dataBound    = (arg) => {
+         if (userDataBound != null)
+            userDataBound(arg);
 
-            if (args.disableAutosize) {
-               // do nothing - autosize disabled
+         if (args.disableAutosize) {
+            // do nothing - autosize disabled
+         } else {
+            if (args.autosizeColumnNames) {
+               instance?.ej2Grid?.autoFitColumns(args.autosizeColumnNames);
             } else {
-               if (args.autosizeColumnNames){
-                instance?.ej2Grid?.autoFitColumns(args.autosizeColumnNames);
-               } else {
-                  instance?.ej2Grid?.autoFitColumns();
-               }
+               instance?.ej2Grid?.autoFitColumns();
             }
          }
-
-
+      }
 
 
       instance.init_PopupDialog(args);
@@ -117,11 +116,21 @@ export class PopupDialog {
    createWgtPopupDialog_Grid(): WgtPopupDialog_Grid {
       let thisX = this;
 
-      let hideLinkButton:boolean = false;
+      if (this.args.ej == null)
+         this.args.ej = {};
 
-      if ( this.args.multiSelect){
+      let hideLinkButton: boolean = false;
+      let checkboxButton: boolean = false;
+
+      if (this.args.multiSelect) {
          hideLinkButton = true;
+         checkboxButton = true;
+         thisX.selectedIndex = []
+         if (this.args.ej.selectionSettings == null)
+            this.args.ej.selectionSettings = {}
+
       } else {
+         thisX.selectedIndex = -1;
          hideLinkButton = this.args?.singleSelectSettings?.hideLinkButton;
       }
 
@@ -149,6 +158,12 @@ export class PopupDialog {
       }  // if ( !this.args.hideLinkButton)
 
 
+      if (checkboxButton) {
+         let columns: ColumnModel[];
+         let argcolumns: ColumnModel[] = classArgArrayVal(this.args.columns);
+         columns                       = [{type: 'checkbox', width: 50}, ...argcolumns];
+         this.args.columns             = columns;
+      }
 
       return WgtPopupDialog_Grid.create(this.args);
    } // createWgtPopupDialog_Grid
@@ -173,7 +188,7 @@ export class PopupDialog {
          enableResize:      true,
          allowDragging:     true,
          visible:           false,
-         open:              (e:any) => {
+         open:              (e: any) => {
             e.preventFocus = true; // preventing focus ( Uncaught TypeError: Cannot read property 'matrix' of undefined in Dialog:  https://www.syncfusion.com/support/directtrac/incidents/255376 )
             thisX.dialogOpen(e, thisX)
          },
@@ -213,9 +228,15 @@ export class PopupDialog {
    }// createDialog
 
    gridRowSelected(e: RowSelectEventArgs) {
-      let rowIndex        = e.rowIndex;
-      this._selectedIndex = rowIndex;
-      this.selectedData   = e.data;
+      if ( this.args.multiSelect) {
+         // multiselect
+         this.selectedIndex = this?.wgtPopupDialog_Grid?.obj?.getSelectedRowIndexes();
+         this.selectedData = this?.wgtPopupDialog_Grid?.obj?.getSelectedRecords();
+      } else {
+         // single select
+         this.selectedIndex = e.rowIndex;
+         this.selectedData   = e.data;
+      }
    }
 
    gridRowDoubleClick(e: RecordDoubleClickEventArgs) {
@@ -298,19 +319,19 @@ export class PopupDialog {
       this._args = value;
    }
 
-   get selectedIndex(): number {
+   get selectedIndex(): number|number[] {
       return this._selectedIndex;
    }
 
-   set selectedIndex(value: number) {
+   set selectedIndex(value: number|number[]) {
       this._selectedIndex = value;
    }
 
-   get selectedData(): any {
+   get selectedData(): any|any[] {
       return this._selectedData;
    }
 
-   set selectedData(value: any) {
+   set selectedData(value: any|any[]) {
       this._selectedData = value;
    }
 
@@ -333,7 +354,7 @@ export class PopupDialog {
    /**
     * Extends WgtGrid and contains Grid as obj property. See ej2Grid for actual Grid
     */
-   get wgtPopupDialog_Grid():WgtPopupDialog_Grid {
+   get wgtPopupDialog_Grid(): WgtPopupDialog_Grid {
       return this.contentWidget?.args?.wgtPopupDialogGrid;
    }
 
@@ -346,10 +367,10 @@ export class PopupDialog {
     *
     * Hint: know if data has been selected or not by checking the selectedData property of the popup
     */
-   currentFilterColumns():PredicateModel[]{
-      let popup_filter_predicate_array:PredicateModel[] = null;
+   currentFilterColumns(): PredicateModel[] {
+      let popup_filter_predicate_array: PredicateModel[] = null;
 
-      let ejGrid = this.wgtPopupDialog_Grid.obj;
+      let ejGrid             = this.wgtPopupDialog_Grid.obj;
       let filterPredicateMap = (ejGrid.filterModule as any).actualPredicate;
       if (filterPredicateMap) {
          let filterArray: PredicateModel[] = [];

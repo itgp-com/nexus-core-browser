@@ -118,8 +118,6 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
          this.gridModel.width = "100%"; // default to 100%
       }
 
-      args.ej.aggregates
-
       let descriptor: Args_AnyWidget = {
          afterInitLogicListener:  args.afterInitLogicListener,
          beforeInitLogicListener: args.beforeInitLogicListener,

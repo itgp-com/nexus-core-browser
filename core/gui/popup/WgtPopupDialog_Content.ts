@@ -55,13 +55,13 @@ export class WgtPopupDialog_Content extends AnyScreen {
                                           children:
                                              (showOkCancelPanel ? [
                                                    WgtPanel_ColumnFlex.create({
-                                                                                 suffixClasses: 'col-11 col-sm-10',
+                                                                                 suffixClasses: 'col-10 col-sm-11',
                                                                                  children:      [
                                                                                     args.wgtPopupDialogGrid
                                                                                  ]
                                                                               }),
                                                    WgtPanel_ColumnFlex.create({
-                                                                                 suffixClasses: 'col-1 col-sm-2',
+                                                                                 suffixClasses: 'col-2 col-sm-1',
                                                                                  children:      [
                                                                                     WgtButton_Primary.create({
                                                                                                                 label: 'Ok', onClick: (ex) => {

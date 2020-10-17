@@ -14,7 +14,7 @@ export class WgtGrid_FilterPage<T = any> extends WgtGrid {
    }
 
 
-   static create<T = any>(args?: Args_WgtGrid): WgtGrid_FilterPage<T> {
+   static create<T = any>(args?: Args_WgtGrid_FilterPage): WgtGrid_FilterPage<T> {
       let instance = new WgtGrid_FilterPage<T>();
       instance.initialize_WgtGrid(args);
       return instance;
@@ -24,20 +24,8 @@ export class WgtGrid_FilterPage<T = any> extends WgtGrid {
    createGridModel() {
       let thisX      = this;
       this.gridModel = {
-         allowPaging:  true,
-         pageSettings: {
-            pageSizes: [5, 10, 20, 50, 100],
-            pageSize:  10,
-            pageCount: 6,
-         },
 
-         allowFiltering: true,
-         filterSettings: {
-            columns : (thisX.args as any)?.filters, // if filters are set, use them
-            showFilterBarStatus: true,
-            mode:                "Immediate",
-            immediateModeDelay: IMMEDIATE_MODE_DELAY,
-         },
+
 
          allowSorting:      true,
          allowMultiSorting: true,
@@ -59,6 +47,42 @@ export class WgtGrid_FilterPage<T = any> extends WgtGrid {
             }
          },
       };
+
+      let localArgs: Args_WgtGrid_FilterPage = this.args as Args_WgtGrid_FilterPage;
+
+      if (!localArgs.filteringDisabled){
+         this.gridModel = {
+            ...this.gridModel,
+            ...{
+               allowFiltering: true,
+               filterSettings: {
+                  columns:             (thisX.args as any)?.filters, // if filters are set, use them
+                  showFilterBarStatus: true,
+                  mode:                "Immediate",
+                  immediateModeDelay:  IMMEDIATE_MODE_DELAY,
+               },
+            },
+         }
+      } // if
+
+
+      if (!localArgs.pagingDisabled) {
+         this.gridModel = {
+            ...this.gridModel,
+            ...{
+               allowPaging:  true,
+               pageSettings: {
+                  pageSizes: [5, 10, 20, 50, 100],
+                  pageSize:  10,
+                  pageCount: 6,
+               },
+            },
+
+         }
+      }
+
+
+
    } //createGridModel
 
 
