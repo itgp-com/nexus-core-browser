@@ -212,6 +212,7 @@ export enum QUERY_OPERATORS {
    NOT_EQUAL             = "notequal",
    STARTS_WITH           = "startswith",
    ENDS_WITH             = "endswith",
+   CONTAINS              = "contains",
 }
 
 export function gridWidth(columns: ColumnModel[]): number {
