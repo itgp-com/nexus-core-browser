@@ -18,6 +18,10 @@ export function createInstance<T>(constructorInstance: new () => T, props: Parti
 export type ModuleInitFunctionType = (moduleInit: ModuleInit) => void ;
 export type ModuleExitFunctionType = (currentModuleInfo:ModuleInfo, nextModuleInfo: ModuleInfo, params: any) => void;
 
+/**
+ * Async function that resolves to <code>true</code> to allow open privilege, <code>false</code> otherwise
+ */
+export type ModuleAllowOpenPrivilegeFunctionType = ()=>Promise<boolean>;
 
 export class ModuleInfo {
     id: string; // the unique id of this module
@@ -25,6 +29,7 @@ export class ModuleInfo {
     moduleInitFunction: ModuleInitFunctionType; // the function that will be called when this module is selected in the user interface
     moduleExitFunction: ModuleExitFunctionType; // called when another module is selected
     showInMenu: boolean = true; // show in the main menu as a module
+    allowOpenPrivilege ?:ModuleAllowOpenPrivilegeFunctionType; // is open allowed
 
     constructor(partial: Partial<ModuleInfo>) {
         Object.assign(this, partial);

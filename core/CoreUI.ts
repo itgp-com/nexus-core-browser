@@ -146,7 +146,7 @@ export class MainUI {
    }
 
 
-   public openModule(args: { modID: string, initialParams?: any }) {
+   public async openModule(args: { modID: string, initialParams?: any }) {
 
 
       let moduleInfo = getModules().get(args.modID);
@@ -157,6 +157,13 @@ export class MainUI {
          //                             });
          getErrorHandler().displayErrorMessageToUser(`Module ID ${args.modID} is not in the list of modules. Add it first using the ModuleRegistry.addModule(module) function!!`)
          return;
+      }
+
+      if (moduleInfo.allowOpenPrivilege){
+         if (! await moduleInfo.allowOpenPrivilege()){
+            getErrorHandler().displayErrorMessageToUser('You do not have enough privileges to open this screen.')
+            return;  // no changes
+         }
       }
 
       let currentModuleId = sessionStorage.getItem(STORAGE_CURRENT_MODULE_ID);

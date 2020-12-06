@@ -1,26 +1,25 @@
 /**
  * This class serves as the base of every data enabled panel
  */
-import {ScreenMeta}                                              from "./ScreenMeta";
-import * as _                                                    from 'lodash';
-import * as wu                                                   from "../ej2/WidgetUtils";
-import {ArgsPost}                                                from "../ej2/WidgetUtils";
-import {Err}                                                     from "../Core";
-import {AxiosResponse}                                           from "axios";
-import {getErrorHandler}                                         from "../CoreErrorHandling";
-import {getRandomString, htmlToElement, StringArg, stringArgVal} from "../CoreUtils";
-import {cu}                                                    from "../index";
-import {ListenerHandler}                                       from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}         from "./BeforeInitLogicListener";
-import {AfterInitLogicEvent, AfterInitLogicListener}           from "./AfterInitLogicListener";
-import {ExceptionEvent}                                        from "../ExceptionEvent";
-import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}   from "./AfterRepaintWidgetListener";
-import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener} from "./BeforeRepaintWidgetListener";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}          from "../WidgetErrorHandler";
-import {DialogWindow}                                          from "../ej2/DialogWindow";
-import {ParentAddedEvent, ParentAddedListener}                 from "./ParentAddedListener";
-import {DialogInfo}                                            from "../ej2/DialogInfo";
-import {Args_WgtTab_SelectedAsTab}                             from "./panels/WgtTab";
+import {ScreenMeta}                                                    from "./ScreenMeta";
+import * as _                                                          from 'lodash';
+import * as wu                                                         from "../ej2/WidgetUtils";
+import {ArgsPost}                                                      from "../ej2/WidgetUtils";
+import {Err}                                                           from "../Core";
+import {AxiosResponse}                                                 from "axios";
+import {getErrorHandler}                                               from "../CoreErrorHandling";
+import {getRandomString, hget, htmlToElement, StringArg, stringArgVal} from "../CoreUtils";
+import {ListenerHandler}                                               from "../ListenerHandler";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                 from "./BeforeInitLogicListener";
+import {AfterInitLogicEvent, AfterInitLogicListener}                   from "./AfterInitLogicListener";
+import {ExceptionEvent}                                                from "../ExceptionEvent";
+import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}           from "./AfterRepaintWidgetListener";
+import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener}         from "./BeforeRepaintWidgetListener";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}                  from "../WidgetErrorHandler";
+import {DialogWindow}                                                  from "../ej2/DialogWindow";
+import {ParentAddedEvent, ParentAddedListener}                         from "./ParentAddedListener";
+import {DialogInfo}                                                    from "../ej2/DialogInfo";
+import {Args_WgtTab_SelectedAsTab}                                     from "./panels/WgtTab";
 
 export class Args_AbstractWidget {
    // was AbstractWidget
@@ -29,7 +28,7 @@ export class Args_AbstractWidget {
 }
 
 export class Args_Repaint {
-   callDestroyOnContents:boolean;
+   callDestroyOnContents: boolean;
 }
 
 export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateListener {
@@ -252,7 +251,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
    }
 
    get hget(): HTMLElement {
-      return cu.hget(this.tagId);
+      return hget(this.tagId);
    }
 
    //----------------------- Error Handling --------------------------
@@ -322,19 +321,19 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
     *
     * It exists because a tab does not make the HTML available until this point, and only gets called if initialized is false
     */
-   initLogicAsTab():void{}
+   initLogicAsTab(): void {
+   }
 
    /**
     * Gets called every time the tab is selected
     */
-   selectedAsTab(arg: Args_WgtTab_SelectedAsTab):void{
+   selectedAsTab(arg: Args_WgtTab_SelectedAsTab): void {
    }
 
 
-
-   repaint( args ?:Args_Repaint) {
+   repaint(args ?: Args_Repaint) {
       let thisX = this;
-      if( args == null)
+      if (args == null)
          args = new Args_Repaint(); // default values
 
       try {
@@ -361,7 +360,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
                let parentNode = existingHtmlElement.parentElement; // was parentNode
                if (parentNode) {
 
-                  if ( args.callDestroyOnContents) {
+                  if (args.callDestroyOnContents) {
                      this.destroy(); // first destroy this instance and all children. This removes all JS events/html as each component seems fit to clean up after itself
                   } else {
                      this.resetInitialize();
@@ -553,7 +552,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
       this.localDestroyImplementation(); // this will take care of this.obj
    }
 
-   resetInitialize():void {
+   resetInitialize(): void {
       this.initialized = false;
       if (this.children) {
          this.children.forEach(child => {
