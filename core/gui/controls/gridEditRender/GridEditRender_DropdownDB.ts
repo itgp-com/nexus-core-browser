@@ -68,7 +68,7 @@ export class GridEditRender_DropdownDB {
    }
 
    // noinspection JSUnusedGlobalSymbols
-   createRenderer(args: QueryCellInfoEventArgs, parentWgtGrid: WgtGrid): void {
+   createRenderer(args: QueryCellInfoEventArgs, parentWgtGrid: WgtGrid): WgtDropDownDB {
 
       //------------- make sure we tag the parent component of this renderer/editor --------------
       if (this.last_parentWgtGrid == null) {
@@ -81,18 +81,19 @@ export class GridEditRender_DropdownDB {
          }
       }
 
-      this.createRendererRawEjGrid(args, parentWgtGrid.obj);
+      return this.createRendererRawEjGrid(args, parentWgtGrid.obj);
 
    } // createRenderer
 
-   createRendererRawEjGrid(args: QueryCellInfoEventArgs, grid: Grid): void {
+   createRendererRawEjGrid(queryCellInfoEventArgs: QueryCellInfoEventArgs, grid: Grid): WgtDropDownDB {
 
-      let anchor: HTMLInputElement = <HTMLInputElement>args.cell.getElementsByClassName(GridEditRender_DropdownDB.CLASS_GRID_DROPDOWN).item(0);
-      this.createDD(anchor, args.data);
+      let anchor: HTMLInputElement = <HTMLInputElement>queryCellInfoEventArgs.cell.getElementsByClassName(GridEditRender_DropdownDB.CLASS_GRID_DROPDOWN).item(0);
+      return this.createDD(anchor, queryCellInfoEventArgs);
    }
 
-   createDD(anchor: HTMLElement, record:any) {
+   private createDD(anchor: HTMLElement, queryCellInfoEventArgs: QueryCellInfoEventArgs) : WgtDropDownDB{
       let thisX = this;
+      let record = queryCellInfoEventArgs.data;
       if (anchor) {
 
          let dataProvider               = singleRecordDataProvider({providerName: '___', record: record});
@@ -119,6 +120,11 @@ export class GridEditRender_DropdownDB {
 
          let wgtDD: WgtDropDownDB = WgtDropDownDB.create(ddArgs);
          wgtDD.initLogic();
+         wgtDD.obj.change = (evt:ChangeEventArgs) => {
+            if (thisX.args.change)
+               thisX.args.change(evt, queryCellInfoEventArgs);
+         };
+
          dataProvider.children    = [wgtDD];
 
          this.dropDownInstance       = wgtDD.obj; //new DropDownList(dropdown_options);
@@ -127,7 +133,9 @@ export class GridEditRender_DropdownDB {
 
          this.dropDownInstance.appendTo(anchor);
 
+         return wgtDD;
       } // if (anchor)
+      return null;
    }
 
    valueTemplate(): string {
