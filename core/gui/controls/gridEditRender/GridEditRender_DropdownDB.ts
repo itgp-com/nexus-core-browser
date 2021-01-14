@@ -9,7 +9,6 @@ import {WgtDropDownDB}                        from "../WgtDropDownDB";
 import {Args_WgtDropDownDB}                   from "../WgtDropDownDB_Abstract";
 import {singleRecordDataProvider}             from "../../../data/DataProviderUtils";
 import {DropDownSortOrder}                    from "../WgtDropDown";
-import {ej}                                   from "@syncfusion/ej2/dist/ej2";
 
 export class Args_GridEditRender_DropdownDB {
    grid_value_column_name: string;
@@ -68,7 +67,7 @@ export class GridEditRender_DropdownDB {
    }
 
    // noinspection JSUnusedGlobalSymbols
-   createRenderer(args: QueryCellInfoEventArgs, parentWgtGrid: WgtGrid): WgtDropDownDB {
+   async createRenderer(args: QueryCellInfoEventArgs, parentWgtGrid: WgtGrid): Promise<WgtDropDownDB> {
 
       //------------- make sure we tag the parent component of this renderer/editor --------------
       if (this.last_parentWgtGrid == null) {
@@ -81,17 +80,17 @@ export class GridEditRender_DropdownDB {
          }
       }
 
-      return this.createRendererRawEjGrid(args, parentWgtGrid.obj);
+      return await this.createRendererRawEjGrid(args, parentWgtGrid.obj);
 
    } // createRenderer
 
-   createRendererRawEjGrid(queryCellInfoEventArgs: QueryCellInfoEventArgs, grid: Grid): WgtDropDownDB {
+   async createRendererRawEjGrid(queryCellInfoEventArgs: QueryCellInfoEventArgs, grid: Grid): Promise<WgtDropDownDB> {
 
       let anchor: HTMLInputElement = <HTMLInputElement>queryCellInfoEventArgs.cell.getElementsByClassName(GridEditRender_DropdownDB.CLASS_GRID_DROPDOWN).item(0);
       return this.createDD(anchor, queryCellInfoEventArgs);
    }
 
-   private createDD(anchor: HTMLElement, queryCellInfoEventArgs: QueryCellInfoEventArgs) : WgtDropDownDB{
+   private async createDD(anchor: HTMLElement, queryCellInfoEventArgs: QueryCellInfoEventArgs) : Promise<WgtDropDownDB>{
       let thisX = this;
       let record = queryCellInfoEventArgs.data;
       if (anchor) {
@@ -119,7 +118,7 @@ export class GridEditRender_DropdownDB {
             ddArgs.ej.itemTemplate = itemTemplate;
 
          let wgtDD: WgtDropDownDB = WgtDropDownDB.create(ddArgs);
-         wgtDD.initLogic();
+         await wgtDD.initLogic();
          wgtDD.obj.change = (evt:ChangeEventArgs) => {
             if (thisX.args.change)
                thisX.args.change(evt, queryCellInfoEventArgs);
@@ -178,7 +177,8 @@ export class GridEditRender_DropdownDB {
             //
             // })(); // iife
 
-            this.createDD(editorTemplateInstance, args.rowData);
+           // noinspection JSIgnoredPromiseFromCall
+            this.createDD(editorTemplateInstance, args.rowData); // async but doesn't matter
 
          }
       } // instance

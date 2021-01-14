@@ -51,7 +51,7 @@ export abstract class WgtDropDown<ARG_CLASS extends Args_WgtDropDown = Args_WgtD
       this.initialize_WgtSimple(args)
    } //initialize_WgtDropDown
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
 
       let x: string = "";
 
@@ -68,7 +68,7 @@ export abstract class WgtDropDown<ARG_CLASS extends Args_WgtDropDown = Args_WgtD
    }
 
 
-   localLogicImplementation() {
+   async localLogicImplementation() {
       let args = this.args;
       args.ej  = args.ej || {};
       let ej   = args.ej;
@@ -121,12 +121,12 @@ export abstract class WgtDropDown<ARG_CLASS extends Args_WgtDropDown = Args_WgtD
    } // doInitLogic
 
 
-   localClearImplementation(): void {
+   async localClearImplementation(): Promise<void> {
       if (this.obj)
          this.obj.clear();
    }// doClear
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation(): Promise<void> {
       if (this.obj) {
          let data             = DataProvider.byName(this, this.args.dataProviderName);
          let value: string    = '';

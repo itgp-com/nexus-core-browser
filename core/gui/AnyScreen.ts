@@ -71,7 +71,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
 
       let classAttr = `${classAttrPrefix} ${classAttrMain} ${classAttrSuffix}`;
 
-      descriptor.initContentBegin = () => {
+      descriptor.localContentBegin = () => {
          return `
 <${anyScreenDescriptor.tagName} id="${this.tagId}" class="${classAttr}">
    `
@@ -79,7 +79,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
 
 
       // ------------------ initContentEnd --------------------------
-      descriptor.initContentEnd = () => {
+      descriptor.localContentEnd = () => {
          let b: string = '';
 
          if (anyScreenDescriptor.extraTagIdCount > 0) {

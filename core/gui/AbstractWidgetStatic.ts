@@ -9,8 +9,8 @@ export abstract class AbstractWidgetStatic<T=any> extends AbstractWidget<T>{
     // was AbstractWidgetStatic
 
 // noinspection JSUnusedGlobalSymbols
-    localRefreshImplementation(): void {}
+    async localRefreshImplementation(): Promise<void> {}
 
 // noinspection JSUnusedGlobalSymbols
-    localClearImplementation(): void {}
+    async localClearImplementation(): Promise<void> {}
 }

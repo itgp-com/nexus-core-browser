@@ -64,7 +64,7 @@ export abstract class WgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Arg
       this.initialize_WgtSimple(args);
    }
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let x: string = "";
 
       x += `<div id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(this._args.wrapper)}>`;
@@ -126,8 +126,8 @@ export abstract class WgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Arg
       return `${this.wrapperTagID}_${i}`;
    }
 
-   localLogicImplementation() {
-      super.localLogicImplementation();
+   async localLogicImplementation(): Promise<void> {
+      await super.localLogicImplementation();
 
       let args = this._args;
       args.ej  = args.ej || {};
@@ -193,8 +193,8 @@ export abstract class WgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Arg
    } // logic
 
 
-   localDestroyImplementation() {
-      super.localDestroyImplementation();
+   async localDestroyImplementation() {
+      await super.localDestroyImplementation();
       this._args        = null;
       this._radioButton = null;
       this._label       = null;

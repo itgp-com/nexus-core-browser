@@ -1,8 +1,5 @@
-import {AnyWidget}                 from "../AnyWidget";
-import {Button}                    from "@syncfusion/ej2-buttons";
 import {Args_WgtButton, WgtButton} from "./WgtButton";
-import {Args_AnyWidget}          from "../Args_AnyWidget";
-import {StringArg, stringArgVal} from "../../CoreUtils";
+import {StringArg, stringArgVal}   from "../../CoreUtils";
 
 export class Args_WgtBadge extends Args_WgtButton{
    badgeLabel: StringArg
@@ -29,7 +26,7 @@ export class WgtBadge extends WgtButton{
    }
 
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let b: string = `
 <div id="${this.badgeLabelTagId}" class="badge-bar">
     <button id="${this.tagId}" type="button" >
@@ -38,7 +35,7 @@ export class WgtBadge extends WgtButton{
       return b;
    }
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       return `
         </span>
     </button>
@@ -52,13 +49,13 @@ export class WgtBadge extends WgtButton{
       return `${this.tagId}_badgeBar`
    }
 
-   localLogicImplementation(): void {
-      super.localLogicImplementation();
-      this.refresh();
+   async localLogicImplementation()  {
+      await super.localLogicImplementation();
+      await this.refresh();
    }
 
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation() {
       try {
          let newLabel                                            = stringArgVal(this.args.label);
          let newBadgeLabel                                       = stringArgVal((this.args as Args_WgtBadge).badgeLabel);

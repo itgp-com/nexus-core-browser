@@ -62,7 +62,7 @@ export class WgtPanel_RowFlex extends WgtPanel_SpecificClass {
    //    return new WgtPanel_RowFlex(args);
    // }
    //
-   // localContentBegin(): string {
+   // async localContentBegin(): Promise<string> {
    //    let args = this.args;
    //
    //    let prefix = '';
@@ -78,7 +78,7 @@ export class WgtPanel_RowFlex extends WgtPanel_SpecificClass {
    //    return `<div class="${prefix}flex-container-row${suffix}"${style}>`;
    // }
    //
-   // localContentEnd(): string {
+   // async localContentEnd(): Promise<string> {
    //    return `</div>`;
    // }
 

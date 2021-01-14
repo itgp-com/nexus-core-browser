@@ -2,7 +2,6 @@
  * This class serves as the base of every data enabled panel
  */
 import {ScreenMeta}                                                    from "./ScreenMeta";
-import * as _                                                          from 'lodash';
 import * as wu                                                         from "../ej2/WidgetUtils";
 import {ArgsPost}                                                      from "../ej2/WidgetUtils";
 import {Err}                                                           from "../Core";
@@ -31,9 +30,9 @@ export class Args_Repaint {
    callDestroyOnContents: boolean;
 }
 
-export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateListener {
-   initContentBegin: StringArg;
-   initContentEnd: StringArg;
+export abstract class AbstractWidget<DATA_TYPE = any> {
+   contentBeginFromExtendingClass: StringArg;
+   contentEndFromExtendingClass: StringArg;
    private _initialized: boolean                                                                                          = false;
    private _tagId: string;
    private _title: string                                                                                                 = 'n/a';
@@ -52,49 +51,9 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
    private _widgetErrorHandler: WidgetErrorHandler;
 
 
-   private _state: DATA_TYPE;
-   private _stateOriginal: DATA_TYPE;
-   private _updateStateListeners: UpdateStateListener[] = [this];
-   private _trackStateChanges: boolean                  = false;
-
-
    constructor() {
       this.initialize_AbstractWidget();
 
-   }
-
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-   // noinspection JSUnusedGlobalSymbols
-   get updateStateListeners(): UpdateStateListener[] {
-      return this._updateStateListeners;
-   }
-
-   //------------------------------------------------------------
-
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-// noinspection JSUnusedGlobalSymbols
-   get state(): DATA_TYPE {
-      return this._state;
-   }
-
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-// noinspection JSUnusedGlobalSymbols
-   set state(value: DATA_TYPE) {
-      this._state = value;
-      if (this.trackStateChanges) {
-         if (value == null) {
-            this._stateOriginal = null;
-         } else {
-            // make a full clone
-            this._stateOriginal = _.cloneDeep(value);
-         }
-      }
    }
 
    get widgetErrorHandler(): WidgetErrorHandler {
@@ -140,29 +99,6 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
    set thisClassName(value: string) {
       // Overwrite the default screen name
       this._thisClassName = value;
-   }
-
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-   get trackStateChanges(): boolean {
-      return this._trackStateChanges;
-   }
-
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-   // noinspection JSUnusedGlobalSymbols
-   set trackStateChanges(value: boolean) {
-      this._trackStateChanges = value;
-   }
-
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-   // noinspection JSUnusedGlobalSymbols
-   get stateOriginal(): DATA_TYPE {
-      return this._stateOriginal;
    }
 
    get parent(): AbstractWidget {
@@ -288,32 +224,21 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
       this.meta.currentClassName = this._thisClassName;
    } // initAbstractBase
 
-   /**
-    * Replaced by {@link initContentBegin} and {@link initContentEnd}. Will be removed in a future version
-    *
-    *
-    * @deprecated
-    * @private
-    */
-   _initContent(): string {
+   async localContentBegin(): Promise<string> {
       return '';
    }
 
-   localContentBegin(): string {
+   async localContentEnd(): Promise<string> {
       return '';
    }
 
-   localContentEnd(): string {
-      return '';
-   }
+   abstract async localLogicImplementation(): Promise<void> ;
 
-   abstract localLogicImplementation(): void;
+   abstract async localDestroyImplementation(): Promise<void>;
 
-   abstract localDestroyImplementation(): void;
+   abstract async localRefreshImplementation(): Promise<void>;
 
-   abstract localRefreshImplementation(): void;
-
-   abstract localClearImplementation(): void;
+   abstract async localClearImplementation(): Promise<void>;
 
 
    /**
@@ -331,7 +256,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
    }
 
 
-   repaint(args ?: Args_Repaint) {
+   async repaint(args ?: Args_Repaint) {
       let thisX = this;
       if (args == null)
          args = new Args_Repaint(); // default values
@@ -361,12 +286,12 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
                if (parentNode) {
 
                   if (args.callDestroyOnContents) {
-                     this.destroy(); // first destroy this instance and all children. This removes all JS events/html as each component seems fit to clean up after itself
+                     await this.destroy(); // first destroy this instance and all children. This removes all JS events/html as each component seems fit to clean up after itself
                   } else {
                      this.resetInitialize();
                   }
 
-                  wu.updateWidgetInDOM({
+                  await wu.updateWidgetInDOM({
                                           parentHTMLElement:         parentNode,
                                           newWidget:                 thisX,
                                           existingWidgetHTMLElement: existingHtmlElement,
@@ -397,10 +322,10 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
    } // repaintWidget
 
 // noinspection JSUnusedGlobalSymbols
-   initContentAndLogic(container: HTMLElement, callback?: Function): void {
+   async initContentAndLogic(container: HTMLElement, callback?: Function): Promise<void> {
       let thisX: AbstractWidget = this;
 
-      wu.updateWidgetInDOM({
+      await wu.updateWidgetInDOM({
                               parentHTMLElement: container,
                               newWidget:         this,
                               callback:          () => {
@@ -459,40 +384,36 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
       } // if container
    }
 
-   initContent(): string {
+   async initContent(): Promise<string> {
       let b = '';
 
-      let contentBeginOld   = stringArgVal(this.initContentBegin);
-      let contentEndOld     = stringArgVal(this.initContentEnd);
-      let localContentBegin = this.localContentBegin();
-      let localContentEnd   = this.localContentEnd();
+      let contentBeginFromExtendingClass   = stringArgVal(this.contentBeginFromExtendingClass);
+      let contentEndFromExtendingClass     = stringArgVal(this.contentEndFromExtendingClass);
+      let localContentBegin = await this.localContentBegin();
+      let localContentEnd   = await this.localContentEnd();
 
-      if (contentBeginOld)
-         b += contentBeginOld;
+      if (contentBeginFromExtendingClass)
+         b += contentBeginFromExtendingClass;
       if (localContentBegin)
          b += localContentBegin;
 
 
-      let overwrittenContent = this._initContent();
-      if (overwrittenContent)
-         b += overwrittenContent;
-
-      this.children.forEach(child => {
+      for (const child of this.children) {
          if (child) {
-            let content = child.initContent();
+            let content = await child.initContent();
             if (content)
                b += content;
          }
-      });
+      } // for
 
-      if (contentEndOld)
-         b += contentEndOld;
+      if (contentEndFromExtendingClass)
+         b += contentEndFromExtendingClass;
       if (localContentEnd)
          b += localContentEnd;
       return b;
    };
 
-   initLogic(): void {
+   async initLogic(): Promise<void> {
       if (!this.initialized) {
          this.initialized = true; // set the flag here, so if we call refresh() from inside the _initLogic implementation, it goes through
 
@@ -512,14 +433,14 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
          }
 
          if (this.children) {
-            this.children.forEach(child => {
+            for (const child of this.children) {
                if (child)
-                  child.initLogic();
-            });
+                  await child.initLogic();
+            }
          } // if ( this.children)
 
          // run this component's logic after the children
-         this.localLogicImplementation();
+         await this.localLogicImplementation();
 
          // ------------ After Init Logic Listeners -----------------------
          if (this.afterInitLogicListeners.count() > 0) {
@@ -540,16 +461,16 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
 //--------------------------- Find parent instance in different ways ---------------------
 
 // noinspection JSUnusedGlobalSymbols
-   destroy(): void {
+   async destroy() {
       this.initialized = false;
       if (this.children) {
-         this.children.forEach(child => {
+         for (const child of this.children) {
             if (child)
-               child.destroy();
-         });
+               await child.destroy();
+         }
       } // if ( this.children)
 
-      this.localDestroyImplementation(); // this will take care of this.obj
+      await this.localDestroyImplementation(); // this will take care of this.obj
    }
 
    resetInitialize(): void {
@@ -563,99 +484,31 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
    }
 
 // noinspection JSUnusedGlobalSymbols
-   refresh(): void {
+   async refresh() {
       if (this.initialized) {
 
 
          if (this.children) {
-            this.children.forEach(child => {
+            for (const child of this.children) {
                if (child)
-                  child.refresh();
-            });
+                  await child.refresh();
+            }
          } // if ( this.children)
 
-         this.localRefreshImplementation();
+         await this.localRefreshImplementation();
       }
    }
 
 // noinspection JSUnusedGlobalSymbols
-   clear(): void {
+   async clear(){
       if (this.children) {
-         this.children.forEach(child => {
+         for (const child of this.children) {
             if (child)
-               child.clear();
-         });
+               await child.clear();
+         }
       } // if this.children
 
-      this.localClearImplementation();
-   }
-
-   //-------------------------- state and state listeners ------------------
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-   hasState() {
-      return this.state != null;
-   }
-
-   /**
-    * Empty implementation of UpdateStateListener. Override as needed
-    * @param updateEvent
-    * @deprecated state should use {@link DataProvider}
-    */
-   updateState(updateEvent: UpdateStateEvent) {
-   }
-
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-   // noinspection JSUnusedGlobalSymbols
-   addUpdateStateListener(listener: UpdateStateListener) {
-      if (listener)
-         this._updateStateListeners.push(listener);
-   }
-
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-   // noinspection JSUnusedGlobalSymbols
-   removeUpdateStateListener(listener: UpdateStateListener) {
-      if (listener) {
-         let n: number = this._updateStateListeners.length;
-         //reverse loop, so that when we remove an item, we don't loose our position and have to do funky math to recover it
-         for (let i = n - 1; i >= 0; i--) {
-            let internal = this._updateStateListeners[i];
-            if (internal && internal == listener)
-               this._updateStateListeners.splice(i, 1);
-         }
-      }
-   }
-
-   /**
-    * @deprecated state should use {@link DataProvider}
-    */
-   fireUpdateState(evt: UpdateStateEvent) {
-      if (!this._updateStateListeners)
-         return;
-
-      let n: number = this._updateStateListeners.length;
-      for (let i = 0; i < n; i++) {
-         let listener = this._updateStateListeners[i];
-         if (listener) {
-            try {
-               listener.updateState(evt)
-            } catch (err) {
-               evt.error    = true;
-               evt.errorTxt = err.toString();
-               if (!evt.extras)
-                  evt.extras = new Map();
-               evt.extras.set('exception', err);
-            }
-         } // if listener
-
-         if (evt.error)
-            break; // get out of the loop the moment there's an error
-      } // for i = 0 to n
+      await this.localClearImplementation();
    }
 
    /**
@@ -915,28 +768,6 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
    }
 
 } // main class
-
-
-//--------------------------------------
-/**
- * @deprecated state should use {@link DataProvider}
- */
-export interface UpdateStateEvent {
-   path?: string;
-   name: string;
-   val: any;
-   error?: boolean; // is there an error after the update ?
-   errorTxt?: string; // if there's an error this is the error message
-   extras?: Map<string, any>;
-}
-
-// -----------------------------
-/**
- * @deprecated state should use {@link DataProvider}
- */
-export interface UpdateStateListener {
-   updateState(updateEvent: UpdateStateEvent): void;
-}
 
 export interface Args_UpdateWidgetInDOM {
    parentHTMLElement: HTMLElement;

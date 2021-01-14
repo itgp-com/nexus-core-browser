@@ -1,15 +1,9 @@
 /// <reference path="./global.d.ts" />
 
-import * as coreUI from "./CoreUI";
-
-export {coreUI} ;
 
 import * as core from "./Core";
 
 export {core};
-
-// import {getErrorHandler, setErrorHandler} from "./CoreErrorHandling";
-// export {getErrorHandler, setErrorHandler};
 
 import * as cu from "./CoreUtils";
 export {cu};
@@ -37,12 +31,6 @@ import {AbstractWidget}       from "./gui/AbstractWidget";
 import {MetaTableData_Base}   from "./gui/MetaTableData_Base";
 import {ScreenMeta}                        from "./gui/ScreenMeta";
 import {MetaTableData}                     from "./ej2/MetaTableData";
-// import {DPopupContent,  DPopupContentArgs} from "./ej2/DPopupContent";
-// import {DPopup,DPopupArgs}                 from "./ej2/DPopup";
-// import {DPopupGrid}                        from "./ej2/DPopupGrid";
-// import {EjWidget}                          from "./ej2/EjWidget";
-// import {EjWidgetContainer}                 from "./ej2/EjWidgetContainer";
-// import {EjWidgetDescriptorBase}            from "./ej2/EjWidgetDescriptorBase";
 
 
 export {AbstractWidgetStatic,
@@ -50,12 +38,6 @@ export {AbstractWidgetStatic,
    MetaTableData_Base,
    MetaTableData,
    ScreenMeta,
-   // DPopupContent,  DPopupContentArgs,
-   // DPopup,DPopupArgs,
-   // DPopupGrid,
-   // EjWidget,
-   // EjWidgetContainer,
-   // EjWidgetDescriptorBase
 };
 import {DialogYesNo, DialogYesNoModel}     from "./ej2/DialogYesNo";
 export {DialogYesNo, DialogYesNoModel};

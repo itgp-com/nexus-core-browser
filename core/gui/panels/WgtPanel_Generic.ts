@@ -40,12 +40,12 @@ export class WgtPanel_Generic extends AnyWidget {
       this.initialize_AnyWidget(anyArgs);
    }
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       return `<${this.args.htmlTagType} id="${this.tagId}"${IArgs_HtmlTag_Utils.class(this.args)}${IArgs_HtmlTag_Utils.style(this.args)}>`;
 
    }
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       return `</${this.args.htmlTagType}>`; //<!-- id="${this.tagID}" -->
    }
 

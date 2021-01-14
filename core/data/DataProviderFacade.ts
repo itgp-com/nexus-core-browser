@@ -42,34 +42,34 @@ export class DataProviderFacade<T = any> extends AbstractWidget implements IData
 
 
 
-   localClearImplementation(): void {
+   async localClearImplementation(): Promise<void> {
       if (this.content) {
          if ((this.content as any).localClearImplementation) {
-            (this.content as any).localClearImplementation();
+            await (this.content as any).localClearImplementation();
          }
       }
    }
 
-   localDestroyImplementation(): void {
+   async localDestroyImplementation(): Promise<void> {
       if (this.content) {
          if ((this.content as any).localDestroyImplementation) {
-            (this.content as any).localDestroyImplementation();
+            await (this.content as any).localDestroyImplementation();
          }
       }
    }
 
-   localLogicImplementation(): void {
+   async localLogicImplementation(): Promise<void> {
       // there is no logic for a facade - it's not a visual object
    }
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation(): Promise<void> {
       // there is not refresh for a non-visual component
    }
 
 
    //------------------- implement DataProviderChangeListener ----------------------
-   dataProviderChanged(evt: DataProviderChangeEvent<T>): void {
-         this.refresh();
+   async dataProviderChanged(evt: DataProviderChangeEvent<T>) {
+         await this.refresh();
    } // dataProviderChanged
 
 

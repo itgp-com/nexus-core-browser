@@ -91,29 +91,21 @@ export class Args_AnyWidget {
     */
    validation ?: any;
 
-   /**
-    * @deprecated use localContentEnd()
-    * This is a static method because a class method would be required to be instantiated when  {@link htmlTextBoxFloating} is called with {colName:'aaa',...}
-    * See: https://stackoverflow.com/questions/47239507/property-getreadableschedule-is-missing-in-type
-    * @param options
-    */
-
    parent ?: AbstractWidget;
 
    children ?: AbstractWidget[];
 
    /**
-    * @deprecated use localContentBegin()
     * Returns the HTML to be inserted before the children's HTML.
     * It is a function so the string is evaluated after the initialization is done. If it was a mere string, the string instantiation would happen at the time the descriptor was created, which is before the widget is instantiated
     */
-   initContentBegin ?: StringArg; // ()=>string;
+   localContentBegin ?: StringArg; // ()=>string;
 
    /**
     * Returns the HTML to be inserted after the children's HTML
     * It is a function so the string is evaluated after the initialization is done. If it was a mere string, the string instantiation would happen at the time the descriptor was created, which is before the widget is instantiated*
     */
-   initContentEnd ?: StringArg; // ()=>string;
+   localContentEnd ?: StringArg; // ()=>string;
 
    extraTagIdCount ?: number = 0;
 

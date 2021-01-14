@@ -67,7 +67,7 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
    } // initTextField
 
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let x: string = "";
       if (this.args.wrapper) {
          this.args.wrapper = IArgs_HtmlTag_Utils.init(this.args.wrapper);
@@ -98,7 +98,7 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
       return x;
    }
 
-   localLogicImplementation() {
+   async localLogicImplementation() {
       let thisX = this;
       let args  = this.args;
       args.ej   = args.ej || {}; // ensure it's not null
@@ -107,9 +107,9 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
       if (args.updateOnBlurDisabled) {
          // do not add a blur event
       } else {
-         args.ej.blur = (arg, rest) => {
+         args.ej.blur = async (arg, rest) => {
 
-            thisX.onBlur();      // local onBlur
+            await thisX.onBlur();      // local onBlur
 
             if (blur) {
                // execute the passed in blur
@@ -129,14 +129,14 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
 
    }
 
-   localClearImplementation(): void {
-      super.localClearImplementation();
+   async localClearImplementation(): Promise<void> {
+      await super.localClearImplementation();
       if (this.obj)
          this.value = '';
       this.previousValue = '';
    }
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation(): Promise<void> {
 
       if (this.obj && this.args.dataProviderName) {
          let data             = DataProvider.byName(this, this.args.dataProviderName);
@@ -161,13 +161,13 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
 
    }
 
-   localDestroyImplementation(): void {
+   async localDestroyImplementation(): Promise<void> {
       try {
          if (this.obj && !this.obj.isDestroyed)
-            this.obj.destroy();
+            await this.obj.destroy();
       } catch( ignore){}
       
-      super.localDestroyImplementation();
+      await super.localDestroyImplementation();
    }
 
    //--------------------------- WgtSimple implementation ---------------

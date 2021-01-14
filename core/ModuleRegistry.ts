@@ -15,8 +15,8 @@ export function createInstance<T>(constructorInstance: new () => T, props: Parti
 /**
  * ModuleInitFunctionType type definition as a function that receives a ModuleInfo instance and returns nothing.
  */
-export type ModuleInitFunctionType = (moduleInit: ModuleInit) => void ;
-export type ModuleExitFunctionType = (currentModuleInfo:ModuleInfo, nextModuleInfo: ModuleInfo, params: any) => void;
+export type ModuleInitFunctionType = (moduleInit: ModuleInit) => Promise<void> ;
+export type ModuleExitFunctionType = (currentModuleInfo:ModuleInfo, nextModuleInfo: ModuleInfo, params: any) => Promise<void>;
 
 /**
  * Async function that resolves to <code>true</code> to allow open privilege, <code>false</code> otherwise

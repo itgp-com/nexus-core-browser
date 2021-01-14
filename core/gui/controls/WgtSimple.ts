@@ -123,7 +123,7 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
       return true; // validated
    }
 
-   onBlur() {
+   async onBlur() {
       let thisX     = this;
       let validated = this.validate();
       if (!validated) {
@@ -163,15 +163,15 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
                propertyName:  this.propertyName,
                value:         currentValue,
                previousValue: previousDataValue,
-               changeFailed:  (changeFailedFinished) => {
+               changeFailed:  async (changeFailedFinished) => {
                   // the context of this function could be anything, so we use thisX to be sure
                   record[thisX.propertyName] = previousDataValue;
 
                   try {
                      if (dataProvider instanceof DataProvider) {
-                        dataProvider.refresh();
+                        await dataProvider.refresh();
                      } else {
-                        thisX.refresh();
+                        await thisX.refresh();
                      }
                   } catch (ex) {
                      thisX.handleError(ex);

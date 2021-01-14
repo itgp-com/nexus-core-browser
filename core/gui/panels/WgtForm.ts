@@ -54,7 +54,7 @@ export class WgtForm extends AnyWidget<any, Args_AnyWidget, any> {
    } // initialize_WgtForm
 
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
 
       let x: string = "";
       try {
@@ -68,7 +68,7 @@ export class WgtForm extends AnyWidget<any, Args_AnyWidget, any> {
       return x;
    }
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       let x   = '';
       let tag = this.args.formTag.htmlTagType; // 'form'
 
@@ -76,7 +76,7 @@ export class WgtForm extends AnyWidget<any, Args_AnyWidget, any> {
       return x;
    }
 
-   localLogicImplementation(): void {
+   async localLogicImplementation(): Promise<void> {
       if (this.args.validation && this.hgetForm) {
          this._validator = new FormValidator(this.hgetForm, this.args.validation);
       }
@@ -90,8 +90,8 @@ export class WgtForm extends AnyWidget<any, Args_AnyWidget, any> {
 
    }
 
-   localDestroyImplementation(): void {
-      super.localDestroyImplementation();
+   async localDestroyImplementation(): Promise<void> {
+      await super.localDestroyImplementation();
       try {
          if (this._validator && this._validator.element)
             this._validator.destroy();

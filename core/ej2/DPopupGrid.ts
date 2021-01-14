@@ -226,7 +226,7 @@ immediateModeDelay: IMMEDIATE_MODE_DELAY,
 
 
 
-   localLogicImplementation() {
+   async localLogicImplementation() {
 
       // let options = this.getGridOptions();
 
@@ -238,12 +238,12 @@ immediateModeDelay: IMMEDIATE_MODE_DELAY,
       }
    }
 
-   localDestroyImplementation(): void {
+   async localDestroyImplementation(): Promise<void> {
 
       if (this._grid)
-         this._grid.destroy();
+         await this._grid.destroy();
       if (this._dialogObj)
-         this._dialogObj.destroy();
+         await this._dialogObj.destroy();
 
       // popup div gets pulled out and added to the bottom of the document
       // so delete it
@@ -254,13 +254,13 @@ immediateModeDelay: IMMEDIATE_MODE_DELAY,
 
    }
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation(): Promise<void> {
       if ( this._grid) {
          let queryObj: Query = this.query;
          if (queryObj) {
             this._grid.dataSource = this.getGridDataManager();
             this._grid.query      = queryObj;
-            this.grid.refresh();
+            await this.grid.refresh();
          } else {
             this._grid.dataSource = []; // empty
          }
@@ -269,7 +269,7 @@ immediateModeDelay: IMMEDIATE_MODE_DELAY,
 
 
 
-   localClearImplementation(): void { }
+   async localClearImplementation(): Promise<void> { }
 
 //---------------------------------------------------------
 
@@ -328,12 +328,10 @@ immediateModeDelay: IMMEDIATE_MODE_DELAY,
             this.grid.query      = null;
          }
       }
-      //
-      // if (!this._grid) {
-      //     this._gridModel.query = this._query;
-      // }
 
-      this.refresh();
+      (async ()=>{
+         await this.refresh();
+      })();
    }
 
 

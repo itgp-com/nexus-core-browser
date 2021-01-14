@@ -52,12 +52,12 @@ export class  WgtTreeView_Simple extends WgtSimple<TreeView, Args_AnyWidget, Tre
       this.initialize_WgtSimple(args);
    }
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let x = `<${this.args.htmlTagType} id="${this.tagId}"${IArgs_HtmlTag_Utils.all(this.args)}></${this.args.htmlTagType}>`;
       return x;
    }
 
-   localLogicImplementation(): void {
+   async localLogicImplementation(): Promise<void> {
       this.obj = new TreeView(this.treeViewModel, hget(this.tagId));
       this.obj.expandAll();
    }

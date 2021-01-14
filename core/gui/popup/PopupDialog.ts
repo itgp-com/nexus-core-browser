@@ -101,8 +101,8 @@ export class PopupDialog {
       thisX.validateLocalData(thisX); // set the original data values based on the hasData flag
    }
 
-   show() {
-      this.createDialog();
+   async show() {
+      await this.createDialog();
       if (this._dialogObj)
          this._dialogObj.show();
    }
@@ -188,19 +188,19 @@ export class PopupDialog {
          enableResize:      true,
          allowDragging:     true,
          visible:           false,
-         open:              (e: any) => {
+         open:             async  (e: any) => {
             e.preventFocus = true; // preventing focus ( Uncaught TypeError: Cannot read property 'matrix' of undefined in Dialog:  https://www.syncfusion.com/support/directtrac/incidents/255376 )
-            thisX.dialogOpen(e, thisX)
+            await thisX.dialogOpen(e, thisX)
          },
-         close:             (args) => {
-            thisX.dialogClose(args, thisX)
+         close:             async (args) => {
+            await thisX.dialogClose(args, thisX)
          },
 
       };
       return dialogModel;
    }
 
-   createDialog() {
+   async createDialog() {
       let thisX        = this;
       let dialogModel  = this.createDialogModel();
       thisX._dialogObj = new Dialog(dialogModel);
@@ -212,7 +212,7 @@ export class PopupDialog {
 
       let x: string;
       try {
-         x = this.contentWidget.initContent();
+         x = await this.contentWidget.initContent();
       } catch (ex) {
          console.log(ex);
          x = 'Exception occurred while creating the content of the popup. See console for stacktrace.<p>' + ex.toString();
@@ -259,9 +259,9 @@ export class PopupDialog {
     * @param args
     * @param thisX
     */
-   dialogOpen(args: any, thisX: PopupDialog) {
+   async dialogOpen(args: any, thisX: PopupDialog) {
       try {
-         thisX.contentWidget.initLogic();
+         await thisX.contentWidget.initLogic();
       } catch (e) {
          console.log(e);
          thisX.contentWidget.handleError(e);
@@ -274,13 +274,13 @@ export class PopupDialog {
     * @param args
     * @param thisX
     */
-   dialogClose(args: any, thisX: PopupDialog) {
+   async dialogClose(args: any, thisX: PopupDialog) {
 
       if (thisX.contentWidget)
-         thisX.contentWidget.destroy();
+         await thisX.contentWidget.destroy();
 
       if (thisX.dialogObj)
-         thisX.dialogObj.destroy();
+         await thisX.dialogObj.destroy();
 
       //      document.querySelectorAll('.e-dlg-container').forEach( (elem) => elem.remove());
 

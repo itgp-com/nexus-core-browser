@@ -1,15 +1,12 @@
-import {Component}                                     from "@syncfusion/ej2-base";
-import {getRandomString}                               from "../ej2/WidgetUtils";
-import {AbstractWidget}                                from "./AbstractWidget";
-import {Args_AnyWidget}                                from "./Args_AnyWidget";
-import {BeforeInitLogicEvent, BeforeInitLogicListener} from "./BeforeInitLogicListener";
-import {AfterInitLogicEvent, AfterInitLogicListener}   from "./AfterInitLogicListener";
-import {stringArgVal}                                  from "../CoreUtils";
-import {ListenerHandler}                               from "../ListenerHandler";
-import {
-   Args_AnyWidget_Initialized_Event,
-   Args_AnyWidget_Initialized_Listener
-}                                                      from "./Args_AnyWidget_Initialized_Listener";
+import {Component}                                                             from "@syncfusion/ej2-base";
+import {getRandomString}                                                       from "../ej2/WidgetUtils";
+import {AbstractWidget}                                                        from "./AbstractWidget";
+import {Args_AnyWidget}                                                        from "./Args_AnyWidget";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                         from "./BeforeInitLogicListener";
+import {AfterInitLogicEvent, AfterInitLogicListener}                           from "./AfterInitLogicListener";
+import {stringArgVal}                                                          from "../CoreUtils";
+import {ListenerHandler}                                                       from "../ListenerHandler";
+import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "./Args_AnyWidget_Initialized_Listener";
 
 /**
  * The generic root component of all the widgets.
@@ -80,11 +77,11 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       } // listeners
 
 
-      if (argsAnyWidget.initContentBegin)
-         this.initContentBegin = stringArgVal(argsAnyWidget.initContentBegin);
+      if (argsAnyWidget.localContentBegin)
+         this.contentBeginFromExtendingClass = stringArgVal(argsAnyWidget.localContentBegin);
 
-      if (argsAnyWidget.initContentEnd)
-         this.initContentEnd = stringArgVal(argsAnyWidget.initContentEnd);
+      if (argsAnyWidget.localContentEnd)
+         this.contentEndFromExtendingClass = stringArgVal(argsAnyWidget.localContentEnd);
 
       //----------------------- Listener Implementations ---------------------
       if (argsAnyWidget.beforeInitLogicListener) {
@@ -111,15 +108,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    /**
     * Implementation based on initContent present in descriptor and children
     */
-   _initContent(): string {
-      return null;
-   } // _initContent
-
-   /**
-    * Implementation based on initContent present in descriptor and children
-    */
-   localLogicImplementation(): void {
-
+   async localLogicImplementation() :Promise<void> {
       if (this.descriptor && this.descriptor.initLogic)
          this.descriptor.initLogic();
    } // _initLogic
@@ -127,7 +116,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    /**
     * Implementation based on initContent present in descriptor and children
     */
-   localClearImplementation(): void {
+   async localClearImplementation() :Promise<void> {
       if (this.descriptor && this.descriptor.clear)
          this.descriptor.clear();
    } // _clear
@@ -135,7 +124,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    /**
     * Implementation based on initContent present in descriptor and children
     */
-   localRefreshImplementation(): void {
+   async localRefreshImplementation() :Promise<void>{
       if (this.descriptor && this.descriptor.refresh)
          this.descriptor.refresh();
    } // _refresh
@@ -144,7 +133,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    /**
     * Implementation based on initContent present in descriptor and children
     */
-   localDestroyImplementation(): void {
+   async localDestroyImplementation() :Promise<void>{
 
       if (this.descriptor && this.descriptor.destroy)
          this.descriptor.destroy();
@@ -153,7 +142,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       if (this.obj && !(this.obj as any).isDestroyed && (this.obj as any).destroy != null) {
          // Destroy this object itself
          try {
-            (this.obj as any).destroy();
+            await (this.obj as any).destroy();
          } catch (ex) {
             console.log(ex);
          }

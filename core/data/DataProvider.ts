@@ -184,7 +184,7 @@ export class DataProviderChangeEvent<T> {
 }
 
 export interface DataProviderChangeListener<T> {
-   dataProviderChanged(evt: DataProviderChangeEvent<T>): void;
+   dataProviderChanged(evt: DataProviderChangeEvent<T>): Promise<void>;
 }
 
 
@@ -374,7 +374,7 @@ export class DataProvider<T = any> extends AbstractWidget implements IDataProvid
       }
    }
 
-   fireChange(evt: DataProviderChangeEvent<ClassArgInstanceOrArray<T>>) {
+   async fireChange(evt: DataProviderChangeEvent<ClassArgInstanceOrArray<T>>) {
       if (!this._changeListeners)
          return;
 
@@ -393,7 +393,7 @@ export class DataProvider<T = any> extends AbstractWidget implements IDataProvid
 
       if (triggerRefresh) {
          try {
-            this.refresh();
+            await this.refresh();
          } catch (ex) {
             this.handleError(ex);
          }
@@ -405,7 +405,7 @@ export class DataProvider<T = any> extends AbstractWidget implements IDataProvid
          let listener = this._changeListeners[i];
          if (listener) {
             try {
-               listener.dataProviderChanged(evt)
+               await listener.dataProviderChanged(evt)
             } catch (err) {
                evt.error    = true;
                evt.errorTxt = err.toString();
@@ -438,20 +438,16 @@ export class DataProvider<T = any> extends AbstractWidget implements IDataProvid
 
    // --------------- Empty AbstractWidget methods implementations ------------------
 
-   localClearImplementation(): void {
+   async localClearImplementation(): Promise<void> {
    }
 
-   localDestroyImplementation(): void {
+   async localDestroyImplementation(): Promise<void> {
    }
 
-   _initContent(): string {
-      return null;
+   async localLogicImplementation(): Promise<void> {
    }
 
-   localLogicImplementation(): void {
-   }
-
-   localRefreshImplementation(): void {
+   async localRefreshImplementation(): Promise<void> {
    }
 
    //----------------------- getter/setter ------------------------

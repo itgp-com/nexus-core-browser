@@ -32,7 +32,7 @@ export class WgtPanel_Row_Bootstrap extends AnyWidget {
       return new WgtPanel_Row_Bootstrap(args);
    }
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let args   = this.args;
       let prefix = '';
       let suffix = '';
@@ -47,7 +47,7 @@ export class WgtPanel_Row_Bootstrap extends AnyWidget {
       return `<div id="${this.tagId}" class="${prefix}row${suffix}"${style}>`;
    }
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       return `</div>`;
    }
 }

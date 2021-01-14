@@ -373,7 +373,7 @@ export function getAppBase(): URL {
 }
 
 let appPathCached: string = null;
-let tModel: boolean       = false;
+let devOn: boolean       = false;
 
 export async function asyncGetAppPath(): Promise<string> {
 
@@ -396,7 +396,7 @@ export async function asyncGetAppPath(): Promise<string> {
       try {
          // noinspection UnnecessaryLocalVariableJS
          let tFlag = response.data['t'];
-         tModel    = tFlag;
+         devOn    = tFlag;
       } catch (ignore) {
       }
    } else {
@@ -406,8 +406,8 @@ export async function asyncGetAppPath(): Promise<string> {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export function isTModel() {
-   return tModel;
+export function isDev() {
+   return devOn;
 }
 
 

@@ -60,7 +60,7 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
             ddArgs.ej.itemTemplate = itemTemplate;
 
          let wgtDD: WgtDropDownDB = WgtDropDownDB.create(ddArgs);
-         wgtDD.initLogic();
+         await wgtDD.initLogic();
          wgtDD.obj.change = (evt:ChangeEventArgs) => {
                thisX.args.change(thisX, evt, queryCellInfoEventArgs);
          };

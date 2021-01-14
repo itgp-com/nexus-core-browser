@@ -127,26 +127,26 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
    } // initialize_WgtGrid
 
 
-   localContentBegin(): string {
-      return `<div id="${this.tagId}"></div>`
+   async localContentBegin(): Promise<string> {
+     return `<div id="${this.tagId}"></div>`
    } // no children for a Grid, so all HTML can go in the Begin section
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       /**
        * Add all the column header templates right after the grid div
        */
 
       let x: string = '';
       if (this.args && this.args.columnHeaderTemplates) {
-         this.args.columnHeaderTemplates.forEach((value) => {
+         for (const value of this.args.columnHeaderTemplates) {
             if (value && value.templateWidget && value.columnId)
-               x += value.templateWidget.initContent();
-         });
+               x += await value.templateWidget.initContent();
+         }
       }
       return x;
    }
 
-   localLogicImplementation(): void {
+   async localLogicImplementation(): Promise<void> {
       if (this.args && this.args.beforeGridInstantiated) {
          this.args.beforeGridInstantiated.call(this);
       }
@@ -197,24 +197,24 @@ export class Args_WgtGrid_ColumnHeaderTemplate {
 export class WgtPanel_ColumnHeader extends AbstractWidget {
 
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       return `<script id="${this.tagId}" type="text/x-template">`
    }
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       return `</script>`
    }
 
-   localLogicImplementation(): void {
+   async localClearImplementation(): Promise<void> {
    }
 
-   localClearImplementation(): void {
+   async localLogicImplementation(): Promise<void> {
    }
 
-   localDestroyImplementation(): void {
+   async localDestroyImplementation(): Promise<void> {
    }
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation(): Promise<void> {
    }
 
 }

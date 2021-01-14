@@ -21,7 +21,7 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
       return t;
    }
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let x:string = ``;
 
       let errorAttributes = '';
@@ -52,12 +52,12 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
       return x;
    }
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       return `</div>`; // goes with <div class="e-float-input e-input-group e-corner">
    }
 
 
-   localLogicImplementation() {
+   async localLogicImplementation() {
 
 
       let thisX = this;
@@ -68,9 +68,9 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
       if (args.updateOnBlurDisabled) {
          // do not add a blur event
       } else {
-         document.getElementById(this.tagId).addEventListener('blur',  () => {
+         document.getElementById(this.tagId).addEventListener('blur', async () => {
 
-            thisX.onBlur();      // local onBlur
+            await thisX.onBlur();      // local onBlur
 
             if (blur) {
                // execute the passed in blur
@@ -83,14 +83,14 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
    }
 
 
-   localClearImplementation(): void {
-      super.localClearImplementation();
+   async localClearImplementation(): Promise<void> {
+      await super.localClearImplementation();
       if (this.obj)
          this.value = '';
       this.previousValue = '';
    }
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation(): Promise<void> {
 
       // if (this.obj) {
          let data             = DataProvider.byName(this, this.args.dataProviderName);
@@ -113,11 +113,11 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
 
    }
 
-   localDestroyImplementation(): void {
+   async localDestroyImplementation(): Promise<void> {
       if (this.obj && !this.obj.isDestroyed)
-         this.obj.destroy();
+         await this.obj.destroy();
 
-      super.localDestroyImplementation();
+      await super.localDestroyImplementation();
    }
 
 

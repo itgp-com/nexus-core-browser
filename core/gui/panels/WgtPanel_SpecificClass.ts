@@ -41,7 +41,7 @@ export class WgtPanel_SpecificClass extends AnyWidget {
       this.initialize_AnyWidget(descriptor);
    }
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let args = this.args;
 
       let prefix = '';
@@ -57,7 +57,7 @@ export class WgtPanel_SpecificClass extends AnyWidget {
       return `<div id="${this.tagId}" class="${prefix}${args.mandatoryClass}${suffix}"${style}>`;
    }
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       return `</div>`;
    }
 

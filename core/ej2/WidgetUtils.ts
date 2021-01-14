@@ -1,12 +1,12 @@
-import {Component}                                                from "@syncfusion/ej2-base";
-import {FormValidator, FormValidatorModel}                        from "@syncfusion/ej2-inputs";
-import {ColumnModel, QueryCellInfoEventArgs}                      from '@syncfusion/ej2-grids';
-import {createSpinner, hideSpinner, showSpinner}                  from "@syncfusion/ej2-popups";
-import {AnyWidget}                                                from "../gui/AnyWidget";
-import {axios, core, cu}                                          from "../index";
-import {AxiosRequestConfig, AxiosResponse}                        from "axios";
-import {AbstractWidget, Args_UpdateWidgetInDOM, UpdateStateEvent} from "../gui/AbstractWidget";
-import {getErrorHandler}                                          from "../CoreErrorHandling";
+import {Component}                               from "@syncfusion/ej2-base";
+import {FormValidator, FormValidatorModel}       from "@syncfusion/ej2-inputs";
+import {ColumnModel, QueryCellInfoEventArgs}     from '@syncfusion/ej2-grids';
+import {createSpinner, hideSpinner, showSpinner} from "@syncfusion/ej2-popups";
+import {AnyWidget}                               from "../gui/AnyWidget";
+import {axios, core, cu}                         from "../index";
+import {AxiosRequestConfig, AxiosResponse}       from "axios";
+import {Args_UpdateWidgetInDOM}                  from "../gui/AbstractWidget";
+import {getErrorHandler}                         from "../CoreErrorHandling";
 
 
 export type GridWidgetCallBack = (args?: QueryCellInfoEventArgs, thisX ?: any) => void;
@@ -21,9 +21,9 @@ export function getRandomString(prefix?: string): string {
 }
 
 
-export function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
+export async function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
    try {
-      let newWidgetHTML = args.newWidget.initContent();
+      let newWidgetHTML = await args.newWidget.initContent();
       if (args.existingWidgetHTMLElement) {
          // replace the child
          let newWidgetHTMLElement = cu.htmlToElement(newWidgetHTML);
@@ -33,8 +33,8 @@ export function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
          args.parentHTMLElement.innerHTML = newWidgetHTML;
       }
       // after giving it time to render, attach the JS logic
-      setImmediate(() => {
-                      args.newWidget.initLogic();
+      setImmediate(async () => {
+                      await args.newWidget.initLogic();
                       if (args.callback)
                          args.callback();
                    }
@@ -113,42 +113,6 @@ export function callbackOnClickOutside(component: Component<HTMLElement>, elemen
 
    // More detail at https://stackoverflow.com/questions/152975/how-do-i-detect-a-click-outside-an-element
 }
-
-
-export function updateStateOnBlur(widget: AnyWidget, screen: AbstractWidget) {
-   if (widget == null)
-      return;
-
-   let inputElement = widget.hgetInput;
-   if (inputElement == null)
-      return;
-
-   inputElement.onblur = (ev) => {
-
-      if (!screen.hasState()) {
-         // no state, no input
-         inputElement.value     = '';
-         inputElement["_orig_"] = '';
-         return
-      }
-
-      let orig    = inputElement["_orig_"];
-      let current = inputElement.value;
-      if (current != orig) {
-
-         let evt: UpdateStateEvent = {
-            name: widget.descriptor.colName,
-            val:  current
-         };
-
-         screen.fireUpdateState(evt);
-         if (evt.error) {
-            inputElement.value = orig; // restore previous valid value
-         }
-
-      }
-   };// on blur
-} // updateStateOnBlur
 
 
 export interface ArgsPost<RESPONSE = any> {

@@ -27,7 +27,7 @@ export class WgtPanel_SpacerHorizontal extends AnyWidget {
       return new WgtPanel_SpacerHorizontal(args);
    }
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let args = this.args;
 
       let classes:string = (args.pixels ? '' : `${css_horizontal_spacer} `);

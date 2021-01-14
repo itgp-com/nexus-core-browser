@@ -345,12 +345,12 @@ export class WgtTreeGrid_Simple extends WgtSimple<TreeGrid, Args_AnyWidget, Tree
       this.initialize_WgtSimple(args);
    }
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let x = `<${this.args.htmlTagType} id="${this.tagId}"${IArgs_HtmlTag_Utils.all(this.args)}></${this.args.htmlTagType}>`;
       return x;
    }
 
-   localLogicImplementation(): void {
+   async localLogicImplementation(): Promise<void> {
       let treeGridTag = hget(this.tagId);
       this.obj        = new TreeGrid(this.treeGridModel, treeGridTag);
       this.obj.expandAll();

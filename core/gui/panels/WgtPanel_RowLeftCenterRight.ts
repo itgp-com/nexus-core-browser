@@ -80,7 +80,7 @@ export class WgtPanel_RowLeftCenterRight extends AnyWidget {
 
    } // initialize_WgtPanel_RowLeftCenterRight
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       if (!this.args.hideDefaultClasses) {
          this.args.htmlTagClass = this.args.htmlTagClass || '';
                this.args.htmlTagClass += ' flex-container-lcr';
@@ -89,7 +89,7 @@ export class WgtPanel_RowLeftCenterRight extends AnyWidget {
 
    }
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       return `</${this.args.htmlTagType}>`; //<!-- id="${this.tagID}" -->
    }
 

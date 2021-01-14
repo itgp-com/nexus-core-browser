@@ -59,7 +59,7 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
    } //initialize_WgtCheckBox
 
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
 
       let x: string = "";
 
@@ -76,7 +76,7 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
    }
 
 
-   localLogicImplementation() {
+   async localLogicImplementation() {
       let args = this.args;
       args.ej  = args.ej || {};
       let ej   = args.ej;
@@ -122,14 +122,14 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
       }
    } // toDataProvider
 
-   localClearImplementation(): void {
+   async localClearImplementation() {
       if (this.obj) {
          this.obj.checked       = false;
          this.obj.indeterminate = true;
       }
    }// doClear
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation() {
       if (this.obj) {
          let value            = this.indeterminateValue;
          let enabled: boolean = false;
@@ -165,7 +165,8 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
       try {
          if (this.obj) {
             if (val == this.indeterminateValue) {
-               this.localClearImplementation();
+               // noinspection JSIgnoredPromiseFromCall
+               this.localClearImplementation(); // clear on separate thread (async function call)
             } else {
                this.obj.checked = val; // will trigger a change event
             }

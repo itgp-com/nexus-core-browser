@@ -1,14 +1,11 @@
 import {AnyWidget}                                          from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 
-import {SelectEventArgs, Tab, TabItemModel, TabModel} from '@syncfusion/ej2-navigations';
-import {AbstractWidget}                               from "../AbstractWidget";
-import {
-   Args_AnyWidget_Initialized_Event,
-   Args_AnyWidget_Initialized_Listener
-}                                                     from "../Args_AnyWidget_Initialized_Listener";
-import {htmlToElement, voidFunction}                  from "../../CoreUtils";
-import {AnyScreen}                                    from "../AnyScreen";
+import {Tab, TabItemModel, TabModel}                                           from '@syncfusion/ej2-navigations';
+import {AbstractWidget}                                                        from "../AbstractWidget";
+import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
+import {voidFunction}                                                          from "../../CoreUtils";
+import {AnyScreen}                                                             from "../AnyScreen";
 
 export class Args_WgtTab implements IArgs_HtmlTag {
    htmlTagType ?: string;
@@ -75,7 +72,7 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    } // initialize_WgtTab
 
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let args      = this.args;
       let x: string = "";
 
@@ -90,7 +87,7 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
       return x;
    }
 
-   localContentEnd(): string {
+   async localContentEnd(): Promise<string> {
       let args = this.args;
       let x    = '';
       x += `</${args.htmlTagType}>`; // the tag div
@@ -101,23 +98,22 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    }
 
 
-   localLogicImplementation() {
+   async localLogicImplementation() {
       let thisX = this;
       let args  = this.args;
       args.ej   = args.ej || {}; // ensure it's not null
 
-      this.createTabModel();
+      await this.createTabModel();
       thisX.obj = new Tab(this.tabModel, thisX.hget);
-
    } //doInitLogic
 
-   createTabModel() {
+   async createTabModel() {
       let thisX = this;
       let args  = this.args;
 
       let itemModelList: TabItemModel[] = [];
       for (let tabObj of this.args.children) {
-         let tabHtml = tabObj.initContent();
+         let tabHtml = await tabObj.initContent();
          itemModelList.push(
             {
                header:  {'text': tabObj.title},
@@ -150,8 +146,8 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
          cssClass:  "e-fill", // fill tab header with accent background
          created:   (_e) => {
             setImmediate(
-               () => {
-                  thisX.obj.refresh(); // hack to repaint tab scrollbar when it overflows
+               async () => {
+                  await thisX.obj.refresh(); // hack to repaint tab scrollbar when it overflows
 
                   // Remove uppercasing from tab header
                   $(".e-tab-text").addClass('app-tab-no-text-transform');
@@ -183,7 +179,7 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    initializeTab(index: number) {
       let thisX: WgtTab = this;
 
-      setImmediate(() => {
+      setImmediate(async () => {
          // Fix 2020-04-27 D. Pociu
          // this is ABSOLUTELY necessary in order to give the HTML in the tab constrol
          // a chance to be inserted. Without this, you get very weird Syncfusion EJ2
@@ -193,7 +189,7 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
             let initialized: boolean = tabObj.initialized;
             if (!tabObj.initialized) {
                try {
-                  tabObj.initLogic(); // this includes a refresh
+                  await tabObj.initLogic(); // this includes a refresh
                   tabObj.initLogicAsTab(); // trigger this on the component inside the tab
                } catch (error) {
                   console.log(error);
@@ -232,7 +228,7 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
                 * no need for this refresh to fire here.
                 */
                if (!(tabObj instanceof AnyScreen)) {
-                  tabObj.refresh(); // all the button enable/disable (the initialized flag prevents re-initialization of EJ2 components)
+                  await tabObj.refresh(); // all the button enable/disable (the initialized flag prevents re-initialization of EJ2 components)
                }
             } catch (error) {
                console.log(error);
@@ -251,33 +247,24 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    } // resetTabInitializations
 
 
-   localDestroyImplementation()
-      :
-      void {
+   async localDestroyImplementation() {
       // destroy the children then this object
-      for (let tabObj of this.args.children
-         ) {
-         tabObj.destroy();
+      for (let tabObj of this.args.children) {
+         await tabObj.destroy();
       }
       if (this.obj)
          this.obj.destroy();
    }
 
-   localClearImplementation()
-      :
-      void {
-      for (let tabObj of this.args.children
-         ) {
-         tabObj.clear();
+   async localClearImplementation() {
+      for (let tabObj of this.args.children  ) {
+         await tabObj.clear();
       }
    }
 
-   localRefreshImplementation()
-      :
-      void {
-      for (let tabObj of this.args.children
-         ) {
-         tabObj.refresh();
+   async localRefreshImplementation() {
+      for (let tabObj of this.args.children ) {
+         await tabObj.refresh();
       }
    }
 

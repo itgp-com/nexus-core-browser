@@ -27,7 +27,7 @@ export class WgtPanel_SpacerVertical extends AnyWidget {
    static create(args?:Args_WgtPanel_SpacerVertical):WgtPanel_SpacerVertical{
       return new WgtPanel_SpacerVertical(args);
    }
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let args = this.args;
       let classes:string = (args.pixels ? ''  : `${css_vertical_spacer} `);
       if ( args.extraClasses)

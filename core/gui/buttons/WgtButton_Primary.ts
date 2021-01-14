@@ -1,6 +1,4 @@
-import {ButtonIconPosition, WgtButton, Args_WgtButton} from "./WgtButton";
-import {StringArg}                                     from "../../CoreUtils";
-import {Args_AnyWidget} from "../Args_AnyWidget";
+import {Args_WgtButton, WgtButton} from "./WgtButton";
 
 export class WgtButton_Primary_Args extends Args_WgtButton{
    enterKeyEnabled ?: boolean;
@@ -34,8 +32,8 @@ export class WgtButton_Primary extends WgtButton {
 
 
 
-   localLogicImplementation(): void {
-      super.localLogicImplementation();
+   async localClearImplementation(): Promise<void> {
+      await super.localLogicImplementation();
       if (!(this.args as WgtButton_Primary_Args).enterKeyEnabled) {
          //Do not respond to enter Key
          this.hgetButton.onkeydown = (ev) => {

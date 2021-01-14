@@ -38,7 +38,7 @@ export class WgtLbl extends WgtSimple<any, Args_AnyWidget, StringArg> {
    } // initialize_WgtLbl
 
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let x = '';
       if (this.args.wrapper) {
          this.args.wrapper = IArgs_HtmlTag_Utils.init(this.args.wrapper);
@@ -53,7 +53,7 @@ export class WgtLbl extends WgtSimple<any, Args_AnyWidget, StringArg> {
       return x;
    }
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation(): Promise<void> {
      let x = this.value; // triggers the function calculation if any
      this.value = x ; // resets the innerHTML
    }

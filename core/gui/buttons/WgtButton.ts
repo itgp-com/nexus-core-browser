@@ -76,16 +76,17 @@ export class WgtButton extends AnyWidget<Button> {
 
    } // initialize_WgtButton
 
-   localContentBegin(): string {
+   async localContentBegin(): Promise<string> {
       let b: string = `<button id="${this.tagId}" type="button" ${IArgs_HtmlTag_Utils.all(this.args)} >${this.title}`;
       return b;
    }
-   localContentEnd(): string {
+
+   async localContentEnd(): Promise<string> {
       return '</button>'
    }
 
 
-   localLogicImplementation(): void {
+   async localLogicImplementation() {
       let args = this.args;
 
       let model: ButtonModel = args.ej || {}; // default to args.ej, but ensure it's not null

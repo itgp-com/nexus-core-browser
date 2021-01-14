@@ -42,7 +42,7 @@ export class DataProviderMulti extends AbstractWidget implements IDataProvider {
       return multi;
    } // create
 
-   localClearImplementation(): void {
+   async localClearImplementation(): Promise<void> {
       let localProviders: IDataProvider[] = this.providers;
       if (localProviders) {
          let n = localProviders.length;
@@ -50,7 +50,7 @@ export class DataProviderMulti extends AbstractWidget implements IDataProvider {
             let provider = localProviders[i];
             try {
                if (provider && (provider as any).clear) {
-                  (provider as any).clear()
+                  await (provider as any).clear()
                }
             } catch (ex) {
 
@@ -61,13 +61,13 @@ export class DataProviderMulti extends AbstractWidget implements IDataProvider {
       } // if ( this.providers)
    } // localClearImplementation
 
-   localDestroyImplementation(): void {
+   async localDestroyImplementation(): Promise<void> {
       if (this.providers) {
          let n: number = this.providers.length;
          for (let i = 0; i < n; i++) {
             let provider: IDataProvider = this.providers[i];
             if ((provider as any).localDestroyImplementation) {
-               (provider as any).localDestroyImplementation();
+               await (provider as any).localDestroyImplementation();
             }
          } // for
       } // if
@@ -77,11 +77,11 @@ export class DataProviderMulti extends AbstractWidget implements IDataProvider {
       return null;
    }
 
-   localLogicImplementation(): void {
+   async localLogicImplementation(): Promise<void> {
       // there is no logic for a facade - it's not a visual object
    }
 
-   localRefreshImplementation(): void {
+   async localRefreshImplementation(): Promise<void> {
       // there is not refresh for a non-visual component
    }
 

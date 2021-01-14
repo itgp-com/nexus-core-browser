@@ -60,14 +60,14 @@ export class DialogWindow {
 
          } //  if (this.initArgs)
       },
-      open:       (e: any) => {
+      open:      async (e: any) => {
          e.preventFocus = true; // preventing focus ( Uncaught TypeError: Cannot read property 'matrix' of undefined in Dialog:  https://www.syncfusion.com/support/directtrac/incidents/255376 )
 
          if (this.initArgs && this.initArgs.content) {
             try {
                this.initArgs.content.dialogWindowContainer = this;
                this.initArgs.content.registerInfo(hget(this.dialogContentTagId));
-               this.initArgs.content.initLogic(); // execute the logic for the content
+               await this.initArgs.content.initLogic(); // execute the logic for the content
 
                if (this.initArgs.onAfterOpen) {
                   this.initArgs.onAfterOpen(this); // call init function
@@ -129,19 +129,19 @@ export class DialogWindow {
    protected constructor() {   } // constructor
 
 
-   static create(args:Args_DialogWindow){
+   static async create(args:Args_DialogWindow){
       let instance:DialogWindow = new DialogWindow();
-      instance.initialize_DialogWindow(args);
+      await instance.initialize_DialogWindow(args);
       return instance;
    }
 
-   static createAndShow(args:Args_DialogWindow){
-      let instance = DialogWindow.create(args);
-      instance.show();
+   static async createAndShow(args:Args_DialogWindow){
+      let instance = await DialogWindow.create(args);
+       instance.show();
       return instance;
    }
 
-   initialize_DialogWindow(args: Args_DialogWindow){
+   async initialize_DialogWindow(args: Args_DialogWindow){
       this.initArgs = args;
       if (args) {
          this.dialogModel.width        = (args.width ? args.width : '99%');
@@ -157,7 +157,7 @@ export class DialogWindow {
       `;
 
       if (this.initArgs && this.initArgs.content)
-         content += this.initArgs.content.initContent();
+         content += await this.initArgs.content.initContent();
 
       content += `
 </div>
