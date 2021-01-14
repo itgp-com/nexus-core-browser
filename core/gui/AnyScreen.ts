@@ -104,9 +104,9 @@ export abstract class AnyScreen<DATA_TYPE = any>
       // ------------------ initLogic --------------------------
       descriptor.initLogic = () => {
          //2020-05-11 - The refresh MUST be AFTER the form is done painting if we want the spinner to show up in the grids of the screen
-         setImmediate(() => {
+         setImmediate(async () => {
              thisX.insideInitRefreshAnyScreen = true;
-             /* await */ thisX.refresh(); // a screen should always refresh the controls at the end of their being instantiated
+             await thisX.refresh(); // a screen should always refresh the controls at the end of their being instantiated
             thisX.insideInitRefreshAnyScreen = false;
          });
       };

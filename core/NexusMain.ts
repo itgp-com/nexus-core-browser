@@ -36,6 +36,14 @@ export class NexusMain {
          // Menu system started, process any initial parameters passed in (appended to) the baseURL.
          await thisX.ui?.processURLParameters(initialParamsAsString);
 
+
+
+         /**
+          * TODO: This is a horrible hack that needs to disappear - allows all the table models to register their UIStartedListeners
+          */
+         thisX.fireUIStartedListeners();
+
+
       } catch (ex) {
          // A catastrophic error has occurred on instantiating the very basic UI for the app
          console.log(ex);
@@ -48,12 +56,13 @@ export class NexusMain {
    }
 
    protected fireUIStartedListeners(){
+      let thisX = this;
       setTimeout(() => {
                     //--- 2020-05-13 Dave
                     // fire all the UIStart listeners then delete them - it's a one time deal for the whole app
-                    if (this.UIStartedListeners) {
+                    if (thisX.UIStartedListeners) {
                        try {
-                          this.UIStartedListeners.fire({
+                          thisX.UIStartedListeners.fire({
                                                           event:            {}, // empty event
                                                           exceptionHandler: event => {
                                                              console.log(event);
@@ -63,7 +72,7 @@ export class NexusMain {
                        } catch (t) {
                           console.log(t);
                        }
-                       this.UIStartedListeners.clear(); // delete all the listeners
+                       thisX.UIStartedListeners.clear(); // delete all the listeners
                     } // if (this.UIStartedListeners)
                     //--------------------------
 
