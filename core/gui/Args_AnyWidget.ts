@@ -67,7 +67,7 @@ export class IArgs_HtmlTag_Utils {
 }
 
 
-export class Args_AnyWidget {
+export class Args_AnyWidget<CONTROLMODEL = any> {
 
    id?: string;
    title ?: string;
@@ -116,6 +116,11 @@ export class Args_AnyWidget {
    beforeInitLogicListener ?: (ev:BeforeInitLogicEvent) => void;
    afterInitLogicListener ?:(ev :AfterInitLogicEvent)=>void;
 
+   /**
+    * If this is present,  a new wrapper div is created around the actual input element.
+    */
+   wrapper           ?: IArgs_HtmlTag;
+   ej                ?: CONTROLMODEL
 
    static initialize(descriptor: Args_AnyWidget, widget:AnyWidget): void {
 

@@ -17,6 +17,8 @@ export abstract class ScreenRegistry {
    constructor() {
       this._uuidMap      = new Map<string, ScreenAttributes>();
       this._classNameMap = new Map<string, ScreenAttributes>();
+      this._screenNames = [];
+      this._screens = [];
 
       setAtWindowPath(screen_registration_root(), this); // register this object as the new registry
    } // constructor

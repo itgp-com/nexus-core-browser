@@ -1,11 +1,12 @@
 import {AnyWidget}                                          from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 
-import {Tab, TabItemModel, TabModel}                                           from '@syncfusion/ej2-navigations';
+import {Tab, TabItemModel, TabModel, SelectingEventArgs, SelectEventArgs}      from '@syncfusion/ej2-navigations';
 import {AbstractWidget}                                                        from "../AbstractWidget";
 import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
 import {voidFunction}                                                          from "../../CoreUtils";
 import {AnyScreen}                                                             from "../AnyScreen";
+import {Event}                                                                 from "@syncfusion/ej2-base";
 
 export class Args_WgtTab implements IArgs_HtmlTag {
    htmlTagType ?: string;
@@ -48,16 +49,16 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    initialize_WgtTab(args: Args_WgtTab) {
       let thisX = this;
 
-      //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
-      this.args_AnyWidgetinitializedListeners.add(
-         new class extends Args_AnyWidget_Initialized_Listener {
-            argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
-
-               // initialize the tags so they available in initContentBegin/End
-               thisX.wrapperTagID = `wrapper_${evt.widget.tagId}`;
-            }
-         }
-      );
+      // //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
+      // this.args_AnyWidgetInitializedListeners.add(
+      //    new class extends Args_AnyWidget_Initialized_Listener {
+      //       argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
+      //
+      //          // initialize the tags so they available in initContentBegin/End
+      //          thisX.wrapperTagID = `wrapper_${evt.widget.tagId}`;
+      //       }
+      //    }
+      // );
 
 
       args = <Args_WgtTab>IArgs_HtmlTag_Utils.init(args);
@@ -125,6 +126,10 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
       } // for
 
 
+      // @ts-ignore
+      // @ts-ignore
+      // @ts-ignore
+      // @ts-ignore
       this.tabModel = {
          heightAdjustMode: 'None',
          overflowMode:     "MultiRow", // "Popup", //"Extended",
@@ -133,18 +138,18 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
 
          items: itemModelList,
 
-         selecting: (e) => {
+         selecting: (e:SelectingEventArgs) => {
             // this is the ACTUAL tab number being selected as far as the children are concerned.
 
             this.lastSelectingIndex = e.selectingIndex; // e.selectedIndex;
          },
-         selected:  (e) => {
+         selected:  (e:SelectEventArgs) => {
             // let index: number = e.selectedIndex;
             let index = this.lastSelectingIndex; // cached from event above
             thisX.tabSelected(index);
          },
          cssClass:  "e-fill", // fill tab header with accent background
-         created:   (_e) => {
+         created:   (_e:Event) => {
             setImmediate(
                async () => {
                   await thisX.obj.refresh(); // hack to repaint tab scrollbar when it overflows

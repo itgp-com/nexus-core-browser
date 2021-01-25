@@ -30,6 +30,7 @@ export class NexusMain {
 
          // Initialize the screen registry
          thisX.ui.screenRegistry = await thisX.ui.createNewScreenRegistry();
+         thisX.ui.menuRegistry = await thisX.ui.createNewMenuRegistry();
 
          await thisX.ui.initUI();
 

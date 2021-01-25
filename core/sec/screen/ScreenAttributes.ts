@@ -18,7 +18,7 @@ export class ScreenAttributes {
    /**
     * Optional. Description to go with the name of the class
     */
-   description ?: string;
+   description ?: string|string[];
 
    /**
     * a function that can be called with an optional parameter to create an instance of the screen

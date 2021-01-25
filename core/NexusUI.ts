@@ -1,8 +1,10 @@
 import {ScreenRegistry} from "./sec/screen/ScreenRegistry";
+import {MenuRegistry}   from "./sec/menu/MenuRegistry";
 
 export abstract class NexusUI {
 
    private _screenRegistry:ScreenRegistry
+   private _menuRegistry:MenuRegistry
 
    private _mainUITagID: string = '_nexus_moduleContainer';
 
@@ -18,6 +20,16 @@ export abstract class NexusUI {
     *
     */
    abstract async createNewScreenRegistry():Promise<ScreenRegistry>;
+
+
+   /**
+    * Return the MenuRegistry that will be used throughout the life of the application.
+    *
+    * Called after {@link init} but before {@link initUI}
+    *
+    */
+   abstract async createNewMenuRegistry():Promise<MenuRegistry>;
+
 
 
    /**
@@ -56,4 +68,14 @@ export abstract class NexusUI {
    set screenRegistry(value: ScreenRegistry) {
       this._screenRegistry = value;
    }
+
+
+   get menuRegistry(): MenuRegistry {
+      return this._menuRegistry;
+   }
+
+   set menuRegistry(value: MenuRegistry) {
+      this._menuRegistry = value;
+   }
+
 } // abstract MainUI

@@ -14,7 +14,7 @@ export interface ISimpleValue<T> {
 export class Args_WgtSimple<CONTROLMODEL = any> {
    dataProviderName  ?: string;
    propertyName      ?: string;
-   id                ?: string;
+   id                ?: string;  // duplicates Args_AnyWidget field
 
    /**
     * Syncfusion style validation
@@ -24,8 +24,8 @@ export class Args_WgtSimple<CONTROLMODEL = any> {
    /**
     * If this is present,  a new wrapper div is created around the actual input element.
     */
-   wrapper           ?: IArgs_HtmlTag;
-   ej                ?: CONTROLMODEL
+   wrapper           ?: IArgs_HtmlTag; // duplicates Args_AnyWidget field
+   ej                ?: CONTROLMODEL;  // duplicates Args_AnyWidget field
 }
 
 export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_AnyWidget = Args_AnyWidget, DATA_CLASS = any>
@@ -40,8 +40,6 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
    private _previousValue: DATA_CLASS;
    private _stayFocusedOnError: boolean = false;
    argsWgtSimple: Args_WgtSimple;
-
-   wrapperTagID: string;
    labelTagID: string;
    errorTagID: string;
 
@@ -55,12 +53,11 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
       this.argsWgtSimple = argsWgtSimple;
 
       //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
-      this.args_AnyWidgetinitializedListeners.add(
+      this.args_AnyWidgetInitializedListeners.add(
          new class extends Args_AnyWidget_Initialized_Listener {
             argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
 
                // initialize the tags so they available in initContentBegin/End
-               thisX.wrapperTagID = `wrapper_${evt.widget.tagId}`;
                thisX.labelTagID   = `label_${evt.widget.tagId}`;
                thisX.errorTagID   = `error_${evt.widget.tagId}`;
 

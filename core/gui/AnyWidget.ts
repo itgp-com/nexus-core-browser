@@ -21,8 +21,10 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    private _obj: EJ2COMPONENT;
    // noinspection SpellCheckingInspection
    private _descriptor: ARGS_ANY_WIDGET;
-   private _args_AnyWidgetinitializedListeners: ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener> = new ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener>();
+   private _args_AnyWidgetInitializedListeners: ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener> = new ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener>();
 
+
+   wrapperTagID: string;
 
    protected constructor() {
       super();
@@ -64,9 +66,11 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
          this.children = argsAnyWidget.children;
 
 
+      // initialize the tags so they available in initContentBegin/End
+      thisX.wrapperTagID = `wrapper_${thisX.tagId}`;
       /** fire the listener for anyone interested  **/
-      if (this.args_AnyWidgetinitializedListeners.count() > 0) {
-         this.args_AnyWidgetinitializedListeners.fire({
+      if (this.args_AnyWidgetInitializedListeners.count() > 0) {
+         this.args_AnyWidgetInitializedListeners.fire({
                                                          event: {
                                                             widget: thisX,
                                                             args:   argsAnyWidget
@@ -178,11 +182,11 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    }
 
 
-   get args_AnyWidgetinitializedListeners(): ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener> {
-      return this._args_AnyWidgetinitializedListeners;
+   get args_AnyWidgetInitializedListeners(): ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener> {
+      return this._args_AnyWidgetInitializedListeners;
    }
 
-   set args_AnyWidgetinitializedListeners(value: ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener>) {
-      this._args_AnyWidgetinitializedListeners = value;
+   set args_AnyWidgetInitializedListeners(value: ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener>) {
+      this._args_AnyWidgetInitializedListeners = value;
    }
 } // AnyWidget
