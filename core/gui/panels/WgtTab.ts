@@ -48,16 +48,16 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    initialize_WgtTab(args: Args_WgtTab) {
       let thisX = this;
 
-      //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
-      this.args_AnyWidgetinitializedListeners.add(
-         new class extends Args_AnyWidget_Initialized_Listener {
-            argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
-
-               // initialize the tags so they available in initContentBegin/End
-               thisX.wrapperTagID = `wrapper_${evt.widget.tagId}`;
-            }
-         }
-      );
+      // //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
+      // this.args_AnyWidgetInitializedListeners.add(
+      //    new class extends Args_AnyWidget_Initialized_Listener {
+      //       argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
+      //
+      //          // initialize the tags so they available in initContentBegin/End
+      //          thisX.wrapperTagID = `wrapper_${evt.widget.tagId}`;
+      //       }
+      //    }
+      // );
 
 
       args = <Args_WgtTab>IArgs_HtmlTag_Utils.init(args);
