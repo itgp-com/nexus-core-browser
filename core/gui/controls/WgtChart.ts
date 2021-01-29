@@ -1,7 +1,3 @@
-import {Args_AnyWidget, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {AnyWidget}                           from "../AnyWidget";
-
-
 import {
    AccumulationDistributionIndicator,
    AreaSeries,
@@ -13,6 +9,7 @@ import {
    CandleSeries,
    Category,
    Chart,
+   ChartModel,
    ChartAnnotation,
    ColumnSeries,
    Crosshair,
@@ -121,7 +118,11 @@ Chart.Inject(
    Zoom
 );
 
-export class Args_WgtChart extends Args_AnyWidget {
+
+import {Args_AnyWidget, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
+import {AnyWidget}                           from "../AnyWidget";
+
+export class Args_WgtChart extends Args_AnyWidget<ChartModel> {
 } // Args_WgtChart
 
 export class WgtChart extends AnyWidget<Chart, Args_WgtChart, any> {
