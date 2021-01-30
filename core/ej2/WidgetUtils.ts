@@ -174,7 +174,7 @@ export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T
 
 }
 
-export function applyPermanentHttpHeaders(headers:any){
+export function applyPermanentHttpHeaders(headers: any) {
 
    //!!!!!!!!! Function applyPermanentHttpHeadersToHttpRequest below also does the same thing !!!!!!!!!!
 
@@ -185,7 +185,7 @@ export function applyPermanentHttpHeaders(headers:any){
    });
 }
 
-export function applyPermanentHttpHeadersToHttpRequest(request: XMLHttpRequest){
+export function applyPermanentHttpHeadersToHttpRequest(request: XMLHttpRequest) {
 
    //!!!!!!!!! Function applyPermanentHttpHeaders above also does the same thing !!!!!!!!!!
 
@@ -196,7 +196,7 @@ export function applyPermanentHttpHeadersToHttpRequest(request: XMLHttpRequest){
    });
 }
 
-export async function asyncHttpGet<T = any, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R>{
+export async function asyncHttpGet<T = any, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
 
    let localConfig: AxiosRequestConfig = config || {}; // empty object or config passed in
    if (!localConfig.headers)
@@ -206,7 +206,8 @@ export async function asyncHttpGet<T = any, R = AxiosResponse<T>>(url: string, c
 
    return axios.get(url, localConfig);
 }
-export async function asyncHttpPost<T = any, R = AxiosResponse<T>>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>{
+
+export async function asyncHttpPost<T = any, R = AxiosResponse<T>>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
 
    let localConfig: AxiosRequestConfig = config || {}; // empty object or config passed in
    if (!localConfig.headers)
@@ -214,7 +215,7 @@ export async function asyncHttpPost<T = any, R = AxiosResponse<T>>(url: string, 
 
    applyPermanentHttpHeaders(localConfig.headers);
 
-   return axios.post(url, data,localConfig);
+   return axios.post(url, data, localConfig);
 }
 
 export enum QUERY_OPERATORS {
