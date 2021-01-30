@@ -2,8 +2,9 @@
 import {Component}            from "@syncfusion/ej2-base";
 import {getErrorHandler}      from "./CoreErrorHandling";
 import axios, {AxiosResponse} from "axios";
-import {AbstractWidget} from "./gui/AbstractWidget";
-import {IDataProvider}  from "./data/DataProvider";
+import {AbstractWidget}       from "./gui/AbstractWidget";
+import {IDataProvider}        from "./data/DataProvider";
+import {asyncHttpGet}         from "./ej2/WidgetUtils";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY = 1000;
@@ -388,7 +389,7 @@ export async function asyncGetAppPath(): Promise<string> {
 
    let urlCoreRunning = `${appPathname}core/running`;
 
-   let response: AxiosResponse = await axios.get(urlCoreRunning);
+   let response: AxiosResponse = await asyncHttpGet(urlCoreRunning);
 
    if (response.status === 200) {
       appPathCached = appPathname;

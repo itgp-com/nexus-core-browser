@@ -5,6 +5,7 @@ export abstract class NexusUI {
 
    private _screenRegistry:ScreenRegistry
    private _menuRegistry:MenuRegistry
+   private _permanentHttpHeaders:Map<string,string> = new Map<string,string>();
 
    private _mainUITagID: string = '_nexus_moduleContainer';
 
@@ -78,4 +79,13 @@ export abstract class NexusUI {
       this._menuRegistry = value;
    }
 
+
+   get permanentHttpHeaders(): Map<string, string> {
+      return this._permanentHttpHeaders;
+   }
+
+   set permanentHttpHeaders(value: Map<string, string>) {
+      if (value)
+         this._permanentHttpHeaders = value;
+   }
 } // abstract MainUI

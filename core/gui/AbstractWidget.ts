@@ -15,10 +15,10 @@ import {ExceptionEvent}                                                from "../
 import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}           from "./AfterRepaintWidgetListener";
 import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener}         from "./BeforeRepaintWidgetListener";
 import {WidgetErrorHandler, WidgetErrorHandlerStatus}                  from "../WidgetErrorHandler";
-import {DialogWindow}                                                  from "../ej2/DialogWindow";
 import {ParentAddedEvent, ParentAddedListener}                         from "./ParentAddedListener";
 import {DialogInfo}                                                    from "../ej2/DialogInfo";
-import {Args_WgtTab_SelectedAsTab}                                     from "./panels/WgtTab";
+import {Args_WgtTab_SelectedAsTab}                   from "./panels/WgtTab";
+import {AbstractDialogWindow, DialogWindowOpenEvent} from "../ej2/AbstractDialogWindow";
 
 export class Args_AbstractWidget {
    // was AbstractWidget
@@ -42,7 +42,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private _childrenMap: Map<string, AbstractWidget>                                                                      = new Map<string, AbstractWidget>(); // map of child tagID to child instance
    private _children: AbstractWidget[]                                                                                    = []; // ordered list of children
    private _parent: AbstractWidget;
-   private _dialogWindowContainer: DialogWindow;
+   private _dialogWindowContainer: AbstractDialogWindow;
    private readonly _beforeInitLogicListeners: ListenerHandler<BeforeInitLogicEvent, BeforeInitLogicListener>             = new ListenerHandler<BeforeInitLogicEvent, BeforeInitLogicListener>();
    private readonly _afterInitLogicListeners: ListenerHandler<AfterInitLogicEvent, AfterInitLogicListener>                = new ListenerHandler<AfterInitLogicEvent, AfterInitLogicListener>();
    private readonly _beforeRepaintWidgetListeners: ListenerHandler<BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener> = new ListenerHandler<BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener>();
@@ -136,11 +136,11 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * Direct DialogWindow Container of this component.
     * Use {@link #findDialogWindowContainer} to search up the tree of parent components and find the top component that has (possibly) a DialogWindow as a container
     */
-   get dialogWindowContainer(): DialogWindow {
+   get dialogWindowContainer(): AbstractDialogWindow {
       return this._dialogWindowContainer;
    }
 
-   set dialogWindowContainer(value: DialogWindow) {
+   set dialogWindowContainer(value: AbstractDialogWindow) {
       this._dialogWindowContainer = value;
    }
 
@@ -292,26 +292,26 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                   }
 
                   await wu.updateWidgetInDOM({
-                                          parentHTMLElement:         parentNode,
-                                          newWidget:                 thisX,
-                                          existingWidgetHTMLElement: existingHtmlElement,
-                                          callback:                  () => {
-                                             // execute after repaint if there are any listeners
-                                             if (thisX.afterRepaintWidgetListeners.count() > 0) {
-                                                let afterEvent: AfterRepaintWidgetEvent = new AfterRepaintWidgetEvent();
-                                                afterEvent.widget                       = thisX;
+                                                parentHTMLElement:         parentNode,
+                                                newWidget:                 thisX,
+                                                existingWidgetHTMLElement: existingHtmlElement,
+                                                callback:                  () => {
+                                                   // execute after repaint if there are any listeners
+                                                   if (thisX.afterRepaintWidgetListeners.count() > 0) {
+                                                      let afterEvent: AfterRepaintWidgetEvent = new AfterRepaintWidgetEvent();
+                                                      afterEvent.widget                       = thisX;
 
-                                                thisX.afterRepaintWidgetListeners.fire({
-                                                                                          event:            afterEvent,
-                                                                                          exceptionHandler: (exceptionEvent) => {
-                                                                                             console.log(exceptionEvent.exception);
-                                                                                             getErrorHandler().displayErrorMessageToUser(exceptionEvent.description);
-                                                                                          },
-                                                                                       });
+                                                      thisX.afterRepaintWidgetListeners.fire({
+                                                                                                event:            afterEvent,
+                                                                                                exceptionHandler: (exceptionEvent) => {
+                                                                                                   console.log(exceptionEvent.exception);
+                                                                                                   getErrorHandler().displayErrorMessageToUser(exceptionEvent.description);
+                                                                                                },
+                                                                                             });
 
-                                             }   //if count > 0
-                                          } // callback
-                                       });
+                                                   }   //if count > 0
+                                                } // callback
+                                             });
                } //if (parentNode)
             } // if ( existingHtmlElement)
 
@@ -326,18 +326,18 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       let thisX: AbstractWidget = this;
 
       await wu.updateWidgetInDOM({
-                              parentHTMLElement: container,
-                              newWidget:         this,
-                              callback:          () => {
+                                    parentHTMLElement: container,
+                                    newWidget:         this,
+                                    callback:          () => {
 
-                                 //attach Ctrl-Alt-double-click on container
-                                 if (thisX.doRegisterInfo)
-                                    thisX.registerInfo(container);
+                                       //attach Ctrl-Alt-double-click on container
+                                       if (thisX.doRegisterInfo)
+                                          thisX.registerInfo(container);
 
-                                 if (callback)
-                                    callback();
-                              },
-                           });
+                                       if (callback)
+                                          callback();
+                                    },
+                                 });
    } // initContentAndLogic
 
    registerInfo(container: HTMLElement) {
@@ -387,10 +387,10 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    async initContent(): Promise<string> {
       let b = '';
 
-      let contentBeginFromExtendingClass   = stringArgVal(this.contentBeginFromExtendingClass);
-      let contentEndFromExtendingClass     = stringArgVal(this.contentEndFromExtendingClass);
-      let localContentBegin = await this.localContentBegin();
-      let localContentEnd   = await this.localContentEnd();
+      let contentBeginFromExtendingClass = stringArgVal(this.contentBeginFromExtendingClass);
+      let contentEndFromExtendingClass   = stringArgVal(this.contentEndFromExtendingClass);
+      let localContentBegin              = await this.localContentBegin();
+      let localContentEnd                = await this.localContentEnd();
 
       if (contentBeginFromExtendingClass)
          b += contentBeginFromExtendingClass;
@@ -500,7 +500,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    }
 
 // noinspection JSUnusedGlobalSymbols
-   async clear(){
+   async clear() {
       if (this.children) {
          for (const child of this.children) {
             if (child)
@@ -576,7 +576,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    /**
     * Searches the chain of ancestors and returns the DialogWindow (if any) that contains any of the ancestors. (Usually it's the top level ancestor that has the DialogWindow.)
     */
-   findDialogWindowContainer(): DialogWindow {
+   findDialogWindowContainer(): AbstractDialogWindow {
 
       if (this.dialogWindowContainer)
          return this.dialogWindowContainer; // if this actually has a DialogWindow, great, we're done
@@ -744,6 +744,16 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       }
    }
 
+   /**
+    * Called upon the 'open' event of a DialogWindow ONLY IF this widget is the actual top component passed in an AbstractDialogWindow implementation.
+    *
+    * Used to obtain information about the open DialogWindow (like height or width for example)
+    *
+    * Empty implementation by default
+    * @param evt
+    */
+   onDialogWindowOpen(evt:DialogWindowOpenEvent){
+   }
 
    //------------------------------- Getter section -------------------------
 

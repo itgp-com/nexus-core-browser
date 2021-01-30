@@ -7,6 +7,7 @@ import {axios, core, cu}                         from "../index";
 import {AxiosRequestConfig, AxiosResponse}       from "axios";
 import {Args_UpdateWidgetInDOM}                  from "../gui/AbstractWidget";
 import {getErrorHandler}                         from "../CoreErrorHandling";
+import {nexusMain}                               from "../NexusMain";
 
 
 export type GridWidgetCallBack = (args?: QueryCellInfoEventArgs, thisX ?: any) => void;
@@ -135,11 +136,17 @@ export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T
          }
       }
       let response: AxiosResponse;
+
+
+      let localConfig: AxiosRequestConfig = argsPost.config || {}; // empty object or config passed in
+      if (!localConfig.headers)
+         localConfig.headers = {}
+
       try {
-         response = await axios.post(
+         response = await asyncHttpPost(
             argsPost.url,
             argsPost.data,
-            argsPost.config,
+            localConfig, // AxiosRequestConfig
          )
       } finally {
          try {
@@ -165,6 +172,49 @@ export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T
       throw error;
    }
 
+}
+
+export function applyPermanentHttpHeaders(headers:any){
+
+   //!!!!!!!!! Function applyPermanentHttpHeadersToHttpRequest below also does the same thing !!!!!!!!!!
+
+   // set the permanent http headers for each request
+   nexusMain.ui.permanentHttpHeaders.forEach((value, key) => {
+      if (key && value)
+         headers[key] = value;
+   });
+}
+
+export function applyPermanentHttpHeadersToHttpRequest(request: XMLHttpRequest){
+
+   //!!!!!!!!! Function applyPermanentHttpHeaders above also does the same thing !!!!!!!!!!
+
+   // set the permanent http headers for each request
+   nexusMain.ui.permanentHttpHeaders.forEach((value, key) => {
+      if (key && value)
+         request.setRequestHeader(key, value);
+   });
+}
+
+export async function asyncHttpGet<T = any, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R>{
+
+   let localConfig: AxiosRequestConfig = config || {}; // empty object or config passed in
+   if (!localConfig.headers)
+      localConfig.headers = {}
+
+   applyPermanentHttpHeaders(localConfig.headers);
+
+   return axios.get(url, localConfig);
+}
+export async function asyncHttpPost<T = any, R = AxiosResponse<T>>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>{
+
+   let localConfig: AxiosRequestConfig = config || {}; // empty object or config passed in
+   if (!localConfig.headers)
+      localConfig.headers = {}
+
+   applyPermanentHttpHeaders(localConfig.headers);
+
+   return axios.post(url, data,localConfig);
 }
 
 export enum QUERY_OPERATORS {

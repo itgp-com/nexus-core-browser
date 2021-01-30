@@ -2,6 +2,7 @@ import {DataManager, Query, UrlAdaptor} from "@syncfusion/ej2-data";
 import {Args_WgtDropDown, WgtDropDown}  from "./WgtDropDown";
 import {urlTableList}                   from "../../CoreUtils";
 import {getErrorHandler}                from "../../CoreErrorHandling";
+import {DataManagerNexus}               from "../../ej2/DataManagerNexus";
 
 
 export class Args_WgtDropDownDB extends Args_WgtDropDown {
@@ -38,7 +39,7 @@ export class WgtDropDownDB_Abstract<ARG_CLASS extends Args_WgtDropDownDB = Args_
    }
 
    initialize_WgtDropDownDB_Abstract(args: ARG_CLASS) {
-      let dm: DataManager = new DataManager({
+      let dm: DataManager = new DataManagerNexus({
                                                url:         urlTableList(args.listDataDBTable),
                                                adaptor:     new UrlAdaptor(),
                                                crossDomain: true
