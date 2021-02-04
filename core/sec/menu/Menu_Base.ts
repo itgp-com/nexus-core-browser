@@ -1,5 +1,5 @@
 export class Menu_Base {
 
-   type : "m"|"s";
+   type : "menu"|"screen"|"blank";
    title ?: string;
 }

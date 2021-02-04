@@ -23,6 +23,6 @@ export class ScreenAttributes {
    /**
     * a function that can be called with an optional parameter to create an instance of the screen
     */
-   create_function: (param ?: any) => AnyScreen;
+   create_function: (param ?: any) => AnyScreen | Promise<AnyScreen>;
 
 }
