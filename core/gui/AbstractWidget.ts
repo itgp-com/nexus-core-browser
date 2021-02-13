@@ -499,11 +499,19 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
          let thisX = this;
 
          // ------------ Before Init Logic Listeners -----------------------
+         let beforeEvt: BeforeInitLogicEvent =  {
+            origin: thisX
+         };
+
+         try {
+            this.beforeInitLogic(beforeEvt)
+         } catch (ex){
+            thisX.handleError(ex);
+         }
+
          if (this.beforeInitLogicListeners.count() > 0) {
             this.beforeInitLogicListeners.fire({
-                                                  event:            {
-                                                     origin: thisX
-                                                  },
+                                                  event:     beforeEvt       ,
                                                   exceptionHandler: (event) => {
                                                      thisX.handleError(event);
                                                   }
@@ -522,11 +530,19 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
          this.localLogicImplementation();
 
          // ------------ After Init Logic Listeners -----------------------
+         let afterEvt:AfterInitLogicEvent = {
+            origin: thisX
+         };
+
+         try {
+            this.afterInitLogic(afterEvt)
+         } catch (ex){
+            thisX.handleError(ex);
+         }
+
          if (this.afterInitLogicListeners.count() > 0) {
             this.afterInitLogicListeners.fire({
-                                                 event:            {
-                                                    origin: thisX
-                                                 },
+                                                 event:         afterEvt,
                                                  exceptionHandler: (event) => {
                                                     thisX.handleError(event);
                                                  }
@@ -912,6 +928,29 @@ export abstract class AbstractWidget<DATA_TYPE = any> implements UpdateStateList
 
    get parentAddedListeners(): ListenerHandler<ParentAddedEvent, ParentAddedListener> {
       return this._parentAddedListener;
+   }
+
+   /**
+    * Overwrite this method that is called before initLogic is fired.
+    *
+    * Empty implementation by default
+    *
+    * @param evt
+    * @since 1.0.24
+    */
+   beforeInitLogic(evt:BeforeInitLogicEvent):void{
+      // empty implementation
+   }
+
+   /**
+    * Overwrite this method that is called after initLogic is fired.
+    *
+    * Empty implementation by default
+    * @param evt
+    * @since 1.0.24
+    */
+   afterInitLogic(evt:AfterInitLogicEvent):void{
+      //empty implementation
    }
 
 } // main class

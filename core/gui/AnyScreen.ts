@@ -3,6 +3,7 @@ import {Args_AnyWidget}  from "./Args_AnyWidget";
 import {getRandomString} from "../ej2/WidgetUtils";
 import {AbstractWidget}  from "./AbstractWidget";
 import set = Reflect.set;
+import {removeTemplate}  from "../CoreUtils";
 
 export class Args_AnyScreen {
    extraTagIdCount ?: number = 0;
@@ -31,6 +32,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
    private _anyScreenDescriptor: Args_AnyScreen;
    private _extraTagIdList: string[] = [];
    protected insideInitRefreshAnyScreen = false;
+   protected _templateIdList: string[] = [];
 
    /**
     * Unique uuid that will uniquely identify this screen even after any future refactoring changes the name of the class
@@ -117,6 +119,30 @@ export abstract class AnyScreen<DATA_TYPE = any>
    } // initAnyScreen
 
 
+   /**
+    * @since 1,0.24
+    */
+   localDestroyImplementation() {
+      try {
+         // remove all templates added to this screen
+         if(this.listTemplateIds().length> 0){
+            for (const listTemplateId of this.listTemplateIds()) {
+               try {
+                  removeTemplate(this, listTemplateId);
+               } catch(ex){
+                  console.log(ex);
+               }
+            }
+         }
+      } catch (ex){
+         console.log(ex);
+      }
+
+
+      super.localDestroyImplementation();
+   }
+
+
    // noinspection JSUnusedGlobalSymbols
    extraTagId(position: number): string {
       if (position < 0 || position > this.extraTagIdList.length)
@@ -167,4 +193,24 @@ export abstract class AnyScreen<DATA_TYPE = any>
    set ui_uuid(value: string) {
       this._ui_uuid = value;
    }
+
+
+   addTemplateId(template_id:string){
+      let index = this._templateIdList.indexOf(template_id);
+      if (index < 0){
+         this._templateIdList.push(template_id)
+      }
+   }
+
+   removeTemplateId(template_id:string){
+      let index = this._templateIdList.indexOf(template_id);
+      if (index >= 0){
+        this._templateIdList.splice(index, 1);
+      }
+   }
+   
+   listTemplateIds(){
+      return this._templateIdList;
+   }
+
 } // AnyScreen

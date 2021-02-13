@@ -2,11 +2,11 @@
 import {Component}            from "@syncfusion/ej2-base";
 import {getErrorHandler}      from "./CoreErrorHandling";
 import axios, {AxiosResponse} from "axios";
-import {AbstractWidget} from "./gui/AbstractWidget";
-import {IDataProvider}  from "./data/DataProvider";
+import {IDataProvider}        from "./data/DataProvider";
+import {AnyScreen}            from "./gui/AnyScreen";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
-export const IMMEDIATE_MODE_DELAY = 1000;
+export const IMMEDIATE_MODE_DELAY   = 1000;
 
 declare global {
    // noinspection JSUnusedGlobalSymbols
@@ -70,25 +70,26 @@ String.prototype.escapeHTML = function (this: Object) {
 export interface voidFunction {
    (): void;
 }
+
 export interface noArgsFunction {
-   ():any;
+   (): any;
 }
 
-export type StringFunction =  ()=>string;
+export type StringFunction = () => string;
 export type StringArg = (string | StringFunction);
 
-export function isFunction(arg:any):boolean{
-   return ( arg ? (typeof arg === "function") : false);
+export function isFunction(arg: any): boolean {
+   return (arg ? (typeof arg === "function") : false);
 }
 
-export function stringArgVal(arg:StringArg):string{
+export function stringArgVal(arg: StringArg): string {
    // arg can only be a String or StringFunction
-   if (arg){
+   if (arg) {
       if (isFunction(arg)) {
          let s: string = (<StringFunction>arg)();
          return s;
       } else {
-         return <string> arg;
+         return <string>arg;
       }
    } else {
       return '';
@@ -100,28 +101,28 @@ export function stringArgVal(arg:StringArg):string{
 /**
  * Returns an instance of the type described
  */
-export type ClassFunction<T> = ()=>T;
+export type ClassFunction<T> = () => T;
 /**
  * Returns an instance of the type described in the generic
  */
-export type ClassArrayFunction<T> = ()=>T[];
+export type ClassArrayFunction<T> = () => T[];
 export type ClassArg<T> = (T | ClassFunction<T>);
 export type ClassArrayArg<T> = (T[] | ClassArrayFunction<T>);
-export type ClassArgInstanceOrArray<T> = (T | T[]  | ClassFunction<T>| ClassArrayFunction<T>);
+export type ClassArgInstanceOrArray<T> = (T | T[] | ClassFunction<T> | ClassArrayFunction<T>);
 
 /**
  * Extract an actual instance T regardless of whether the argument is already a T instance or if it's a function that yields the T instance when called
  * Returns null if argument is empty
  * @param arg
  */
-export function classArgInstanceVal<T>(arg:ClassArg<T>):T{
-   if (arg){
+export function classArgInstanceVal<T>(arg: ClassArg<T>): T {
+   if (arg) {
       if (isFunction(arg)) {
-            let val:T =  (<ClassFunction<T>> arg)();
-            return val;
-         } else {
-            return (<T> arg);
-         }
+         let val: T = (<ClassFunction<T>>arg)();
+         return val;
+      } else {
+         return (<T>arg);
+      }
    } else {
       return null;
    }
@@ -132,13 +133,13 @@ export function classArgInstanceVal<T>(arg:ClassArg<T>):T{
  *  Returns null if argument is empty
  * @param arg
  */
-export function classArgArrayVal<T>(arg:|ClassArrayArg<T>):T[]{
-   if (arg){
+export function classArgArrayVal<T>(arg: |ClassArrayArg<T>): T[] {
+   if (arg) {
       if (isFunction(arg)) {
-         let val:T[] =  (<ClassArrayFunction<T>> arg)();
+         let val: T[] = (<ClassArrayFunction<T>>arg)();
          return val;
       } else {
-         return (<T[]> arg);
+         return (<T[]>arg);
       }
    } else {
       return null;
@@ -151,13 +152,13 @@ export function classArgArrayVal<T>(arg:|ClassArrayArg<T>):T[]{
  *  Returns null if argument is empty
  * @param arg
  */
-export function classArgInstanceOrArrayVal<T>(arg:(ClassArg<T>|ClassArrayArg<T> | ClassArgInstanceOrArray<T>)):(T | T[]){
+export function classArgInstanceOrArrayVal<T>(arg: (ClassArg<T> | ClassArrayArg<T> | ClassArgInstanceOrArray<T>)): (T | T[]) {
    // arg can only be a String or StringFunction
-   if (arg){
+   if (arg) {
       if (isFunction(arg)) {
 
-         if (  arg as ClassFunction<T> ){
-            let val:T =  (<ClassFunction<T>> arg)();
+         if (arg as ClassFunction<T>) {
+            let val: T = (<ClassFunction<T>>arg)();
             return val;
          } else {
             let arrayVal: T[] = (<ClassArrayFunction<T>>arg)();
@@ -165,10 +166,10 @@ export function classArgInstanceOrArrayVal<T>(arg:(ClassArg<T>|ClassArrayArg<T> 
          }
 
       } else {
-         if ( Array.isArray(arg)){
+         if (Array.isArray(arg)) {
             return (<T[]>arg);
          } else {
-            return (<T> arg);
+            return (<T>arg);
          }
       }
    } else {
@@ -179,11 +180,10 @@ export function classArgInstanceOrArrayVal<T>(arg:(ClassArg<T>|ClassArrayArg<T> 
 
 //------------------------- Data Provider filter function type -------
 export type DataProviderFilterOptionalArgs = (any | noArgsFunction);
-export type DataProviderFilter<T> = (provider: IDataProvider, optionalArgs:DataProviderFilterOptionalArgs )=>T;
+export type DataProviderFilter<T> = (provider: IDataProvider, optionalArgs: DataProviderFilterOptionalArgs) => T;
 
 
-
-export function isA(ChildClass:any , ParentClass:any) {
+export function isA(ChildClass: any, ParentClass: any) {
    let _ = ChildClass.prototype;
    while (_ != null) {
       if (_ == ParentClass.prototype)
@@ -192,7 +192,6 @@ export function isA(ChildClass:any , ParentClass:any) {
    }
    return false;
 }
-
 
 
 // noinspection JSUnusedGlobalSymbols
@@ -424,7 +423,7 @@ export const MODULE_CORE: string          = 'core/';
 export const REC_ANYTABLE: string         = 'rec/{tablename}';
 export const REC_ANYTABLE_EJ2: string     = REC_ANYTABLE + "/ej2";
 export const REC_ANYTABLE_EJ2CRUD: string = REC_ANYTABLE + "/ej2crud";
-export const REC_ANYTABLE_LIST: string     = REC_ANYTABLE +"/list";
+export const REC_ANYTABLE_LIST: string    = REC_ANYTABLE + "/list";
 
 export function urlTable(tablename: string, rawPath: string): string {
    let x = rawPath;
@@ -444,7 +443,7 @@ export function urlTableEj2(tablename: string): string {
 
 // noinspection JSUnusedGlobalSymbols
 export function urlTableEj2Crud(tablename: string): string {
-    return urlTable(tablename, REC_ANYTABLE_EJ2CRUD);
+   return urlTable(tablename, REC_ANYTABLE_EJ2CRUD);
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -726,4 +725,48 @@ export function getRandomString(prefix?: string): string {
    p             = p.replace(/#|:/g, '_'); // replaces '#' and ':' with '_'
    let retVal    = `${p}${Date.now()}_${getRandomInt(100000)}`;
    return retVal;
+}
+
+/**
+ * Creates a template under the {@link createTemplate.template_id} id, with the body being the {@link createTemplate.templateHtmlContent}
+ *
+ * <code>
+ * <script id="' + instance.template_id + '" type="text/x-template">
+ * ${templateHtmlContent}
+ * </script>
+ * </code>
+ * @param template_id string unique id for this template
+ * @param templateHtmlContent content body to be inserted between <script></script>
+ * @return null if there's a problem, the HTMLElement if all is ok
+ */
+export function addTemplate(screen: AnyScreen, template_id: string, templateHtmlContent: string): HTMLElement {
+   let templateDiv: HTMLElement = null;
+   try {
+      let templateDiv = htmlToElement(`
+<script id="' + instance.template_id + '" type="text/x-template">
+${templateHtmlContent}
+</script>`);
+      document.body.appendChild(templateDiv);
+      screen.addTemplateId(template_id);
+   } catch (ex) {
+      console.log(ex);
+   }
+   return templateDiv;
+}
+
+/**
+ * Remove the template added with {@link addTemplate} in order to clean up.
+ * This is usually done in the destroy phase
+ * @param template_id
+ */
+export function removeTemplate(screen:AnyScreen, template_id: string): boolean {
+   let success: boolean = false;
+   try {
+      let removedChild = document.body.removeChild(document.getElementById(this.template_id));
+      screen.removeTemplateId(template_id);
+      return (removedChild != null)
+   } catch (ex) {
+      console.log(ex);
+   }
+   return success;
 }
