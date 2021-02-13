@@ -2,8 +2,8 @@
 import {Component}            from "@syncfusion/ej2-base";
 import {getErrorHandler}      from "./CoreErrorHandling";
 import axios, {AxiosResponse} from "axios";
-import {AbstractWidget}       from "./gui/AbstractWidget";
 import {IDataProvider}        from "./data/DataProvider";
+import {AnyScreen}            from "./gui/AnyScreen";
 import {asyncHttpGet}         from "./ej2/WidgetUtils";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
@@ -727,4 +727,60 @@ export function getRandomString(prefix?: string): string {
    p             = p.replace(/#|:/g, '_'); // replaces '#' and ':' with '_'
    let retVal    = `${p}${Date.now()}_${getRandomInt(100000)}`;
    return retVal;
+}
+
+/**
+ * Creates a template under the {@link createTemplate.template_id} id, with the body being the {@link createTemplate.templateHtmlContent}
+ * Adds the template id to the screen list of templates
+ *
+ * <code>
+ * <script id="' + instance.template_id + '" type="text/x-template">
+ * ${templateHtmlContent}
+ * </script>
+ * </code>
+ * @param screen the screen to add the template to (auto destroys the template on close)
+ * @param template_id string unique id for this template
+ * @param templateHtmlContent content body to be inserted between <script></script>
+ * @return null if there's a problem, the HTMLElement if all is ok
+ */
+export function addTemplate(screen: AnyScreen, template_id: string, templateHtmlContent: string): HTMLElement {
+   let templateDiv: HTMLElement = null;
+   if (template_id &&templateHtmlContent) {
+      try {
+         let templateDiv = htmlToElement(`
+<script id="${template_id}" type="text/x-template">
+${templateHtmlContent}
+</script>`);
+         document.body.appendChild(templateDiv);
+         if (screen)
+            screen.addTemplateId(template_id);
+      } catch (ex) {
+         console.log(ex);
+      }
+   }
+   return templateDiv;
+}
+
+/**
+ * Remove the template added with {@link addTemplate} in order to clean up.
+ * This is usually done in the destroy phase.
+ *
+ * Called automatically by the localDestroyImplementation of AnyScreen.
+ *
+ * @param screen
+ * @param template_id
+ */
+export function removeTemplate(screen:AnyScreen, template_id: string): boolean {
+   let success: boolean = false;
+   if (template_id) {
+      try {
+         let removedChild = document.body.removeChild(document.getElementById(template_id));
+         if (screen)
+            screen.removeTemplateId(template_id);
+         return (removedChild != null)
+      } catch (ex) {
+         console.log(ex);
+      }
+   }
+   return success;
 }
