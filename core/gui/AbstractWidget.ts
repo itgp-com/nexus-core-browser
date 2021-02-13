@@ -425,7 +425,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
          };
 
          try {
-            this.beforeInitLogic(beforeEvt)
+            await this.beforeInitLogic(beforeEvt)
          } catch (ex){
             thisX.handleError(ex);
          }
@@ -456,7 +456,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
          };
 
          try {
-            this.afterInitLogic(afterEvt)
+            await this.afterInitLogic(afterEvt)
          } catch (ex){
             thisX.handleError(ex);
          }
@@ -801,7 +801,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * @param evt
     * @since 1.0.24
     */
-   beforeInitLogic(evt:BeforeInitLogicEvent):void{
+   async beforeInitLogic(evt:BeforeInitLogicEvent):Promise<void>{
       // empty implementation
    }
 
@@ -812,7 +812,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * @param evt
     * @since 1.0.24
     */
-   afterInitLogic(evt:AfterInitLogicEvent):void{
+   async afterInitLogic(evt:AfterInitLogicEvent):Promise<void>{
       //empty implementation
    }
 

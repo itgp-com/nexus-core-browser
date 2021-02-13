@@ -122,7 +122,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
    /**
     * @since 1,0.24
     */
-   localDestroyImplementation() {
+   async localDestroyImplementation() {
       try {
          // remove all templates added to this screen
          if(this.listTemplateIds().length> 0){
@@ -137,7 +137,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
       } catch (ex){
          console.log(ex);
       }
-      super.localDestroyImplementation();
+      await super.localDestroyImplementation();
    }
 
 
