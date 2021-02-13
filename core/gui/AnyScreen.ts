@@ -137,8 +137,6 @@ export abstract class AnyScreen<DATA_TYPE = any>
       } catch (ex){
          console.log(ex);
       }
-
-
       super.localDestroyImplementation();
    }
 
