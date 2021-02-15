@@ -1,12 +1,11 @@
-import {AnyWidget}       from "./AnyWidget";
-import {Args_AnyWidget}  from "./Args_AnyWidget";
-import {getRandomString} from "../ej2/WidgetUtils";
-import {AbstractWidget}  from "./AbstractWidget";
-import set = Reflect.set;
-import {removeTemplate}  from "../CoreUtils";
+import {AnyWidget}                     from "./AnyWidget";
+import {Args_AnyWidget}                from "./Args_AnyWidget";
+import {getRandomString}               from "../ej2/WidgetUtils";
+import {AbstractWidget}                from "./AbstractWidget";
+import {htmlToElement, removeTemplate} from "../CoreUtils";
 
 export class Args_AnyScreen {
-   extraTagIdCount ?: number = 0;
+   // extraTagIdCount ?: number = 0;
    tagName ?: string         = 'div';
    classAttrReplacement ?: string;
    classAttrPrefix ?: string;
@@ -30,7 +29,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
    extends AnyWidget<HTMLElement, Args_AnyWidget, DATA_TYPE> {
 
    private _anyScreenDescriptor: Args_AnyScreen;
-   private _extraTagIdList: string[] = [];
+   // private _extraTagIdList: string[] = [];
    protected insideInitRefreshAnyScreen = false;
    protected _templateIdList: string[] = [];
 
@@ -62,7 +61,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
       let descriptor: Args_AnyWidget = new Args_AnyWidget();
 
       // ------------------ straight property movement -----------------
-      descriptor.extraTagIdCount = anyScreenDescriptor.extraTagIdCount;
+      // descriptor.extraTagIdCount = anyScreenDescriptor.extraTagIdCount;
       descriptor.children        = anyScreenDescriptor.children;
       descriptor.title           = anyScreenDescriptor.title;
 
@@ -84,20 +83,20 @@ export abstract class AnyScreen<DATA_TYPE = any>
       descriptor.initContentEnd = () => {
          let b: string = '';
 
-         if (anyScreenDescriptor.extraTagIdCount > 0) {
-            for (let i = 0; i < anyScreenDescriptor.extraTagIdCount; i++) {
-               let extraTagId = getRandomString(`extraTagId${i}`);
-
-               // store the tag id in the list
-               this.extraTagIdList.push(extraTagId);
-
-               // add the div tag in the HTML
-               b += `
-<div id="${extraTagId}"></div>
-`;
-
-            } //for anyScreenDescriptor.extraTagIdCount
-         } //if (descriptor.extraTagIdCount > 0)
+//          if (anyScreenDescriptor.extraTagIdCount > 0) {
+//             for (let i = 0; i < anyScreenDescriptor.extraTagIdCount; i++) {
+//                let extraTagId = getRandomString(`extraTagId${i}`);
+//
+//                // store the tag id in the list
+//                this.extraTagIdList.push(extraTagId);
+//
+//                // add the div tag in the HTML
+//                b += `
+// <div id="${extraTagId}"></div>
+// `;
+//
+//             } //for anyScreenDescriptor.extraTagIdCount
+//          } //if (descriptor.extraTagIdCount > 0)
 
          b += `</${anyScreenDescriptor.tagName}>`;
          return b;
@@ -141,12 +140,12 @@ export abstract class AnyScreen<DATA_TYPE = any>
    }
 
 
-   // noinspection JSUnusedGlobalSymbols
-   extraTagId(position: number): string {
-      if (position < 0 || position > this.extraTagIdList.length)
-         return null;
-      return this.extraTagIdList[position];
-   } // extraTagId
+   // // noinspection JSUnusedGlobalSymbols
+   // extraTagId(position: number): string {
+   //    if (position < 0 || position > this.extraTagIdList.length)
+   //       return null;
+   //    return this.extraTagIdList[position];
+   // } // extraTagId
 
 
    // noinspection JSUnusedGlobalSymbols
@@ -158,14 +157,14 @@ export abstract class AnyScreen<DATA_TYPE = any>
       this._anyScreenDescriptor = value;
    }
 
-   get extraTagIdList(): string[] {
-      return this._extraTagIdList;
-   }
-
-   // noinspection JSUnusedGlobalSymbols
-   set extraTagIdList(value: string[]) {
-      this._extraTagIdList = value;
-   }
+   // get extraTagIdList(): string[] {
+   //    return this._extraTagIdList;
+   // }
+   //
+   // // noinspection JSUnusedGlobalSymbols
+   // set extraTagIdList(value: string[]) {
+   //    this._extraTagIdList = value;
+   // }
 
    get contentTagId(): string {
       return this.tagId;
@@ -210,5 +209,43 @@ export abstract class AnyScreen<DATA_TYPE = any>
    listTemplateIds(){
       return this._templateIdList;
    }
+
+
+   /**
+    * Append DIV with uniqueID to the screen and return that id if successful. Return null if it failed
+    */
+   appendDivToScreen():string {
+      let id = getRandomString(this.thisClassName);
+      let htmlContent = `<div id="${id}"></div>`
+      let success = this.appendHTMLToScreen(htmlContent);
+      if (success) {
+         return id;
+      } else {
+         return null;
+      }
+   }
+
+   /**
+    * Append html string to the screen
+    *
+    * @param htmlContent html to be added. Ex: <div id="2342342"></div>
+    * @return <code>true</code> if successful, <code>false</code> if it fails (exception logged in console)
+    */
+   appendHTMLToScreen(htmlContent:string):boolean{
+
+      let success = false;
+      try {
+         if (htmlContent) {
+            let contentElement = htmlToElement(htmlContent);
+            this.hget.appendChild(contentElement);
+            success = true;
+         }
+      } catch (ex) {
+         console.log(ex);
+      }
+
+      return success;
+   }
+
 
 } // AnyScreen

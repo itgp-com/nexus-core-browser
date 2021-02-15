@@ -723,7 +723,7 @@ export function getRandomString(prefix?: string): string {
    let p: string = (prefix ? `${prefix}_` : '');
    p             = p.replace(/\./g, '_'); // replaces '.' with '_'
    p             = p.replace(/#|:/g, '_'); // replaces '#' and ':' with '_'
-   let retVal    = `${p}${Date.now()}_${getRandomInt(100000)}`;
+   let retVal    = `${p}${getRandomInt(1000)}_${getRandomInt(100000)}`;
    return retVal;
 }
 
