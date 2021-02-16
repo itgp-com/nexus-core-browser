@@ -1,9 +1,11 @@
 /// <reference path="./global.d.ts" />
-import {Component}            from "@syncfusion/ej2-base";
-import {getErrorHandler}      from "./CoreErrorHandling";
-import axios, {AxiosResponse} from "axios";
-import {IDataProvider}        from "./data/DataProvider";
-import {AnyScreen}            from "./gui/AnyScreen";
+import {Component}                                    from "@syncfusion/ej2-base";
+import {getErrorHandler}                              from "./CoreErrorHandling";
+import axios, {AxiosResponse}                         from "axios";
+import {IDataProvider}                                from "./data/DataProvider";
+import {AnyScreen}                                    from "./gui/AnyScreen";
+import {DataManager, Query, ReturnOption, UrlAdaptor} from "@syncfusion/ej2-data";
+import {EJList}                                       from "./ej2/Ej2Comm";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY   = 1000;
@@ -743,7 +745,7 @@ export function getRandomString(prefix?: string): string {
  */
 export function addTemplate(screen: AnyScreen, template_id: string, templateHtmlContent: string): HTMLElement {
    let templateDiv: HTMLElement = null;
-   if (template_id &&templateHtmlContent) {
+   if (template_id && templateHtmlContent) {
       try {
          let templateDiv = htmlToElement(`
 <script id="${template_id}" type="text/x-template">
@@ -768,7 +770,7 @@ ${templateHtmlContent}
  * @param screen
  * @param template_id
  */
-export function removeTemplate(screen:AnyScreen, template_id: string): boolean {
+export function removeTemplate(screen: AnyScreen, template_id: string): boolean {
    let success: boolean = false;
    if (template_id) {
       try {
@@ -782,3 +784,88 @@ export function removeTemplate(screen:AnyScreen, template_id: string): boolean {
    }
    return success;
 }
+
+class RGB {
+   r: number;
+   g: number;
+   b: number;
+}
+
+function rgbToYIQ(rgb: RGB) {
+   return ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000;
+}
+
+export function hexToRgb(hex: string) {
+   if (!hex || hex === undefined || hex === '') {
+      return undefined;
+   }
+
+   const result =
+            /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+   return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+   } : undefined;
+}
+
+/**
+ * Generates contrasting text color as black or white for a given Background Color
+ * @param backgroundColorHex
+ * @param threshold
+ */
+export function fontColor(backgroundColorHex: string, threshold = 128): string {
+   //https://medium.com/better-programming/generate-contrasting-text-for-your-random-background-color-ac302dc87b4
+   if (backgroundColorHex === undefined) {
+      return '#000';
+   }
+
+   const rgb = hexToRgb(backgroundColorHex);
+
+   if (rgb === undefined) {
+      return '#000';
+   }
+
+   return rgbToYIQ(rgb) >= threshold ? '#000000' : '#FFFFFF';
+}
+
+/**
+ * Query the appserver (using ej2 syntax) and return back an array of records
+ * @param tablename
+ * @param query
+ * @param options
+ */
+async function ej2Query(tablename: string, query: Query, options?: any): Promise<any[]> {
+   let dataManager = new DataManager({
+                                        url:         urlTableEj2(tablename),
+                                        adaptor:     new UrlAdaptor(),
+                                        crossDomain: true
+                                     });
+
+   let promise: Promise<any[]> = new Promise((resolve, reject) => {
+                                                dataManager.executeQuery(query, (e: ReturnOption) => {
+                                                                            let ejList:EJList           = e.result as EJList;
+                                                                            if (ejList.success) {
+                                                                               let records: any[] = <any[]>ejList.result;
+                                                                               resolve(records);
+                                                                            } else {
+                                                                               console.log(ejList.errMsgDisplay);
+                                                                               console.log(ejList.errMsgLog);
+                                                                               reject(ejList.errMsgDisplay);
+                                                                            }
+                                                                         },
+                                                                         (error: any) => {
+                                                                            reject(error);
+                                                                         },
+                                                                         (e: any) => {
+
+                                                                         }
+                                                );
+                                             }
+   );
+   return promise;
+}
+
+
+
