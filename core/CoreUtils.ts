@@ -836,7 +836,7 @@ export function fontColor(backgroundColorHex: string, threshold = 128): string {
  * @param query
  * @param options
  */
-async function ej2Query(tablename: string, query: Query, options?: any): Promise<any[]> {
+export async function ej2Query(tablename: string, query: Query, options?: any): Promise<any[]> {
    let dataManager = new DataManager({
                                         url:         urlTableEj2(tablename),
                                         adaptor:     new UrlAdaptor(),
