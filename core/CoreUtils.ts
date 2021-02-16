@@ -845,14 +845,14 @@ export async function ej2Query(tablename: string, query: Query, options?: any): 
 
    let promise: Promise<any[]> = new Promise((resolve, reject) => {
                                                 dataManager.executeQuery(query, (e: ReturnOption) => {
-                                                                            let ejList:EJList           = e.result as EJList;
-                                                                            if (ejList.success) {
-                                                                               let records: any[] = <any[]>ejList.result;
+                                                                            let result:any           = e.result as EJList;
+                                                                            if (!result.errMsgDisplay) {
+                                                                               let records: any[] = <any[]>result.result;
                                                                                resolve(records);
                                                                             } else {
-                                                                               console.log(ejList.errMsgDisplay);
-                                                                               console.log(ejList.errMsgLog);
-                                                                               reject(ejList.errMsgDisplay);
+                                                                               console.log(result.errMsgDisplay);
+                                                                               console.log(result.errMsgLog);
+                                                                               reject(result.errMsgDisplay);
                                                                             }
                                                                          },
                                                                          (error: any) => {
