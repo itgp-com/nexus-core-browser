@@ -1,28 +1,25 @@
-import {FormValidator} from "@syncfusion/ej2-inputs";
-
 /**
  * Based on Syncfusion source code at node_modules/@syncfusion/ej2-inputs/src/form-validator/form-validator.js
  */
 
 
 
-export interface validateFormField_RetVal {
+export interface ValidFormField_RetVal {
    valid: boolean;
    error_message ?: string;
 }
 
-export interface validateFormField_Args {
+export interface ValidFormField_Args {
    element? : HTMLInputElement;
-   value: any;
+   value: string;
 }
+
 
 /**
  *
  * @param args { element: this.inputElement, value: this.inputElement.value }
  */
-export let validateFormField:  (args: validateFormField_Args) => Promise<validateFormField_RetVal>;
-
-
+export let validFormField:  (args: ValidFormField_Args) => Promise<ValidFormField_RetVal>;
 
 /*  ---- From  form-validator.js ----------
 
