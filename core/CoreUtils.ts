@@ -799,6 +799,9 @@ export function hexToRgb(hex: string) {
    if (!hex || hex === undefined || hex === '') {
       return undefined;
    }
+if (hex.length > 7) // 8 or 9 character hex with opacity
+   return undefined;
+
 
    const result =
             /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -810,6 +813,21 @@ export function hexToRgb(hex: string) {
    } : undefined;
 }
 
+export function hexToRgba(hex8char: string) {
+   if (!hex8char || hex8char === undefined || hex8char === '') {
+      return undefined;
+   }
+
+   const result =
+            /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex8char);
+
+   return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16),
+      a: parseInt(result[4], 16),
+   } : undefined;
+}
 /**
  * Generates contrasting text color as black or white for a given Background Color
  * @param backgroundColorHex
@@ -821,10 +839,13 @@ export function fontColor(backgroundColorHex: string, threshold = 128): string {
       return '#000';
    }
 
-   const rgb = hexToRgb(backgroundColorHex);
+   let rgb = hexToRgb(backgroundColorHex);
 
    if (rgb === undefined) {
-      return '#000';
+      rgb = hexToRgba(backgroundColorHex);
+      if (rgb === undefined) {
+         return '#000';
+      }
    }
 
    return rgbToYIQ(rgb) >= threshold ? '#000000' : '#FFFFFF';
