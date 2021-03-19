@@ -208,17 +208,17 @@ export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T
    try {
       let waitElem: HTMLElement;
 
-      let response:any = await asyncPost(argsPost);
+      let data:any = await asyncPost(argsPost);
 
-      if (response.data) {
-         let retVal: core.RetVal = cu.cast(response.data, core.RetVal);
+      if (data) {
+         let retVal: core.RetVal = cu.cast(data, core.RetVal);
          if (retVal.hasError()) {
             throw retVal.err;
          } else {
             return retVal.value;
          }
       } else {
-         throw response;
+         throw data;
       }
    } catch (error) {
       throw error;
