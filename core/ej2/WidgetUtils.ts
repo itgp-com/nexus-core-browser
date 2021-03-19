@@ -159,7 +159,11 @@ export interface ArgsPost<RESPONSE = any> {
 
 }
 
-export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T> {
+/**
+ * Do a POST and either return the exact object or throw an error (and return undefined
+ * @param argsPost
+ */
+export async function asyncPost<T = any>(argsPost: ArgsPost<T>): Promise<T> {
    try {
       let waitElem: HTMLElement;
 
@@ -187,6 +191,25 @@ export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T
          } // if close pressed, there's nothing to hide and we get undefined
       }
 
+      // noinspection ExceptionCaughtLocallyJS
+      if (response.status >= 200 &&response.status < 400 && response.data) {
+         return response.data;
+      } else {
+         throw response.statusText;
+      }
+   } catch (error) {
+      throw error;
+   }
+
+}
+
+
+export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T> {
+   try {
+      let waitElem: HTMLElement;
+
+      let response:any = await asyncPost(argsPost);
+
       if (response.data) {
          let retVal: core.RetVal = cu.cast(response.data, core.RetVal);
          if (retVal.hasError()) {
@@ -200,7 +223,6 @@ export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T
    } catch (error) {
       throw error;
    }
-
 }
 
 export enum QUERY_OPERATORS {

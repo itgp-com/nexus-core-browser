@@ -31,10 +31,9 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
    }
 
 
-   async createDropDown(anchor: HTMLElement, queryCellInfoEventArgs: QueryCellInfoEventArgs) : Promise<void>{
+   async createDropDown(anchor: HTMLElement, record:any ) : Promise<void>{
       let thisX = this;
 
-      let record = queryCellInfoEventArgs.data;
       if (anchor) {
 
          let dataProvider               = singleRecordDataProvider({providerName: '___', record: record});
@@ -62,6 +61,10 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
          let wgtDD: WgtDropDownDB = WgtDropDownDB.create(ddArgs);
          wgtDD.initLogic();
          wgtDD.obj.change = (evt:ChangeEventArgs) => {
+               let queryCellInfoEventArgs:QueryCellInfoEventArgs = {
+                  data: record,
+                  cell: anchor,
+               }
                thisX.args.change(thisX, evt, queryCellInfoEventArgs);
          };
 
