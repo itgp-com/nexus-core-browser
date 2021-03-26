@@ -123,16 +123,22 @@ export abstract class AnyScreen<DATA_TYPE = any>
     */
    localDestroyImplementation() {
       try {
+
+         let list = this.listTemplateIds();
+
          // remove all templates added to this screen
-         if(this.listTemplateIds().length> 0){
-            for (const listTemplateId of this.listTemplateIds()) {
-               try {
-                  removeTemplate(this, listTemplateId);
-               } catch(ex){
-                  console.log(ex);
+         if(list?.length> 0){
+            for (let i = list.length-1; i >= 0 ; i--) {
+               let listTemplateId = list[i];
+               if (listTemplateId) {
+                  try {
+                     removeTemplate(this, listTemplateId);
+                  } catch (ex) {
+                     console.log(ex);
+                  }
                }
-            }
-         }
+            } // for
+         } // if list
       } catch (ex){
          console.log(ex);
       }
