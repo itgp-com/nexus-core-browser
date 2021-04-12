@@ -124,7 +124,11 @@ export interface ArgsPost<RESPONSE = any> {
 
 }
 
-export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T> {
+/**
+ * Do a POST and either return the exact object or throw an error (and return undefined
+ * @param argsPost
+ */
+export async function asyncPost<T = any>(argsPost: ArgsPost<T>): Promise<T> {
    try {
       let waitElem: HTMLElement;
 
@@ -158,20 +162,38 @@ export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T
          } // if close pressed, there's nothing to hide and we get undefined
       }
 
-      if (response.data) {
-         let retVal: core.RetVal = cu.cast(response.data, core.RetVal);
+      // noinspection ExceptionCaughtLocallyJS
+      if (response.status >= 200 &&response.status < 400 && response.data) {
+         return response.data;
+      } else {
+         throw response.statusText;
+      }
+   } catch (error) {
+      throw error;
+   }
+
+}
+
+
+export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T> {
+   try {
+      let waitElem: HTMLElement;
+
+      let data:any = await asyncPost(argsPost);
+
+      if (data) {
+         let retVal: core.RetVal = cu.cast(data, core.RetVal);
          if (retVal.hasError()) {
             throw retVal.err;
          } else {
             return retVal.value;
          }
       } else {
-         throw response;
+         throw data;
       }
    } catch (error) {
       throw error;
    }
-
 }
 
 export function applyPermanentHttpHeaders(headers: any) {

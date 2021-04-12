@@ -67,6 +67,11 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
       if (!args.children) {
          args.children = []; // initialize to non-null
       }
+      if ( args.children.length > 0){
+         args.children = args.children.filter(value => {
+            return value != null; // keep non-null children only
+         });
+      }
 
 
       this.initialize_AnyWidget();
@@ -186,7 +191,7 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
 
       setImmediate(async () => {
          // Fix 2020-04-27 D. Pociu
-         // this is ABSOLUTELY necessary in order to give the HTML in the tab constrol
+         // this is ABSOLUTELY necessary in order to give the HTML in the tab control
          // a chance to be inserted. Without this, you get very weird Syncfusion EJ2
          // error about parts of the widgets being undefined during refresh
          let tabObj: AbstractWidget = this.args.children[index];

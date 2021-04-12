@@ -7,7 +7,7 @@ import {AnyScreen}            from "./gui/AnyScreen";
 import {asyncHttpGet}         from "./ej2/WidgetUtils";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
-export const IMMEDIATE_MODE_DELAY = 1000;
+export const IMMEDIATE_MODE_DELAY   = 1000;
 
 declare global {
    // noinspection JSUnusedGlobalSymbols
@@ -71,25 +71,26 @@ String.prototype.escapeHTML = function (this: Object) {
 export interface voidFunction {
    (): void;
 }
+
 export interface noArgsFunction {
-   ():any;
+   (): any;
 }
 
-export type StringFunction =  ()=>string;
+export type StringFunction = () => string;
 export type StringArg = (string | StringFunction);
 
-export function isFunction(arg:any):boolean{
-   return ( arg ? (typeof arg === "function") : false);
+export function isFunction(arg: any): boolean {
+   return (arg ? (typeof arg === "function") : false);
 }
 
-export function stringArgVal(arg:StringArg):string{
+export function stringArgVal(arg: StringArg): string {
    // arg can only be a String or StringFunction
-   if (arg){
+   if (arg) {
       if (isFunction(arg)) {
          let s: string = (<StringFunction>arg)();
          return s;
       } else {
-         return <string> arg;
+         return <string>arg;
       }
    } else {
       return '';
@@ -101,28 +102,28 @@ export function stringArgVal(arg:StringArg):string{
 /**
  * Returns an instance of the type described
  */
-export type ClassFunction<T> = ()=>T;
+export type ClassFunction<T> = () => T;
 /**
  * Returns an instance of the type described in the generic
  */
-export type ClassArrayFunction<T> = ()=>T[];
+export type ClassArrayFunction<T> = () => T[];
 export type ClassArg<T> = (T | ClassFunction<T>);
 export type ClassArrayArg<T> = (T[] | ClassArrayFunction<T>);
-export type ClassArgInstanceOrArray<T> = (T | T[]  | ClassFunction<T>| ClassArrayFunction<T>);
+export type ClassArgInstanceOrArray<T> = (T | T[] | ClassFunction<T> | ClassArrayFunction<T>);
 
 /**
  * Extract an actual instance T regardless of whether the argument is already a T instance or if it's a function that yields the T instance when called
  * Returns null if argument is empty
  * @param arg
  */
-export function classArgInstanceVal<T>(arg:ClassArg<T>):T{
-   if (arg){
+export function classArgInstanceVal<T>(arg: ClassArg<T>): T {
+   if (arg) {
       if (isFunction(arg)) {
-            let val:T =  (<ClassFunction<T>> arg)();
-            return val;
-         } else {
-            return (<T> arg);
-         }
+         let val: T = (<ClassFunction<T>>arg)();
+         return val;
+      } else {
+         return (<T>arg);
+      }
    } else {
       return null;
    }
@@ -133,13 +134,13 @@ export function classArgInstanceVal<T>(arg:ClassArg<T>):T{
  *  Returns null if argument is empty
  * @param arg
  */
-export function classArgArrayVal<T>(arg:|ClassArrayArg<T>):T[]{
-   if (arg){
+export function classArgArrayVal<T>(arg: |ClassArrayArg<T>): T[] {
+   if (arg) {
       if (isFunction(arg)) {
-         let val:T[] =  (<ClassArrayFunction<T>> arg)();
+         let val: T[] = (<ClassArrayFunction<T>>arg)();
          return val;
       } else {
-         return (<T[]> arg);
+         return (<T[]>arg);
       }
    } else {
       return null;
@@ -152,13 +153,13 @@ export function classArgArrayVal<T>(arg:|ClassArrayArg<T>):T[]{
  *  Returns null if argument is empty
  * @param arg
  */
-export function classArgInstanceOrArrayVal<T>(arg:(ClassArg<T>|ClassArrayArg<T> | ClassArgInstanceOrArray<T>)):(T | T[]){
+export function classArgInstanceOrArrayVal<T>(arg: (ClassArg<T> | ClassArrayArg<T> | ClassArgInstanceOrArray<T>)): (T | T[]) {
    // arg can only be a String or StringFunction
-   if (arg){
+   if (arg) {
       if (isFunction(arg)) {
 
-         if (  arg as ClassFunction<T> ){
-            let val:T =  (<ClassFunction<T>> arg)();
+         if (arg as ClassFunction<T>) {
+            let val: T = (<ClassFunction<T>>arg)();
             return val;
          } else {
             let arrayVal: T[] = (<ClassArrayFunction<T>>arg)();
@@ -166,10 +167,10 @@ export function classArgInstanceOrArrayVal<T>(arg:(ClassArg<T>|ClassArrayArg<T> 
          }
 
       } else {
-         if ( Array.isArray(arg)){
+         if (Array.isArray(arg)) {
             return (<T[]>arg);
          } else {
-            return (<T> arg);
+            return (<T>arg);
          }
       }
    } else {
@@ -180,11 +181,10 @@ export function classArgInstanceOrArrayVal<T>(arg:(ClassArg<T>|ClassArrayArg<T> 
 
 //------------------------- Data Provider filter function type -------
 export type DataProviderFilterOptionalArgs = (any | noArgsFunction);
-export type DataProviderFilter<T> = (provider: IDataProvider, optionalArgs:DataProviderFilterOptionalArgs )=>T;
+export type DataProviderFilter<T> = (provider: IDataProvider, optionalArgs: DataProviderFilterOptionalArgs) => T;
 
 
-
-export function isA(ChildClass:any , ParentClass:any) {
+export function isA(ChildClass: any, ParentClass: any) {
    let _ = ChildClass.prototype;
    while (_ != null) {
       if (_ == ParentClass.prototype)
@@ -193,7 +193,6 @@ export function isA(ChildClass:any , ParentClass:any) {
    }
    return false;
 }
-
 
 
 // noinspection JSUnusedGlobalSymbols
@@ -374,7 +373,7 @@ export function getAppBase(): URL {
 }
 
 let appPathCached: string = null;
-let devOn: boolean       = false;
+let tModel: boolean       = false;
 
 export async function asyncGetAppPath(): Promise<string> {
 
@@ -389,7 +388,7 @@ export async function asyncGetAppPath(): Promise<string> {
 
    let urlCoreRunning = `${appPathname}core/running`;
 
-   let response: AxiosResponse = await asyncHttpGet(urlCoreRunning);
+   let response: AxiosResponse = await axios.get(urlCoreRunning);
 
    if (response.status === 200) {
       appPathCached = appPathname;
@@ -397,7 +396,7 @@ export async function asyncGetAppPath(): Promise<string> {
       try {
          // noinspection UnnecessaryLocalVariableJS
          let tFlag = response.data['t'];
-         devOn    = tFlag;
+         tModel    = tFlag;
       } catch (ignore) {
       }
    } else {
@@ -407,8 +406,8 @@ export async function asyncGetAppPath(): Promise<string> {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export function isDev() {
-   return devOn;
+export function isTModel() {
+   return tModel;
 }
 
 
@@ -425,7 +424,7 @@ export const MODULE_CORE: string          = 'core/';
 export const REC_ANYTABLE: string         = 'rec/{tablename}';
 export const REC_ANYTABLE_EJ2: string     = REC_ANYTABLE + "/ej2";
 export const REC_ANYTABLE_EJ2CRUD: string = REC_ANYTABLE + "/ej2crud";
-export const REC_ANYTABLE_LIST: string     = REC_ANYTABLE +"/list";
+export const REC_ANYTABLE_LIST: string    = REC_ANYTABLE + "/list";
 
 export function urlTable(tablename: string, rawPath: string): string {
    let x = rawPath;
@@ -445,7 +444,7 @@ export function urlTableEj2(tablename: string): string {
 
 // noinspection JSUnusedGlobalSymbols
 export function urlTableEj2Crud(tablename: string): string {
-    return urlTable(tablename, REC_ANYTABLE_EJ2CRUD);
+   return urlTable(tablename, REC_ANYTABLE_EJ2CRUD);
 }
 
 // noinspection JSUnusedGlobalSymbols

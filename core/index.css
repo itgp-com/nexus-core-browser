@@ -38,6 +38,12 @@
   height: 100%;
 }
 
+.flex-full-width {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
 .flex-container-row {
   display: flex;
   flex-direction: row;
