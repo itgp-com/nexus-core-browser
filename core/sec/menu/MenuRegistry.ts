@@ -20,7 +20,7 @@ export abstract class MenuRegistry {
 
 
 
-   async abstract registerMenus(): Promise<Menu_Menu[]>;
+   abstract registerMenus(): Promise<Menu_Menu[]>;
 
 
 

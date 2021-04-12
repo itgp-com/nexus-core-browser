@@ -6,7 +6,6 @@ import {Args_WgtText}                        from "./WgtText_Abstract";
 
 export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
    args: Args_WgtText;
-   previousValue: string = '';
    private _validator: FormValidator;
 
 

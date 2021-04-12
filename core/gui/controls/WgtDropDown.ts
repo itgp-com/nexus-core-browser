@@ -28,7 +28,6 @@ export type WgtDropDownDataType = number | string | boolean;
 
 export abstract class WgtDropDown<ARG_CLASS extends Args_WgtDropDown = Args_WgtDropDown> extends WgtSimple<DropDownList, Args_AnyWidget, WgtDropDownDataType> {
    args: Args_WgtDropDown;
-   previousValue: any = '';
 
    protected constructor() {
       super();

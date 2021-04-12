@@ -24,7 +24,7 @@ export abstract class ScreenRegistry {
    } // constructor
 
 
-   async abstract registerScreens(): Promise<ScreenAttributes[]>;
+   abstract registerScreens(): Promise<ScreenAttributes[]>;
 
 
    get uuidMap(): Map<string, ScreenAttributes> {

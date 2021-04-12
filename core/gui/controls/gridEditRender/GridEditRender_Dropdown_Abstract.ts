@@ -112,7 +112,7 @@ export abstract class GridEditRender_Dropdown_Abstract {
       } // if (anchor)
    }
 
-   abstract async createDropDown(anchor: HTMLElement, queryCellInfoEventArgs: QueryCellInfoEventArgs, grid: Grid):Promise<void> ;
+   abstract createDropDown(anchor: HTMLElement, queryCellInfoEventArgs: QueryCellInfoEventArgs, grid: Grid):Promise<void> ;
 
    decorateCell(id: string, cell: HTMLElement, anchor: HTMLElement): void {
       // if there's a function in the args, call it
@@ -152,7 +152,7 @@ export abstract class GridEditRender_Dropdown_Abstract {
    //  * The method itself will block if it's already been called and has not returned - this prevents the same method from doing hundreds of HTTP GETs
    //  * The moment the first instance has returned, all the other instances piggyback on the data that first instance has return and return the local copy also.
    //  */
-   // abstract async getDropdownData(): Promise<{ [key: string]: Object }[] | DataManager | string[] | number[] | boolean[]>;
+   // abstract getDropdownData(): Promise<{ [key: string]: Object }[] | DataManager | string[] | number[] | boolean[]>;
    //
 
    // // noinspection JSUnusedGlobalSymbols
