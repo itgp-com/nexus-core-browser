@@ -232,13 +232,13 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       return '';
    }
 
-   abstract async localLogicImplementation(): Promise<void> ;
+   abstract localLogicImplementation(): Promise<void> ;
 
-   abstract async localDestroyImplementation(): Promise<void>;
+   abstract localDestroyImplementation(): Promise<void>;
 
-   abstract async localRefreshImplementation(): Promise<void>;
+   abstract localRefreshImplementation(): Promise<void>;
 
-   abstract async localClearImplementation(): Promise<void>;
+   abstract localClearImplementation(): Promise<void>;
 
 
    /**

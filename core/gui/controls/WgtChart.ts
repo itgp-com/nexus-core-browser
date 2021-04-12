@@ -1,133 +1,144 @@
+import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils}                    from "../Args_AnyWidget";
+import {AnyWidget}                                                             from "../AnyWidget";
+import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
+
 import {
-   AccumulationDistributionIndicator,
+   // AccumulationDistributionIndicator,
    AreaSeries,
-   AtrIndicator,
+   // AtrIndicator,
    BarSeries,
-   BollingerBands,
-   BoxAndWhiskerSeries,
-   BubbleSeries,
-   CandleSeries,
+   // BollingerBands,
+   // BoxAndWhiskerSeries,
+   // BubbleSeries,
+   // CandleSeries,
    Category,
    Chart,
-   ChartModel,
    ChartAnnotation,
+   ChartModel,
    ColumnSeries,
-   Crosshair,
-   DataEditing,
+   // Crosshair,
+   // DataEditing,
    DataLabel,
    DateTime,
    DateTimeCategory,
-   EmaIndicator,
+   // EmaIndicator,
    ErrorBar,
    Export,
    Highlight,
-   HiloOpenCloseSeries,
-   HistogramSeries,
+   // HiloOpenCloseSeries,
+   // HistogramSeries,
    Legend,
    LineSeries,
    Logarithmic,
-   MacdIndicator,
-   MomentumIndicator,
+   // MacdIndicator,
+   // MomentumIndicator,
    MultiColoredAreaSeries,
    MultiColoredLineSeries,
    MultiLevelLabel,
-   ParetoSeries,
-   PolarSeries,
-   RadarSeries,
-   RangeAreaSeries,
-   RangeColumnSeries,
-   RsiIndicator,
-   ScatterSeries,
+   // ParetoSeries,
+   // PolarSeries,
+   // RadarSeries,
+   // RangeAreaSeries,
+   // RangeColumnSeries,
+   // RsiIndicator,
+   // ScatterSeries,
    ScrollBar,
    Selection,
-   SmaIndicator,
-   SplineAreaSeries,
-   SplineSeries,
-   StackingAreaSeries,
-   StackingBarSeries,
-   StackingColumnSeries,
-   StackingLineSeries,
-   StackingStepAreaSeries,
-   StepAreaSeries,
-   StepLineSeries,
-   StochasticIndicator,
+   // SmaIndicator,
+   // SplineAreaSeries,
+   // SplineSeries,
+   // StackingAreaSeries,
+   // StackingBarSeries,
+   // StackingColumnSeries,
+   // StackingLineSeries,
+   // StackingStepAreaSeries,
+   // StepAreaSeries,
+   // StepLineSeries,
+   // StochasticIndicator,
    StripLine,
-   TmaIndicator,
+   // TmaIndicator,
    Tooltip,
    Trendlines,
-   WaterfallSeries,
+   // WaterfallSeries,
    Zoom
 } from '@syncfusion/ej2-charts';
 
 Chart.Inject(
-   AccumulationDistributionIndicator,
+   // AccumulationDistributionIndicator,
    AreaSeries,
-   AtrIndicator,
+   // AtrIndicator,
    BarSeries,
-   BollingerBands,
-   BoxAndWhiskerSeries,
-   BubbleSeries,
-   CandleSeries,
+   // BollingerBands,
+   // BoxAndWhiskerSeries,
+   // BubbleSeries,
+   // CandleSeries,
    ChartAnnotation,
    Category,
    ColumnSeries,
-   Crosshair,
-   DataEditing,
+   // Crosshair,
+   // DataEditing,
    DataLabel,
    DateTime,
    DateTimeCategory,
-   EmaIndicator,
+   // EmaIndicator,
    ErrorBar,
    Export,
    Highlight,
-   HiloOpenCloseSeries,
-   HistogramSeries,
+   // HiloOpenCloseSeries,
+   // HistogramSeries,
    Legend,
    LineSeries,
    Logarithmic,
-   MacdIndicator,
-   MomentumIndicator,
+   // MacdIndicator,
+   // MomentumIndicator,
    MultiColoredAreaSeries,
    MultiColoredLineSeries,
    MultiLevelLabel,
-   ParetoSeries,
-   PolarSeries,
-   RadarSeries,
-   RangeAreaSeries,
-   RangeColumnSeries,
-   RsiIndicator,
-   ScatterSeries,
+   // ParetoSeries,
+   // PolarSeries,
+   // RadarSeries,
+   // RangeAreaSeries,
+   // RangeColumnSeries,
+   // RsiIndicator,
+   // ScatterSeries,
    ScrollBar,
    Selection,
-   SmaIndicator,
-   SplineAreaSeries,
-   SplineSeries,
-   StackingAreaSeries,
-   StackingBarSeries,
-   StackingColumnSeries,
-   StackingLineSeries,
-   StackingStepAreaSeries,
-   StepAreaSeries,
-   StepLineSeries,
-   StochasticIndicator,
+   // SmaIndicator,
+   // SplineAreaSeries,
+   // SplineSeries,
+   // StackingAreaSeries,
+   // StackingBarSeries,
+   // StackingColumnSeries,
+   // StackingLineSeries,
+   // StackingStepAreaSeries,
+   // StepAreaSeries,
+   // StepLineSeries,
+   // StochasticIndicator,
    StripLine,
-   TmaIndicator,
+   // TmaIndicator,
    Tooltip,
    Trendlines,
-   WaterfallSeries,
+   // WaterfallSeries,
    Zoom
 );
 
-
-import {Args_AnyWidget, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {AnyWidget}                           from "../AnyWidget";
-
-export class Args_WgtChart extends Args_AnyWidget<ChartModel> {
+export class Args_WgtChart extends Args_AnyWidget {
+   //---- should move from Args_WgtSimple to Args_AnyWidget -------
+   /**
+    * If this is present,  a new wrapper div is created around the actual input element.
+    */
+   wrapper           ?: IArgs_HtmlTag;
+   ej ?: ChartModel;
 } // Args_WgtChart
 
+// noinspection JSUnusedGlobalSymbols
 export class WgtChart extends AnyWidget<Chart, Args_WgtChart, any> {
    args: Args_WgtChart;
 
+   //---- should move from WgtSimple to AnyWidget -------
+   wrapperTagID: string;
+
+   //----
 
    protected constructor() {
       super();
@@ -146,17 +157,17 @@ export class WgtChart extends AnyWidget<Chart, Args_WgtChart, any> {
 
       this.initialize_AnyWidget(args);
 
-      // //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
-      // this.args_AnyWidgetInitializedListeners.add(
-      //    new class extends Args_AnyWidget_Initialized_Listener {
-      //       argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
-      //
-      //          // initialize the tags so they available in initContentBegin/End
-      //          thisX.wrapperTagID = `wrapper_${evt.widget.tagId}`;
-      //
-      //       }
-      //    }
-      // );
+      //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
+      this.args_AnyWidgetInitializedListeners.add(
+         new class extends Args_AnyWidget_Initialized_Listener {
+            argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
+
+               // initialize the tags so they available in initContentBegin/End
+               thisX.wrapperTagID = `wrapper_${evt.widget.tagId}`;
+
+            }
+         }
+      );
 
    } // initialize_WgtChart
 
@@ -177,8 +188,8 @@ export class WgtChart extends AnyWidget<Chart, Args_WgtChart, any> {
 
 
    async localLogicImplementation() {
-      this.obj = new Chart(this.args?.ej, this.hget);
-      this.args.ej.dataSource
+      let anchor = this.hget;
+      this.obj   = new Chart(this.args?.ej, anchor);
    } // localLogicImplementation
 
 
@@ -194,4 +205,15 @@ export class WgtChart extends AnyWidget<Chart, Args_WgtChart, any> {
          this.obj.refresh();
       }
    } // localRefreshImplementation
+
+   get value(): any {
+      if (this.obj)
+         return this.obj.dataSource;
+   }
+
+   set value(value: any) {
+      if (this.obj) {
+         this.obj.dataSource = value;
+      }
+   }
 } // main

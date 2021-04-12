@@ -12,7 +12,7 @@ export abstract class NexusUI {
    /**
     * First method to be called to initialize any initial settings before calling {@link createNewScreenRegistry}
     */
-   abstract async init():Promise<void>;
+   abstract init():Promise<void>;
 
    /**
     * Return the ScreenRegistry that will be used throughout the life of the application.
@@ -20,7 +20,7 @@ export abstract class NexusUI {
     * Called after {@link init} but before {@link initUI}
     *
     */
-   abstract async createNewScreenRegistry():Promise<ScreenRegistry>;
+   abstract createNewScreenRegistry():Promise<ScreenRegistry>;
 
 
    /**
@@ -29,21 +29,21 @@ export abstract class NexusUI {
     * Called after {@link init} but before {@link initUI}
     *
     */
-   abstract async createNewMenuRegistry():Promise<MenuRegistry>;
+   abstract createNewMenuRegistry():Promise<MenuRegistry>;
 
 
 
    /**
     * Called after {@link createNewScreenRegistry} to finish initializing the UI after the first init() call and the relevant screens have been registered
     */
-   abstract async initUI():Promise<void>;
+   abstract initUI():Promise<void>;
 
    /**
     * Called after {@link initUI} in order to process any URL parameters passed in after the root application URL
     *
     * @param initialParamsAsString  initial parameters (free range - depends on specific app)
     */
-   abstract async processURLParameters(initialParamsAsString:string):Promise<void>;
+   abstract processURLParameters(initialParamsAsString:string):Promise<void>;
 
 
    get mainUITagID(): string {
