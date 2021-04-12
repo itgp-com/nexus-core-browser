@@ -91,6 +91,13 @@ export class Args_AnyWidget<CONTROLMODEL = any> {
     */
    validation ?: any;
 
+   /**
+    * @deprecated use localContentEnd()
+    * This is a static method because a class method would be required to be instantiated when  {@link htmlTextBoxFloating} is called with {colName:'aaa',...}
+    * See: https://stackoverflow.com/questions/47239507/property-getreadableschedule-is-missing-in-type
+    * @param options
+    */
+
    parent ?: AbstractWidget;
 
    children ?: AbstractWidget[];
