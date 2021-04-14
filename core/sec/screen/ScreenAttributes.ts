@@ -2,9 +2,10 @@
  * Global screen registration record for all screens that need central registration (in order to be included in a menu, or security for example)
  *
  */
-import {AnyScreen}         from "../../gui/AnyScreen";
-import {StringArg}         from "../../CoreUtils";
-import {Args_DialogWindow} from "../../ej2/DialogWindow";
+import {AnyScreen}            from "../../gui/AnyScreen";
+import {StringArg}            from "../../CoreUtils";
+import {Args_DialogWindow}    from "../../ej2/DialogWindow";
+import {AbstractDialogWindow} from "../../ej2/AbstractDialogWindow";
 
 export class ScreenAttributes {
    /**
@@ -33,9 +34,26 @@ export class ScreenAttributes {
     */
    header ?:  (screenInstance: AnyScreen) => string | Promise<string>;
 
-   /**
-    * Any arguments that should be passed to the DialogWindow (displaying the screen) when it is created.
-    */
-   dialogArgs?:Args_DialogWindow;
+   //----------------------- extra optional arguments (from Args_DialogWindow) that might be relevant if opened in DialogWindow
 
+   width?: string | number | undefined;
+   height?: string | number | undefined;
+   enableResize?: boolean;
+   htmlClassesPrefix ?: string;
+   htmlClass ?: string;
+   htmlClassesSuffix?: string;
+   htmlStyle?: string;
+
+   onBeforeOpen?(instance: AbstractDialogWindow): void;
+
+   onAfterOpen?(instance: AbstractDialogWindow): void;
+
+   /**
+    *
+    * @param instance
+    * return true if close should continue, false otherwise
+    */
+   onBeforeClose?(instance: AbstractDialogWindow): boolean;
+
+   onAfterClose?(instance: AbstractDialogWindow): void;
 }
