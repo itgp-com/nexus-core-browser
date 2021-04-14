@@ -1,27 +1,25 @@
 import {Menu_Menu}                               from "./Menu_Menu";
-import {getMenuRegistry, menu_registration_root} from "../menu/MenuRegistryUtils";
+import {getMenuRegistry, menu_registration_root} from "./MenuRegistryUtils";
 import {setAtWindowPath}                         from "../../CoreUtils";
 
 
 export abstract class MenuRegistry {
-   private readonly _menuMap:Map<string, Menu_Menu> ;
-   private _menuPks: string[];
-   private _menus:Menu_Menu[];
-   
+   private readonly _menuMap: Map<string, Menu_Menu>;
+   private _menuIdList: string[];
+   private _menus: Menu_Menu[];
+
    private _processed: boolean = false;
 
-   constructor() {
-      this._menuMap = new Map<string, Menu_Menu>();
-      this._menuPks = []
-      this._menus = [];
+   protected constructor() {
+      this._menuMap    = new Map<string, Menu_Menu>();
+      this._menuIdList = []
+      this._menus      = [];
 
       setAtWindowPath(menu_registration_root(), this); // register this object as the new menu registry
    }
 
 
-
    abstract registerMenus(): Promise<Menu_Menu[]>;
-
 
 
    get menuMap(): Map<string, Menu_Menu> {
@@ -29,6 +27,9 @@ export abstract class MenuRegistry {
    }
 
 
+   /**
+    * True if the processRegisteredMenu() has been run successfully
+    */
    get processed(): boolean {
       return this._processed;
    }
@@ -38,14 +39,17 @@ export abstract class MenuRegistry {
    }
 
 
-   get menuPks(): string[] {
-      return this._menuPks;
+   get menuIdList(): string[] {
+      return this._menuIdList;
    }
 
    get menus(): Menu_Menu[] {
       return this._menus;
    }
 
+   /**
+    * Loads the initial system menus and sets the processed flag to true when done
+    */
    async processRegisteredMenus() {
       if (this._processed)
          return;
@@ -56,33 +60,68 @@ export abstract class MenuRegistry {
       }
 
       this._menus = []
-      for (const pk of this._menuPks) {
-         this._menus.push(this.menuMap.get(pk))
+      for (const menu_id of this._menuIdList) {
+         this._menus.push(this.menuMap.get(menu_id))
       }
 
       this.processed = true;
    } // processRegisteredMenus
 
 
-
-   protected add(menu: Menu_Menu) {
+   /**
+    *
+    * @param menu
+    * @returns true if successful, false otherwise
+    */
+   add(menu: Menu_Menu): boolean {
       if (menu) {
 
          let menuRegistry: MenuRegistry = getMenuRegistry();
 
-         if (menu.pk) {
+         if (menu.id) {
             let menuMap: Map<string, Menu_Menu> = menuRegistry._menuMap
-            menuMap.set(menu.pk, menu);
+            menuMap.set(menu.id, menu);
 
-            this.menuPks.push(menu.pk)
-            this._menuPks = this._menuPks.sort();
+            this.menuIdList.push(menu.id)
+            this._menuIdList = this._menuIdList.sort();
 
-            this.menus.push(this.menuMap.get(menu.pk))
+            this.menus.push(this.menuMap.get(menu.id))
+            return true;
          }
-
-
-
       } // if registration
+      return false;
    } // add
+
+   remove(menu_id: string): boolean {
+      if (menu_id) {
+         let menuRegistry: MenuRegistry = getMenuRegistry();
+         if (menu_id) {
+            let menuMap: Map<string, Menu_Menu> = menuRegistry._menuMap
+            let menu: Menu_Menu                 = menuMap.get(menu_id);
+            if (menu) {
+               let success = menuMap.delete(menu_id);
+               if (success) {
+
+                  let index: number = -1;
+
+                  do {
+                     index = this.menuIdList.indexOf(menu_id, 0);
+                     if (index >= 0)
+                        this.menuIdList.splice(index, 1); // delete just that index
+                  } while (index >= 0)
+
+                  do {
+                     index = this.menus.indexOf(menu, 0)
+                     if (index >= 0)
+                        this.menus.splice(index, 0); // delete the menu
+                  } while (index >= 0)
+
+                  return true;
+               }
+            }
+         }
+      }
+      return false;
+   } //remove
 
 } // main

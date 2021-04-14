@@ -10,14 +10,14 @@ export function getMenuRegistry(): MenuRegistry {
    return getAtWindowPath(...menu_registration_root());
 }
 
-export async function getMenuByPk(pk:string){
+export async function getMenu(menu_id:string){
    let menu: Menu_Menu = null;
-   if ( pk){
+   if ( menu_id){
       let menuRegistry:MenuRegistry = getMenuRegistry();
       if (menuRegistry){
             await menuRegistry.processRegisteredMenus(); // make sure menus are processed first
-            menu = menuRegistry.menuMap.get(pk);
+            menu = menuRegistry.menuMap.get(menu_id);
       } // if menuRegistry
-   } // if pk
+   } // if menu_id
    return menu;
 }
