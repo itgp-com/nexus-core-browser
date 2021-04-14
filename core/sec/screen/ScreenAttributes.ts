@@ -3,6 +3,7 @@
  *
  */
 import {AnyScreen} from "../../gui/AnyScreen";
+import {StringArg} from "../../CoreUtils";
 
 export class ScreenAttributes {
    /**
@@ -24,5 +25,10 @@ export class ScreenAttributes {
     * a function that can be called with an optional parameter to create an instance of the screen
     */
    create_function: (param ?: any) => AnyScreen | Promise<AnyScreen>;
+
+   /**
+    * The dialog header in which the actual screen is being displayed. This is the top band of the Dialog, not the screen title
+    */
+   header ?: StringArg;
 
 }
