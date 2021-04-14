@@ -2,8 +2,9 @@
  * Global screen registration record for all screens that need central registration (in order to be included in a menu, or security for example)
  *
  */
-import {AnyScreen} from "../../gui/AnyScreen";
-import {StringArg} from "../../CoreUtils";
+import {AnyScreen}         from "../../gui/AnyScreen";
+import {StringArg}         from "../../CoreUtils";
+import {Args_DialogWindow} from "../../ej2/DialogWindow";
 
 export class ScreenAttributes {
    /**
@@ -31,5 +32,10 @@ export class ScreenAttributes {
     * The function receives the freshly instantiated screen result of create_function as a parameter
     */
    header ?:  (screenInstance: AnyScreen) => string | Promise<string>;
+
+   /**
+    * Any arguments that should be passed to the DialogWindow (displaying the screen) when it is created.
+    */
+   dialogArgs?:Args_DialogWindow;
 
 }
