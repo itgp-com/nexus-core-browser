@@ -28,7 +28,8 @@ export class ScreenAttributes {
 
    /**
     * The dialog header in which the actual screen is being displayed. This is the top band of the Dialog, not the screen title
+    * The function receives the freshly instantiated screen result of create_function as a parameter
     */
-   header ?: StringArg;
+   header ?:  (screenInstance: AnyScreen) => string | Promise<string>;
 
 }
