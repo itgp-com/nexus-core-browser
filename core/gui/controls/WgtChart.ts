@@ -178,7 +178,7 @@ export class WgtChart extends AnyWidget<Chart, Args_WgtChart, any> {
          x += `<${this.args.wrapper.htmlTagType} id="${this.wrapperTagID}" ${IArgs_HtmlTag_Utils.all(this.args.wrapper)}>`;
       }
 
-      x += `<div id="${this.tagId}"/>`;
+      x += `<div id="${this.tagId}"></div>`; // NEVER use <div />
 
       if (this.args?.wrapper) {
          x += `</${this.args.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->
