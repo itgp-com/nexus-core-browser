@@ -229,6 +229,3 @@ export class AdaptorUpdateEvent<T = any> {
 
 export type AdaptorUpdateListener<T = any> = (updateEvent: AdaptorUpdateEvent<T>) => void;
 
-
-
-
