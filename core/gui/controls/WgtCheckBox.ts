@@ -1,13 +1,21 @@
 import {Args_WgtSimple, WgtSimple}           from "./WgtSimple";
-import {CheckBox, CheckBoxModel}             from '@syncfusion/ej2-buttons';
-import {Args_AnyWidget, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {DataProviderChangeEvent}             from "../../data/DataProvider";
+import {CheckBox, CheckBoxModel}                            from '@syncfusion/ej2-buttons';
+import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
+import {DataProviderChangeEvent}                            from "../../data/DataProvider";
 
+export abstract class Args_WgtCheckBox_Label {
+   position ?:  "Top"|"Leading"|"Trailing";
+   /// Number of pixels for the margin (bottom or side depending on label position)
+   margin?: number;
+   wrapper           ?: IArgs_HtmlTag; // duplicates Args_AnyWidget field
+}
 export abstract class Args_WgtCheckBox extends Args_WgtSimple<CheckBoxModel> {
    /**
     * Control label. Overwrites the placeholder in the ej.placeholder in places
     */
    label?: string;
+   labelSettings ?: Args_WgtCheckBox_Label;
+
 
    modelTrueValue ?: WgtCheckBoxDataType;
 
@@ -53,6 +61,32 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
       if (args.enabled != null)
          args.ej.disabled = !args.enabled;
 
+      if (args.labelSettings == null){
+         args.labelSettings = {
+            position: "Top",
+            margin: 5, // Vertical
+            wrapper:{},
+         }
+      }
+
+      args.labelSettings.wrapper = IArgs_HtmlTag_Utils.init(args.labelSettings.wrapper);
+
+      if (!args.labelSettings.position)
+         args.labelSettings.position = "Top";
+
+      if (args.labelSettings.margin == null){
+
+         switch( args.labelSettings.position){
+            case 'Top':
+               args.labelSettings.margin = 5; //(vertical)
+               break;
+            default:
+               args.labelSettings.margin =10; // trailing and leading (horizontal)
+         }
+      }
+
+
+
       this.previousValue = this.indeterminateValue;
 
       this.initialize_WgtSimple(args)
@@ -65,11 +99,28 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
 
       x += `<div id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(this.args.wrapper)}>`;
 
-      if (this.args.label) {
-         x += `    <div id="${this.labelTagID}" class="e-float-text e-label-top" style="padding-bottom: 5px;">${this.args.label.escapeHTML()}</div>`;
+      let label = null;
+      let padding_suffix = 'bottom';
+      switch( this.args.labelSettings.position){
+         case "Leading":
+            padding_suffix = "right";
+            break;
+         case "Trailing":
+            padding_suffix = "left";
       }
 
+      if (this.args.label) {
+         label = `    <${this.args.labelSettings.wrapper.htmlTagType} id="${this.labelTagID}" ${this.args.labelSettings.wrapper.htmlOtherAttr} class="e-float-text e-label-top ${this.args.labelSettings.wrapper.htmlTagClass}" style="padding-${padding_suffix}: ${this.args.labelSettings.margin}px;${this.args.labelSettings.wrapper.htmlTagStyle}">${this.args.label.escapeHTML()}</${this.args.labelSettings.wrapper.htmlTagType}>`;
+      }
+
+
+      if (label != null && (this.args.labelSettings.position == "Top" ||this.args.labelSettings.position == "Leading")){
+         x += label;
+      }
       x += `<input type="checkbox" id="${this.tagId}" name="${this.args.propertyName}"/>`;
+      if (label != null && (this.args.labelSettings.position == "Trailing" )){
+         x += label;
+      }
       x += "</div>";
 
       return x;

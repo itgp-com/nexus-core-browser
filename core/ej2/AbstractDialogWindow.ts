@@ -9,7 +9,7 @@ import {createInstance}                                                 from "..
 
 export abstract class Args_AbstractDialogWindow {
 
-   dialogTagId: string;
+   dialogTagId ?: string;
    content: AbstractWidget<any> | Promise<AbstractWidget<any>>;
    header?: string | Promise<string>;
    width?: string | number | undefined;
@@ -73,7 +73,14 @@ export class AbstractDialogWindow {
          this.resolvedContent = await args.content;
       }
 
-      this.dialog = new Dialog(this.dialogModel, cu.hget(this.initArgs.dialogTagId));
+      let targetElem:HTMLElement;
+      if (this.initArgs.dialogTagId)
+         targetElem = hget(this.initArgs.dialogTagId)
+      else
+         targetElem = document.body
+
+
+      this.dialog = new Dialog(this.dialogModel, targetElem );
 
       // Create classes for DialogWindow DIV
       let cs = ''
