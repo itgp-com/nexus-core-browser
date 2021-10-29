@@ -1,10 +1,8 @@
-import * as cu                                                          from "../CoreUtils";
-import {hget}                                                           from "../CoreUtils";
+import {getRandomString, hget}                                          from "../CoreUtils";
 import {AbstractWidget}                                                 from "../gui/AbstractWidget";
 import {BeforeCloseEventArgs, BeforeOpenEventArgs, Dialog, DialogModel} from "@syncfusion/ej2-popups";
 import {getErrorHandler}                                                from "../CoreErrorHandling";
 import {ErrorHandler}                                                   from "../ErrorHandler";
-import {createInstance}                                                 from "../ModuleRegistry";
 
 
 export abstract class Args_AbstractDialogWindow {
@@ -41,8 +39,9 @@ export class DialogWindowOpenEvent {
 export class AbstractDialogWindow {
 
    private _initArgs: Args_AbstractDialogWindow;
-   readonly dialogContentTagId: string = cu.getRandomString('dialogContent');
+   readonly dialogContentTagId: string = getRandomString('dialogContent');
    protected resolvedContent: AbstractWidget<any>;
+   protected localAnchorID: string;
 
    // noinspection JSUnusedLocalSymbols
    private _dialogModel: DialogModel;
@@ -73,14 +72,18 @@ export class AbstractDialogWindow {
          this.resolvedContent = await args.content;
       }
 
-      let targetElem:HTMLElement;
+      let targetElem: HTMLElement;
       if (this.initArgs.dialogTagId)
          targetElem = hget(this.initArgs.dialogTagId)
-      else
-         targetElem = document.body
+      else {
+         this.localAnchorID = getRandomString('anchor_');
+         let elem           = document.createElement('div')
+         elem.id            = this.localAnchorID
+         document.body.appendChild(elem);
+         targetElem = elem
+      }
 
-
-      this.dialog = new Dialog(this.dialogModel, targetElem );
+      this.dialog = new Dialog(this.dialogModel, targetElem);
 
       // Create classes for DialogWindow DIV
       let cs = ''
@@ -179,7 +182,7 @@ export class AbstractDialogWindow {
     * @param e
     */
    async open(e: any) {
-      let thisX = this;
+      let thisX      = this;
       e.preventFocus = true; // preventing focus ( Uncaught TypeError: Cannot read property 'matrix' of undefined in Dialog:  https://www.syncfusion.com/support/directtrac/incidents/255376 )
 
       if (thisX.initArgs && thisX.resolvedContent) {
@@ -255,6 +258,16 @@ export class AbstractDialogWindow {
 
       } catch (ex) {
          getErrorHandler().displayExceptionToUser(ex);
+      }
+
+      try {
+         if (this.localAnchorID) {
+            let anchorElem = document.getElementById(this.localAnchorID);
+            if (anchorElem)
+               anchorElem.parentNode.removeChild(anchorElem);
+         }
+      } catch (e) {
+         console.log(e);
       }
    }
 
