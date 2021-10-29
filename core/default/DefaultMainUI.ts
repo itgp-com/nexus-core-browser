@@ -3,9 +3,9 @@ import * as utils                                   from "../CoreUtils";
 import {getModules}                                 from "../ModuleRegistry";
 import {getErrorHandler}                            from "../CoreErrorHandling";
 import {Button}                                     from "@syncfusion/ej2-buttons";
-import {ej2_icon_close, ej2_icon_menu_hamburger} from "../index";
-import {openModule, STORAGE_CURRENT_MODULE_ID} from "../ModuleUtils";
-import {NexusUI}                               from "../NexusUI";
+import {ej2_icon_close, ej2_icon_menu_hamburger}                     from "../index";
+import {lastOpenModule_modId, openModule, STORAGE_CURRENT_MODULE_ID} from "../ModuleUtils";
+import {NexusUI}                                                     from "../NexusUI";
 
 export interface SelectionListener {
    nodeSelected(): void;
@@ -13,8 +13,7 @@ export interface SelectionListener {
 
 export abstract class DefaultMainUI extends NexusUI {
 
-   lastOpenModule_modId: string      = null;
-   lastOpenModule_initialParams: any = null;
+
 
    initialModuleToDisplay_modId: string      = null;
    initialModuleToDisplay_initialParams: any = null;
@@ -78,7 +77,7 @@ export abstract class DefaultMainUI extends NexusUI {
    }
 
    protected async _openInitialModuleToDisplay() {
-      if (this.lastOpenModule_modId == null) {
+      if (lastOpenModule_modId == null) {
          // if no other module has been opened, then initialize the view to this module
          if (this.initialModuleToDisplay_modId != null) {
             // if there's an initial module defined, open it

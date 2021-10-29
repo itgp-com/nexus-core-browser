@@ -4,6 +4,9 @@ import {nexusMain}                          from "./NexusMain";
 
 export const STORAGE_CURRENT_MODULE_ID: string = 'currentModule';
 
+export let lastOpenModule_modId: string      = null;
+export let lastOpenModule_initialParams: any = null;
+
 export async function openModule(args: { modID: string, initialParams?: any }) {
 
 
@@ -47,8 +50,8 @@ export async function openModule(args: { modID: string, initialParams?: any }) {
                                          initialParams:        args.initialParams
                                       });
 
-      this.lastOpenModule_modId         = args.modID;
-      this.lastOpenModule_initialParams = args.initialParams;
+      lastOpenModule_modId         = args.modID;
+      lastOpenModule_initialParams = args.initialParams;
 
       await f(moduleInit);
    }
