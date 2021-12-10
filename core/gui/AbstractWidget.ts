@@ -50,6 +50,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private readonly _parentAddedListener: ListenerHandler<ParentAddedEvent, ParentAddedListener>                          = new ListenerHandler<ParentAddedEvent, ParentAddedListener>();
    private _widgetErrorHandler: WidgetErrorHandler;
 
+   private readonly _afterInitLogic: AfterInitLogicListener[] = [];
+
 
    constructor() {
       this.initialize_AbstractWidget();
@@ -455,11 +457,19 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
             origin: thisX
          };
 
-         try {
-            await this.afterInitLogic(afterEvt)
-         } catch (ex){
-            thisX.handleError(ex);
-         }
+         // try {
+         //    await this.afterInitLogic(afterEvt)
+         // } catch (ex){
+         //    thisX.handleError(ex);
+         // }
+
+
+         if (this._afterInitLogic.length > 0){
+            let thisX = this;
+            for (const afterInitLogicListener of this._afterInitLogic) {
+               this.afterInitLogicListeners.add(afterInitLogicListener);
+            }
+         } // if (this._afterInitLogic.length > 0)
 
          if (this.afterInitLogicListeners.count() > 0) {
             this.afterInitLogicListeners.fire({
@@ -470,6 +480,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                                               },
             );
          } // if (this.afterInitLogicListeners.count() > 0)
+
+
 
       }
    }
@@ -805,15 +817,19 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       // empty implementation
    }
 
-   /**
-    * Overwrite this method that is called after initLogic is fired.
-    *
-    * Empty implementation by default
-    * @param evt
-    * @since 1.0.24
-    */
-   async afterInitLogic(evt:AfterInitLogicEvent):Promise<void>{
-      //empty implementation
+   // /**
+   //  * Overwrite this method that is called after initLogic is fired.
+   //  *
+   //  * Empty implementation by default
+   //  * @param evt
+   //  * @since 1.0.24
+   //  */
+   // async afterInitLogic(evt:AfterInitLogicEvent):Promise<void>{
+   //    //empty implementation
+   // }
+
+   get afterInitLogic(): AfterInitLogicListener[]{
+      return this._afterInitLogic;
    }
 
 } // main class
