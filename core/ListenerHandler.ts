@@ -1,5 +1,5 @@
-import {ExceptionEvent} from "./ExceptionEvent";
-import {BaseListener}   from "./BaseListener";
+import {ExceptionEvent}      from "./ExceptionEvent";
+import {BaseListener}        from "./BaseListener";
 
 export class StopListenerChain {
    stopEventProcessing ?: boolean;
@@ -24,9 +24,19 @@ export class Args_FireListener<E, Listener extends BaseListener<E>> {
 
 export class ListenerHandler<E, Listener extends BaseListener<E>> {
    private listeners: Listener[] = [];
+   private xref:[BaseListener<E>,(ev:E)=>void] [] = [];
 
+   add(f:(ev:E)=>void ){
+      let baseListener: BaseListener<E> = new class BaseListener {
+         eventFired(ev: E): void {
+               f(ev);
+         }
+      };
+      this.xref.push([baseListener, f]);
+      this.addListener(baseListener as Listener);
+   }
 
-   add(listener: Listener): void {
+   addListener(listener: Listener): void {
       if (listener) {
          let n: number = this.listeners.length;
          for (let i = 0; i < n; i++) {
@@ -38,7 +48,18 @@ export class ListenerHandler<E, Listener extends BaseListener<E>> {
       } // if listener
    } // addListener
 
-   remove(listener: Listener): void {
+   remove(f:(ev:E)=>void){
+      let n = this.xref.length
+      for (let i = 0; i < n; i++) {
+         let tuple = this.xref[i];
+         if ( tuple[1] === f){
+            this.xref = this.xref.splice(i);
+            this.removeListener(tuple[0] as Listener);
+         }
+      } // for i1
+   } // remove
+
+   removeListener(listener: Listener): void {
       if (listener) {
 
          let n: number = this.listeners.length;
@@ -46,6 +67,16 @@ export class ListenerHandler<E, Listener extends BaseListener<E>> {
             let l = this.listeners[i];
             if (l === listener) {
                this.listeners = this.listeners.splice(i);
+
+
+               let n1 = this.xref.length
+               for (let i1 = 0; i1 < n1; i1++) {
+                  let tuple = this.xref[i1];
+                  if ( tuple[0] === listener){
+                     this.xref = this.xref.splice(i1);
+                  }
+               } // for i1
+
                return; // done, since a listener is in there only once
             }
          } // for
@@ -57,18 +88,19 @@ export class ListenerHandler<E, Listener extends BaseListener<E>> {
     */
    clear(): void{
       this.listeners.length = 0;
+      this.xref.length = 0;
    }
 
    /**
     * Returns a copy of the listener list. Modifying this list has no effect on the listeners in the handler.
     * To add and remove listeners you have to use the add and remove methods of the handler instance.
     */
-   list() {
+   listListeners() {
       let newList: Listener[] = [...this.listeners];
       return newList;
    }
 
-   count(): number {
+   countListeners(): number {
       return this.listeners.length;
    }
 

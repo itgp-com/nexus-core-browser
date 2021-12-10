@@ -17,13 +17,16 @@ import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener}         from "./B
 import {WidgetErrorHandler, WidgetErrorHandlerStatus}                  from "../WidgetErrorHandler";
 import {ParentAddedEvent, ParentAddedListener}                         from "./ParentAddedListener";
 import {DialogInfo}                                                    from "../ej2/DialogInfo";
-import {Args_WgtTab_SelectedAsTab}                   from "./panels/WgtTab";
-import {AbstractDialogWindow, DialogWindowOpenEvent} from "../ej2/AbstractDialogWindow";
+import {Args_WgtTab_SelectedAsTab}                                     from "./panels/WgtTab";
+import {AbstractDialogWindow, DialogWindowOpenEvent}                   from "../ej2/AbstractDialogWindow";
+
+export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
+export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
 
 export class Args_AbstractWidget {
    // was AbstractWidget
-   beforeInitLogicListener ?: (ev: BeforeInitLogicEvent) => void;
-   afterInitLogicListener ?: (ev: AfterInitLogicEvent) => void;
+   beforeInitLogicListener ?: BeforeInitLogicType;
+   afterInitLogicListener ?: AfterInitLogicType;
 }
 
 export class Args_Repaint {
@@ -49,8 +52,6 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private readonly _afterRepaintWidgetListeners: ListenerHandler<AfterRepaintWidgetEvent, AfterRepaintWidgetListener>    = new ListenerHandler<AfterRepaintWidgetEvent, AfterRepaintWidgetListener>();
    private readonly _parentAddedListener: ListenerHandler<ParentAddedEvent, ParentAddedListener>                          = new ListenerHandler<ParentAddedEvent, ParentAddedListener>();
    private _widgetErrorHandler: WidgetErrorHandler;
-
-   private readonly _afterInitLogic: AfterInitLogicListener[] = [];
 
 
    constructor() {
@@ -110,7 +111,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    set parent(value: AbstractWidget) {
       try {
          this._parent = value;
-         if (this.parentAddedListeners.count() > 0) {
+         if (this.parentAddedListeners.countListeners() > 0) {
             this.parentAddedListeners.fire({
                                               event: {
                                                  child:  this,
@@ -265,7 +266,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
       try {
          if (this.initialized && this.tagId) {
-            if (thisX.beforeRepaintWidgetListeners.count() > 0) {
+            if (thisX.beforeRepaintWidgetListeners.countListeners() > 0) {
 
                let beforeEvent: BeforeRepaintWidgetEvent = new BeforeRepaintWidgetEvent();
                beforeEvent.widget                        = thisX;
@@ -299,7 +300,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                                                 existingWidgetHTMLElement: existingHtmlElement,
                                                 callback:                  () => {
                                                    // execute after repaint if there are any listeners
-                                                   if (thisX.afterRepaintWidgetListeners.count() > 0) {
+                                                   if (thisX.afterRepaintWidgetListeners.countListeners() > 0) {
                                                       let afterEvent: AfterRepaintWidgetEvent = new AfterRepaintWidgetEvent();
                                                       afterEvent.widget                       = thisX;
 
@@ -422,19 +423,19 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
          let thisX = this;
 
          // ------------ Before Init Logic Listeners -----------------------
-         let beforeEvt: BeforeInitLogicEvent =  {
+         let beforeEvt: BeforeInitLogicEvent = {
             origin: thisX
          };
 
          try {
             await this.beforeInitLogic(beforeEvt)
-         } catch (ex){
+         } catch (ex) {
             thisX.handleError(ex);
          }
 
-         if (this.beforeInitLogicListeners.count() > 0) {
+         if (this.beforeInitLogicListeners.countListeners() > 0) {
             this.beforeInitLogicListeners.fire({
-                                                  event:     beforeEvt       ,
+                                                  event:            beforeEvt,
                                                   exceptionHandler: (event) => {
                                                      thisX.handleError(event);
                                                   }
@@ -453,34 +454,25 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
          await this.localLogicImplementation();
 
          // ------------ After Init Logic Listeners -----------------------
-         let afterEvt:AfterInitLogicEvent = {
+         let afterEvt: AfterInitLogicEvent = {
             origin: thisX
          };
 
-         // try {
-         //    await this.afterInitLogic(afterEvt)
-         // } catch (ex){
-         //    thisX.handleError(ex);
-         // }
+         try {
+            await this.afterInitLogic(afterEvt)
+         } catch (ex){
+            thisX.handleError(ex);
+                  }
 
-
-         if (this._afterInitLogic.length > 0){
-            let thisX = this;
-            for (const afterInitLogicListener of this._afterInitLogic) {
-               this.afterInitLogicListeners.add(afterInitLogicListener);
-            }
-         } // if (this._afterInitLogic.length > 0)
-
-         if (this.afterInitLogicListeners.count() > 0) {
+         if (this.afterInitLogicListeners.countListeners() > 0) {
             this.afterInitLogicListeners.fire({
-                                                 event:         afterEvt,
+                                                 event:            afterEvt,
                                                  exceptionHandler: (event) => {
                                                     thisX.handleError(event);
                                                  }
                                               },
             );
          } // if (this.afterInitLogicListeners.count() > 0)
-
 
 
       }
@@ -780,7 +772,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * Empty implementation by default
     * @param evt
     */
-   onDialogWindowOpen(evt:DialogWindowOpenEvent){
+   onDialogWindowOpen(evt: DialogWindowOpenEvent) {
    }
 
    //------------------------------- Getter section -------------------------
@@ -813,23 +805,19 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * @param evt
     * @since 1.0.24
     */
-   async beforeInitLogic(evt:BeforeInitLogicEvent):Promise<void>{
+   async beforeInitLogic(evt: BeforeInitLogicEvent): Promise<void> {
       // empty implementation
    }
 
-   // /**
-   //  * Overwrite this method that is called after initLogic is fired.
-   //  *
-   //  * Empty implementation by default
-   //  * @param evt
-   //  * @since 1.0.24
-   //  */
-   // async afterInitLogic(evt:AfterInitLogicEvent):Promise<void>{
-   //    //empty implementation
-   // }
-
-   get afterInitLogic(): AfterInitLogicListener[]{
-      return this._afterInitLogic;
+   /**
+    * Overwrite this method that is called after initLogic is fired.
+    *
+    * Empty implementation by default
+    * @param evt
+    * @since 1.0.24
+    */
+   async afterInitLogic(evt:AfterInitLogicEvent):Promise<void>{
+      //empty implementation
    }
 
 } // main class

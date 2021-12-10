@@ -53,7 +53,7 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
       this.argsWgtSimple = argsWgtSimple;
 
       //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
-      this.args_AnyWidgetInitializedListeners.add(
+      this.args_AnyWidgetInitializedListeners.addListener(
          new class extends Args_AnyWidget_Initialized_Listener {
             argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
 

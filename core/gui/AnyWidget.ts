@@ -69,7 +69,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       // initialize the tags so they available in initContentBegin/End
       thisX.wrapperTagID = `wrapper_${thisX.tagId}`;
       /** fire the listener for anyone interested  **/
-      if (this.args_AnyWidgetInitializedListeners.count() > 0) {
+      if (this.args_AnyWidgetInitializedListeners.countListeners() > 0) {
          this.args_AnyWidgetInitializedListeners.fire({
                                                          event: {
                                                             widget: thisX,
@@ -89,7 +89,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
       //----------------------- Listener Implementations ---------------------
       if (argsAnyWidget.beforeInitLogicListener) {
-         this.beforeInitLogicListeners.add(new class extends BeforeInitLogicListener {
+         this.beforeInitLogicListeners.addListener(new class extends BeforeInitLogicListener {
             beforeInitLogic(ev: BeforeInitLogicEvent): void {
                argsAnyWidget.beforeInitLogicListener(ev);
             }
@@ -97,7 +97,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       }
 
       if (argsAnyWidget.afterInitLogicListener) {
-         this.afterInitLogicListeners.add(new class extends AfterInitLogicListener {
+         this.afterInitLogicListeners.addListener(new class extends AfterInitLogicListener {
             afterInitLogic(ev: AfterInitLogicEvent): void {
                argsAnyWidget.afterInitLogicListener(ev);
             }
