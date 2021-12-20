@@ -1,56 +1,60 @@
 import {AnyWidget}               from "./AnyWidget";
 import {StringArg, voidFunction} from "../CoreUtils";
 import {AbstractWidget, wu}      from "../../core/index";
-import {BeforeInitLogicEvent} from "./BeforeInitLogicListener";
-import {AfterInitLogicEvent}    from "./AfterInitLogicListener";
+import {BeforeInitLogicEvent}    from "./BeforeInitLogicListener";
+import {AfterInitLogicEvent}     from "./AfterInitLogicListener";
 
 
 export interface IKeyValueString {
-   [key:string]: string
+   [key: string]: string
 }
 
-export interface IArgs_HtmlTag {
-   htmlTagType ?: string; // div by default
-   htmlTagClass ?: string;
-   htmlTagStyle ?: string;
-   htmlOtherAttr ?: IKeyValueString; // {string:string};
+export interface IArgs_HtmlDecoration {
+   htmlTagClass?: string;
+   htmlTagStyle?: string;
+   htmlOtherAttr?: IKeyValueString; // {string:string};
+}
+
+export interface IArgs_HtmlTag extends IArgs_HtmlDecoration {
+   htmlTagType?: string; // div by default
 }
 
 export class IArgs_HtmlTag_Utils {
 
-   static init(args:IArgs_HtmlTag):IArgs_HtmlTag{
+   static init(args: IArgs_HtmlDecoration): IArgs_HtmlTag {
       if (!args)
          args = {};
-      if (!args.htmlTagType)
-         args.htmlTagType = 'div' ;// default to 'div'
-      if ( !args.htmlTagClass)
+      if (!(args as IArgs_HtmlTag).htmlTagType)
+         (args as IArgs_HtmlTag).htmlTagType = 'div';// default to 'div'
+      if (!args.htmlTagClass)
          args.htmlTagClass = '';
       return args;
    }
 
 
-   static class(args:IArgs_HtmlTag):string{
-      args = IArgs_HtmlTag_Utils.init(args);
+   static class(args: IArgs_HtmlDecoration): string {
+      args             = IArgs_HtmlTag_Utils.init(args);
       let htmlTagClass = '';
       if (args.htmlTagClass)
          htmlTagClass = ` class="${args.htmlTagClass}"`;
 
       return htmlTagClass;
    }
-   static style(args:IArgs_HtmlTag):string{
-      args = IArgs_HtmlTag_Utils.init(args);
+
+   static style(args: IArgs_HtmlDecoration): string {
+      args             = IArgs_HtmlTag_Utils.init(args);
       let htmlTagStyle = '';
       if (args.htmlTagStyle)
          htmlTagStyle = ` style="${args.htmlTagStyle}"`;
       return htmlTagStyle;
    }
 
-   static otherAttr(args:IArgs_HtmlTag):string{
-      args = IArgs_HtmlTag_Utils.init(args);
+   static otherAttr(args: IArgs_HtmlDecoration): string {
+      args          = IArgs_HtmlTag_Utils.init(args);
       let htmlAttrs = '';
       if (args.htmlOtherAttr) {
          Object.entries(args.htmlOtherAttr).forEach(entry => {
-            let key = entry[0];
+            let key   = entry[0];
             let value = entry[1];
             //use key and value here
             htmlAttrs += ` ${key}="${value}"`;
@@ -59,7 +63,7 @@ export class IArgs_HtmlTag_Utils {
       return htmlAttrs;
    }
 
-   static all(args:IArgs_HtmlTag):string{
+   static all(args: IArgs_HtmlDecoration): string {
       return `${IArgs_HtmlTag_Utils.class(args)}${IArgs_HtmlTag_Utils.style(args)}${IArgs_HtmlTag_Utils.otherAttr(args)}`;
    }
 
@@ -120,8 +124,8 @@ export class Args_AnyWidget<CONTROLMODEL = any> {
    refresh ?: voidFunction;
    clear ?: voidFunction;
    destroy ?: voidFunction;
-   beforeInitLogicListener ?: (ev:BeforeInitLogicEvent) => void;
-   afterInitLogicListener ?:(ev :AfterInitLogicEvent)=>void;
+   beforeInitLogicListener ?: (ev: BeforeInitLogicEvent) => void;
+   afterInitLogicListener ?: (ev: AfterInitLogicEvent) => void;
 
    /**
     * If this is present,  a new wrapper div is created around the actual input element.
@@ -129,18 +133,18 @@ export class Args_AnyWidget<CONTROLMODEL = any> {
    wrapper           ?: IArgs_HtmlTag;
    ej                ?: CONTROLMODEL
 
-   static initialize(descriptor: Args_AnyWidget, widget:AnyWidget): void {
+   static initialize(descriptor: Args_AnyWidget, widget: AnyWidget): void {
 
-      if ( descriptor.colName) {
+      if (descriptor.colName) {
          if (!descriptor.id)
             descriptor.id = descriptor.colName;
       } else {
-         if ( descriptor.id)
+         if (descriptor.id)
             descriptor.colName = descriptor.id;
       }
 
       if (!descriptor.id)
-         descriptor.id = wu.getRandomString( (widget ? widget.thisClassName : 'widget') ); // generate an id regardless
+         descriptor.id = wu.getRandomString((widget ? widget.thisClassName : 'widget')); // generate an id regardless
 
       if (!descriptor.required)
          descriptor.required = false;

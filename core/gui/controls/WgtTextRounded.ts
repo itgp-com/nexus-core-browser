@@ -31,9 +31,9 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
       if (this.args.required)
          requiredAttribute = ' required';
 
-      this.args.text = this.args.text || {};
-      let textArgs = IArgs_HtmlTag_Utils.init(this.args.text);
-      this.args.text.htmlTagClass += ' e-control input-field';
+      this.args.inputTagDecoration = this.args.inputTagDecoration || {};
+      let textArgs                 = IArgs_HtmlTag_Utils.init(this.args.inputTagDecoration);
+      this.args.inputTagDecoration.htmlTagClass += ' e-control input-field';
 
       x += `<div>`;
 

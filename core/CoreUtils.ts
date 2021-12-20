@@ -6,6 +6,8 @@ import {IDataProvider}                                from "./data/DataProvider"
 import {AnyScreen}                                    from "./gui/AnyScreen";
 import {DataManager, Query, ReturnOption, UrlAdaptor} from "@syncfusion/ej2-data";
 import {EJList}                                       from "./ej2/Ej2Comm";
+import {IArgs_HtmlDecoration, IKeyValueString}        from "./gui/Args_AnyWidget";
+import {isArray}                                      from "lodash";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY   = 1000;
@@ -887,4 +889,79 @@ export async function ej2Query(tablename: string, query: Query, options?: any): 
 // noinspection JSUnusedGlobalSymbols
 export function isDev():boolean{
    return tModel;
+}
+
+/**
+ * Remove all double spaces from a string
+ * @param s
+ */
+export function removeDoubleSpaces(s:string):string { return s.replace(/  +/g, ' ');}
+
+export function applyHtmlDecoration(htmlElement: HTMLElement, decoration:IArgs_HtmlDecoration ):void {
+   if (!htmlElement)
+      return;
+   if (!decoration)
+      return;
+
+   // first append any classes
+   try {
+      let htmlTagClass: string = decoration.htmlTagClass;
+      htmlTagClass             = removeDoubleSpaces(htmlTagClass);
+      if (htmlTagClass)
+         htmlElement.classList.add(...htmlTagClass.split(' '));
+   } catch (ex) {
+      console.log(ex);
+   }
+
+   // now update the style attribute
+   try {
+      let htmlTagStyle: string = decoration.htmlTagStyle;
+      htmlTagStyle             = removeDoubleSpaces(htmlTagStyle);
+      if (htmlTagStyle) {
+         let currentStyle: string = htmlElement.getAttribute('style');
+         if (!currentStyle)
+            currentStyle = ''
+         if (currentStyle.length > 0 && (!currentStyle.endsWith(';')))
+            currentStyle += ';'
+
+         currentStyle += htmlTagStyle;
+         htmlElement.setAttribute('style', currentStyle);
+      }
+   } catch (ex) {
+      console.log(ex);
+   }
+
+   // now add any additional  attributes
+
+   try {
+      let htmlOtherAttr: IKeyValueString = decoration.htmlOtherAttr;
+      if (htmlOtherAttr) {
+
+         for (let key in htmlOtherAttr) {
+            if ( key ) {
+               let value: string = htmlOtherAttr[key];
+
+               if (value == null)
+                  value = ''; // empty attribute
+               try {
+                  htmlElement.setAttribute(key, value);
+               } catch (ex) {
+                  console.log(ex);
+               }
+            } // if key
+         } // for
+      } //if (htmlOtherAttr )
+   } catch (ex) {
+      console.log(ex);
+   }
+
+} // applyHtmlDecoration
+
+export function toStringFromMaybeArray(input: (string|string[]) , joinUsing:string = ' '): string {
+   if (!input)
+      return '';
+   if (isArray(input)){
+      return (input as string[]).join(joinUsing);
+   }
+   return input as string;
 }
