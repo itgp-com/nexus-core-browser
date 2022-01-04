@@ -45,7 +45,7 @@ export class WgtLbl extends WgtSimple<any, Args_AnyWidget, StringArg> {
          x += `<${this.args.wrapper.htmlTagType} id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(this.args.wrapper)}>`;
       }
 
-      x += `<${this.args.htmlTagType} id="${this.tagId}"${IArgs_HtmlTag_Utils.all(this.args)}>${this.value}</${this.args.htmlTagType}>`;
+      x += `<${this.args.htmlTagType} id="${this.tagId}"${IArgs_HtmlTag_Utils.all(this.args)}>${stringArgVal(this.value)}</${this.args.htmlTagType}>`;
 
       if (this.args.wrapper) {
          x += `</${this.args.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->
