@@ -32,6 +32,8 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    wrapperTagID: string;
    tabModel: TabModel;
    lastSelectingIndex: number;
+   lastSelectingEvent: SelectingEventArgs;
+   lastSelectedEvent: SelectEventArgs;
 
    protected constructor() {
       super();
@@ -111,6 +113,7 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
 
       await this.createTabModel();
       thisX.obj = new Tab(this.tabModel, thisX.hget);
+      // thisX.obj.appendTo(thisX.hget); <--- Must do extensive testing before enabling
    } //doInitLogic
 
    async createTabModel() {
@@ -135,7 +138,7 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
       // @ts-ignore
       // @ts-ignore
       // @ts-ignore
-      this.tabModel = {
+      thisX.tabModel = {
          heightAdjustMode: 'None',
          overflowMode:     "MultiRow", // "Popup", //"Extended",
          // overflowMode: "Popup",
@@ -146,11 +149,13 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
          selecting: (e:SelectingEventArgs) => {
             // this is the ACTUAL tab number being selected as far as the children are concerned.
 
-            this.lastSelectingIndex = e.selectingIndex; // e.selectedIndex;
+            thisX.lastSelectingIndex = e.selectingIndex; // e.selectedIndex;
+            thisX.lastSelectingEvent = e;
          },
          selected:  (e:SelectEventArgs) => {
             // let index: number = e.selectedIndex;
-            let index = this.lastSelectingIndex; // cached from event above
+            thisX.lastSelectedEvent = e;
+            let index = thisX.lastSelectingIndex; // cached from event above
             thisX.tabSelected(index);
          },
          cssClass:  "e-fill", // fill tab header with accent background
@@ -225,6 +230,21 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
                                        initialized: initialized,
                                        wgtTab:      thisX,
                                     });
+            } catch (error) {
+               console.log(error);
+               // this.handleError(error);
+            }
+
+
+            try {
+               // trigger this on the component inside the tab
+               tabObj.activatedAsInnerWidget({
+                                                  parentWidget: thisX,
+                                                  parentInfo:   {
+                                                     'selecting': thisX.lastSelectingIndex,
+                                                     'selected':  thisX.lastSelectedEvent,
+                                                  }
+                                               });
             } catch (error) {
                console.log(error);
                // this.handleError(error);

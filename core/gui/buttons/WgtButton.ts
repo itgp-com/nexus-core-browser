@@ -95,7 +95,8 @@ export class WgtButton extends AnyWidget<Button> {
          model.content = stringArgVal(args.label);
       if (args.iconPosition)
          model.iconPosition = args.iconPosition;
-      this.obj = new Button(model, this.hgetButton);
+      this.obj = new Button(model);
+      this.obj.appendTo(this.hgetButton);
 
       if (args.onClick) {
          this.hgetButton.onclick = args.onClick;

@@ -1,7 +1,7 @@
 import {Args_WgtSimple, WgtSimple}                          from "./WgtSimple";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {IDataProviderSimple}     from "../../data/DataProvider";
-import {StringArg, stringArgVal} from "../../CoreUtils";
+import {IDataProviderSimple}                                from "../../data/DataProvider";
+import {StringArg, stringArgVal}                            from "../../CoreUtils";
 
 
 export class Args_WgtLbl extends Args_WgtSimple implements IArgs_HtmlTag {
@@ -23,7 +23,7 @@ export class WgtLbl extends WgtSimple<any, Args_AnyWidget, StringArg> {
    }
 
    static create<DATA_CLASS = any>(args: Args_WgtLbl) {
-      args                             = <Args_WgtLbl>IArgs_HtmlTag_Utils.init(args);
+      args                 = <Args_WgtLbl>IArgs_HtmlTag_Utils.init(args);
       let instance: WgtLbl = new WgtLbl();
       instance.initialize_WgtLbl(args);
       return instance;
@@ -54,8 +54,8 @@ export class WgtLbl extends WgtSimple<any, Args_AnyWidget, StringArg> {
    }
 
    async localRefreshImplementation(): Promise<void> {
-     let x = this.value; // triggers the function calculation if any
-     this.value = x ; // resets the innerHTML
+      let x      = this.value; // triggers the function calculation if any
+      this.value = x; // resets the innerHTML
    }
 
 
@@ -65,12 +65,18 @@ export class WgtLbl extends WgtSimple<any, Args_AnyWidget, StringArg> {
 
    set value(val: StringArg) {
       this.args.labelHTML = val;
-      this.hget.innerHTML = stringArgVal(val);
+      let anchor          = this.hget;
+      if (anchor) {
+         let sval         = stringArgVal(val);
+         anchor.innerHTML = sval;
+      } else {
+         let i = 1;
+      }
    }
 
    getDataProviderSimple(): IDataProviderSimple {
       //there is not data provider for a label currently
-     return null;
+      return null;
    }
 
 

@@ -164,7 +164,8 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
 
 
 
-      this.obj = new TextBox(args.ej, this.hgetInput);
+      this.obj = new TextBox(args.ej);
+      this.obj.appendTo( this.hgetInput);
 
       if (args.initialValue)
          this.value = stringArgVal(args.initialValue);

@@ -151,7 +151,8 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
          this.args.beforeGridInstantiated.call(this);
       }
       try {
-         this.obj = new Grid(this.gridModel, hget(this.tagId));
+         this.obj = new Grid(this.gridModel);
+         this.obj.appendTo(hget(this.tagId))
       } catch (ex) {
          this.handleError(ex);
       }

@@ -16,9 +16,9 @@ import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}           from "./A
 import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener}         from "./BeforeRepaintWidgetListener";
 import {WidgetErrorHandler, WidgetErrorHandlerStatus}                  from "../WidgetErrorHandler";
 import {ParentAddedEvent, ParentAddedListener}                         from "./ParentAddedListener";
-import {DialogInfo}                                                    from "../ej2/DialogInfo";
-import {Args_WgtTab_SelectedAsTab}                                     from "./panels/WgtTab";
-import {AbstractDialogWindow, DialogWindowOpenEvent}                   from "../ej2/AbstractDialogWindow";
+import {DialogInfo}                                  from "../ej2/DialogInfo";
+import {Args_WgtTab_SelectedAsTab, WgtTab}           from "./panels/WgtTab";
+import {AbstractDialogWindow, DialogWindowOpenEvent} from "../ej2/AbstractDialogWindow";
 
 export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
 export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
@@ -31,6 +31,14 @@ export class Args_AbstractWidget {
 
 export class Args_Repaint {
    callDestroyOnContents: boolean;
+}
+
+export class Args_ActivatedAsInnerWidget<PARENT_WIDGET extends AbstractWidget> {
+   parentWidget: PARENT_WIDGET;
+   /**
+    * Usually the name of the event(s) and the event(s) data, but could contain any info
+    */
+   parentInfo:{[key:string]: any} = {};
 }
 
 export abstract class AbstractWidget<DATA_TYPE = any> {
@@ -256,6 +264,13 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * Gets called every time the tab is selected
     */
    selectedAsTab(arg: Args_WgtTab_SelectedAsTab): void {
+   }
+
+   /**
+    * Called when this component is a panel in a lazy-loading parent component like tab or accordion
+    * @param args
+    */
+   activatedAsInnerWidget(args:Args_ActivatedAsInnerWidget<any> ): void {
    }
 
 

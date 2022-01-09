@@ -114,8 +114,8 @@ export abstract class WgtDropDown<ARG_CLASS extends Args_WgtDropDown = Args_WgtD
       }; // change event
 
 
-      this.obj = new DropDownList(ej, this.hgetInput);
-
+      this.obj = new DropDownList(ej);
+      this.obj.appendTo(this.hgetInput);
 
    } // doInitLogic
 

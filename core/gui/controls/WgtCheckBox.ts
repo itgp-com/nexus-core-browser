@@ -1,7 +1,8 @@
-import {Args_WgtSimple, WgtSimple}           from "./WgtSimple";
+import {Args_WgtSimple, WgtSimple}                          from "./WgtSimple";
 import {CheckBox, CheckBoxModel}                            from '@syncfusion/ej2-buttons';
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 import {DataProviderChangeEvent}                            from "../../data/DataProvider";
+import {hget}                                               from "../../CoreUtils";
 
 export abstract class Args_WgtCheckBox_Label {
    position ?:  "Top"|"Leading"|"Trailing";
@@ -142,7 +143,8 @@ export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtC
          this.toDataProvider(currentValue);
       }; // change event
 
-      this.obj = new CheckBox(ej, this.hgetInput);
+      this.obj = new CheckBox(ej );
+      this.obj.appendTo(this.hgetInput)
    } // doInitLogic
 
 

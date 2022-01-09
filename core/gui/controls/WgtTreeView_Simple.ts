@@ -58,7 +58,8 @@ export class  WgtTreeView_Simple extends WgtSimple<TreeView, Args_AnyWidget, Tre
    }
 
    async localLogicImplementation(): Promise<void> {
-      this.obj = new TreeView(this.treeViewModel, hget(this.tagId));
+      this.obj = new TreeView(this.treeViewModel);
+      this.obj.appendTo(hget(this.tagId))
       this.obj.expandAll();
    }
 
