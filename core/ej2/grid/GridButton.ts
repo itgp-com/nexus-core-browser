@@ -8,7 +8,7 @@ import {AbstractGridButton, Args_AbstractGridButton} from "./AbstractGridButton"
  * Define the button first with a unique class name (your choice as long as it does not conflict with other existing class names)
  *
  * <pre>
- *       let uploadButton: GridButton_App = await GridButton_App.create({
+ *       let uploadButton: GridButton = await GridButton.createGridButton({
  *                                                                         buttonClass: 'upload_custom_class_777',
  *                                                                         fa_classes:  'fas fa-cloud-upload-alt'
  *                                                                      });
@@ -49,7 +49,11 @@ export class GridButton extends AbstractGridButton {
       super(param);
    }
 
-   static async create(param: Args_AbstractGridButton): Promise<GridButton> {
+   /**
+    * Named createGridButton so it does not interfere with subsequent
+    * @param param
+    */
+   static createGridButton(param: Args_AbstractGridButton): GridButton {
       let instance = new GridButton(param);
       return instance;
    }
