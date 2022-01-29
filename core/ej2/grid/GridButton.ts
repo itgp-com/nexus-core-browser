@@ -8,10 +8,10 @@ import {AbstractGridButton, Args_AbstractGridButton} from "./AbstractGridButton"
  * Define the button first with a unique class name (your choice as long as it does not conflict with other existing class names)
  *
  * <pre>
- *       let uploadButton: GridButton = await GridButton.createGridButton({
- *                                                                         buttonClass: 'upload_custom_class_777',
- *                                                                         fa_classes:  'fas fa-cloud-upload-alt'
- *                                                                      });
+ *       let uploadButton: GridButton = new GridButton({
+ *                                                        buttonClass: 'upload_custom_class_777',
+ *                                                        fa_classes:  'fas fa-cloud-upload-alt'
+ *                                                     });
  *</pre>
  *
  * Insert the column model in the grid columns:
@@ -45,16 +45,8 @@ import {AbstractGridButton, Args_AbstractGridButton} from "./AbstractGridButton"
  */
 export class GridButton extends AbstractGridButton {
 
-   protected constructor(param: Args_AbstractGridButton) {
+   constructor(param: Args_AbstractGridButton) {
       super(param);
    }
 
-   /**
-    * Named createGridButton so it does not interfere with subsequent
-    * @param param
-    */
-   static createGridButton(param: Args_AbstractGridButton): GridButton {
-      let instance = new GridButton(param);
-      return instance;
-   }
 }
