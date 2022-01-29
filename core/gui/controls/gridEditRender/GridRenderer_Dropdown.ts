@@ -1,8 +1,8 @@
 import {Args_GridRenderer_Common}      from "./GridRenderer_Common";
 import {ChangeEventArgs, DropDownList} from "@syncfusion/ej2-dropdowns";
 import {QueryCellInfoEventArgs}        from "@syncfusion/ej2-grids";
-import {getErrorHandler}               from "nexus-core-browser/core/CoreErrorHandling";
 import {DropDownListModel}             from "@syncfusion/ej2-dropdowns/src/drop-down-list";
+import {getErrorHandler}               from "../../../CoreErrorHandling";
 
 export class Args_GridRenderer_Dropdown<LIST_RECORD = any> extends Args_GridRenderer_Common<DropDownList, DropDownListModel, (string |number | boolean), ChangeEventArgs, HTMLInputElement> {
    listRecords: LIST_RECORD[];

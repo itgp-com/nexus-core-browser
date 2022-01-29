@@ -298,18 +298,18 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                   return; // do not continue if flag set
             } //  if (thisX.beforeRepaintWidgetListeners.count() > 0)
 
-            let existingHtmlElement = document.getElementById(this.tagId);
+            let existingHtmlElement = document.getElementById(thisX.tagId);
             if (existingHtmlElement) {
                let parentNode = existingHtmlElement.parentElement; // was parentNode
                if (parentNode) {
 
                   if (args.callDestroyOnContents) {
-                     await this.destroy(); // first destroy this instance and all children. This removes all JS events/html as each component seems fit to clean up after itself
+                     await thisX.destroy(); // first destroy this instance and all children. This removes all JS events/html as each component seems fit to clean up after itself
                   } else {
-                     this.resetInitialize();
+                     thisX.resetInitialize();
                   }
 
-                  await wu.updateWidgetInDOM({
+                  await wu.updateWidgetInDOM.call(thisX,{
                                                 parentHTMLElement:         parentNode,
                                                 newWidget:                 thisX,
                                                 existingWidgetHTMLElement: existingHtmlElement,

@@ -76,11 +76,23 @@ export class WgtTreeView extends AnyWidget<TreeView, Args_WgtTreeView, any> {
       }
    } // localClearImplementation
 
-   // async localRefreshImplementation() {
-   //    if (this.obj) {
-   //       this.obj.refresh();
-   //    }
-   // } // localRefreshImplementation
+   async localRefreshImplementation() {
+      try {
+         if (this.obj) {
+
+            let expandedNodes = this.obj.expandedNodes;
+            let selectedNodes = this.obj.selectedNodes
+
+
+            this.obj.refresh();
+            this.obj.expandedNodes = expandedNodes;
+            this.obj.selectedNodes = selectedNodes;
+
+         }
+      } catch (ex) {
+         this.handleError(ex);
+      }
+   } // localRefreshImplementation
 
    get value(): DataManager | { [key: string]: Object }[] {
       if (this.obj)
@@ -94,4 +106,32 @@ export class WgtTreeView extends AnyWidget<TreeView, Args_WgtTreeView, any> {
          this.obj.fields.dataSource = value;
       }
    }
+
+
+   //----------------------------
+
+   selectNode( treeNode:string){
+      if ( !treeNode)
+         return;
+
+      let pk_field_id:string = this.obj.fields.parentID;
+      if (!pk_field_id)
+         return;
+
+      let currentNodeID:string = treeNode as string;
+
+      let originalNodeID = currentNodeID;
+      let path: string[] = [currentNodeID];
+      while (currentNodeID) {
+         let records: any[] = this.obj.getTreeData(currentNodeID) as any[];
+         if (records || records.length > 0) {
+            let record = records[0];
+            currentNodeID = record[pk_field_id];
+            path.push(currentNodeID);
+         } // if
+      } // while current node
+      this.obj.expandedNodes = path;
+      this.obj.selectedNodes = [originalNodeID];
+   }
+
 } // main class
