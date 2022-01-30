@@ -9,6 +9,9 @@ export class ErrorHandler {
    documentClickAdded:boolean = false;
 
    public displayExceptionToUser(ex:any) {
+      if (ex== null)
+         return;
+
       if ( ex instanceof Error) {
          this.displayErrorMessageToUser(ex.message);
          console.log(ex);
