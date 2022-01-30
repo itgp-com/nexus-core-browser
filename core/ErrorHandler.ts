@@ -13,7 +13,7 @@ export class ErrorHandler {
          this.displayErrorMessageToUser(ex.message);
          console.log(ex);
       } else if (typeof ex === 'string' || typeof ex === 'number'){
-         this.displayErrorMessageToUser(ex);
+         this.displayErrorMessageToUser(ex as string);
          console.log(ex);
       } else if ( typeof ex === 'object' && (ex.hasOwnProperty('displayMessage') || ex.hasOwnProperty('logMessage')) ){ //  instanceof Err
          let displayMessage = ex.displayMessage;
