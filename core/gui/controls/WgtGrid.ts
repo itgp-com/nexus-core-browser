@@ -6,6 +6,7 @@ import {ExcelExport, Page, Resize, Toolbar, Filter, Aggregate}                  
 import {AbstractWidget, Args_AbstractWidget}                                                 from "../AbstractWidget";
 import {ClassArg, classArgInstanceVal, hget}                                                 from "../../CoreUtils";
 import {AggregateRowModel}                                                                   from "@syncfusion/ej2-grids/src/grid/models/models";
+import {AnyScreen}                                                                           from "../AnyScreen";
 
 Grid.Inject(Toolbar, ExcelExport, Page, Resize, Filter, Aggregate);
 
@@ -86,7 +87,7 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
       if (args.query)
          this.gridModel.query = args.query;
 
-      if ( args.aggregates)
+      if (args.aggregates)
          this.gridModel.aggregates = args.aggregates;
 
       //--------------- function / events from here down
@@ -128,7 +129,7 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
 
 
    async localContentBegin(): Promise<string> {
-     return `<div id="${this.tagId}"></div>`
+      return `<div id="${this.tagId}"></div>`
    } // no children for a Grid, so all HTML can go in the Begin section
 
    async localContentEnd(): Promise<string> {
@@ -158,6 +159,25 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
       }
       this.tagColumns(); // only tag at initialization time
    }
+
+   async localRefreshImplementation(): Promise<void> {
+      if (!this.obj)
+         return;
+      try {
+         let screenParent: AnyScreen = this.findAncestor<AnyScreen>(instance => instance instanceof AnyScreen);
+         if (screenParent) {
+            // if it's in a screen, make sure you don't trigger a refresh loop
+            if (!screenParent.isInsideRefreshAnyScreen())
+               await this.obj?.refresh(); // refresh the grid
+         } else {
+            // if it's not in a screen, just refresh
+            await this.obj?.refresh();
+         }
+      } catch (ex) {
+         console.log(ex);
+      }
+   }
+
 
    /**
     * tag all the columns with the instance of this table
@@ -216,6 +236,7 @@ export class WgtPanel_ColumnHeader extends AbstractWidget {
    }
 
    async localRefreshImplementation(): Promise<void> {
+
    }
 
 }
