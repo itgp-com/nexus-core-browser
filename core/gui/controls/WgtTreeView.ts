@@ -119,12 +119,16 @@ export class WgtTreeView extends AnyWidget<TreeView, Args_WgtTreeView, any> {
          return;
 
       let currentNodeID:string = treeNode as string;
+      let records: any[] = this.obj.getTreeData(currentNodeID) as any[];
+      if ( records.length == 0){
+         return;
+      }
 
       let originalNodeID = currentNodeID;
       let path: string[] = [currentNodeID];
       while (currentNodeID) {
          let records: any[] = this.obj.getTreeData(currentNodeID) as any[];
-         if (records || records.length > 0) {
+         if (records && records.length > 0) {
             let record = records[0];
             currentNodeID = record[pk_field_id];
             path.push(currentNodeID);
@@ -132,6 +136,6 @@ export class WgtTreeView extends AnyWidget<TreeView, Args_WgtTreeView, any> {
       } // while current node
       this.obj.expandedNodes = path;
       this.obj.selectedNodes = [originalNodeID];
-   }
+   } // selectNode
 
 } // main class
