@@ -8,6 +8,7 @@ import {DataManager, Query, ReturnOption, UrlAdaptor} from "@syncfusion/ej2-data
 import {EJList}                                       from "./ej2/Ej2Comm";
 import {IArgs_HtmlDecoration, IKeyValueString}        from "./gui/Args_AnyWidget";
 import {isArray}                                      from "lodash";
+import {ClientVersion}                                from "./gui/ClientVersion";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY   = 1000;
@@ -52,24 +53,17 @@ String.prototype.escapeHTML = function (this: Object) {
    return x;
 };
 
-//
-// export function escapeHTML(value: string) {
-//     if (value == null)
-//         return null;
-//
-//     value = value.toString();
-//
-//     var tagsToReplace = {
-//         '&': '&amp;',
-//         '<': '&lt;',
-//         '>': '&gt;'
-//     };
-//     let x:string =  value.replace(/[&<>]/g, function(tag:string) {
-//         return tagsToReplace[tag] || tag;
-//     });
-//
-//     return x;
-// };
+//-------------------------------
+let _clientVersion:ClientVersion = null;
+
+export function getClientVersion() {
+   return _clientVersion;
+}
+
+export function setClientVersion(newClientVersion:ClientVersion):void {
+   _clientVersion = newClientVersion;
+}
+//------------------------------
 
 export interface voidFunction {
    (): void;

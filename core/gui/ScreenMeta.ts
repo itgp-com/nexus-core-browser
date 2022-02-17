@@ -1,6 +1,4 @@
-import * as _               from "lodash";
-import {MetaTableData_Base} from "./MetaTableData_Base";
-import {MetaTableData}      from "../ej2/MetaTableData";
+import {MetaTableData} from "../ej2/MetaTableData";
 
 export class ScreenMeta {
 

@@ -1,24 +1,25 @@
 /**
  * This class serves as the base of every data enabled panel
  */
-import {ScreenMeta}                                                    from "./ScreenMeta";
-import * as wu                                                         from "../ej2/WidgetUtils";
-import {ArgsPost}                                                      from "../ej2/WidgetUtils";
-import {Err}                                                           from "../Core";
-import {AxiosResponse}                                                 from "axios";
-import {getErrorHandler}                                               from "../CoreErrorHandling";
-import {getRandomString, hget, htmlToElement, StringArg, stringArgVal} from "../CoreUtils";
-import {ListenerHandler}                                               from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                 from "./BeforeInitLogicListener";
-import {AfterInitLogicEvent, AfterInitLogicListener}                   from "./AfterInitLogicListener";
-import {ExceptionEvent}                                                from "../ExceptionEvent";
-import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}           from "./AfterRepaintWidgetListener";
-import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener}         from "./BeforeRepaintWidgetListener";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}                  from "../WidgetErrorHandler";
-import {ParentAddedEvent, ParentAddedListener}                         from "./ParentAddedListener";
-import {DialogInfo}                                  from "../ej2/DialogInfo";
-import {Args_WgtTab_SelectedAsTab, WgtTab}           from "./panels/WgtTab";
-import {AbstractDialogWindow, DialogWindowOpenEvent} from "../ej2/AbstractDialogWindow";
+import {ScreenMeta}                                                                      from "./ScreenMeta";
+import * as wu                                                                           from "../ej2/WidgetUtils";
+import {ArgsPost}                                                                        from "../ej2/WidgetUtils";
+import {Err}                                                                             from "../Core";
+import {AxiosResponse}                                                                   from "axios";
+import {getErrorHandler}                                                                 from "../CoreErrorHandling";
+import {getClientVersion, getRandomString, hget, htmlToElement, StringArg, stringArgVal} from "../CoreUtils";
+import {ListenerHandler}                                                                 from "../ListenerHandler";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                                   from "./BeforeInitLogicListener";
+import {AfterInitLogicEvent, AfterInitLogicListener}                                     from "./AfterInitLogicListener";
+import {ExceptionEvent}                                                                  from "../ExceptionEvent";
+import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}                             from "./AfterRepaintWidgetListener";
+import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener}                           from "./BeforeRepaintWidgetListener";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                    from "../WidgetErrorHandler";
+import {ParentAddedEvent, ParentAddedListener}                                           from "./ParentAddedListener";
+import {DialogInfo}                                                                      from "../ej2/DialogInfo";
+import {Args_WgtTab_SelectedAsTab, WgtTab}                                               from "./panels/WgtTab";
+import {AbstractDialogWindow, DialogWindowOpenEvent}                                     from "../ej2/AbstractDialogWindow";
+import {ClientVersion}                                                                   from "./ClientVersion";
 
 export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
 export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
@@ -38,7 +39,7 @@ export class Args_ActivatedAsInnerWidget<PARENT_WIDGET extends AbstractWidget> {
    /**
     * Usually the name of the event(s) and the event(s) data, but could contain any info
     */
-   parentInfo:{[key:string]: any} = {};
+   parentInfo: { [key: string]: any } = {};
 }
 
 export abstract class AbstractWidget<DATA_TYPE = any> {
@@ -270,7 +271,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * Called when this component is a panel in a lazy-loading parent component like tab or accordion
     * @param args
     */
-   activatedAsInnerWidget(args:Args_ActivatedAsInnerWidget<any> ): void {
+   activatedAsInnerWidget(args: Args_ActivatedAsInnerWidget<any>): void {
    }
 
 
@@ -309,27 +310,27 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                      thisX.resetInitialize();
                   }
 
-                  await wu.updateWidgetInDOM.call(thisX,{
-                                                parentHTMLElement:         parentNode,
-                                                newWidget:                 thisX,
-                                                existingWidgetHTMLElement: existingHtmlElement,
-                                                callback:                  () => {
-                                                   // execute after repaint if there are any listeners
-                                                   if (thisX.afterRepaintWidgetListeners.countListeners() > 0) {
-                                                      let afterEvent: AfterRepaintWidgetEvent = new AfterRepaintWidgetEvent();
-                                                      afterEvent.widget                       = thisX;
+                  await wu.updateWidgetInDOM.call(thisX, {
+                     parentHTMLElement:         parentNode,
+                     newWidget:                 thisX,
+                     existingWidgetHTMLElement: existingHtmlElement,
+                     callback:                  () => {
+                        // execute after repaint if there are any listeners
+                        if (thisX.afterRepaintWidgetListeners.countListeners() > 0) {
+                           let afterEvent: AfterRepaintWidgetEvent = new AfterRepaintWidgetEvent();
+                           afterEvent.widget                       = thisX;
 
-                                                      thisX.afterRepaintWidgetListeners.fire({
-                                                                                                event:            afterEvent,
-                                                                                                exceptionHandler: (exceptionEvent) => {
-                                                                                                   console.log(exceptionEvent.exception);
-                                                                                                   getErrorHandler().displayErrorMessageToUser(exceptionEvent.description);
-                                                                                                },
-                                                                                             });
+                           thisX.afterRepaintWidgetListeners.fire({
+                                                                     event:            afterEvent,
+                                                                     exceptionHandler: (exceptionEvent) => {
+                                                                        console.log(exceptionEvent.exception);
+                                                                        getErrorHandler().displayErrorMessageToUser(exceptionEvent.description);
+                                                                     },
+                                                                  });
 
-                                                   }   //if count > 0
-                                                } // callback
-                                             });
+                        }   //if count > 0
+                     } // callback
+                  });
                } //if (parentNode)
             } // if ( existingHtmlElement)
 
@@ -371,14 +372,21 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                });
 
 
-               let x = `
+               let x                            = `
 <div class="flex-full-height">
         <div><b>Screen name:</b> ${this._thisClassName}</div>
         <div style="margin-bottom: 30px"></div>
         <div><b>Tables used:</b></div>
         <div class="row">${tablesHtml}</div>
-</div>
+        <p style="flex-grow: 1"></p>
 `;
+               let clientVersion: ClientVersion = getClientVersion();
+               if (clientVersion) {
+                  x += `<div style="color:darkgray;"><b>Version:</b> `
+                  x += `${clientVersion.major}.${clientVersion.minor}.${clientVersion.build}`
+                  x += `</div>`
+               }
+               x += `</div>`;
 
 
                let dialogTagId: string    = getRandomString('registerInfoTag');
@@ -475,9 +483,9 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
          try {
             await this.afterInitLogic(afterEvt)
-         } catch (ex){
+         } catch (ex) {
             thisX.handleError(ex);
-                  }
+         }
 
          if (this.afterInitLogicListeners.countListeners() > 0) {
             this.afterInitLogicListeners.fire({
@@ -831,7 +839,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * @param evt
     * @since 1.0.24
     */
-   async afterInitLogic(evt:AfterInitLogicEvent):Promise<void>{
+   async afterInitLogic(evt: AfterInitLogicEvent): Promise<void> {
       //empty implementation
    }
 
