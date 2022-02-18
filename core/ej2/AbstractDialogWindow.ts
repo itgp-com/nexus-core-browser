@@ -27,7 +27,7 @@ export abstract class Args_AbstractDialogWindow {
     * @param instance
     * return true if close should continue, false otherwise
     */
-   onBeforeClose?(instance: AbstractDialogWindow): boolean;
+   onBeforeClose?(instance: AbstractDialogWindow): boolean | Promise<boolean>;
 
    onAfterClose?(instance: AbstractDialogWindow): void;
 }
@@ -47,6 +47,7 @@ export class AbstractDialogWindow {
    private _dialogModel: DialogModel;
 
    private _dialog: Dialog;
+   private _beforeCloseHideCalled: boolean = false;
 
 
    async initialize_AbstractDialogWindow(args: Args_AbstractDialogWindow) {
@@ -145,17 +146,37 @@ export class AbstractDialogWindow {
           beforeOpen:thisX.beforeOpen
           does not pass the context correctly
           */
-         beforeOpen:  (beforeOpenEventArgs: BeforeOpenEventArgs) => {
-            thisX.beforeOpen(beforeOpenEventArgs);
+         beforeOpen:  async (beforeOpenEventArgs: BeforeOpenEventArgs) => {
+            await thisX.beforeOpen(beforeOpenEventArgs);
          },
          open:        async (e: any) => {
             await thisX.open(e);
          },
          beforeClose: (beforeCloseEventArgs: BeforeCloseEventArgs) => {
-            thisX.beforeClose(beforeCloseEventArgs);
+            /**
+             * Transforms a synchronous method into asynchronous one by using the _beforeCloseHideCalled flag.
+             *
+             * First time through, _beforeCloseHideCalled = false
+             * The beforeCloseEventArgs.cancel flag is set to true (don't close window) and the asynchronous function
+             * thisX.beforeClose(beforeCloseEventArgs) is called.
+             *
+             * When that executes, if it needs to close the dialog, it will actually invoke the hide() method in the dialge
+             *  but first it will set the _beforeCloseHideCalled to true so that the close is allowed to go through in this case.
+             *
+             */
+
+
+            if (thisX._beforeCloseHideCalled) {
+               beforeCloseEventArgs.cancel  = false; // allow the close since the flag is set
+               thisX._beforeCloseHideCalled = false; // reset the flag
+            } else {
+               beforeCloseEventArgs.cancel = true; // cancel the close in synchronous mode (before async below has executed)
+               thisX.beforeClose(beforeCloseEventArgs); // it's async actually, but uses the  _beforeCloseHideCalled
+            }
+
          },
-         close:       (e: any) => {
-            thisX.close();
+         close:       async (e: any) => {
+            await thisX.close();
          },
       };
    } //initialize_DialogModel
@@ -164,7 +185,7 @@ export class AbstractDialogWindow {
     * Event triggers when the dialog is being opened. If you cancel this event, the dialog remains closed. Set the cancel argument to true to cancel the open of a dialog.
     * @param beforeOpenEventArgs
     */
-   beforeOpen(beforeOpenEventArgs: BeforeOpenEventArgs) {
+   async beforeOpen(beforeOpenEventArgs: BeforeOpenEventArgs) {
       if (this.initArgs) {
          try {
             if (this.initArgs.onBeforeOpen) {
@@ -214,12 +235,13 @@ export class AbstractDialogWindow {
     * Event triggers before the dialog is closed. If you cancel this event, the dialog remains opened. Set the cancel argument to true to cancel the closure of a dialog.
     * @param beforeCloseEventArgs
     */
-   beforeClose(beforeCloseEventArgs: BeforeCloseEventArgs) {
+   async beforeClose(beforeCloseEventArgs: BeforeCloseEventArgs) {
       let shouldClose = true;
+
       try {
          if (this.initArgs) {
             if (this.initArgs.onBeforeClose) {
-               shouldClose = this.initArgs.onBeforeClose(this); // call init function
+               shouldClose = await this.initArgs.onBeforeClose(this); // call init function
             } // if (this.initArgs.onOpen)
          } //  if ( this.initArgs)
 
@@ -231,9 +253,12 @@ export class AbstractDialogWindow {
       if (shouldClose) {
          if (this.resolvedContent)
             //cannot await because this method is synchronous
-            this.resolvedContent.destroy();
-      } else {
-         beforeCloseEventArgs.cancel = true; // cancel the close
+            await this.resolvedContent.destroy();
+
+         this._beforeCloseHideCalled = true; // allow dialog to actually close
+         this._dialog?.hide();
+         // } else {
+         //    beforeCloseEventArgs.cancel = true; // cancel the close
       } // if (shouldClose)
 
    } // beforeClose
@@ -242,7 +267,7 @@ export class AbstractDialogWindow {
    /**
     * Triggers AFTER the dialog has been closed.
     */
-   close() {
+   async close() {
       try {
 
          if (this.resolvedContent)

@@ -1,9 +1,8 @@
 import {AbstractDialogWindow, Args_AbstractDialogWindow} from "./AbstractDialogWindow";
 
-export class Args_DialogWindow extends Args_AbstractDialogWindow{
+export class Args_DialogWindow extends Args_AbstractDialogWindow {
 
 }
-
 
 
 /**
@@ -23,15 +22,15 @@ export class DialogWindow extends AbstractDialogWindow {
       await this.initialize_AbstractDialogWindow(args);
    }
 
-   static async create(args:Args_DialogWindow){
-      let instance:DialogWindow = new DialogWindow();
+   static async create(args: Args_DialogWindow) {
+      let instance: DialogWindow = new DialogWindow();
       await instance.initialize_DialogWindow(args);
       return instance;
    }
 
-   static async createAndShow(args:Args_DialogWindow){
+   static async createAndShow(args: Args_DialogWindow) {
       let instance = await DialogWindow.create(args);
-       instance.show();
+      instance.show();
       return instance;
    }
 
