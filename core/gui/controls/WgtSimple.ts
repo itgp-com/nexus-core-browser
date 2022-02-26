@@ -49,7 +49,7 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
 
 
    initialize_WgtSimple(argsWgtSimple: Args_WgtSimple, argsAnyWidget ?: WIDGET_DESCRIPTOR_TYPE) {
-      let thisX = this;
+      let thisX          = this;
       this.argsWgtSimple = argsWgtSimple;
 
       //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
@@ -58,8 +58,8 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
             argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
 
                // initialize the tags so they available in initContentBegin/End
-               thisX.labelTagID   = `label_${evt.widget.tagId}`;
-               thisX.errorTagID   = `error_${evt.widget.tagId}`;
+               thisX.labelTagID = `label_${evt.widget.tagId}`;
+               thisX.errorTagID = `error_${evt.widget.tagId}`;
 
             }
          }
@@ -68,7 +68,7 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
       if (!argsAnyWidget)
          argsAnyWidget = {} as any;
 
-      if ( argsWgtSimple.validation){
+      if (argsWgtSimple.validation) {
          argsAnyWidget.validation = argsWgtSimple.validation;
       }
 
@@ -101,23 +101,28 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
 
 
    validate(): boolean {
-      let form: WgtForm = this.findForm();
-      if (form) {
-         let formValidator = form.formValidator;
-         if (formValidator) {
-            if ( this.argsWgtSimple.validation){
-               formValidator.addRules( this.name, this.argsWgtSimple.validation);
-            }
+      try {
+         let form: WgtForm = this.findForm();
+         if (form) {
+            let formValidator = form.formValidator;
+            if (formValidator) {
+               if (this.argsWgtSimple.validation) {
+                  formValidator.addRules(this.name, this.argsWgtSimple.validation);
+               }
 
 
-            if (formValidator.rules) {
-               if (formValidator.rules[this.name]) {
-                  return formValidator.validate(this.name); // validate this textfield alone
+               if (formValidator.rules) {
+                  if (formValidator.rules[this.name]) {
+                     return formValidator.validate(this.name); // validate this textfield alone
+                  }
                }
             }
-         }
-      } // if form
-      return true; // validated
+         } // if form
+         return true; // validated
+      } catch (ex) {
+         this.handleError(ex);
+         return false; // not validated if exception
+      }
    }
 
    async onBlur() {
