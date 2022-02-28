@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "include": [
-        "core/**/*"
-    ],
+//    "include": [
+//        "core/**/*"
+//    ],
     "baseUrl": ".",
     "paths": { "*": ["types/*"] },
     "target": "es6",

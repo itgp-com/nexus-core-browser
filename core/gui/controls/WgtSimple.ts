@@ -125,7 +125,7 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
       }
    }
 
-   async onBlur() {
+   protected async _onValueChanged() {
       let thisX     = this;
       let validated = this.validate();
       if (!validated) {

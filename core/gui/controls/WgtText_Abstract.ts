@@ -113,7 +113,7 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
       } else {
          args.ej.blur = async (arg, rest) => {
 
-            await thisX.onBlur();      // local onBlur
+            await thisX._onValueChanged();      // local onBlur
 
             if (blur) {
                // execute the passed in blur
@@ -170,6 +170,8 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
       if (args.initialValue)
          this.value = stringArgVal(args.initialValue);
 
+
+      // if we have an initial value, then set it the previous value to same
       if (this.value)
          this.previousValue = this.value;
 

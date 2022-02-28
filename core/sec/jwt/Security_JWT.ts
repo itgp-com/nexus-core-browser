@@ -1,8 +1,8 @@
-import {getAppPath}                     from "nexus-core-browser/core/CoreUtils";
-import {asyncHttpPost}                  from "nexus-core-browser/core/ej2/WidgetUtils";
 import {AuthenticationOrRefreshRequest} from "./AuthenticationOrRefreshRequest";
 import {AxiosResponse}                  from "axios";
 import {AuthenticationResult}           from "./AuthenticationResult";
+import {getAppPath}                     from "../../CoreUtils";
+import {asyncHttpPost}                  from "../../ej2/WidgetUtils";
 
 export class Security_JWT {
 

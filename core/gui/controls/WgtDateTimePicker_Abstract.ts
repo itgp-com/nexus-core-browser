@@ -79,7 +79,7 @@ export abstract class WgtDateTimePicker_Abstract extends WgtSimple<DateTimePicke
       } else {
          args.ej.blur = (arg, rest) => {
 
-            thisX.onBlur();      // local onBlur
+            thisX._onValueChanged();      // local onBlur
 
             if (blur) {
                // execute the passed in blur
@@ -90,7 +90,7 @@ export abstract class WgtDateTimePicker_Abstract extends WgtSimple<DateTimePicke
 
       let oldChange = args.ej.change;
       args.ej.change = (ev:ChangedEventArgs) =>{
-         thisX.onBlur(); // write to appserver
+         thisX._onValueChanged(); // write to appserver
 
          if (oldChange)
             oldChange(ev);

@@ -105,7 +105,7 @@ export abstract class WgtColorPicker_Abstract extends WgtSimple<ColorPicker, Arg
    protected doChange(currentValue: string){
       if (currentValue !== this.previousValue){
          this.value = currentValue; // must do this manually
-         this.onBlur(); // write to appserver
+         this._onValueChanged(); // write to appserver
       }
    } // doChange
 

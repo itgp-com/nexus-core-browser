@@ -69,7 +69,7 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
       } else {
          document.getElementById(this.tagId).addEventListener('blur', async () => {
 
-            await thisX.onBlur();      // local onBlur
+            await thisX._onValueChanged();      // local onBlur
 
             if (blur) {
                // execute the passed in blur

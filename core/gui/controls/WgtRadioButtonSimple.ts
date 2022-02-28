@@ -9,11 +9,11 @@ export class WgtRadioButtonSimple extends WgtRadioButton{
 
    static create<T>(args: Args_WgtRadioButton){
       let instance = new WgtRadioButtonSimple()
-      instance.initialize_WgtDropDownSimple(args);
+      instance.initialize_WgtRadioButtonSimple(args);
       return instance;
    } // create
 
-   initialize_WgtDropDownSimple(args: Args_WgtRadioButton){
+   initialize_WgtRadioButtonSimple(args: Args_WgtRadioButton){
       if (!args)
          args = new Args_WgtRadioButton(); // so defaults are in place
 

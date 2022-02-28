@@ -1,7 +1,7 @@
 import {QueryCellInfoEventArgs}                   from "@syncfusion/ej2-grids";
 import {Args_GridRenderer_Common}                 from "./GridRenderer_Common";
 import {ChangeEventArgs, CheckBox, CheckBoxModel} from "@syncfusion/ej2-buttons";
-import {getErrorHandler}                          from "nexus-core-browser/core/CoreErrorHandling";
+import {getErrorHandler}                          from "../../../CoreErrorHandling";
 
 
 export class Args_GridRenderer_Checkbox extends Args_GridRenderer_Common<CheckBox, CheckBoxModel, boolean, ChangeEventArgs, HTMLInputElement> {
