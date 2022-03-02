@@ -54,15 +54,16 @@ String.prototype.escapeHTML = function (this: Object) {
 };
 
 //-------------------------------
-let _clientVersion:ClientVersion = null;
+let _clientVersion: ClientVersion = null;
 
 export function getClientVersion() {
    return _clientVersion;
 }
 
-export function setClientVersion(newClientVersion:ClientVersion):void {
+export function setClientVersion(newClientVersion: ClientVersion): void {
    _clientVersion = newClientVersion;
 }
+
 //------------------------------
 
 export interface voidFunction {
@@ -790,8 +791,8 @@ export function hexToRgb(hex: string) {
    if (!hex || hex === undefined || hex === '') {
       return undefined;
    }
-if (hex.length > 7) // 8 or 9 character hex with opacity
-   return undefined;
+   if (hex.length > 7) // 8 or 9 character hex with opacity
+      return undefined;
 
 
    const result =
@@ -819,6 +820,7 @@ export function hexToRgba(hex8char: string) {
       a: parseInt(result[4], 16),
    } : undefined;
 }
+
 /**
  * Generates contrasting text color as black or white for a given Background Color
  * @param backgroundColorHex
@@ -857,7 +859,7 @@ export async function ej2Query(tablename: string, query: Query, options?: any): 
 
    let promise: Promise<any[]> = new Promise((resolve, reject) => {
                                                 dataManager.executeQuery(query, (e: ReturnOption) => {
-                                                                            let result:any           = e.result as EJList;
+                                                                            let result: any = e.result as EJList;
                                                                             if (!result.errMsgDisplay) {
                                                                                let records: any[] = <any[]>result.result;
                                                                                resolve(records);
@@ -881,7 +883,7 @@ export async function ej2Query(tablename: string, query: Query, options?: any): 
 
 
 // noinspection JSUnusedGlobalSymbols
-export function isDev():boolean{
+export function isDev(): boolean {
    return tModel;
 }
 
@@ -889,9 +891,11 @@ export function isDev():boolean{
  * Remove all double spaces from a string
  * @param s
  */
-export function removeDoubleSpaces(s:string):string { return s.replace(/  +/g, ' ');}
+export function removeDoubleSpaces(s: string): string {
+   return s.replace(/  +/g, ' ');
+}
 
-export function applyHtmlDecoration(htmlElement: HTMLElement, decoration:IArgs_HtmlDecoration ):void {
+export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_HtmlDecoration): void {
    if (!htmlElement)
       return;
    if (!decoration)
@@ -932,7 +936,7 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration:IArgs_H
       if (htmlOtherAttr) {
 
          for (let key in htmlOtherAttr) {
-            if ( key ) {
+            if (key) {
                let value: string = htmlOtherAttr[key];
 
                if (value == null)
@@ -951,11 +955,122 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration:IArgs_H
 
 } // applyHtmlDecoration
 
-export function toStringFromMaybeArray(input: (string|string[]) , joinUsing:string = ' '): string {
+export function toStringFromMaybeArray(input: (string | string[]), joinUsing: string = ' '): string {
    if (!input)
       return '';
-   if (isArray(input)){
+   if (isArray(input)) {
       return (input as string[]).join(joinUsing);
    }
    return input as string;
 }
+
+import * as CSS from 'csstype';
+
+/**
+ * Add a class with a body under to the document css.
+ * It will overwrite an existing class if it exists.
+ * Example: cssAddClass('whatever',"background-color: green;");
+ * @param className
+ * @param rules
+ */
+export function cssAddClass(className: string, rules: string | CSS.Properties) {
+
+   // First, remove the class if it already exists
+   cssRemoveClass(className);
+
+   let style  = document.createElement('style');
+   // noinspection JSDeprecatedSymbols
+   style.type = 'text/css';
+   document.getElementsByTagName('head')[0].appendChild(style);
+   if (!(style.sheet || {}).insertRule) {
+      // noinspection JSDeprecatedSymbols
+      (((style as any).styleSheet || style.sheet) as any).addRule(`.${className}`, rules);
+   } else {
+      style.sheet.insertRule(`.${className}{${JSON.stringify(rules)}}`, 0);
+   }
+} // cssAddClass
+
+//https://yyjhao.com/posts/roll-your-own-css-in-js/
+type CssLikeObject = | { [selector: string]: CSS.PropertiesHyphen | CssLikeObject; } | CSS.PropertiesHyphen;
+
+function joinSelectors(parentSelector: string, nestedSelector: string) {
+   if (nestedSelector[0] === ":") {
+      return parentSelector + nestedSelector;
+   } else {
+      return `${parentSelector} ${nestedSelector}`;
+   }
+}
+
+// https://yyjhao.com/posts/roll-your-own-css-in-js/
+function nestedDeclarationToRuleStrings(
+   rootClassName: string,
+   declaration: CssLikeObject
+): string[] {
+   const result: string[] = [];
+
+   // We use a helper here to walk through the tree recursively
+   function _helper(selector: string, declaration: CssLikeObject) {
+      // We split the props into either nested css rules
+      // or plain css props.
+      const nestedNames: string[]          = [];
+      const cssProps: CSS.PropertiesHyphen = {};
+
+      for (let prop in declaration) {
+         const value = (<any>declaration)[prop];
+
+         if (value instanceof Object) {
+            nestedNames.push(prop);
+         } else {
+            (<any>cssProps)[prop] = value;
+         }
+      }
+
+      const lines: string[] = [];
+      // Collect all generated css rules.
+      lines.push(`${selector} {`);
+      for (let prop in cssProps) {
+         // collect the top level css rules
+         lines.push(`${prop}:${(<any>cssProps)[prop]};`);
+      }
+      lines.push("}");
+
+      // Each string has to be a complete rule, not just a single
+      // property
+      result.push(lines.join("\n"));
+
+      // Go through all nested css rules, generate string css rules
+      // and collect them
+      nestedNames.forEach((nestedSelector) =>
+                             _helper(
+                                joinSelectors(selector, nestedSelector),
+                                (<any>declaration)[nestedSelector]
+                             )
+      );
+   }
+
+   _helper("." + rootClassName, declaration);
+   return result;
+}
+
+
+export function cssAddClass2(className: string, rules: CSS.Properties) {
+   let x = nestedDeclarationToRuleStrings(className, rules);
+   console.log(x);
+}
+
+/**
+ * Removes this class from the document css
+ * Example : cssRemoveClass('whatever')
+ * @param className
+ */
+export function cssRemoveClass(className: string) {
+   let styleSheets = document.styleSheets;
+
+   for (let i = 0; i < styleSheets.length; i++) {
+      let styleSheet = document.styleSheets[0];/*index of the sheet in the markup head el*/
+      for (let j = 0; j < styleSheet.cssRules.length; j++) {
+         if ((styleSheet.cssRules[i] as CSSStyleRule).selectorText == `.${className}`)
+            styleSheet.deleteRule(j)
+      } //for
+   } //for
+} // cssRemoveClass

@@ -1,6 +1,6 @@
 {
   "name": "nexus-core-browser",
-  "version": "2.0.45",
+  "version": "2.0.46",
   "private": true,
   "description": "nexus-core-browser",
   "author": "InsiTech",
@@ -12,6 +12,7 @@
     "@types/sockjs-client": "^1.5.1",
     "axios": "^0.21.1",
     "bootstrap": "4.6.1",
+    "csstype": "^3.0.10",
     "jquery": "^3.5.1",
     "js-file-download": "^0.4.12",
     "lodash": "^4.17.21",
