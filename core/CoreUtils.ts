@@ -9,6 +9,7 @@ import {EJList}                                       from "./ej2/Ej2Comm";
 import {IArgs_HtmlDecoration, IKeyValueString}        from "./gui/Args_AnyWidget";
 import {isArray}                                      from "lodash";
 import {ClientVersion}                                from "./gui/ClientVersion";
+import * as CSS                                       from 'csstype';
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY   = 1000;
@@ -964,7 +965,13 @@ export function toStringFromMaybeArray(input: (string | string[]), joinUsing: st
    return input as string;
 }
 
-import * as CSS from 'csstype';
+//----------------------------------------------------------------------------
+//------------------- Start dynamic CSS section ------------------------------
+//----------------------------------------------------------------------------
+
+let cachedStyle: HTMLStyleElement;
+let ruleMap: Map<string, number> = new Map<string, number>();
+
 
 /**
  * Add a class with a body under to the document css.
@@ -973,22 +980,85 @@ import * as CSS from 'csstype';
  * @param className
  * @param rules
  */
-export function cssAddClass(className: string, rules: string | CSS.Properties) {
+export function cssAddClass(className: string, rules: string | CssLikeObject) {
 
-   // First, remove the class if it already exists
-   cssRemoveClass(className);
-
-   let style  = document.createElement('style');
-   // noinspection JSDeprecatedSymbols
-   style.type = 'text/css';
-   document.getElementsByTagName('head')[0].appendChild(style);
-   if (!(style.sheet || {}).insertRule) {
-      // noinspection JSDeprecatedSymbols
-      (((style as any).styleSheet || style.sheet) as any).addRule(`.${className}`, rules);
-   } else {
-      style.sheet.insertRule(`.${className}{${JSON.stringify(rules)}}`, 0);
+   if (!className) {
+      getErrorHandler().displayExceptionToUser(`CoreUtils.cssAddClass method was passed an empty className parameter! className = ${className}`);
+      return;
    }
+
+   if (!rules) {
+      getErrorHandler().displayExceptionToUser(`CoreUtils.cssAddClass method was passed an empty rules parameter! rules = ${rules}`);
+      return;
+   }
+
+   let classArray: cssRule[];
+   let t = typeof rules;
+   if ((t === 'string')) {
+      classArray = [{className: className, body: rules as string}];
+   } else {
+      classArray = cssNestedDeclarationToRuleStrings(className, rules as CssLikeObject);
+   }
+
+   if (!cachedStyle) {
+      // Create it the first time through
+      cachedStyle      = document.createElement('style');
+      // noinspection JSDeprecatedSymbols
+      cachedStyle.type = 'text/css';
+      document.getElementsByTagName('head')[0].appendChild(cachedStyle);
+   }
+
+
+   if (ruleMap.get(className)) {
+      // First, remove the class if it already exists
+      let removed = cssRemoveClass(className);
+      if (removed)
+         ruleMap.delete(className);
+   }
+
+
+   for (const cssRule of classArray) {
+      if (!(cachedStyle.sheet || {}).insertRule) {
+         // noinspection JSDeprecatedSymbols
+         (((cachedStyle as any).styleSheet || cachedStyle.sheet) as any).addRule(`.${cssRule.className}`, cssRule.body);
+      } else {
+         // Modern browsers use this path
+         let n: number = cachedStyle.sheet?.cssRules.length; // insert at the end
+         cachedStyle.sheet.insertRule(`.${cssRule.className}{${cssRule.body}}`, n); // insert at the end
+         ruleMap.set(cssRule.className, 1); // keep track of the fact that it's already been added
+      }
+   } // for cssRule
+
 } // cssAddClass
+
+
+/**
+ * Removes the first instance of the class from the document css
+ * Example : cssRemoveClass('whatever')
+ * @param className
+ */
+export function cssRemoveClass(className: string): boolean {
+   let removed: boolean           = false;
+   let cachedSheet: CSSStyleSheet = cachedStyle.sheet;
+   if (cachedSheet) {
+
+
+      for (let j = 0; j < cachedSheet.cssRules.length; j++) {
+         if ((cachedSheet.cssRules[j] as CSSStyleRule).selectorText == `.${className}`) {
+            try {
+               cachedSheet.deleteRule(j);
+               removed = true;
+               break;
+            } catch (ex) {
+               console.error(ex);
+               getErrorHandler().displayExceptionToUser(ex);
+            }
+         } // if
+      } //for
+   } // cssRemoveClass
+
+   return removed;
+} // cssRemoveClass
 
 //https://yyjhao.com/posts/roll-your-own-css-in-js/
 type CssLikeObject = | { [selector: string]: CSS.PropertiesHyphen | CssLikeObject; } | CSS.PropertiesHyphen;
@@ -1001,12 +1071,14 @@ function joinSelectors(parentSelector: string, nestedSelector: string) {
    }
 }
 
+class cssRule {
+   className: string;
+   body: string;
+}
+
 // https://yyjhao.com/posts/roll-your-own-css-in-js/
-function nestedDeclarationToRuleStrings(
-   rootClassName: string,
-   declaration: CssLikeObject
-): string[] {
-   const result: string[] = [];
+function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: CssLikeObject): cssRule[] {
+   const result: cssRule[] = [];
 
    // We use a helper here to walk through the tree recursively
    function _helper(selector: string, declaration: CssLikeObject) {
@@ -1027,16 +1099,16 @@ function nestedDeclarationToRuleStrings(
 
       const lines: string[] = [];
       // Collect all generated css rules.
-      lines.push(`${selector} {`);
+      // lines.push(`${selector} {`);
       for (let prop in cssProps) {
          // collect the top level css rules
          lines.push(`${prop}:${(<any>cssProps)[prop]};`);
       }
-      lines.push("}");
+      // lines.push("}");
 
       // Each string has to be a complete rule, not just a single
       // property
-      result.push(lines.join("\n"));
+      result.push({className: selector, body: lines.join("\n")});
 
       // Go through all nested css rules, generate string css rules
       // and collect them
@@ -1048,29 +1120,10 @@ function nestedDeclarationToRuleStrings(
       );
    }
 
-   _helper("." + rootClassName, declaration);
+   _helper(rootClassName, declaration);
    return result;
 }
 
-
-export function cssAddClass2(className: string, rules: CSS.Properties) {
-   let x = nestedDeclarationToRuleStrings(className, rules);
-   console.log(x);
-}
-
-/**
- * Removes this class from the document css
- * Example : cssRemoveClass('whatever')
- * @param className
- */
-export function cssRemoveClass(className: string) {
-   let styleSheets = document.styleSheets;
-
-   for (let i = 0; i < styleSheets.length; i++) {
-      let styleSheet = document.styleSheets[0];/*index of the sheet in the markup head el*/
-      for (let j = 0; j < styleSheet.cssRules.length; j++) {
-         if ((styleSheet.cssRules[i] as CSSStyleRule).selectorText == `.${className}`)
-            styleSheet.deleteRule(j)
-      } //for
-   } //for
-} // cssRemoveClass
+//----------------------------------------------------------------------------
+//------------------- Start      section ------------------------------
+//----------------------------------------------------------------------------
