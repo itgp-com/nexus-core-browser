@@ -987,6 +987,10 @@ export function cssAddClass(className: string, rules: string | CssLikeObject) {
       return;
    }
 
+   while (className.startsWith('.') || className.startsWith(' ')){
+      className = className.substr(1); // eliminate starting periods and spaces
+   }
+
    if (!rules) {
       getErrorHandler().displayExceptionToUser(`CoreUtils.cssAddClass method was passed an empty rules parameter! rules = ${rules}`);
       return;
