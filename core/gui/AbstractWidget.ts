@@ -76,6 +76,17 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       this._widgetErrorHandler = value;
    }
 
+   handleWidgetError(err: any) {
+      if (this.widgetErrorHandler) {
+         this.widgetErrorHandler.handleWidgetError({
+                                                      err: err,
+                                                   })
+      } else {
+         getErrorHandler().displayExceptionToUser(err);
+      }
+   }
+
+
 // noinspection JSUnusedGlobalSymbols
    get title(): string {
       return this._title;

@@ -1,12 +1,10 @@
 import {AnyWidget}                                          from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 
-import {Tab, TabItemModel, TabModel, SelectingEventArgs, SelectEventArgs}      from '@syncfusion/ej2-navigations';
-import {AbstractWidget}                                                        from "../AbstractWidget";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
-import {voidFunction}                                                          from "../../CoreUtils";
-import {AnyScreen}                                                             from "../AnyScreen";
-import {Event}                                                                 from "@syncfusion/ej2-base";
+import {SelectEventArgs, SelectingEventArgs, Tab, TabItemModel, TabModel} from '@syncfusion/ej2-navigations';
+import {AbstractWidget}                                                   from "../AbstractWidget";
+import {AnyScreen}                                                        from "../AnyScreen";
+import {Event}                                                            from "@syncfusion/ej2-base";
 
 export class Args_WgtTab implements IArgs_HtmlTag {
    htmlTagType ?: string;
@@ -16,7 +14,6 @@ export class Args_WgtTab implements IArgs_HtmlTag {
    wrapper ?: IArgs_HtmlTag;
    children: AbstractWidget[];
    ej ?: TabModel;
-   onCreate ?: voidFunction;
 }
 
 export class Args_WgtTab_SelectedAsTab {
@@ -51,32 +48,19 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    initialize_WgtTab(args: Args_WgtTab) {
       let thisX = this;
 
-      // //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
-      // this.args_AnyWidgetInitializedListeners.add(
-      //    new class extends Args_AnyWidget_Initialized_Listener {
-      //       argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
-      //
-      //          // initialize the tags so they available in initContentBegin/End
-      //          thisX.wrapperTagID = `wrapper_${evt.widget.tagId}`;
-      //       }
-      //    }
-      // );
-
-
       args = <Args_WgtTab>IArgs_HtmlTag_Utils.init(args);
 
-      this.args = args;
+      thisX.args = args;
       if (!args.children) {
          args.children = []; // initialize to non-null
       }
-      if ( args.children.length > 0){
+      if (args.children.length > 0) {
          args.children = args.children.filter(value => {
             return value != null; // keep non-null children only
          });
       }
 
-
-      this.initialize_AnyWidget();
+      thisX.initialize_AnyWidget();
    } // initialize_WgtTab
 
 
@@ -109,7 +93,13 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    async localLogicImplementation() {
       let thisX = this;
       let args  = this.args;
-      args.ej   = args.ej || {}; // ensure it's not null
+      if (!args) {
+         args = {
+            children: [],
+         }
+      }
+      ;
+      args.ej = args.ej || {};
 
       await this.createTabModel();
       thisX.obj = new Tab(this.tabModel, thisX.hget);
@@ -118,7 +108,8 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
 
    async createTabModel() {
       let thisX = this;
-      let args  = this.args;
+      let args  = this.args; // cannot be null because they have required properties
+      let ej    = this.args.ej;
 
       let itemModelList: TabItemModel[] = [];
       for (let tabObj of this.args.children) {
@@ -133,6 +124,7 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
 
       } // for
 
+      let ejCreated = ej.created;
 
       // @ts-ignore
       // @ts-ignore
@@ -146,20 +138,21 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
 
          items: itemModelList,
 
-         selecting: (e:SelectingEventArgs) => {
+         selecting: (e: SelectingEventArgs) => {
             // this is the ACTUAL tab number being selected as far as the children are concerned.
 
             thisX.lastSelectingIndex = e.selectingIndex; // e.selectedIndex;
             thisX.lastSelectingEvent = e;
          },
-         selected:  (e:SelectEventArgs) => {
+         selected:  async (e: SelectEventArgs) => {
             // let index: number = e.selectedIndex;
             thisX.lastSelectedEvent = e;
-            let index = thisX.lastSelectingIndex; // cached from event above
-            thisX.tabSelected(index);
+            let index               = thisX.lastSelectingIndex; // cached from event above
+            await thisX.tabSelected(index);
          },
          cssClass:  "e-fill", // fill tab header with accent background
-         created:   (_e:Event) => {
+         created:   async (_e: Event) => {
+            // setImmediate is used because of Syncfusion implementation
             setImmediate(
                async () => {
                   await thisX.obj.refresh(); // hack to repaint tab scrollbar when it overflows
@@ -167,16 +160,25 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
                   // Remove uppercasing from tab header
                   $(".e-tab-text").addClass('app-tab-no-text-transform');
 
-                  if (args.onCreate) {
-                     args.onCreate.call(thisX); // run onCreate in the context of the WgtTab object
+                  if (ejCreated) {
+                     try {
+                        ejCreated.call(thisX);
+                     } catch (ex) {
+                        thisX.handleWidgetError(ex);
+                     }
                   }
 
                   if (thisX.args.children.length > 0) {
-                     thisX.initializeTab(0); // initialize the first tab on start
+                     try {
+                        await thisX.tabSelected(0); // initialize the first tab on start
+                     } catch (ex) {
+                        thisX.handleWidgetError(ex);
+                     }
                   }
+
                }
             );
-         },
+         }, // created
       };
 
       if (args.ej)
@@ -185,87 +187,89 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    } // createTabModel
 
 
-   tabSelected(index: number): void {
+   async tabSelected(index: number) {
+      //    if (index < 0 || index >= this.args.children.length)
+      //       return;
+      //    await this.initializeTab(index);
+      // } // tabSelected
+      //
+      // async initializeTab(index: number) {
       if (index < 0 || index >= this.args.children.length)
          return;
-      this.initializeTab(index);
-   } // tabSelected
-
-   initializeTab(index: number) {
       let thisX: WgtTab = this;
 
-      setImmediate(async () => {
-         // Fix 2020-04-27 D. Pociu
-         // this is ABSOLUTELY necessary in order to give the HTML in the tab control
-         // a chance to be inserted. Without this, you get very weird Syncfusion EJ2
-         // error about parts of the widgets being undefined during refresh
-         let tabObj: AbstractWidget = this.args.children[index];
-         if (tabObj) {
-            let initialized: boolean = tabObj.initialized;
-            if (!tabObj.initialized) {
-               try {
-                  await tabObj.initLogic(); // this includes a refresh
-                  tabObj.initLogicAsTab(); // trigger this on the component inside the tab
-               } catch (error) {
-                  console.log(error);
-                  // this.handleError(error);
-               }
-            }
-
-            /**
-             * Added 2020-05-14 David Pociu to register the panes in the tab (since initContentAndLogic i
-             */
+      // setImmediate(async () => {
+      // Fix 2020-04-27 D. Pociu
+      // this is ABSOLUTELY necessary in order to give the HTML in the tab control
+      // a chance to be inserted. Without this, you get very weird Syncfusion EJ2
+      // error about parts of the widgets being undefined during refresh
+      let tabObj: AbstractWidget = this.args.children[index];
+      if (tabObj) {
+         let initialized: boolean = tabObj.initialized;
+         if (!tabObj.initialized) {
             try {
-               if (tabObj.doRegisterInfo) {
-                  tabObj.registerInfo(thisX.hget);
-               }
-            } catch (ex) {
-               console.log(ex)
-            }
-
-            try {
-               // trigger this on the component inside the tab
-               tabObj.selectedAsTab({
-                                       index:       index,
-                                       initialized: initialized,
-                                       wgtTab:      thisX,
-                                    });
+               await tabObj.initLogic(); // this includes a refresh
+               tabObj.initLogicAsTab(); // trigger this on the component inside the tab
             } catch (error) {
                console.log(error);
                // this.handleError(error);
-            }
-
-
-            try {
-               // trigger this on the component inside the tab
-               tabObj.activatedAsInnerWidget({
-                                                  parentWidget: thisX,
-                                                  parentInfo:   {
-                                                     'selecting': thisX.lastSelectingIndex,
-                                                     'selected':  thisX.lastSelectedEvent,
-                                                  }
-                                               });
-            } catch (error) {
-               console.log(error);
-               // this.handleError(error);
-            }
-
-            try {
-               /**
-                * Only perform the refresh if the component in the tab is not extending AnyScreen.
-                * AnyScreen will already trigger a refresh at the end of it's initLogic implementation
-                * and that initalization is also on setImmediate (as of 2020-05-11 Dave) so there's
-                * no need for this refresh to fire here.
-                */
-               if (!(tabObj instanceof AnyScreen)) {
-                  await tabObj.refresh(); // all the button enable/disable (the initialized flag prevents re-initialization of EJ2 components)
-               }
-            } catch (error) {
-               console.log(error);
-               this.handleError(error);
             }
          }
-      });
+
+         /**
+          * Added 2020-05-14 David Pociu to register the panes in the tab (since initContentAndLogic i
+          */
+         try {
+            if (tabObj.doRegisterInfo) {
+               tabObj.registerInfo(thisX.hget);
+            }
+         } catch (ex) {
+            console.log(ex)
+         }
+
+         try {
+            // trigger this on the component inside the tab
+            tabObj.selectedAsTab({
+                                    index:       index,
+                                    initialized: initialized,
+                                    wgtTab:      thisX,
+                                 });
+         } catch (error) {
+            console.log(error);
+            // this.handleError(error);
+         }
+
+
+         try {
+            // trigger this on the component inside the tab
+            tabObj.activatedAsInnerWidget({
+                                             parentWidget: thisX,
+                                             parentInfo:   {
+                                                'selecting': thisX.lastSelectingIndex,
+                                                'selected':  thisX.lastSelectedEvent,
+                                             }
+                                          });
+         } catch (error) {
+            console.log(error);
+            // this.handleError(error);
+         }
+
+         try {
+            /**
+             * Only perform the refresh if the component in the tab is not extending AnyScreen.
+             * AnyScreen will already trigger a refresh at the end of it's initLogic implementation
+             * and that initalization is also on setImmediate (as of 2020-05-11 Dave) so there's
+             * no need for this refresh to fire here.
+             */
+            if (!(tabObj instanceof AnyScreen)) {
+               await tabObj.refresh(); // all the button enable/disable (the initialized flag prevents re-initialization of EJ2 components)
+            }
+         } catch (error) {
+            console.log(error);
+            this.handleError(error);
+         }
+      }
+      // });
 
 
    } // initializeTab
@@ -287,13 +291,13 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
    }
 
    async localClearImplementation() {
-      for (let tabObj of this.args.children  ) {
+      for (let tabObj of this.args.children) {
          await tabObj.clear();
       }
    }
 
    async localRefreshImplementation() {
-      for (let tabObj of this.args.children ) {
+      for (let tabObj of this.args.children) {
          await tabObj.refresh();
       }
    }
