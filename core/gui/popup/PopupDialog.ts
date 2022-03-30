@@ -286,7 +286,8 @@ export class PopupDialog {
 
       thisX.validateLocalData(thisX);
 
-      thisX.args.onClose(thisX);
+      if ( thisX.args.onClose)
+         thisX.args.onClose(thisX);
    }
 
    /**
