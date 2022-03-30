@@ -3,6 +3,7 @@ import {Args_GridRenderer_Common} from "./GridRenderer_Common";
 import {getErrorHandler}          from "../../../CoreErrorHandling";
 import {TextBox, TextBoxModel,}   from "@syncfusion/ej2-inputs";
 import {FocusOutEventArgs}        from "@syncfusion/ej2-inputs/src/textbox/textbox";
+import {isEqual}                  from "lodash";
 
 const ERROR_CLASS:string = 'e-error';
 
@@ -74,8 +75,10 @@ export function textboxRenderer(params: Args_GridRenderer_Textbox) {
             } // if (!validated)
 
 
+
             if (params.callback)
                await params.callback(textBox, ev);
+
             if (blurFunction != null) {
                try {
                   blurFunction(ev);

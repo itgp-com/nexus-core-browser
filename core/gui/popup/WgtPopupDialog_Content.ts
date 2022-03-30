@@ -52,6 +52,7 @@ export class WgtPopupDialog_Content extends AnyScreen {
       children.push(
          WgtPanel_SpacerVertical.create(),
          WgtPanel_Row_Bootstrap.create({
+                                          style: 'margin-left:2px !important;margin-right:2px !important;', // default for bootstrap is -15px for both
                                           children:
                                              (showOkCancelPanel ? [
                                                    WgtPanel_ColumnFlex.create({
