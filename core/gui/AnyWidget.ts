@@ -7,6 +7,7 @@ import {AfterInitLogicEvent, AfterInitLogicListener}                           f
 import {stringArgVal}                                                          from "../CoreUtils";
 import {ListenerHandler}                                                       from "../ListenerHandler";
 import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "./Args_AnyWidget_Initialized_Listener";
+import {getErrorHandler}                                                       from "nexus-core-browser/core/CoreErrorHandling";
 
 /**
  * The generic root component of all the widgets.
@@ -108,6 +109,23 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       this.descriptor = argsAnyWidget;
    } // initAnyWidget
 
+
+   async initLogic(): Promise<void> {
+      if (!this.initialized) {
+         await super.initLogic();
+
+
+         // assign fully instantiated instance to a variable
+         if (this.descriptor.onInitialized) {
+            try {
+               this.descriptor.onInitialized(this);
+            } catch (ex) {
+               console.error(ex);
+               getErrorHandler().displayExceptionToUser(ex)
+            }
+         }
+      }
+   } // initLogic
 
    /**
     * Implementation based on initContent present in descriptor and children

@@ -133,6 +133,13 @@ export class Args_AnyWidget<CONTROLMODEL = any> {
    wrapper           ?: IArgs_HtmlTag;
    ej                ?: CONTROLMODEL
 
+
+
+   /**
+    *  Called after initLogic has been completed
+    */
+   onInitialized ?: (widget:any)=>void;
+
    static initialize(descriptor: Args_AnyWidget, widget: AnyWidget): void {
 
       if (descriptor.colName) {

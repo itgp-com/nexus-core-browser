@@ -3,6 +3,7 @@ import {AbstractWidget}                                                 from "..
 import {BeforeCloseEventArgs, BeforeOpenEventArgs, Dialog, DialogModel} from "@syncfusion/ej2-popups";
 import {getErrorHandler}                                                from "../CoreErrorHandling";
 import {ErrorHandler}                                                   from "../ErrorHandler";
+import {AnyScreen}                                                      from "nexus-core-browser/core/gui/AnyScreen";
 
 
 export abstract class Args_AbstractDialogWindow {
@@ -30,6 +31,12 @@ export abstract class Args_AbstractDialogWindow {
    onBeforeClose?(instance: AbstractDialogWindow): boolean | Promise<boolean>;
 
    onAfterClose?(instance: AbstractDialogWindow): void;
+
+   /**
+    * Optional function that if it exists, will be called instead of screen.destroy().
+    * The original screen.destroy() should usually be called inside the implementation of this function
+    */
+   destroy_function ?: (screen : (AbstractWidget | Promise<AbstractWidget>)) => (void | Promise<void>);
 }
 
 export class DialogWindowOpenEvent {
@@ -251,10 +258,14 @@ export class AbstractDialogWindow {
       }
 
       if (shouldClose) {
-         if (this.resolvedContent)
-            //cannot await because this method is synchronous
-            await this.resolvedContent.destroy();
-
+         if (this.resolvedContent) {
+            if (this.initArgs.destroy_function) {
+               // If the destroy function exists, call that instead of AnyScreen destroy
+               await this.initArgs.destroy_function(this.resolvedContent);
+            } else {
+               await this.resolvedContent.destroy();
+            }
+         }
          this._beforeCloseHideCalled = true; // allow dialog to actually close
          this._dialog?.hide();
          // } else {

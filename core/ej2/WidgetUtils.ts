@@ -36,8 +36,10 @@ export async function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
       // after giving it time to render, attach the JS logic
       setImmediate(async () => {
                       await args.newWidget.initLogic();
-                      if (args.callback)
-                         args.callback();
+                      if (args.onInstantiated)
+                         args.onInstantiated({
+                                                widget: args.newWidget,
+                                             });
                    }
       );
 
@@ -163,7 +165,7 @@ export async function asyncPost<T = any>(argsPost: ArgsPost<T>): Promise<T> {
       }
 
       // noinspection ExceptionCaughtLocallyJS
-      if (response.status >= 200 &&response.status < 400 && response.data) {
+      if (response.status >= 200 && response.status < 400 && response.data) {
          return response.data;
       } else {
          throw response.statusText;
@@ -179,7 +181,7 @@ export async function asyncPostRetVal<T = any>(argsPost: ArgsPost<T>): Promise<T
    try {
       let waitElem: HTMLElement;
 
-      let data:any = await asyncPost(argsPost);
+      let data: any = await asyncPost(argsPost);
 
       if (data) {
          let retVal: core.RetVal = cu.cast(data, core.RetVal);

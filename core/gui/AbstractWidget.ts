@@ -65,7 +65,6 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
    constructor() {
       this.initialize_AbstractWidget();
-
    }
 
    get widgetErrorHandler(): WidgetErrorHandler {
@@ -358,14 +357,14 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       await wu.updateWidgetInDOM({
                                     parentHTMLElement: container,
                                     newWidget:         this,
-                                    callback:          () => {
+                                    onInstantiated:          (args:Args_onInstantiated) => {
 
                                        //attach Ctrl-Alt-double-click on container
                                        if (thisX.doRegisterInfo)
                                           thisX.registerInfo(container);
 
                                        if (callback)
-                                          callback();
+                                          callback(args);
                                     },
                                  });
    } // initContentAndLogic
@@ -507,8 +506,6 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                                               },
             );
          } // if (this.afterInitLogicListeners.count() > 0)
-
-
       }
    }
 
@@ -856,9 +853,14 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
 } // main class
 
+export interface Args_onInstantiated {
+   widget:AbstractWidget;
+   extra?:any;
+}
+
 export interface Args_UpdateWidgetInDOM {
    parentHTMLElement: HTMLElement;
    newWidget: AbstractWidget;
    existingWidgetHTMLElement?: HTMLElement;
-   callback?: Function;
+   onInstantiated ?: (args:Args_onInstantiated)=>void;
 }

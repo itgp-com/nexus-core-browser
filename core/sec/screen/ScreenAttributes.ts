@@ -6,6 +6,7 @@ import {AnyScreen}            from "../../gui/AnyScreen";
 import {StringArg}            from "../../CoreUtils";
 import {Args_DialogWindow}    from "../../ej2/DialogWindow";
 import {AbstractDialogWindow} from "../../ej2/AbstractDialogWindow";
+import {AbstractWidget}       from "nexus-core-browser/core/gui/AbstractWidget";
 
 export class ScreenAttributes {
    /**
@@ -27,6 +28,12 @@ export class ScreenAttributes {
     * a function that can be called with an optional parameter to create an instance of the screen
     */
    create_function: (param ?: any) => AnyScreen | Promise<AnyScreen>;
+
+   /**
+    * Optional function that if it exists, will be called instead of screen.destroy().
+    * The original screen.destroy() should usually be called inside the implementation of this function
+    */
+   destroy_function ?: (screen : (AbstractWidget | Promise<AbstractWidget>)) => (void | Promise<void>);
 
    /**
     * The dialog header in which the actual screen is being displayed. This is the top band of the Dialog, not the screen title

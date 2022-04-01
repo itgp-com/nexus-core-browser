@@ -26,6 +26,13 @@ export class Args_WgtSimple<CONTROLMODEL = any> {
     */
    wrapper           ?: IArgs_HtmlTag; // duplicates Args_AnyWidget field
    ej                ?: CONTROLMODEL;  // duplicates Args_AnyWidget field
+
+
+   /**
+    *  Called after initLogic has been completed.
+    *  It is a similar to  {@link afterInitLogic}, but is available in the create parameters instead of having to overwrite a method
+    */
+   onInitialized ?: (widget:any)=>void;
 }
 
 export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_AnyWidget = Args_AnyWidget, DATA_CLASS = any>
@@ -68,9 +75,8 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
       if (!argsAnyWidget)
          argsAnyWidget = {} as any;
 
-      if (argsWgtSimple.validation) {
+      if (argsWgtSimple.validation)
          argsAnyWidget.validation = argsWgtSimple.validation;
-      }
 
       if (!argsAnyWidget.colName)
          if (argsWgtSimple.propertyName)
@@ -79,6 +85,8 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
       if (argsAnyWidget.colName)
          this.propertyName = argsAnyWidget.colName;
 
+      if ( argsWgtSimple.onInitialized)
+         argsAnyWidget.onInitialized = argsWgtSimple.onInitialized;
 
       if (!argsAnyWidget.id)
          if (argsWgtSimple.id)
