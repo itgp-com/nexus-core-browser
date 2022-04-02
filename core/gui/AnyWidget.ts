@@ -116,7 +116,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
 
          // assign fully instantiated instance to a variable
-         if (this.descriptor.onInitialized) {
+         if (this.descriptor?.onInitialized) {
             try {
                this.descriptor.onInitialized(this);
             } catch (ex) {

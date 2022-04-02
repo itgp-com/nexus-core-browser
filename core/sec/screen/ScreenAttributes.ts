@@ -27,7 +27,7 @@ export class ScreenAttributes {
    /**
     * a function that can be called with an optional parameter to create an instance of the screen
     */
-   create_function: (param ?: any) => AnyScreen | Promise<AnyScreen>;
+   create_function: (param ?: any) => AnyScreen | Promise<AnyScreen> | AbstractWidget | Promise<AbstractWidget>;
 
    /**
     * Optional function that if it exists, will be called instead of screen.destroy().

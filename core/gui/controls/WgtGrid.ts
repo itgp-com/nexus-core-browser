@@ -13,9 +13,9 @@ Grid.Inject(Toolbar, ExcelExport, Page, Resize, Filter, Aggregate);
 export class Args_WgtGrid extends Args_AbstractWidget {
 
    // functions to be called at constructor time
-   dataSource: ClassArg<Object | DataManager | DataResult>;
+   dataSource ?: ClassArg<Object | DataManager | DataResult>;
    query ?: Query;
-   columns: ClassArg<ColumnModel[]>;
+   columns?: ClassArg<ColumnModel[]>;
    sortSettings?: ClassArg<SortSettingsModel>;
 
    // regular properties
