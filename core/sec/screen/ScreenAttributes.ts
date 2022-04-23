@@ -3,10 +3,8 @@
  *
  */
 import {AnyScreen}            from "../../gui/AnyScreen";
-import {StringArg}            from "../../CoreUtils";
-import {Args_DialogWindow}    from "../../ej2/DialogWindow";
 import {AbstractDialogWindow} from "../../ej2/AbstractDialogWindow";
-import {AbstractWidget}       from "nexus-core-browser/core/gui/AbstractWidget";
+import {AbstractWidget}       from "../../gui/AbstractWidget";
 
 export class ScreenAttributes {
    /**

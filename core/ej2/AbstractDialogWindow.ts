@@ -3,7 +3,6 @@ import {AbstractWidget}                                                 from "..
 import {BeforeCloseEventArgs, BeforeOpenEventArgs, Dialog, DialogModel} from "@syncfusion/ej2-popups";
 import {getErrorHandler}                                                from "../CoreErrorHandling";
 import {ErrorHandler}                                                   from "../ErrorHandler";
-import {AnyScreen}                                                      from "nexus-core-browser/core/gui/AnyScreen";
 
 
 export abstract class Args_AbstractDialogWindow {
@@ -36,7 +35,7 @@ export abstract class Args_AbstractDialogWindow {
     * Optional function that if it exists, will be called instead of screen.destroy().
     * The original screen.destroy() should usually be called inside the implementation of this function
     */
-   destroy_function ?: (screen : (AbstractWidget | Promise<AbstractWidget>)) => (void | Promise<void>);
+   destroy_function ?: (screen: (AbstractWidget | Promise<AbstractWidget>)) => (void | Promise<void>);
 }
 
 export class DialogWindowOpenEvent {
@@ -167,7 +166,7 @@ export class AbstractDialogWindow {
              * The beforeCloseEventArgs.cancel flag is set to true (don't close window) and the asynchronous function
              * thisX.beforeClose(beforeCloseEventArgs) is called.
              *
-             * When that executes, if it needs to close the dialog, it will actually invoke the hide() method in the dialge
+             * When that executes, if it needs to close the dialog, it will actually invoke the hide() method in the dialog
              *  but first it will set the _beforeCloseHideCalled to true so that the close is allowed to go through in this case.
              *
              */
@@ -183,6 +182,13 @@ export class AbstractDialogWindow {
 
          },
          close:       async (e: any) => {
+            try {
+               if (this.resolvedContent)
+                  await this.resolvedContent.onDialogWindow_Close({dialog: this, closeEventArgs: e});
+            } catch (ex) {
+               console.error(ex);
+            }
+
             await thisX.close();
          },
       };
@@ -201,8 +207,15 @@ export class AbstractDialogWindow {
          } catch (ex) {
             getErrorHandler().displayExceptionToUser(ex);
          }
-
       } //  if (this.initArgs)
+
+      if (this.resolvedContent) {
+         try {
+            await this.resolvedContent.onDialogWindow_BeforeOpen({dialog: this, beforeOpenEventArgs: beforeOpenEventArgs});
+         } catch (ex) {
+            getErrorHandler().displayExceptionToUser(ex);
+         }
+      }
    } // beforeOpen
 
    /**
@@ -220,7 +233,7 @@ export class AbstractDialogWindow {
             await thisX.resolvedContent.initLogic(); // execute the logic for the content
 
             try {
-               thisX.resolvedContent.onDialogWindowOpen({instance: thisX} as DialogWindowOpenEvent);
+               await thisX.resolvedContent.onDialogWindow_Open({dialog: thisX, openEventArgs: e});
             } catch (ex) {
                let eh: ErrorHandler = getErrorHandler();
                eh.displayExceptionToUser(ex);
@@ -246,11 +259,17 @@ export class AbstractDialogWindow {
       let shouldClose = true;
 
       try {
+
          if (this.initArgs) {
             if (this.initArgs.onBeforeClose) {
                shouldClose = await this.initArgs.onBeforeClose(this); // call init function
             } // if (this.initArgs.onOpen)
          } //  if ( this.initArgs)
+
+         if (shouldClose) {
+            if (this.resolvedContent)
+               await this.resolvedContent.onDialogWindow_BeforeClose({dialog: this, beforeCloseEventArgs: beforeCloseEventArgs});
+         }
 
       } catch (ex) {
          shouldClose = true; // if exception then close no matter what
@@ -280,7 +299,6 @@ export class AbstractDialogWindow {
     */
    async close() {
       try {
-
          if (this.resolvedContent)
             this.resolvedContent.dialogWindowContainer = undefined;
 

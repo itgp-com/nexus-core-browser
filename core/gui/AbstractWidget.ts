@@ -9,17 +9,18 @@ import {AxiosResponse}                                                          
 import {getErrorHandler}                                                                 from "../CoreErrorHandling";
 import {getClientVersion, getRandomString, hget, htmlToElement, StringArg, stringArgVal} from "../CoreUtils";
 import {ListenerHandler}                                                                 from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                   from "./BeforeInitLogicListener";
-import {AfterInitLogicEvent, AfterInitLogicListener}                                     from "./AfterInitLogicListener";
-import {ExceptionEvent}                                                                  from "../ExceptionEvent";
-import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}                             from "./AfterRepaintWidgetListener";
-import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener}                           from "./BeforeRepaintWidgetListener";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                    from "../WidgetErrorHandler";
-import {ParentAddedEvent, ParentAddedListener}                                           from "./ParentAddedListener";
-import {DialogInfo}                                                                      from "../ej2/DialogInfo";
-import {Args_WgtTab_SelectedAsTab, WgtTab}                                               from "./panels/WgtTab";
-import {AbstractDialogWindow, DialogWindowOpenEvent}                                     from "../ej2/AbstractDialogWindow";
-import {ClientVersion}                                                                   from "./ClientVersion";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}         from "./BeforeInitLogicListener";
+import {AfterInitLogicEvent, AfterInitLogicListener}           from "./AfterInitLogicListener";
+import {ExceptionEvent}                                        from "../ExceptionEvent";
+import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}   from "./AfterRepaintWidgetListener";
+import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener} from "./BeforeRepaintWidgetListener";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}          from "../WidgetErrorHandler";
+import {ParentAddedEvent, ParentAddedListener}                 from "./ParentAddedListener";
+import {DialogInfo}                                            from "../ej2/DialogInfo";
+import {Args_WgtTab_SelectedAsTab, WgtTab}                     from "./panels/WgtTab";
+import {AbstractDialogWindow, DialogWindowOpenEvent}           from "../ej2/AbstractDialogWindow";
+import {ClientVersion}                             from "./ClientVersion";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs} from "@syncfusion/ej2-popups";
 
 export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
 export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
@@ -795,17 +796,6 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       }
    }
 
-   /**
-    * Called upon the 'open' event of a DialogWindow ONLY IF this widget is the actual top component passed in an AbstractDialogWindow implementation.
-    *
-    * Used to obtain information about the open DialogWindow (like height or width for example)
-    *
-    * Empty implementation by default
-    * @param evt
-    */
-   onDialogWindowOpen(evt: DialogWindowOpenEvent) {
-   }
-
    //------------------------------- Getter section -------------------------
 
    get beforeInitLogicListeners(): ListenerHandler<BeforeInitLogicEvent, BeforeInitLogicListener> {
@@ -829,7 +819,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    }
 
    /**
-    * Overwrite this method that is called before initLogic is fired.
+    * Override this method that is called before initLogic is fired.
     *
     * Empty implementation by default
     *
@@ -841,7 +831,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    }
 
    /**
-    * Overwrite this method that is called after initLogic is fired.
+    * Override this method that is called after initLogic is fired.
     *
     * Empty implementation by default
     * @param evt
@@ -850,6 +840,47 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    async afterInitLogic(evt: AfterInitLogicEvent): Promise<void> {
       //empty implementation
    }
+
+   /**
+    * Empty implementation to be overridden if necessary.
+    *
+    * Override this method to intercept the BeforeOpen event of the DialogWindow containing this widget.
+    * Obviously, this only triggers if the widget is the main content of a DialogWindow
+    *
+    * @param evt
+    */
+   async onDialogWindow_BeforeOpen (evt: Args_OnDialogWindow_BeforeOpen): Promise<void>{}
+
+   /**
+    * Empty implementation to be overridden if necessary.
+    *
+    * Override this method to intercept the Open event of the DialogWindow containing this widget.
+    * Obviously, this only triggers if the widget is the main content of a DialogWindow
+    *
+    * @param evt
+    */
+   async onDialogWindow_Open(evt:Args_OnDialogWindow_Open){}
+
+   /**
+    * Empty implementation to be overridden if necessary.
+    *
+    * Override this method to intercept the BeforeClose event of the DialogWindow containing this widget.
+    * Obviously, this only triggers if the widget is the main content of a DialogWindow
+    *
+    * @param evt
+    */
+   async onDialogWindow_BeforeClose(evt:Args_OnDialogWindow_BeforeClose){}
+
+   /**
+    * Empty implementation to be overridden if necessary.
+    *
+    * Override this method to intercept the BeforeClose event of the DialogWindow containing this widget.
+    * Obviously, this only triggers if the widget is the main content of a DialogWindow
+    *
+    * @param evt
+    */
+   async onDialogWindow_Close(evt:Args_OnDialogWindow_Close){}
+
 
 } // main class
 
@@ -864,3 +895,22 @@ export interface Args_UpdateWidgetInDOM {
    existingWidgetHTMLElement?: HTMLElement;
    onInstantiated ?: (args:Args_onInstantiated)=>void;
 }
+
+export interface Args_OnDialogWindow_BeforeOpen{
+   dialog: AbstractDialogWindow;
+   beforeOpenEventArgs: BeforeOpenEventArgs;
+}
+
+export interface Args_OnDialogWindow_Open{
+   dialog: AbstractDialogWindow;
+   openEventArgs: any;
+}
+export interface Args_OnDialogWindow_BeforeClose{
+   dialog: AbstractDialogWindow;
+   beforeCloseEventArgs: BeforeCloseEventArgs;
+}
+export interface Args_OnDialogWindow_Close{
+   dialog: AbstractDialogWindow;
+   closeEventArgs: any;
+}
+
