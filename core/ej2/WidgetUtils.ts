@@ -8,6 +8,7 @@ import {AxiosRequestConfig, AxiosResponse}       from "axios";
 import {Args_UpdateWidgetInDOM}                  from "../gui/AbstractWidget";
 import {getErrorHandler}                         from "../CoreErrorHandling";
 import {nexusMain}                               from "../NexusMain";
+import {WgtGrid}                                 from "../gui/controls/WgtGrid";
 
 
 export type GridWidgetCallBack = (args?: QueryCellInfoEventArgs, thisX ?: any) => void;
@@ -252,6 +253,9 @@ export enum QUERY_OPERATORS {
    STARTS_WITH           = "startswith",
    ENDS_WITH             = "endswith",
    CONTAINS              = "contains",
+   ISNULL                = "isnull",      // not standard EJ2
+   ISNOTNULL             = "isnotnull",   // not standard EJ2
+
 }
 
 export function gridWidth(columns: ColumnModel[]): number {
@@ -280,6 +284,40 @@ export function gridWidth(columns: ColumnModel[]): number {
    return width;
 }
 
+/**
+ * Calculate the total height of all the padding that the deading, filters and bottom paging controls take in a grid
+ * @param wgtGrid
+ */
+export function gridDecoratorsHeight(wgtGrid:WgtGrid):number{
+   let gridDecoratorHeightVal:number = 0;
+
+   let gridElem = wgtGrid.hget;
+
+   let toolbarArray = gridElem.getElementsByClassName('e-toolbar');
+   if (toolbarArray.length >0) {
+      let toolBar = toolbarArray[0];
+      if (toolBar){
+         gridDecoratorHeightVal += toolBar.clientHeight;
+      }
+   }
+
+   let gridHeaderArray = gridElem.getElementsByClassName('e-gridheader');
+   if (gridHeaderArray.length >0) {
+      let gridHeader = gridHeaderArray[0];
+      if (gridHeader){
+         gridDecoratorHeightVal += gridHeader.clientHeight;
+      }
+   }
+
+   let gridPagerArray = gridElem.getElementsByClassName('e-gridpager');
+   if (gridPagerArray.length >0) {
+      let gridPager = gridPagerArray[0];
+      if (gridPager){
+         gridDecoratorHeightVal += gridPager.clientHeight;
+      }
+   }
+   return gridDecoratorHeightVal;
+}
 
 // export const BTN_BADGE_CLASS: string               = `btnBadgeClass`;
 //

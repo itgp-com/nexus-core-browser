@@ -36,7 +36,7 @@ export class WgtPanel_TopBar extends WgtPanel_Generic {
       args.preBarChildren = args.preBarChildren || [];
       args.postBarChildren = args.postBarChildren || [];
 
-      let bar: WgtPanel_RowLeftCenterRight = WgtPanel_RowLeftCenterRight.create_WgtPanel_RowLeftCenterRight(args.barArgs);
+      let bar: WgtPanel_RowLeftCenterRight = WgtPanel_RowLeftCenterRight.create(args.barArgs);
 
       let panelArgs: Args_WgtPanel_Generic = {
          htmlTagClass: args.htmlTagClass,

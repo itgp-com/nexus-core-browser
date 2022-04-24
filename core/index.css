@@ -76,8 +76,8 @@
   display: flex;
   justify-content: center;
 }
-.flex-lcr-box-left  > span { margin-right: auto; }
-.flex-lcr-box-right > span { margin-left: auto;  }
+.flex-lcr-box-left  > * { margin-right: auto; }
+.flex-lcr-box-right > * { margin-left: auto;  }
 
 
 
