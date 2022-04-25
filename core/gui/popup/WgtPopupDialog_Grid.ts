@@ -3,6 +3,7 @@ import {Args_PopupDialog}                               from "./PopupDialog";
 import {RecordDoubleClickEventArgs, RowSelectEventArgs} from "@syncfusion/ej2-grids";
 
 
+
 export class WgtPopupDialog_Grid<T = any> extends WgtGrid_FilterPage {
 
    protected constructor() {

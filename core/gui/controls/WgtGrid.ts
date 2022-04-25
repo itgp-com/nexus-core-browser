@@ -1,14 +1,15 @@
-import {AnyWidget}                                                                           from "../AnyWidget";
-import {Args_AnyWidget}                                                                      from "../Args_AnyWidget";
-import {DataManager, Query}                                                                  from "@syncfusion/ej2-data";
-import {ColumnModel, DataResult, Grid, GridModel, QueryCellInfoEventArgs, SortSettingsModel} from "@syncfusion/ej2-grids";
-import {ExcelExport, Page, Resize, Toolbar, Filter, Aggregate}                               from "@syncfusion/ej2-grids";
-import {AbstractWidget, Args_AbstractWidget}                                                 from "../AbstractWidget";
-import {ClassArg, classArgInstanceVal, hget}                                                 from "../../CoreUtils";
-import {AggregateRowModel}                                                                   from "@syncfusion/ej2-grids/src/grid/models/models";
-import {AnyScreen}                                                                           from "../AnyScreen";
+import {AnyWidget}                                                                                                                                                    from "../AnyWidget";
+import {Args_AnyWidget}                                                                                                                                               from "../Args_AnyWidget";
+import {DataManager, Query}                                                                                                                                           from "@syncfusion/ej2-data";
+import {Aggregate, ColumnMenu, ColumnModel, DataResult, ExcelExport, Filter, Grid, GridModel, Page, QueryCellInfoEventArgs, Resize, Sort, SortSettingsModel, Toolbar} from "@syncfusion/ej2-grids";
+import {AbstractWidget, Args_AbstractWidget}                                                                                                                          from "../AbstractWidget";
+import {ClassArg, classArgInstanceVal, hget}                                                                                                                          from "../../CoreUtils";
+import {
+   AggregateRowModel
+}                                                                                                                                                                     from "@syncfusion/ej2-grids/src/grid/models/models";
+import {AnyScreen}                                                                                                                                                    from "../AnyScreen";
 
-Grid.Inject(Toolbar, ExcelExport, Page, Resize, Filter, Aggregate);
+Grid.Inject(Toolbar, ExcelExport, Page, Resize, ColumnMenu, Aggregate, Sort, Filter );
 
 export class Args_WgtGrid extends Args_AbstractWidget {
 

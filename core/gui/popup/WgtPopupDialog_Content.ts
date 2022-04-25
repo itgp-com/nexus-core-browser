@@ -4,13 +4,13 @@ import {WgtPanel_Row_Bootstrap}    from "../panels/WgtPanel_Row_Bootstrap";
 import {WgtPopupDialog_Grid}       from "./WgtPopupDialog_Grid";
 import {WgtPanel_ColumnFlex}       from "../panels/WgtPanel_ColumnFlex";
 import {WgtButton_Primary}         from "../buttons/WgtButton_Primary";
-import {PopupDialog}               from "./PopupDialog";
 import {WgtPanel_SpacerVertical}   from "../panels/WgtPanel_SpacerVertical";
+import {PopupDialog_Abstract}      from "./PopupDialog_Abstract";
 
 export class Args_WgtPopupDialog_Content {
    topPanel?: AbstractWidget;
    wgtPopupDialogGrid: WgtPopupDialog_Grid;
-   popupDialog: PopupDialog;
+   popupDialog: PopupDialog_Abstract;
 }
 
 export class WgtPopupDialog_Content extends AnyScreen {
