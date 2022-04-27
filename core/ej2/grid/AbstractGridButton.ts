@@ -29,7 +29,7 @@ export abstract class AbstractGridButton {
    args: Args_AbstractGridButton;
 
 
-   constructor(args: Args_AbstractGridButton) {
+   protected constructor(args: Args_AbstractGridButton) {
       this.args = args;
    }
 

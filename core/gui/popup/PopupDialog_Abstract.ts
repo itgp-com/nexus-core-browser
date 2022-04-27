@@ -5,6 +5,7 @@ import {Args_WgtPopupDialog_Content, WgtPopupDialog_Content}                    
 import {WgtPopupDialog_Grid}                                                                                                                     from "./WgtPopupDialog_Grid";
 import {ClassArg, classArgArrayVal, hget, StringArg, stringArgVal}                                                                               from "../../CoreUtils";
 import {btnLinkGridColumnModel, btnLinkInstantiate}                                                                                              from "../buttons/ButtonUtils";
+import {AbstractWidget}                                                                                                                          from "../AbstractWidget";
 
 
 export interface Args_PopupDialog_Abstract {
@@ -24,6 +25,11 @@ export interface Args_PopupDialog_Abstract {
    created?: () => void;
    dataBound?: (args?: Object | undefined) => void;
    ej?: GridModel;
+
+   /**
+    * Widget to display above the grid in the popup
+    */
+   topPanel ?: AbstractWidget;
 
    onClose?(instance: PopupDialog_Abstract): void;
 
@@ -170,6 +176,7 @@ export abstract class PopupDialog_Abstract {
 
    createContentWidget() {
       let args: Args_WgtPopupDialog_Content = {
+         topPanel: this?.args?.topPanel,
          wgtPopupDialogGrid: this.createWgtPopupDialog_Grid(),
          popupDialog:        this,
       };

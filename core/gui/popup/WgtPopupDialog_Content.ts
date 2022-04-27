@@ -28,12 +28,12 @@ export class WgtPopupDialog_Content extends AnyScreen {
 
 
    initialize_WgtPopupDialog_Content(args: Args_WgtPopupDialog_Content) {
-      let thisX                      = this;
-      this.args                      = args;
+      let thisX = this;
+      this.args = args;
 
-      let popupArgs = args?.popupDialog.args;
-      let showOkCancelPanel:boolean = false;
-      if (popupArgs.multiSelect){
+      let popupArgs                  = args?.popupDialog.args;
+      let showOkCancelPanel: boolean = false;
+      if (popupArgs.multiSelect) {
          showOkCancelPanel = true;
       } else {
          showOkCancelPanel = popupArgs?.singleSelectSettings?.showOkCancelPanel;
@@ -42,11 +42,7 @@ export class WgtPopupDialog_Content extends AnyScreen {
       let children: AbstractWidget[] = [];
 
       if (args.topPanel) {
-         children.push(
-            WgtPanel_Row_Bootstrap.create({
-                                             children: [args.topPanel]
-                                          })
-         );
+         children.push(args.topPanel);
       }
 
       children.push(
@@ -54,31 +50,31 @@ export class WgtPopupDialog_Content extends AnyScreen {
          WgtPanel_Row_Bootstrap.create({
                                           style: 'margin-left:2px !important;margin-right:2px !important;', // default for bootstrap is -15px for both
                                           children:
-                                             (showOkCancelPanel ? [
-                                                   WgtPanel_ColumnFlex.create({
-                                                                                 suffixClasses: 'col-10 col-sm-11',
-                                                                                 children:      [
-                                                                                    args.wgtPopupDialogGrid
-                                                                                 ]
-                                                                              }),
-                                                   WgtPanel_ColumnFlex.create({
-                                                                                 suffixClasses: 'col-2 col-sm-1',
-                                                                                 children:      [
-                                                                                    WgtButton_Primary.create({
-                                                                                                                label: 'Ok', onClick: (ex) => {
-                                                                                          thisX.args.popupDialog.closeWithSelectedData();
-                                                                                       }
-                                                                                                             }),
-                                                                                    WgtPanel_SpacerVertical.create(),
-                                                                                    WgtButton_Primary.create({
-                                                                                                                label: 'Cancel', onClick: (ex) => {
-                                                                                          thisX.args.popupDialog.hide();
-                                                                                       }
-                                                                                                             })
-                                                                                 ]
-                                                                              }),
-                                                ]
-                                                : [args.wgtPopupDialogGrid]),
+                                                 (showOkCancelPanel ? [
+                                                       WgtPanel_ColumnFlex.create({
+                                                                                     suffixClasses: 'col-10 col-sm-11',
+                                                                                     children:      [
+                                                                                        args.wgtPopupDialogGrid
+                                                                                     ]
+                                                                                  }),
+                                                       WgtPanel_ColumnFlex.create({
+                                                                                     suffixClasses: 'col-2 col-sm-1',
+                                                                                     children:      [
+                                                                                        WgtButton_Primary.create({
+                                                                                                                    label: 'Ok', onClick: (ex) => {
+                                                                                              thisX.args.popupDialog.closeWithSelectedData();
+                                                                                           }
+                                                                                                                 }),
+                                                                                        WgtPanel_SpacerVertical.create(),
+                                                                                        WgtButton_Primary.create({
+                                                                                                                    label: 'Cancel', onClick: (ex) => {
+                                                                                              thisX.args.popupDialog.hide();
+                                                                                           }
+                                                                                                                 })
+                                                                                     ]
+                                                                                  }),
+                                                    ]
+                                                    : [args.wgtPopupDialogGrid]),
 
                                        })
       );
