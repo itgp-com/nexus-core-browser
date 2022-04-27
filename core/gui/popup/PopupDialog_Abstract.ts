@@ -90,6 +90,15 @@ export abstract class PopupDialog_Abstract {
       // if default has databound, execute that after the args databound
       let userDataBound = args.dataBound;
       args.dataBound    = (arg) => {
+
+         if ( args?.ej?.dataBound){
+            try {
+               args.ej.dataBound(arg); // execute default dataBound
+            }catch (e) {
+               console.error(e);
+            }
+         }
+
          if (userDataBound != null)
             userDataBound(arg);
 
