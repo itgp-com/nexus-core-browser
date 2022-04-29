@@ -1,14 +1,14 @@
-import {Component}                               from "@syncfusion/ej2-base";
-import {FormValidator, FormValidatorModel}       from "@syncfusion/ej2-inputs";
-import {ColumnModel, QueryCellInfoEventArgs}     from '@syncfusion/ej2-grids';
-import {createSpinner, hideSpinner, showSpinner} from "@syncfusion/ej2-popups";
-import {AnyWidget}                               from "../gui/AnyWidget";
-import {axios, core, cu}                         from "../index";
-import {AxiosRequestConfig, AxiosResponse}       from "axios";
-import {Args_UpdateWidgetInDOM}                  from "../gui/AbstractWidget";
-import {getErrorHandler}                         from "../CoreErrorHandling";
-import {nexusMain}                               from "../NexusMain";
-import {WgtGrid}                                 from "../gui/controls/WgtGrid";
+import {Component}                                 from "@syncfusion/ej2-base";
+import {FormValidator, FormValidatorModel}         from "@syncfusion/ej2-inputs";
+import {ColumnModel, Grid, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
+import {createSpinner, hideSpinner, showSpinner}   from "@syncfusion/ej2-popups";
+import {AnyWidget}                                 from "../gui/AnyWidget";
+import {axios, core, cu}                           from "../index";
+import {AxiosRequestConfig, AxiosResponse}         from "axios";
+import {Args_UpdateWidgetInDOM}                    from "../gui/AbstractWidget";
+import {getErrorHandler}                           from "../CoreErrorHandling";
+import {nexusMain}                                 from "../NexusMain";
+import {WgtGrid}                                   from "../gui/controls/WgtGrid";
 
 
 export type GridWidgetCallBack = (args?: QueryCellInfoEventArgs, thisX ?: any) => void;
@@ -288,35 +288,76 @@ export function gridWidth(columns: ColumnModel[]): number {
  * Calculate the total height of all the padding that the deading, filters and bottom paging controls take in a grid
  * @param wgtGrid
  */
-export function gridDecoratorsHeight(wgtGrid:WgtGrid):number{
-   let gridDecoratorHeightVal:number = 0;
+export function gridDecoratorsHeight(wgtGrid: WgtGrid): number {
+   let gridDecoratorHeightVal: number = 0;
 
    let gridElem = wgtGrid.hget;
 
    let toolbarArray = gridElem.getElementsByClassName('e-toolbar');
-   if (toolbarArray.length >0) {
+   if (toolbarArray.length > 0) {
       let toolBar = toolbarArray[0];
-      if (toolBar){
+      if (toolBar) {
          gridDecoratorHeightVal += toolBar.clientHeight;
       }
    }
 
    let gridHeaderArray = gridElem.getElementsByClassName('e-gridheader');
-   if (gridHeaderArray.length >0) {
+   if (gridHeaderArray.length > 0) {
       let gridHeader = gridHeaderArray[0];
-      if (gridHeader){
+      if (gridHeader) {
          gridDecoratorHeightVal += gridHeader.clientHeight;
       }
    }
 
    let gridPagerArray = gridElem.getElementsByClassName('e-gridpager');
-   if (gridPagerArray.length >0) {
+   if (gridPagerArray.length > 0) {
       let gridPager = gridPagerArray[0];
-      if (gridPager){
+      if (gridPager) {
          gridDecoratorHeightVal += gridPager.clientHeight;
       }
    }
    return gridDecoratorHeightVal;
+}
+
+/**
+ * Call this from the dataBound event of the Grid
+ *
+ * @param grid
+ */
+export function gridTotalRecordCount(grid: Grid): number {
+   if (!grid)
+      return 0;
+
+   let count: number = 0;
+
+   try {
+      if (grid.allowPaging) {
+         // paged grid
+         let pagingSettings = grid.pageSettings
+         if (pagingSettings.totalRecordsCount != null) {
+            count = grid.pageSettings.totalRecordsCount;
+         } else {
+            count = grid.getRowsObject().length; // if not paged, get the number of loaded rows
+         }
+      } else {
+         // unpaged grids
+         if (grid.enableVirtualization) {
+            if ((grid?.contentModule as any)?.count) {
+               count = (grid.contentModule as any).count;
+            }
+         } else {
+            // not virtualized
+            if (grid?.contentModule?.getRows()) {
+               count = grid.contentModule.getRows().length;
+            }
+         }
+      }
+
+   } catch (e) {
+      console.error(e);
+   }
+
+   return count;
 }
 
 // export const BTN_BADGE_CLASS: string               = `btnBadgeClass`;
