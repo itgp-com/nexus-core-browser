@@ -2,7 +2,7 @@ import {Args_AnyWidget, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 import {FormValidator, TextBox}              from "@syncfusion/ej2-inputs";
 import {WgtSimple}                           from "./WgtSimple";
 import {DataProvider, IDataProviderSimple}   from "../../data/DataProvider";
-import {Args_WgtText}                        from "./WgtText_Abstract";
+import {Args_WgtText, Base_WgtText}          from "./Base_WgtText";
 
 export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
    args: Args_WgtText;
@@ -14,14 +14,14 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
    }
 
    static create(args: Args_WgtText): WgtTextRounded {
-      let t = new WgtTextRounded();
+      let t  = new WgtTextRounded();
       t.args = args;
       // t.initialize_WgtText(args);
       return t;
    }
 
    async localContentBegin(): Promise<string> {
-      let x:string = ``;
+      let x: string = ``;
 
       let errorAttributes = '';
       if (this.args.includeErrorLine)
@@ -92,21 +92,21 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
    async localRefreshImplementation(): Promise<void> {
 
       // if (this.obj) {
-         let data             = DataProvider.byName(this, this.args.dataProviderName);
-         let value: string    = '';
-         let enabled: boolean = false;
-         if (data) {
-            value   = data[this.args.propertyName];
-            enabled = true; // there is data so it's enabled
-         }
+      let data             = DataProvider.byName(this, this.args.dataProviderName);
+      let value: string    = '';
+      let enabled: boolean = false;
+      if (data) {
+         value   = data[this.args.propertyName];
+         enabled = true; // there is data so it's enabled
+      }
 
-         this.value     = value;
-         this.previousValue = value;
+      this.value         = value;
+      this.previousValue = value;
 
-         if (this.args.ej.enabled) {
-            // if the general properties allow you to enable, the enable if there's data, disable when there's no data link
-            this.obj.enabled = enabled;
-         }
+      if (this.args.ej.enabled) {
+         // if the general properties allow you to enable, the enable if there's data, disable when there's no data link
+         this.obj.enabled = enabled;
+      }
       // }
 
 

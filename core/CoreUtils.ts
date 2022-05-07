@@ -987,7 +987,7 @@ export function cssAddClass(className: string, rules: string | CssLikeObject) {
       return;
    }
 
-   while (className.startsWith('.') || className.startsWith(' ')){
+   while (className.startsWith('.') || className.startsWith(' ')) {
       className = className.substr(1); // eliminate starting periods and spaces
    }
 
@@ -1126,6 +1126,19 @@ function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: C
 
    _helper(rootClassName, declaration);
    return result;
+}
+
+
+export function htmlElement_link_clickFunction(elem: HTMLElement, clickFunction: (evt: any) => (void | Promise<void>)){
+   if (!elem)
+      return;
+
+   let original = elem.innerHTML
+   if (original) {
+// Example of an href the takes no action:<a href="#" onclick="return false;">
+      elem.innerHTML = `<a href="#" onclick="return false;">${original}</a>`;
+      elem.addEventListener('click', clickFunction);
+   }
 }
 
 //----------------------------------------------------------------------------

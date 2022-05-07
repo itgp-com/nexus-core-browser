@@ -37,7 +37,7 @@ export class Args_WgtText extends Args_WgtSimple<TextBoxModel> {
  * autocomplete: 'off'
  * floatLabelType: "Always"
  */
-export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget, string> {
+export abstract class Base_WgtText extends WgtSimple<TextBox, Args_AnyWidget, string> {
    args: Args_WgtText;
    private _validator: FormValidator;
 
@@ -45,7 +45,7 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
       super();
    }
 
-   initialize_WgtText(args: Args_WgtText) {
+   initialize_Base_WgtText(args: Args_WgtText) {
 
       if (!args.ej)
          args.ej = {};
@@ -237,7 +237,7 @@ export abstract class WgtText_Abstract extends WgtSimple<TextBox, Args_AnyWidget
    }
 
    convertValueBeforeSet(val: string): string {
-      if (val == null || val == undefined)
+      if (val == null)
          val = ''; // default null, undefined to ''
       return val;
    }

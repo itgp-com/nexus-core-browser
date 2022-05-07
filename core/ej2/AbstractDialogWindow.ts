@@ -1,15 +1,27 @@
-import {getRandomString, hget}                                          from "../CoreUtils";
-import {AbstractWidget}                                                 from "../gui/AbstractWidget";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs, Dialog, DialogModel} from "@syncfusion/ej2-popups";
-import {getErrorHandler}                                                from "../CoreErrorHandling";
-import {ErrorHandler}                                                   from "../ErrorHandler";
-
+import {getRandomString, hget}                                                         from "../CoreUtils";
+import {AbstractWidget}                                                                from "../gui/AbstractWidget";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs, Dialog, DialogModel, DialogUtility} from "@syncfusion/ej2-popups";
+import {getErrorHandler}                                                               from "../CoreErrorHandling";
+import {ErrorHandler}                                                                  from "../ErrorHandler";
+import {isString}                                                                      from "lodash";
+import {WgtPanel_RowFlex}                                                              from "../gui/panels/WgtPanel_RowFlex";
+import {WgtLbl}                                                                        from "../gui/controls/WgtLbl";
+import {WgtButton}                                                                     from "../gui/buttons/WgtButton";
+import {WgtPanel_HTML}                                                                 from "../gui/controls/WgtPanel_HTML";
+import {AnimationSettingsModel}                                                        from "@syncfusion/ej2-popups/src/dialog/dialog-model";
 
 export abstract class Args_AbstractDialogWindow {
 
    dialogTagId ?: string;
    content: AbstractWidget<any> | Promise<AbstractWidget<any>>;
-   header?: string | Promise<string>;
+   header ?: string | Promise<string> | AbstractWidget<any> | Promise<AbstractWidget<any>>;
+   cssClass ?: string;
+   isModal ?: boolean;
+   animationSettings ?: AnimationSettingsModel;
+   showCloseIcon ?: boolean;
+   closeOnEscape ?: boolean;
+   allowDragging ?: boolean;
+   visible ?: boolean;
    width?: string | number | undefined;
    height?: string | number | undefined;
    enableResize?: boolean;
@@ -55,8 +67,18 @@ export class AbstractDialogWindow {
    private _dialog: Dialog;
    private _beforeCloseHideCalled: boolean = false;
 
+   protected headerWidget: AbstractWidget;
+   readonly backArrowId: string = getRandomString('hdrBackArrow');
 
-   async initialize_AbstractDialogWindow(args: Args_AbstractDialogWindow) {
+   /**
+    * The color of the back arrow in the header. Overwrite in extending classes
+    */
+   color_header_font: string       = 'white';
+   color_header_background: string = 'black';
+
+
+   protected async initialize_AbstractDialogWindow(args: Args_AbstractDialogWindow) {
+      let thisX     = this;
       this.initArgs = args;
 
       // initialize class and style
@@ -72,9 +94,31 @@ export class AbstractDialogWindow {
       this.dialogModel = await this.initialize_DialogModel();
 
       if (args) {
+         if (args.isModal != null)
+            this.dialogModel.isModal = args.isModal;
+
+         if (args.animationSettings != null)
+            this.dialogModel.animationSettings = args.animationSettings;
+
+         if (args.showCloseIcon != null)
+            this.dialogModel.showCloseIcon = args.showCloseIcon;
+
+         if (args.closeOnEscape != null)
+            this.dialogModel.closeOnEscape = args.closeOnEscape;
+
+         if (args.allowDragging != null)
+            this.dialogModel.allowDragging = args.allowDragging;
+
+         if (args.visible != null)
+            this.dialogModel.visible = args.visible;
+
          this.dialogModel.width        = (args.width ? args.width : '99%');
          this.dialogModel.height       = (args.height ? args.height : '99%');
          this.dialogModel.enableResize = (args.enableResize != null ? args.enableResize : true);
+         if (args.cssClass) {
+            let x         = this.dialogModel.cssClass
+            args.cssClass = (x ? `${x} ${args.cssClass}` : args.cssClass);
+         }
 
          this.resolvedContent = await args.content;
       }
@@ -121,9 +165,44 @@ export class AbstractDialogWindow {
 `;
       this.dialog.content = dialogContent;
 
-      if (this.initArgs && this.initArgs.header)
-         this.dialog.header = await this.initArgs.header;
 
+      if (this.initArgs)  {
+         if (this.initArgs.header == null)
+            this.initArgs.header = ''; // there's always a header so that we always have the top widgets
+
+         let arg_header: String | AbstractWidget = await this.initArgs.header
+
+         let headerFromInitArgs: AbstractWidget;
+         if (isString(arg_header)) {
+            // html
+            headerFromInitArgs = WgtLbl.create({labelHTML: arg_header as string, htmlTagStyle: 'align-self: center;', htmlTagType: 'span'});
+         } else {
+            // AbstractWidget
+            headerFromInitArgs = arg_header as AbstractWidget;
+         }
+
+
+         thisX.headerWidget = WgtPanel_RowFlex.create(
+            {
+               children: [
+                  await WgtPanel_HTML.create({
+                                                htmlContent:         `<span id="${thisX.backArrowId}"  style="margin-right:5px;"><button type="button" style="background-color: ${thisX.color_header_background}"><i class="fa fa-arrow-circle-left" style="font-weight:900;font-size:20px;color: ${this.color_header_font} !important;"></i></button></span>`,
+                                                logicImplementation: async () => {
+                                                   let htmlElement: HTMLElement = document.getElementById(thisX.backArrowId);
+                                                   htmlElement.addEventListener('click', (ev) => {
+                                                      thisX.hide(); // close
+                                                   });
+                                                },
+                                             }),
+
+                  headerFromInitArgs,
+
+               ]
+            })
+
+
+         this.dialog.header = await thisX.headerWidget.initContent();
+      } // header
    }
 
    show() {
@@ -135,7 +214,7 @@ export class AbstractDialogWindow {
    }
 
 
-   async initialize_DialogModel(): Promise<DialogModel> {
+   protected async initialize_DialogModel(): Promise<DialogModel> {
       let thisX = this;
       return {
          isModal:           true,
@@ -145,6 +224,7 @@ export class AbstractDialogWindow {
          enableResize:      true,
          allowDragging:     true,
          visible:           false,
+         cssClass:          thisX.constructor.name, // name of the class
 
          /*
           The calls below MUST be made using thisX.functionName(args) so that the CONTEXT of the DialogWindow is passed correctly
@@ -225,6 +305,15 @@ export class AbstractDialogWindow {
    async open(e: any) {
       let thisX      = this;
       e.preventFocus = true; // preventing focus ( Uncaught TypeError: Cannot read property 'matrix' of undefined in Dialog:  https://www.syncfusion.com/support/directtrac/incidents/255376 )
+
+      if (thisX.initArgs && thisX.headerWidget) {
+         try {
+            await thisX.headerWidget.initLogic();
+         } catch (ex) {
+            let eh: ErrorHandler = getErrorHandler();
+            eh.displayExceptionToUser(ex);
+         }
+      }
 
       if (thisX.initArgs && thisX.resolvedContent) {
          try {

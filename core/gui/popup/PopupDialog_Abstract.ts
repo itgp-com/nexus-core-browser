@@ -1,11 +1,13 @@
-import {Dialog, DialogModel}                                                                                                                     from '@syncfusion/ej2-popups';
+import {DialogModel}                                                                                                                             from '@syncfusion/ej2-popups';
 import {ColumnModel, Grid, GridModel, PredicateModel, QueryCellInfoEventArgs, RecordDoubleClickEventArgs, RowSelectEventArgs, SortSettingsModel} from "@syncfusion/ej2-grids";
 import {DataManager, DataResult, Query}                                                                                                          from "@syncfusion/ej2-data";
 import {Args_WgtPopupDialog_Content, WgtPopupDialog_Content}                                                                                     from "./WgtPopupDialog_Content";
 import {WgtPopupDialog_Grid}                                                                                                                     from "./WgtPopupDialog_Grid";
-import {ClassArg, classArgArrayVal, hget, StringArg, stringArgVal}                                                                               from "../../CoreUtils";
+import {ClassArg, classArgArrayVal, StringArg, stringArgVal}                                                                                     from "../../CoreUtils";
 import {btnLinkGridColumnModel, btnLinkInstantiate}                                                                                              from "../buttons/ButtonUtils";
 import {AbstractWidget}                                                                                                                          from "../AbstractWidget";
+import {AbstractDialogWindow, Args_AbstractDialogWindow}                                                                                         from "../../ej2/AbstractDialogWindow";
+import {DialogWindow}                                                                                                                            from "../../ej2/DialogWindow";
 
 
 export interface Args_PopupDialog_Abstract {
@@ -29,7 +31,7 @@ export interface Args_PopupDialog_Abstract {
    /**
     * Widget to display above the grid in the popup
     */
-   topPanel ?: AbstractWidget;
+   topPanel?: AbstractWidget;
 
    onClose?(instance: PopupDialog_Abstract): void;
 
@@ -62,11 +64,11 @@ export interface Args_MultiSelect_PopupDialog_Abstract {
 
 export abstract class PopupDialog_Abstract {
 
-   private _dialogObj: Dialog;
+   private _dialogObj: AbstractDialogWindow;
    private _args: Args_PopupDialog_Abstract;
-   private _selectedIndex: number|number[]
-   private _selectedData: any|any[];
-   private _hasData: boolean      = false;
+   private _selectedIndex: number | number[]
+   private _selectedData: any | any[];
+   private _hasData: boolean = false;
 
    private _contentWidget: WgtPopupDialog_Content;
 
@@ -91,10 +93,10 @@ export abstract class PopupDialog_Abstract {
       let userDataBound = args.dataBound;
       args.dataBound    = (arg) => {
 
-         if ( args?.ej?.dataBound){
+         if (args?.ej?.dataBound) {
             try {
                args.ej.dataBound(arg); // execute default dataBound
-            }catch (e) {
+            } catch (e) {
                console.error(e);
             }
          }
@@ -138,15 +140,15 @@ export abstract class PopupDialog_Abstract {
       let checkboxButton: boolean = false;
 
       if (this.args.multiSelect) {
-         hideLinkButton = true;
-         checkboxButton = true;
+         hideLinkButton      = true;
+         checkboxButton      = true;
          thisX.selectedIndex = []
          if (this.args.ej.selectionSettings == null)
             this.args.ej.selectionSettings = {}
 
       } else {
          thisX.selectedIndex = -1;
-         hideLinkButton = this.args?.singleSelectSettings?.hideLinkButton;
+         hideLinkButton      = this.args?.singleSelectSettings?.hideLinkButton;
       }
 
       if (!hideLinkButton) {
@@ -185,7 +187,7 @@ export abstract class PopupDialog_Abstract {
 
    createContentWidget() {
       let args: Args_WgtPopupDialog_Content = {
-         topPanel: this?.args?.topPanel,
+         topPanel:           this?.args?.topPanel,
          wgtPopupDialogGrid: this.createWgtPopupDialog_Grid(),
          popupDialog:        this,
       };
@@ -204,7 +206,7 @@ export abstract class PopupDialog_Abstract {
          enableResize:      true,
          allowDragging:     true,
          visible:           false,
-         open:             async  (e: any) => {
+         open:              async (e: any) => {
             e.preventFocus = true; // preventing focus ( Uncaught TypeError: Cannot read property 'matrix' of undefined in Dialog:  https://www.syncfusion.com/support/directtrac/incidents/255376 )
             await thisX.dialogOpen(e, thisX)
          },
@@ -216,42 +218,86 @@ export abstract class PopupDialog_Abstract {
       return dialogModel;
    }
 
-   async createDialog() {
-      let thisX        = this;
-      let dialogModel  = this.createDialogModel();
-      thisX._dialogObj = new Dialog(dialogModel);
-
-
-      thisX._dialogObj.appendTo(hget(thisX._args.dialogTagId));
-
+   createDialogWindowModel(): Args_AbstractDialogWindow {
+      let thisX = this;
       thisX.createContentWidget();
 
-      let x: string;
-      try {
-         x = await this.contentWidget.initContent();
-      } catch (ex) {
-         console.log(ex);
-         x = 'Exception occurred while creating the content of the popup. See console for stacktrace.<p>' + ex.toString();
-      }
-      thisX._dialogObj.content = x;
 
       let header = stringArgVal(this?.args?.popupTitle);
       if (header == null)
          header = 'Please select:';
 
-      thisX._dialogObj.header = header;
+
+      let dialogModel: Args_AbstractDialogWindow = {
+         dialogTagId:       thisX.args.dialogTagId,
+         content:           this.contentWidget,
+         header:            header,
+         width:             this.args.width,
+         isModal:           true,
+         animationSettings: {effect: "FadeZoom"},
+         showCloseIcon:     true,
+         closeOnEscape:     true,
+         enableResize:      true,
+         allowDragging:     true,
+         visible:           false,
+
+         onAfterClose: async (instance) => {
+            thisX.validateLocalData(thisX);
+
+            if (thisX.args.onClose)
+               thisX.args.onClose(thisX);
+         },
+
+      };
+      return dialogModel;
+
+   }
+
+
+   async createDialog() {
+      let thisX        = this;
+      let dialogModel  = this.createDialogWindowModel();
+      thisX._dialogObj = await DialogWindow.create(dialogModel);
 
    }// createDialog
 
+   //
+   // async createDialog() {
+   //    let thisX        = this;
+   //    let dialogModel  = this.createDialogModel();
+   //    thisX._dialogObj = new Dialog(dialogModel);
+   //
+   //
+   //    thisX._dialogObj.appendTo(hget(thisX._args.dialogTagId));
+   //
+   //    thisX.createContentWidget();
+   //
+   //    let x: string;
+   //    try {
+   //       x = await this.contentWidget.initContent();
+   //    } catch (ex) {
+   //       console.log(ex);
+   //       x = 'Exception occurred while creating the content of the popup. See console for stacktrace.<p>' + ex.toString();
+   //    }
+   //    thisX._dialogObj.content = x;
+   //
+   //    let header = stringArgVal(this?.args?.popupTitle);
+   //    if (header == null)
+   //       header = 'Please select:';
+   //
+   //    thisX._dialogObj.header = header;
+   //
+   // }// createDialog
+
    gridRowSelected(e: RowSelectEventArgs) {
-      if ( this.args.multiSelect) {
+      if (this.args.multiSelect) {
          // multiselect
          this.selectedIndex = this?.wgtPopupDialog_Grid?.obj?.getSelectedRowIndexes();
-         this.selectedData = this?.wgtPopupDialog_Grid?.obj?.getSelectedRecords();
+         this.selectedData  = this?.wgtPopupDialog_Grid?.obj?.getSelectedRecords();
       } else {
          // single select
          this.selectedIndex = e.rowIndex;
-         this.selectedData   = e.data;
+         this.selectedData  = e.data;
       }
    }
 
@@ -295,14 +341,14 @@ export abstract class PopupDialog_Abstract {
       if (thisX.contentWidget)
          await thisX.contentWidget.destroy();
 
-      if (thisX.dialogObj)
-         await thisX.dialogObj.destroy();
+      // if (thisX.dialogObj)
+      //    await thisX.dialogObj.destroy();
 
       //      document.querySelectorAll('.e-dlg-container').forEach( (elem) => elem.remove());
 
       thisX.validateLocalData(thisX);
 
-      if ( thisX.args.onClose)
+      if (thisX.args.onClose)
          thisX.args.onClose(thisX);
    }
 
@@ -320,11 +366,11 @@ export abstract class PopupDialog_Abstract {
    //------------------------ get/set ----------------
 
 
-   get dialogObj(): Dialog {
+   get dialogObj(): AbstractDialogWindow {
       return this._dialogObj;
    }
 
-   set dialogObj(value: Dialog) {
+   set dialogObj(value: AbstractDialogWindow) {
       this._dialogObj = value;
    }
 
@@ -336,19 +382,19 @@ export abstract class PopupDialog_Abstract {
       this._args = value;
    }
 
-   get selectedIndex(): number|number[] {
+   get selectedIndex(): number | number[] {
       return this._selectedIndex;
    }
 
-   set selectedIndex(value: number|number[]) {
+   set selectedIndex(value: number | number[]) {
       this._selectedIndex = value;
    }
 
-   get selectedData(): any|any[] {
+   get selectedData(): any | any[] {
       return this._selectedData;
    }
 
-   set selectedData(value: any|any[]) {
+   set selectedData(value: any | any[]) {
       this._selectedData = value;
    }
 
