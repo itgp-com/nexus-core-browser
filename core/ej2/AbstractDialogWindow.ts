@@ -1,14 +1,16 @@
-import {getRandomString, hget}                                                         from "../CoreUtils";
-import {AbstractWidget}                                                                from "../gui/AbstractWidget";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs, Dialog, DialogModel, DialogUtility} from "@syncfusion/ej2-popups";
-import {getErrorHandler}                                                               from "../CoreErrorHandling";
-import {ErrorHandler}                                                                  from "../ErrorHandler";
-import {isString}                                                                      from "lodash";
-import {WgtPanel_RowFlex}                                                              from "../gui/panels/WgtPanel_RowFlex";
-import {WgtLbl}                                                                        from "../gui/controls/WgtLbl";
-import {WgtButton}                                                                     from "../gui/buttons/WgtButton";
-import {WgtPanel_HTML}                                                                 from "../gui/controls/WgtPanel_HTML";
-import {AnimationSettingsModel}                                                        from "@syncfusion/ej2-popups/src/dialog/dialog-model";
+// noinspection UnnecessaryLocalVariableJS
+
+import {getRandomString, hget}                                                   from "../CoreUtils";
+import {AbstractWidget}                                                          from "../gui/AbstractWidget";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs, Dialog, DialogModel, Tooltip} from "@syncfusion/ej2-popups";
+import {getErrorHandler}                                                         from "../CoreErrorHandling";
+import {ErrorHandler}                                                            from "../ErrorHandler";
+import {isString}                                                                from "lodash";
+import {WgtPanel_RowFlex}                                                        from "../gui/panels/WgtPanel_RowFlex";
+import {WgtLbl}                                                                  from "../gui/controls/WgtLbl";
+import {WgtPanel_HTML}                                                           from "../gui/controls/WgtPanel_HTML";
+import {AnimationSettingsModel}                                                  from "@syncfusion/ej2-popups/src/dialog/dialog-model";
+import {WgtPanel_SpacerHorizontal}                                               from "../gui/panels/WgtPanel_SpacerHorizontal";
 
 export abstract class Args_AbstractDialogWindow {
 
@@ -29,6 +31,12 @@ export abstract class Args_AbstractDialogWindow {
    htmlClass ?: string;
    htmlClassesSuffix?: string;
    htmlStyle?: string;
+
+
+   headerStartWidgets?: AbstractWidget[] | Promise<AbstractWidget[]>;
+   showHeaderBackArrow?: boolean;
+
+   headerEndWidgets?: AbstractWidget[] | Promise<AbstractWidget[]>;
 
    onBeforeOpen?(instance: AbstractDialogWindow): void;
 
@@ -54,9 +62,9 @@ export class DialogWindowOpenEvent {
    instance: AbstractDialogWindow;
 }
 
-export class AbstractDialogWindow {
+export class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialogWindow = Args_AbstractDialogWindow> {
 
-   private _initArgs: Args_AbstractDialogWindow;
+   private _initArgs: ARGS_TYPE;
    readonly dialogContentTagId: string = getRandomString('dialogContent');
    protected resolvedContent: AbstractWidget<any>;
    protected localAnchorID: string;
@@ -68,7 +76,8 @@ export class AbstractDialogWindow {
    private _beforeCloseHideCalled: boolean = false;
 
    protected headerWidget: AbstractWidget;
-   readonly backArrowId: string = getRandomString('hdrBackArrow');
+   readonly headerBackArrowId: string = getRandomString('hdrBackArrow');
+   readonly headerRefreshId: string   = getRandomString('hrdRefresh');
 
    /**
     * The color of the back arrow in the header. Overwrite in extending classes
@@ -77,7 +86,7 @@ export class AbstractDialogWindow {
    color_header_background: string = 'black';
 
 
-   protected async initialize_AbstractDialogWindow(args: Args_AbstractDialogWindow) {
+   protected async initialize_AbstractDialogWindow(args: ARGS_TYPE) {
       let thisX     = this;
       this.initArgs = args;
 
@@ -93,35 +102,40 @@ export class AbstractDialogWindow {
 
       this.dialogModel = await this.initialize_DialogModel();
 
-      if (args) {
-         if (args.isModal != null)
-            this.dialogModel.isModal = args.isModal;
+      if (args.isModal != null)
+         this.dialogModel.isModal = args.isModal;
 
-         if (args.animationSettings != null)
-            this.dialogModel.animationSettings = args.animationSettings;
+      if (args.animationSettings != null)
+         this.dialogModel.animationSettings = args.animationSettings;
 
-         if (args.showCloseIcon != null)
-            this.dialogModel.showCloseIcon = args.showCloseIcon;
+      if (args.showCloseIcon != null)
+         this.dialogModel.showCloseIcon = args.showCloseIcon;
 
-         if (args.closeOnEscape != null)
-            this.dialogModel.closeOnEscape = args.closeOnEscape;
+      if (args.closeOnEscape != null)
+         this.dialogModel.closeOnEscape = args.closeOnEscape;
 
-         if (args.allowDragging != null)
-            this.dialogModel.allowDragging = args.allowDragging;
+      if (args.allowDragging != null)
+         this.dialogModel.allowDragging = args.allowDragging;
 
-         if (args.visible != null)
-            this.dialogModel.visible = args.visible;
+      if (args.visible != null)
+         this.dialogModel.visible = args.visible;
 
-         this.dialogModel.width        = (args.width ? args.width : '99%');
-         this.dialogModel.height       = (args.height ? args.height : '99%');
-         this.dialogModel.enableResize = (args.enableResize != null ? args.enableResize : true);
-         if (args.cssClass) {
-            let x         = this.dialogModel.cssClass
-            args.cssClass = (x ? `${x} ${args.cssClass}` : args.cssClass);
-         }
-
-         this.resolvedContent = await args.content;
+      this.dialogModel.width        = (args.width ? args.width : '99%');
+      this.dialogModel.height       = (args.height ? args.height : '99%');
+      this.dialogModel.enableResize = (args.enableResize != null ? args.enableResize : true);
+      if (args.cssClass) {
+         let x         = this.dialogModel.cssClass
+         args.cssClass = (x ? `${x} ${args.cssClass}` : args.cssClass);
       }
+
+      this.resolvedContent = await args.content;
+
+      try {
+         await this.afterContentResolved(this.resolvedContent);
+      } catch (ex) {
+         getErrorHandler().displayExceptionToUser(ex);
+      }
+
 
       let targetElem: HTMLElement;
       if (this.initArgs.dialogTagId)
@@ -134,7 +148,6 @@ export class AbstractDialogWindow {
          targetElem = elem
       }
 
-      this.dialog = new Dialog(this.dialogModel, targetElem);
 
       // Create classes for DialogWindow DIV
       let cs = ''
@@ -163,47 +176,207 @@ export class AbstractDialogWindow {
       dialogContent += `
 </div>
 `;
-      this.dialog.content = dialogContent;
+      // this.dialog.content = dialogContent;
+      this.dialogModel.content = dialogContent;
 
 
-      if (this.initArgs)  {
-         if (this.initArgs.header == null)
-            this.initArgs.header = ''; // there's always a header so that we always have the top widgets
+      try {
+         await this.beforeHeaderInstantiated();
+      } catch (ex) {
+         getErrorHandler().displayExceptionToUser(ex);
+      }
 
-         let arg_header: String | AbstractWidget = await this.initArgs.header
-
-         let headerFromInitArgs: AbstractWidget;
-         if (isString(arg_header)) {
-            // html
-            headerFromInitArgs = WgtLbl.create({labelHTML: arg_header as string, htmlTagStyle: 'align-self: center;', htmlTagType: 'span'});
-         } else {
-            // AbstractWidget
-            headerFromInitArgs = arg_header as AbstractWidget;
-         }
+      thisX.headerWidget      = await thisX.headerMakeHeaderMainRow();
+      //this.dialog.header = await thisX.headerWidget.initContent();
+      this.dialogModel.header = await thisX.headerWidget.initContent();
 
 
-         thisX.headerWidget = WgtPanel_RowFlex.create(
-            {
-               children: [
-                  await WgtPanel_HTML.create({
-                                                htmlContent:         `<span id="${thisX.backArrowId}"  style="margin-right:5px;"><button type="button" style="background-color: ${thisX.color_header_background}"><i class="fa fa-arrow-circle-left" style="font-weight:900;font-size:20px;color: ${this.color_header_font} !important;"></i></button></span>`,
-                                                logicImplementation: async () => {
-                                                   let htmlElement: HTMLElement = document.getElementById(thisX.backArrowId);
-                                                   htmlElement.addEventListener('click', (ev) => {
-                                                      thisX.hide(); // close
-                                                   });
-                                                },
-                                             }),
+      try {
+         await this.beforeDialogInstantiated();
+      } catch (ex) {
+         getErrorHandler().displayExceptionToUser(ex);
+      }
 
-                  headerFromInitArgs,
+      this.dialog = new Dialog(this.dialogModel, targetElem);
 
-               ]
-            })
-
-
-         this.dialog.header = await thisX.headerWidget.initContent();
-      } // header
    }
+
+
+   //--------------- Start Container methods -----------------------
+
+   /**
+    * Override this method to insert logic after the content is resolved (awaited)
+    * @protected
+    */
+   protected async afterContentResolved(resolvedContent: AbstractWidget) {
+
+   }
+
+   /**
+    * Called before the EJ2 Dialog is instantiated (the entire dialog model including content and header are set).
+    * The dialogModel can be found in <code>this.dialogModel</code>, and the initial arguments in <code>this.initArgs</code>
+    * @protected
+    */
+   protected async beforeDialogInstantiated() {
+
+   }
+
+   /**
+    * Called before the header og EJ2 Dialog is instantiated, but AFTER the content is resolved (initContent called and set in the DialogModel).
+    * The dialogModel can be found in <code>this.dialogModel</code>, and the initial arguments in <code>this.initArgs</code>
+    * @protected
+    */
+   protected async beforeHeaderInstantiated() {
+
+   }
+
+
+   //--------------------- Start Header methods --------------------
+
+   /**
+    * Widgets that are placed before the header text from the parameters and before the headerStartWidgets in the parameters
+    * @protected
+    */
+   protected async headerStartWidgets(): Promise<AbstractWidget[]> {
+      return [];
+   }
+
+   /**
+    * Widgets that are placed after the header text from the parameters but before the headerEndWidgets in the parameters
+    * @protected
+    */
+   protected async headerEndWidgets(): Promise<AbstractWidget[]> {
+      return [];
+   }
+
+
+   protected async headerFullWidgetList(): Promise<AbstractWidget[]> {
+      let headerFromInitArgs: AbstractWidget = await this.headerMakeWidgetFromArgsHeaderField();
+
+      let list = [];
+
+      try {
+         list.push((this.initArgs?.showHeaderBackArrow ? await this.headerBackArrowWidget() : null));
+      } catch (ex) {
+         getErrorHandler().displayExceptionToUser(ex);
+      }
+
+      try {
+         list.push(...await this.headerStartWidgets());
+      } catch (ex) {
+         getErrorHandler().displayExceptionToUser(ex);
+      }
+
+      try {
+         let startWidgets = await this.initArgs?.headerStartWidgets;
+         list.push(...(startWidgets ? startWidgets : []));
+      } catch (ex) {
+         getErrorHandler().displayExceptionToUser(ex);
+      }
+
+      list.push(headerFromInitArgs);
+
+      try {
+         list.push(...await this.headerEndWidgets());
+      } catch (ex) {
+         getErrorHandler().displayExceptionToUser(ex);
+      }
+
+      try {
+         let endWidgets = await this.initArgs?.headerEndWidgets;
+         list.push(...(endWidgets ? endWidgets : []));
+      } catch (ex) {
+         getErrorHandler().displayExceptionToUser(ex);
+      }
+
+
+      list.push(WgtPanel_SpacerHorizontal.create({pixels: 20}));
+
+      return list;
+   } // headerMakeHeaderMainRowChildren
+
+   protected async headerMakeHeaderMainRow(): Promise<AbstractWidget> {
+      let children = await this.headerFullWidgetList();
+
+      return WgtPanel_RowFlex.create(
+         {
+            style:    `flex-shrink:0;flex-grow:1;align-content:stretch;`,
+            children: children
+         });
+   } // headerMakeHeaderMainRow
+
+
+   /**
+    * Override this method to create the Widget that represents the header content passed in from the dialog arguments.
+    * This component will then be wrapped along with standard widgets (ex: back arrow, refresh icon, etc.)
+    * @protected
+    */
+   protected async headerMakeWidgetFromArgsHeaderField(): Promise<AbstractWidget> {
+      if (this.initArgs.header == null)
+         this.initArgs.header = ''; // there's always a header so that we always have the top widgets
+
+      let arg_header: String | AbstractWidget = await this.initArgs.header
+
+      let headerFromInitArgs: AbstractWidget;
+      if (isString(arg_header)) {
+         // html
+         headerFromInitArgs = WgtLbl.create({labelHTML: arg_header as string, htmlTagStyle: 'align-self: center;margin-left:2px;', htmlTagType: 'span'});
+      } else {
+         // AbstractWidget
+         headerFromInitArgs = arg_header as AbstractWidget;
+      }
+      let wrapper = WgtPanel_RowFlex.create(
+         {
+            style:    `flex-shrink:0;flex-grow:1;align-content:stretch;`,
+            children: [headerFromInitArgs],
+         });
+      return wrapper;
+   } //header_makeWidgetFromArgs
+
+   /**
+    * Creates the back arrow that is placed in the left-most part of the dialog header and allows an iOS-like "Back" effect
+    * @protected
+    */
+   protected async headerBackArrowWidget(): Promise<AbstractWidget> {
+      let thisX = this;
+      return WgtPanel_HTML.create({
+                                     htmlContent:         `<span id="${thisX.headerBackArrowId}"  style="margin-right:5px;"><button type="button" style="background-color: ${thisX.color_header_background}"><i class="fa fa-arrow-circle-left" style="font-weight:900;font-size:20px;color: ${this.color_header_font} !important;"></i></button></span>`,
+                                     logicImplementation: async () => {
+                                        let htmlElement: HTMLElement = document.getElementById(thisX.headerBackArrowId);
+                                        htmlElement.addEventListener('click', (_ev) => {
+                                           thisX.headerBackArrowAction.call(thisX, _ev);
+                                        });
+
+                                        await thisX.headerBackArrowTooltip();
+                                     },
+                                  })
+   } // header_backArrowWidget
+
+   /**
+    * Override this method to control the action taken when the back arrow widget defined in header_backArrowWidget() is clicked
+    *
+    * Note: if the header_backArrowWidget() method is overridden, then this method might not be called by the new widget.
+    * @param _ev
+    * @protected
+    */
+   protected async headerBackArrowAction(_ev: MouseEvent) {
+      this.hide(); // close
+   } // header_backArrowAction
+
+   protected headerBackArrowTooltip() {
+      let htmlElement: HTMLElement = document.getElementById(this.headerBackArrowId);
+      if (htmlElement) {
+         let tooltip = new Tooltip({
+                                      content:   'Close',
+                                      openDelay: 300,
+                                   });
+         tooltip.appendTo(htmlElement);
+      }
+   } // headerRefreshTooltip
+
+
+   //-------------------- End Header Methods --------------------
+
 
    show() {
       this.dialog.show()
@@ -417,12 +590,12 @@ export class AbstractDialogWindow {
 
 //--------------------------- set/get --------------
 
-   get initArgs(): Args_AbstractDialogWindow {
+   get initArgs(): ARGS_TYPE {
       return this._initArgs;
    }
 
 
-   set initArgs(value: Args_AbstractDialogWindow) {
+   set initArgs(value: ARGS_TYPE) {
       this._initArgs = value;
    }
 

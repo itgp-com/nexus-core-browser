@@ -9,6 +9,11 @@ export class Args_WgtPanel {
    suffixClasses ?: StringArg;
    style ?: StringArg;
    children ?: AbstractWidget[];
+
+   /**
+    * HTML tag to be used instead of the default 'div'
+    */
+   htmlTag ?: string;
 }
 
 export class Args_WgtPanel_SpecificClass  extends Args_WgtPanel{
@@ -33,7 +38,7 @@ export class WgtPanel_SpecificClass extends AnyWidget {
       this.args = args;
 
       let descriptor: Args_AnyWidget = {
-         id:               `WgtPanel`,
+         id:               this.constructor.name,
       }; //Args_AnyWidget
 
       if ( args && args.children)
@@ -47,6 +52,7 @@ export class WgtPanel_SpecificClass extends AnyWidget {
       let prefix = '';
       let suffix = '';
       let style  = '';
+      let tag    = this.getTag();
 
       if (args && args.prefixClasses)
          prefix = stringArgVal(args.prefixClasses) + ' ';
@@ -54,11 +60,19 @@ export class WgtPanel_SpecificClass extends AnyWidget {
          suffix = ' ' + stringArgVal(args.suffixClasses);
       if (args && args.style)
          style = ` style="${stringArgVal(args.style)}"`;
-      return `<div id="${this.tagId}" class="${prefix}${args.mandatoryClass}${suffix}"${style}>`;
+      return `<${tag} id="${this.tagId}" class="${prefix}${args.mandatoryClass}${suffix}"${style}>`;
    }
-
    async localContentEnd(): Promise<string> {
-      return `</div>`;
+      let tag    = this.getTag();
+      return `</${tag}>`;
    }
 
+
+   private getTag():string{
+      let args = this.args;
+      let tag    = 'div';
+      if ( args?.htmlTag)
+         tag=args.htmlTag;
+      return tag;
+   }
 }
