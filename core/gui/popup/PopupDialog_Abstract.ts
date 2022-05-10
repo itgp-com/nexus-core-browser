@@ -64,13 +64,13 @@ export interface Args_MultiSelect_PopupDialog_Abstract {
 
 export abstract class PopupDialog_Abstract {
 
-   private _dialogObj: AbstractDialogWindow;
-   private _args: Args_PopupDialog_Abstract;
-   private _selectedIndex: number | number[]
-   private _selectedData: any | any[];
-   private _hasData: boolean = false;
+   protected _dialogObj: AbstractDialogWindow;
+   protected _args: Args_PopupDialog_Abstract;
+   protected _selectedIndex: number | number[]
+   protected _selectedData: any | any[];
+   protected _hasData: boolean = false;
 
-   private _contentWidget: WgtPopupDialog_Content;
+   protected _contentWidget: WgtPopupDialog_Content;
 
 
    protected constructor() {
