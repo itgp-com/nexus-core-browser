@@ -1,12 +1,12 @@
 import {getModules, ModuleInfo, ModuleInit} from "./ModuleRegistry";
 import {getErrorHandler}                    from "./CoreErrorHandling";
-import {nexusMain}                          from "./NexusMain";
-import {AnyScreen}                          from "nexus-core-browser/core/gui/AnyScreen";
-import {ScreenAttributes}                   from "nexus-core-browser/core/sec/screen/ScreenAttributes";
-import {appendDivToPage}                    from "../../../src/main/browser/utils/app/AppUtils";
-import {getRandomString}                    from "nexus-core-browser/core/CoreUtils";
-import {AbstractWidget}                     from "nexus-core-browser/core";
-import {Args_onInstantiated}                from "nexus-core-browser/core/gui/AbstractWidget";
+import {nexusMain}                           from "./NexusMain";
+import {AbstractWidget, Args_onInstantiated} from "./gui/AbstractWidget";
+import {ScreenAttributes}                    from "./sec/screen/ScreenAttributes";
+import {getRandomString}                    from "./CoreUtils";
+
+
+
 
 export const STORAGE_CURRENT_MODULE_ID: string = 'currentModule';
 
