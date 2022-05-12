@@ -15,6 +15,7 @@ export class Args_WgtDatePicker extends Args_WgtSimple<DatePickerModel> {
    stayFocusedOnError ?: boolean;
 
    initialValue ?: Date;
+   convertNullToToday?:boolean;
    htmlTag ?: IArgs_HtmlTag;
 }
 
@@ -168,8 +169,10 @@ export abstract class WgtDatePicker_Abstract extends WgtSimple<DatePicker, Args_
    }
 
    convertValueBeforeSet(val: Date): Date {
-      if (val == null || val == undefined)
-         val = new Date(); //to now
+      if (this.args.convertNullToToday) {
+         if (val == null || val == undefined)
+            val = new Date(); //to now
+      }
       return val;
    }
 

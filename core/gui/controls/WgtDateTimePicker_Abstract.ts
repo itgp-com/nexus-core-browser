@@ -15,11 +15,13 @@ export class Args_WgtDateTimePicker extends Args_WgtSimple<DateTimePickerModel> 
    stayFocusedOnError ?: boolean;
 
    initialValue ?: Date;
+   convertNullToNow?: boolean;
    htmlTag ?: IArgs_HtmlTag;
 }
 
 export abstract class WgtDateTimePicker_Abstract extends WgtSimple<DateTimePicker, Args_WgtSimple, Date> {
    args: Args_WgtDateTimePicker;
+
    // private _validator: FormValidator;
 
    protected constructor() {
@@ -88,8 +90,8 @@ export abstract class WgtDateTimePicker_Abstract extends WgtSimple<DateTimePicke
          };
       } // if updateOnBlurDisabled
 
-      let oldChange = args.ej.change;
-      args.ej.change = (ev:ChangedEventArgs) =>{
+      let oldChange  = args.ej.change;
+      args.ej.change = (ev: ChangedEventArgs) => {
          thisX._onValueChanged(); // write to appserver
 
          if (oldChange)
@@ -168,8 +170,10 @@ export abstract class WgtDateTimePicker_Abstract extends WgtSimple<DateTimePicke
    }
 
    convertValueBeforeSet(val: Date): Date {
-      if (val == null || val == undefined)
-         val = new Date(); //to now
+      if (this.args.convertNullToNow) {
+         if (val == null || val == undefined)
+            val = new Date(); //to now
+      }
       return val;
    }
 
