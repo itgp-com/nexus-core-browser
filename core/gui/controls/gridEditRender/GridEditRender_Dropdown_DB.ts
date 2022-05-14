@@ -2,8 +2,8 @@ import {IEditCell}                                                              
 import {Query}                                                                   from '@syncfusion/ej2-data';
 import {Column, QueryCellInfoEventArgs}                                          from "@syncfusion/ej2-grids";
 import {ChangeEventArgs}                                                         from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
-import {WgtDropDownDB}                                                           from "../WgtDropDownDB";
-import {Args_WgtDropDownDB}                                                      from "../WgtDropDownDB_Abstract";
+import {CoreWgtDropDownDB}                                                       from "../CoreWgtDropDownDB";
+import {Args_WgtDropDownDB}                                                      from "../AbstractWgtDropDownDB";
 import {singleRecordDataProvider}                                                from "../../../data/DataProviderUtils";
 import {Args_GridEditRender_Dropdown_Abstract, GridEditRender_Dropdown_Abstract} from "./GridEditRender_Dropdown_Abstract";
 
@@ -31,7 +31,7 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
    }
 
 
-   async createDropDown(anchor: HTMLElement, record:any ) : Promise<void>{
+   async createDropDown(anchor: HTMLElement, record: any): Promise<void> {
       let thisX = this;
 
       if (anchor) {
@@ -58,17 +58,17 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
          if (itemTemplate != null && itemTemplate.length > 0)
             ddArgs.ej.itemTemplate = itemTemplate;
 
-         let wgtDD: WgtDropDownDB = WgtDropDownDB.create(ddArgs);
+         let wgtDD: CoreWgtDropDownDB = CoreWgtDropDownDB.create(ddArgs);
          await wgtDD.initLogic();
-         wgtDD.obj.change = (evt:ChangeEventArgs) => {
-               let queryCellInfoEventArgs:QueryCellInfoEventArgs = {
-                  data: record,
-                  cell: anchor,
-               }
-               thisX.args.change(thisX, evt, queryCellInfoEventArgs);
+         wgtDD.obj.change = (evt: ChangeEventArgs) => {
+            let queryCellInfoEventArgs: QueryCellInfoEventArgs = {
+               data: record,
+               cell: anchor,
+            }
+            thisX.args.change(thisX, evt, queryCellInfoEventArgs);
          };
 
-         dataProvider.children    = [wgtDD];
+         dataProvider.children = [wgtDD];
 
          this.dropDownInstance       = wgtDD.obj; //new DropDownList(dropdown_options);
          let currentValue            = record[this.grid_value_column_name];

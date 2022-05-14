@@ -7,10 +7,11 @@ import {getErrorHandler}                                                        
 import {ErrorHandler}                                                            from "../ErrorHandler";
 import {isString}                                                                from "lodash";
 import {WgtPanel_RowFlex}                                                        from "../gui/panels/WgtPanel_RowFlex";
-import {WgtLbl}                                                                  from "../gui/controls/WgtLbl";
-import {WgtPanel_HTML}                                                           from "../gui/controls/WgtPanel_HTML";
+import {CoreWgtLbl}                                                              from "../gui/controls/CoreWgtLbl";
+import {AbstractWgtPanel_HTML}                                                   from "../gui/controls/AbstractWgtPanel_HTML";
 import {AnimationSettingsModel}                                                  from "@syncfusion/ej2-popups/src/dialog/dialog-model";
 import {WgtPanel_SpacerHorizontal}                                               from "../gui/panels/WgtPanel_SpacerHorizontal";
+import {CoreWgtPanel_HTML}                                                       from "../gui/controls/CoreWgtPanel_HTML";
 
 export abstract class Args_AbstractDialogWindow {
 
@@ -320,7 +321,7 @@ export class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialogWindow = 
       let headerFromInitArgs: AbstractWidget;
       if (isString(arg_header)) {
          // html
-         headerFromInitArgs = WgtLbl.create({labelHTML: arg_header as string, htmlTagStyle: 'align-self: center;margin-left:2px;', htmlTagType: 'span'});
+         headerFromInitArgs = CoreWgtLbl.create({labelHTML: arg_header as string, htmlTagStyle: 'align-self: center;margin-left:2px;', htmlTagType: 'span'});
       } else {
          // AbstractWidget
          headerFromInitArgs = arg_header as AbstractWidget;
@@ -339,7 +340,7 @@ export class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialogWindow = 
     */
    protected async headerBackArrowWidget(): Promise<AbstractWidget> {
       let thisX = this;
-      return WgtPanel_HTML.create({
+      return CoreWgtPanel_HTML.create({
                                      htmlContent:         `<span id="${thisX.headerBackArrowId}"  style="margin-right:5px;"><button type="button" style="background-color: ${thisX.color_header_background}"><i class="fa fa-arrow-circle-left" style="font-weight:900;font-size:20px;color: ${this.color_header_font} !important;"></i></button></span>`,
                                      logicImplementation: async () => {
                                         let htmlElement: HTMLElement = document.getElementById(thisX.headerBackArrowId);

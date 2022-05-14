@@ -26,14 +26,14 @@ export enum DropDownSortOrder {
 
 export type WgtDropDownDataType = number | string | boolean;
 
-export abstract class WgtDropDown<ARG_CLASS extends Args_WgtDropDown = Args_WgtDropDown> extends WgtSimple<DropDownList, Args_AnyWidget, WgtDropDownDataType> {
+export abstract class AbstractWgtDropDown<ARG_CLASS extends Args_WgtDropDown = Args_WgtDropDown> extends WgtSimple<DropDownList, Args_AnyWidget, WgtDropDownDataType> {
    args: Args_WgtDropDown;
 
    protected constructor() {
       super();
    }
 
-   initialize_WgtDropDown(args: ARG_CLASS) {
+   initialize_AbstractWgtDropDown(args: ARG_CLASS) {
       if (!args)
          throw "There are no args in call to initialize_WgtDropDown(args) !";
 

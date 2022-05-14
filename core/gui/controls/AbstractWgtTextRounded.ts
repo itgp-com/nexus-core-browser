@@ -2,9 +2,9 @@ import {Args_AnyWidget, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 import {FormValidator, TextBox}              from "@syncfusion/ej2-inputs";
 import {WgtSimple}                           from "./WgtSimple";
 import {DataProvider, IDataProviderSimple}   from "../../data/DataProvider";
-import {Args_WgtText, Base_WgtText}          from "./Base_WgtText";
+import {Args_WgtText}                        from "./AbstractWgtText";
 
-export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
+export abstract class AbstractWgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
    args: Args_WgtText;
    private _validator: FormValidator;
 
@@ -13,12 +13,12 @@ export class WgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
       super();
    }
 
-   static create(args: Args_WgtText): WgtTextRounded {
-      let t  = new WgtTextRounded();
-      t.args = args;
-      // t.initialize_WgtText(args);
-      return t;
-   }
+   // static create(args: Args_WgtText): AbstractWgtTextRounded {
+   //    let t  = new AbstractWgtTextRounded();
+   //    t.args = args;
+   //    // t.initialize_WgtText(args);
+   //    return t;
+   // }
 
    async localContentBegin(): Promise<string> {
       let x: string = ``;

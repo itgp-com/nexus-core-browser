@@ -132,7 +132,7 @@ export class Args_WgtChart extends Args_AnyWidget {
 } // Args_WgtChart
 
 // noinspection JSUnusedGlobalSymbols
-export class WgtChart extends AnyWidget<Chart, Args_WgtChart, any> {
+export abstract class AbstractWgtChart extends AnyWidget<Chart, Args_WgtChart, any> {
    args: Args_WgtChart;
 
    //---- should move from WgtSimple to AnyWidget -------
@@ -145,7 +145,7 @@ export class WgtChart extends AnyWidget<Chart, Args_WgtChart, any> {
    }
 
 
-   initialize_WgtChart(args: Args_WgtChart) {
+   initialize_AbstractWgtChart(args: Args_WgtChart) {
       let thisX = this;
       if (!args)
          args = {}

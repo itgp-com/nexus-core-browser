@@ -19,7 +19,7 @@ export class Args_WgtDatePicker extends Args_WgtSimple<DatePickerModel> {
    htmlTag ?: IArgs_HtmlTag;
 }
 
-export abstract class WgtDatePicker_Abstract extends WgtSimple<DatePicker, Args_WgtSimple, Date> {
+export abstract class AbstractWgtDatePicker extends WgtSimple<DatePicker, Args_WgtSimple, Date> {
    args: Args_WgtDatePicker;
    // private _validator: FormValidator;
 
@@ -27,7 +27,7 @@ export abstract class WgtDatePicker_Abstract extends WgtSimple<DatePicker, Args_
       super();
    }
 
-   initialize_WgtDatePicker_Abstract(args: Args_WgtDatePicker) {
+   initialize_AbstractWgtDatePicker(args: Args_WgtDatePicker) {
 
       if (!args.ej)
          args.ej = {};

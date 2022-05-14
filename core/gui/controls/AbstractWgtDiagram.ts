@@ -16,11 +16,11 @@ export class Args_WgtDiagram_Abstract extends Args_AnyWidget implements IArgs_Ht
 } // Args_WgtDiagram_Abstract
 
 
-export abstract class WgtDiagram_Abstract extends AnyWidget<Diagram, Args_WgtDiagram_Abstract, any> {
+export abstract class AbstractWgtDiagram extends AnyWidget<Diagram, Args_WgtDiagram_Abstract, any> {
    args_WgtDiagram_Abstract: Args_WgtDiagram_Abstract;
    // wrapperTagID: string;
 
-   protected initialize_WgtDiagram_Abstract(args_WgtDiagram_Abstract: Args_WgtDiagram_Abstract) {
+   protected initialize_AbstractWgtDiagram(args_WgtDiagram_Abstract: Args_WgtDiagram_Abstract) {
       let thisX                      = this;
       thisX.args_WgtDiagram_Abstract = args_WgtDiagram_Abstract;
 

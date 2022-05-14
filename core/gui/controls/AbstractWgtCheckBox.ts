@@ -31,7 +31,7 @@ export abstract class Args_WgtCheckBox extends Args_WgtSimple<CheckBoxModel> {
 
 export type WgtCheckBoxDataType = number | string | boolean;
 
-export abstract class WgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtCheckBox> extends WgtSimple <CheckBox, Args_AnyWidget, WgtCheckBoxDataType> {
+export abstract class AbstractWgtCheckBox<ARG_CLASS extends Args_WgtCheckBox = Args_WgtCheckBox> extends WgtSimple <CheckBox, Args_AnyWidget, WgtCheckBoxDataType> {
    args: Args_WgtCheckBox;
    private _indeterminateValue: any                         = null;
    private _modelTrueValue: WgtCheckBoxDataType             = true;

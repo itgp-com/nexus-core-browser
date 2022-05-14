@@ -4,7 +4,7 @@ import {IDataProviderSimple}                                from "../../data/Dat
 import {StringArg, stringArgVal}                            from "../../CoreUtils";
 
 
-export class Args_WgtLbl_Abstract extends Args_WgtSimple implements IArgs_HtmlTag {
+export class Args_WgtLbl extends Args_WgtSimple implements IArgs_HtmlTag {
    htmlTagType ?: string; // div by default
    htmlTagClass ?: string;
    htmlTagStyle ?: string;
@@ -14,15 +14,15 @@ export class Args_WgtLbl_Abstract extends Args_WgtSimple implements IArgs_HtmlTa
    labelHTML: StringArg;
 } // Args_WgtLbl
 
-export abstract class WgtLbl_Abstract extends WgtSimple<any, Args_AnyWidget, StringArg> {
+export abstract class AbstractWgtLbl extends WgtSimple<any, Args_AnyWidget, StringArg> {
 
-   args: Args_WgtLbl_Abstract;
+   args: Args_WgtLbl;
 
    protected constructor() {
       super();
    }
 
-   initialize_WgtLbl_Abstract(args: Args_WgtLbl_Abstract) {
+   initialize_AbstractWgtLbl(args: Args_WgtLbl) {
       if (!args)
          throw "There are no args in call to initialize_WgtLbl_Abstract(args) !";
       this.args = args;

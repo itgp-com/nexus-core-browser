@@ -1,8 +1,7 @@
-import {DataManager, Query, UrlAdaptor} from "@syncfusion/ej2-data";
-import {Args_WgtDropDown, WgtDropDown}  from "./WgtDropDown";
-import {urlTableList}                   from "../../CoreUtils";
-import {getErrorHandler}                from "../../CoreErrorHandling";
-import {DataManagerNexus}               from "../../ej2/DataManagerNexus";
+import {DataManager, Query, UrlAdaptor}        from "@syncfusion/ej2-data";
+import {AbstractWgtDropDown, Args_WgtDropDown} from "./AbstractWgtDropDown";
+import {urlTableList}                          from "../../CoreUtils";
+import {DataManagerNexus}                      from "../../ej2/DataManagerNexus";
 
 
 export class Args_WgtDropDownDB extends Args_WgtDropDown {
@@ -31,14 +30,14 @@ export class Args_WgtDropDownDB extends Args_WgtDropDown {
 
 }
 
-export class WgtDropDownDB_Abstract<ARG_CLASS extends Args_WgtDropDownDB = Args_WgtDropDownDB> extends WgtDropDown<ARG_CLASS> {
+export class AbstractWgtDropDownDB<ARG_CLASS extends Args_WgtDropDownDB = Args_WgtDropDownDB> extends AbstractWgtDropDown<ARG_CLASS> {
 
 
    protected constructor() {
       super();
    }
 
-   initialize_WgtDropDownDB_Abstract(args: ARG_CLASS) {
+   initialize_AbstractWgtDropDownDB(args: ARG_CLASS) {
       let dm: DataManager = new DataManagerNexus({
                                                url:         urlTableList(args.listDataDBTable),
                                                adaptor:     new UrlAdaptor(),
@@ -58,24 +57,24 @@ export class WgtDropDownDB_Abstract<ARG_CLASS extends Args_WgtDropDownDB = Args_
       if (args.enabled != null)
          args.ej.enabled = args.enabled;
 
-      this.pre_initialize_WgtDropDown(args);
-      super.initialize_WgtDropDown(args);
-      this.post_initialize_WgtDropDown(args);
+      this.pre_initialize_AbstractWgtDropDownDB(args);
+      super.initialize_AbstractWgtDropDown(args);
+      this.post_initialize_AbstractWgtDropDownDB(args);
 
    }
 
    /**
-    * Allows extending classes to execute code before the super method is called, but after the code in the {@link #initialize_WgtDropDownDB_Abstract} method has run
+    * Allows extending classes to execute code before the super method is called, but after the code in the {@link #initialize_AbstractWgtDropDownDB} method has run
     * @param args
     */
-   pre_initialize_WgtDropDown(args: ARG_CLASS){
+   pre_initialize_AbstractWgtDropDownDB(args: ARG_CLASS){
 
    }
    /**
-    * Allows extending classes to execute code right after the call to <pre>super.initialize_WgtDropDown(args);</pre> in  {@link #initialize_WgtDropDownDB_Abstract} method has run
+    * Allows extending classes to execute code right after the call to <pre>super.initialize_WgtDropDown(args);</pre> in  {@link #initialize_AbstractWgtDropDownDB} method has run
     * @param args
     */
-   post_initialize_WgtDropDown(args: ARG_CLASS){
+   post_initialize_AbstractWgtDropDownDB(args: ARG_CLASS){
 
    }
 

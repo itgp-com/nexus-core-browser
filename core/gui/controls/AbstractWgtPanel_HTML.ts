@@ -10,22 +10,14 @@ export class Args_WgtPanel_HTML {
    destroyImplementation ?: () => Promise<void>;
 }
 
-export class WgtPanel_HTML extends AnyWidget {
+export abstract class AbstractWgtPanel_HTML extends AnyWidget {
    htmlArgs: Args_WgtPanel_HTML;
 
    protected constructor() {
       super();
    }
 
-
-   static async create(param:Args_WgtPanel_HTML){
-      let instance = new WgtPanel_HTML();
-      await instance.initialize_WgtPanel_HTML(param);
-      return instance;
-   }
-
-
-   async initialize_WgtPanel_HTML(htmlArgs: Args_WgtPanel_HTML) {
+   async initialize_AbstractWgtPanel_HTML(htmlArgs: Args_WgtPanel_HTML) {
       this.htmlArgs               = htmlArgs;
       let anyArgs: Args_AnyWidget = {
          children: [],

@@ -8,11 +8,11 @@ import {StringArg, stringArgVal} from "../../CoreUtils";
 
 RichTextEditor.Inject(Toolbar, Link, Image, HtmlEditor, QuickToolbar, Resize);
 
-export class Args_Base_WgtRichTextEditor extends Args_WgtSimple<RichTextEditorModel> {
+export class Args_WgtRichTextEditor extends Args_WgtSimple<RichTextEditorModel> {
    initialValue?:StringArg;
 }
 
-export abstract class Base_WgtRichTextEditor<A extends Args_Base_WgtRichTextEditor> extends WgtSimple<RichTextEditor, A> {
+export abstract class AbstractWgtRichTextEditor<A extends Args_WgtRichTextEditor> extends WgtSimple<RichTextEditor, A> {
 
    args: A;
 
@@ -20,7 +20,7 @@ export abstract class Base_WgtRichTextEditor<A extends Args_Base_WgtRichTextEdit
       super();
    }
 
-   initialize_Base_WgtRichTextEditor(argsLocal: A) {
+   initialize_AbstractWgtRichTextEditor(argsLocal: A) {
       let thisX = this;
       if (!argsLocal)
          argsLocal = {} as A;

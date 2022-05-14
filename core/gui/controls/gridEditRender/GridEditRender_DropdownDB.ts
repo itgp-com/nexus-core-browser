@@ -5,10 +5,10 @@ import {Column, Grid, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
 import {WgtGrid}                              from "../WgtGrid";
 import {getRandomString}                      from "../../../CoreUtils";
 import {ChangeEventArgs}                      from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
-import {WgtDropDownDB}                        from "../WgtDropDownDB";
-import {Args_WgtDropDownDB}                   from "../WgtDropDownDB_Abstract";
+import {CoreWgtDropDownDB}                    from "../CoreWgtDropDownDB";
 import {singleRecordDataProvider}             from "../../../data/DataProviderUtils";
-import {DropDownSortOrder}                    from "../WgtDropDown";
+import {Args_WgtDropDownDB}                   from "../AbstractWgtDropDownDB";
+import {DropDownSortOrder}                    from "../AbstractWgtDropDown";
 
 export class Args_GridEditRender_DropdownDB {
    grid_value_column_name: string;
@@ -67,7 +67,7 @@ export class GridEditRender_DropdownDB {
    }
 
    // noinspection JSUnusedGlobalSymbols
-   async createRenderer(args: QueryCellInfoEventArgs, parentWgtGrid: WgtGrid): Promise<WgtDropDownDB> {
+   async createRenderer(args: QueryCellInfoEventArgs, parentWgtGrid: WgtGrid): Promise<CoreWgtDropDownDB> {
 
       //------------- make sure we tag the parent component of this renderer/editor --------------
       if (this.last_parentWgtGrid == null) {
@@ -84,13 +84,13 @@ export class GridEditRender_DropdownDB {
 
    } // createRenderer
 
-   async createRendererRawEjGrid(queryCellInfoEventArgs: QueryCellInfoEventArgs, grid: Grid): Promise<WgtDropDownDB> {
+   async createRendererRawEjGrid(queryCellInfoEventArgs: QueryCellInfoEventArgs, grid: Grid): Promise<CoreWgtDropDownDB> {
 
       let anchor: HTMLInputElement = <HTMLInputElement>queryCellInfoEventArgs.cell.getElementsByClassName(GridEditRender_DropdownDB.CLASS_GRID_DROPDOWN).item(0);
       return this.createDD(anchor, queryCellInfoEventArgs);
    }
 
-   private async createDD(anchor: HTMLElement, queryCellInfoEventArgs: QueryCellInfoEventArgs) : Promise<WgtDropDownDB>{
+   private async createDD(anchor: HTMLElement, queryCellInfoEventArgs: QueryCellInfoEventArgs) : Promise<CoreWgtDropDownDB>{
       let thisX = this;
       let record = queryCellInfoEventArgs.data;
       if (anchor) {
@@ -117,7 +117,7 @@ export class GridEditRender_DropdownDB {
          if (itemTemplate != null && itemTemplate.length > 0)
             ddArgs.ej.itemTemplate = itemTemplate;
 
-         let wgtDD: WgtDropDownDB = WgtDropDownDB.create(ddArgs);
+         let wgtDD: CoreWgtDropDownDB = CoreWgtDropDownDB.create(ddArgs);
          await wgtDD.initLogic();
          wgtDD.obj.change = (evt:ChangeEventArgs) => {
             if (thisX.args.change)

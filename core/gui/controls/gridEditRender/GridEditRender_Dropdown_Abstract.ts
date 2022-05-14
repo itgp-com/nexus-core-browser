@@ -4,7 +4,7 @@ import {ChangeEventArgs}              from "@syncfusion/ej2-dropdowns/src/drop-d
 import {getRandomString}              from "../../../CoreUtils";
 import {WgtGrid}                      from "../WgtGrid";
 import {getErrorHandler}              from "../../../CoreErrorHandling";
-import {DropDownSortOrder}            from "../WgtDropDown";
+import {DropDownSortOrder}            from "../AbstractWgtDropDown";
 
 export class Args_GridEditRender_Dropdown_Abstract {
    grid_value_column_name: string;

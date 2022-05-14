@@ -13,14 +13,14 @@ export class Args_WgtTreeView extends Args_AbstractWidget {
    ej ?: TreeViewModel
 }
 
-export class WgtTreeView extends AnyWidget<TreeView, Args_WgtTreeView, any> {
+export abstract class AbstractWgtTreeView extends AnyWidget<TreeView, Args_WgtTreeView, any> {
    args: Args_WgtTreeView;
 
    protected constructor() {
       super();
    }
 
-   initialize_WgtTreeView(args: Args_WgtTreeView) {
+   initialize_AbstractWgtTreeView(args: Args_WgtTreeView) {
       let thisX = this;
 
       if (!args)

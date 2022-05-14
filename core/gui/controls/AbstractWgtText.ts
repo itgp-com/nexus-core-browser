@@ -37,7 +37,7 @@ export class Args_WgtText extends Args_WgtSimple<TextBoxModel> {
  * autocomplete: 'off'
  * floatLabelType: "Always"
  */
-export abstract class Base_WgtText extends WgtSimple<TextBox, Args_AnyWidget, string> {
+export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget, string> {
    args: Args_WgtText;
    private _validator: FormValidator;
 
@@ -45,7 +45,7 @@ export abstract class Base_WgtText extends WgtSimple<TextBox, Args_AnyWidget, st
       super();
    }
 
-   initialize_Base_WgtText(args: Args_WgtText) {
+   initialize_AbstractWgtText(args: Args_WgtText) {
 
       if (!args.ej)
          args.ej = {};

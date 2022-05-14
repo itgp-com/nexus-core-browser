@@ -28,7 +28,7 @@ export class Args_WgtUpload implements IArgs_HtmlTag {
 
 }
 
-export class WgtUpload extends AnyWidget<Uploader> {
+export abstract class AbstractWgtUpload extends AnyWidget<Uploader> {
    argsWgtUpload: Args_WgtUpload;
    protected errorTagId: string;
    protected wrapperTagId: string;
@@ -45,7 +45,7 @@ export class WgtUpload extends AnyWidget<Uploader> {
     * Called from any inheriting class to initialize all the properties during creation
     * @param args
     */
-   initialize_WgtUpload(args ?: Args_WgtUpload) {
+   initialize_AbstractWgtUpload(args ?: Args_WgtUpload) {
 
       if (!args) {
          args = {propertyName: 'upload'}

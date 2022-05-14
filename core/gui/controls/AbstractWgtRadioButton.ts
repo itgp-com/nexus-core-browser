@@ -1,11 +1,10 @@
 import {RadioButton, RadioButtonModel}            from '@syncfusion/ej2-buttons';
-import {enableRipple}                             from '@syncfusion/ej2-base';
 import {Args_WgtSimple, WgtSimple}                from "./WgtSimple";
 import {Args_AnyWidget, IArgs_HtmlTag_Utils}      from "../Args_AnyWidget";
 import {getRandomString, StringArg, stringArgVal} from "../../CoreUtils";
-import {ChangeArgs}                                                 from "@syncfusion/ej2-buttons/src/radio-button/radio-button";
-import {DataProvider, DataProviderChangeEvent, IDataProviderSimple} from "../../data/DataProvider";
-import {getErrorHandler}                                            from "../../CoreErrorHandling";
+import {DataProvider, IDataProviderSimple}        from "../../data/DataProvider";
+import {getErrorHandler}                          from "../../CoreErrorHandling";
+import {isFunction, isString}                     from "lodash";
 
 export class Args_WgtRadioButton extends Args_WgtSimple<RadioButtonModel> {
 
@@ -23,11 +22,8 @@ export class Args_WgtRadioButton extends Args_WgtSimple<RadioButtonModel> {
     */
    labelFunction ?: ((record: any) => string);
 
-   change ?: ((evt: ChangeArgs) => void);
    horizontalLayout ?: boolean;
-   cssButtonClass ?: string;
-   cssButtonClassFunction ?: ((record: any) => string);
-
+   cssButtonClass ?: string | ((record: any) => string);
 
    initialValue ?: StringArg;  // defaults to null
    not_selected_value ?: StringArg; // defaults to null
@@ -36,7 +32,7 @@ export class Args_WgtRadioButton extends Args_WgtSimple<RadioButtonModel> {
 /**
  * Abstract implementation of a group of Syncfusion radio buttons
  */
-export abstract class WgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Args_WgtRadioButton> extends WgtSimple<Map<string, RadioButton>, Args_AnyWidget, string> {
+export abstract class AbstractWgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Args_WgtRadioButton> extends WgtSimple<Map<string, RadioButton>, Args_AnyWidget, string> {
    private _args: Args_WgtRadioButton;
    private _value: string;
    private _label: string
@@ -47,12 +43,11 @@ export abstract class WgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Arg
    }
 
 
-   initialize_WgtRadioButton(args: ARG_CLASS) {
-      let thisX = this;
+   initialize_AbstractWgtRadioButton(args: ARG_CLASS) {
       this.obj  = new Map<string, RadioButton>();
 
       if (!args)
-         throw "There are no args in call to initialize_WgtDropDown(args) !";
+         throw "There are no args in call to initialize_AbstractWgtRadioButton(args) !";
 
       if (!args.ej)
          args.ej = {};
@@ -80,13 +75,10 @@ export abstract class WgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Arg
             let record = this.args.records[i];
 
             let extraClasses: string = '';
-            if (this.args.cssButtonClass != null && this.args.cssButtonClass.length > 0) {
-               extraClasses += this.args.cssButtonClass;
-            }
-
             try {
-               if (this.args.cssButtonClassFunction != null) {
-                  let s: string = this.args.cssButtonClassFunction(record);
+            if (this.args.cssButtonClass != null && this.args.cssButtonClass.length > 0) {
+               if ( isFunction( this.args.cssButtonClass)) {
+                  let s: string = this.args.cssButtonClass(record);
                   if (s != null && s.length > 0) {
                      if (extraClasses.length == 0) {
                         extraClasses += s;
@@ -95,10 +87,15 @@ export abstract class WgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Arg
                         extraClasses += s;
                      }
                   }
+               } else if (isString(this.args.cssButtonClass)) {
+                  extraClasses += this.args.cssButtonClass;
+               } else {
+                  throw 'The cssButtonClass property in AbstractWgtRadioButton arguments is neither a string or a function';
                }
+            }
 
             } catch (ex) {
-               console.log(ex);
+               this.handleWidgetError(ex);
             }
 
 
@@ -134,39 +131,41 @@ export abstract class WgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Arg
       args.ej  = args.ej || {};
       let ej   = args.ej;
 
-      if (thisX._args.records != null && thisX._args.records.length > 0) {
-         let n = thisX._args.records.length;
+      if (args.records != null && args.records.length > 0) {
+         let n = args.records.length;
          for (let i = 0; i < n; i++) {
-            let rec           = thisX._args.records[i];
+            let rec           = args.records[i];
             let val: string   = null;
             let label: string = null
 
-            if (thisX._args.valueFunction != null) {
+            if (args.valueFunction != null) {
                try {
-                  val = thisX._args.valueFunction(rec);
+                  val = args.valueFunction(rec);
                } catch (t) {
                   thisX.handleError(t)
                }
             } else {
-               let valueFieldName: string = stringArgVal(thisX._args.valueFieldName);
+               let valueFieldName: string = stringArgVal(args.valueFieldName);
                val                        = rec[valueFieldName] as string;
             }
 
-            if (thisX._args.labelFunction != null) {
+            if (args.labelFunction != null) {
                try {
-                  label = thisX._args.labelFunction(rec);
+                  label = args.labelFunction(rec);
                } catch (t) {
-                  thisX.handleError(t)
+                  thisX.handleWidgetError(t)
                }
             } else {
-               let labelFieldName: string = stringArgVal(thisX._args.labelFieldName);
+               let labelFieldName: string = stringArgVal(args.labelFieldName);
                label                      = rec[labelFieldName] as string;
             }
 
-            let model: RadioButtonModel = {...thisX._args.ej}
+            let model: RadioButtonModel = {...ej}
             model.label                 = label;
             model.value                 = val;
 
+
+            let userChangeMethod = ej.change;
             model.change = async (evt) => {
 
                thisX.previousValue = thisX.value;
@@ -174,8 +173,12 @@ export abstract class WgtRadioButton<ARG_CLASS extends Args_WgtRadioButton = Arg
 
                await thisX._onValueChanged();
 
-               if (args.change) {
-                  args.change(evt);
+               if (userChangeMethod) {
+                  try {
+                     userChangeMethod(evt);
+                  } catch (e){
+                     this.handleWidgetError(e);
+                  }
                }
             }
 

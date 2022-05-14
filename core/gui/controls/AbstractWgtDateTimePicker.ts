@@ -1,37 +1,39 @@
-import {ColorPicker, ColorPickerEventArgs, ColorPickerModel} from '@syncfusion/ej2-inputs';
+import {ChangedEventArgs, DateTimePicker, DateTimePickerModel} from '@syncfusion/ej2-calendars';
 
 import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 import {Args_WgtSimple, WgtSimple}          from "../controls/WgtSimple";
 import {DataProvider, IDataProviderSimple}  from "../../data/DataProvider";
 
-export class Args_WgtColorPicker extends Args_WgtSimple<ColorPickerModel> {
+export class Args_WgtDateTimePicker extends Args_WgtSimple<DateTimePickerModel> {
    includeErrorLine ?: boolean;
    error ?: IArgs_HtmlTag;
    required ?: boolean;
+   /**
+    * Controls if the textbox string triggers an 'onBlur' event when its contents are changed, the provider data propertyName attribute will be updated and a DataProviderChangeEvent will be fired
+    */
+   updateOnBlurDisabled ?: boolean;
    stayFocusedOnError ?: boolean;
 
-   initialValue ?: string;
+   initialValue ?: Date;
+   convertNullToNow?: boolean;
    htmlTag ?: IArgs_HtmlTag;
 }
 
-export abstract class WgtColorPicker_Abstract extends WgtSimple<ColorPicker, Args_WgtSimple, string> {
-   args: Args_WgtColorPicker;
+export abstract class AbstractWgtDateTimePicker extends WgtSimple<DateTimePicker, Args_WgtSimple, Date> {
+   args: Args_WgtDateTimePicker;
+
    // private _validator: FormValidator;
 
    protected constructor() {
       super();
    }
 
-   initialize_WgtColorPicker_Abstract(args: Args_WgtColorPicker) {
+   initialize_AbstractWgtDateTimePicker(args: Args_WgtDateTimePicker) {
 
       if (!args.ej)
          args.ej = {};
 
-      if (!args.ej.showButtons)
-         args.ej.showButtons = false; // make sure it has a defined value
-
-
-         this.args          = args;
+      this.args          = args;
       this.previousValue = null;
 
       this.initialize_WgtSimple(args)
@@ -53,7 +55,7 @@ export abstract class WgtColorPicker_Abstract extends WgtSimple<ColorPicker, Arg
          requiredAttribute = ' required';
 
       let htmlTagArgs = IArgs_HtmlTag_Utils.init(this.args.htmlTag);
-      x += `<input id="${this.tagId}" type="color" name="${this.args.propertyName}"${IArgs_HtmlTag_Utils.all(htmlTagArgs)}${errorAttributes}${requiredAttribute}/>`;
+      x += `<input id="${this.tagId}" name="${this.args.propertyName}"${IArgs_HtmlTag_Utils.all(htmlTagArgs)}${errorAttributes}${requiredAttribute}/>`;
 
       if (this.args.includeErrorLine) {
          let errorArgs = IArgs_HtmlTag_Utils.init(this.args.error);
@@ -73,26 +75,31 @@ export abstract class WgtColorPicker_Abstract extends WgtSimple<ColorPicker, Arg
       let args  = this.args;
       args.ej   = args.ej || {}; // ensure it's not null
 
+      let blur = args.ej.blur;
+      if (args.updateOnBlurDisabled) {
+         // do not add a blur event
+      } else {
+         args.ej.blur = (arg, rest) => {
 
-         let oldChange  = args.ej.change;
-         args.ej.change = (ev: ColorPickerEventArgs) => {
-            let currentValue = ev.currentValue.hex;
-            thisX.doChange(currentValue);
-            if (oldChange)
-               oldChange(ev);
+            thisX._onValueChanged();      // local onBlur
+
+            if (blur) {
+               // execute the passed in blur
+               blur(arg, rest);
+            }
          };
+      } // if updateOnBlurDisabled
 
-         let oldSelect  = args.ej.select;
-         args.ej.select = (ev: ColorPickerEventArgs) => {
-            let currentValue = ev.currentValue.hex;
-            thisX.doChange(currentValue);
-            if (oldSelect)
-               oldSelect(ev);
-         };
+      let oldChange  = args.ej.change;
+      args.ej.change = (ev: ChangedEventArgs) => {
+         thisX._onValueChanged(); // write to appserver
+
+         if (oldChange)
+            oldChange(ev);
+      };
 
 
-
-      this.obj = new ColorPicker(args.ej, this.hgetInput);
+      this.obj = new DateTimePicker(args.ej, this.hgetInput);
 
       if (args.initialValue)
          this.value = args.initialValue;
@@ -101,13 +108,6 @@ export abstract class WgtColorPicker_Abstract extends WgtSimple<ColorPicker, Arg
          this.previousValue = this.value;
 
    } // localLogicImplementation
-
-   protected doChange(currentValue: string){
-      if (currentValue !== this.previousValue){
-         this.value = currentValue; // must do this manually
-         this._onValueChanged(); // write to appserver
-      }
-   } // doChange
 
 
    async localClearImplementation() {
@@ -120,8 +120,8 @@ export abstract class WgtColorPicker_Abstract extends WgtSimple<ColorPicker, Arg
    async localRefreshImplementation() {
 
       if (this.obj && this.args.dataProviderName) {
-         let data             = await DataProvider.byName(this, this.args.dataProviderName);
-         let value: string      = null;
+         let data             = DataProvider.byName(this, this.args.dataProviderName);
+         let value: Date      = null;
          let enabled: boolean = false;
          if (data) {
             value   = data[this.args.propertyName];
@@ -131,6 +131,10 @@ export abstract class WgtColorPicker_Abstract extends WgtSimple<ColorPicker, Arg
          this.value         = value;
          this.previousValue = value;
 
+         if (this.args.ej.enabled) {
+            // if the general properties allow you to enable, the enable if there's data, disable when there's no data link
+            this.obj.enabled = enabled;
+         }
       } else {
 
       }
@@ -151,23 +155,24 @@ export abstract class WgtColorPicker_Abstract extends WgtSimple<ColorPicker, Arg
    //--------------------------- WgtSimple implementation ---------------
 
 
-   get value(): string {
+   get value(): Date {
       if (this.obj) {
          return this.obj.value;
       }
       return null;
    }
 
-   set value(val: string) {
+   set value(val: Date) {
       if (this.obj) {
          val            = this.convertValueBeforeSet(val);
          this.obj.value = val;
       }
    }
 
-   convertValueBeforeSet(val: string): string {
-      if (!val){
-         val = "#FFFFFFFF"; // transparent
+   convertValueBeforeSet(val: Date): Date {
+      if (this.args.convertNullToNow) {
+         if (val == null)
+            val = new Date(); //to now
       }
       return val;
    }
