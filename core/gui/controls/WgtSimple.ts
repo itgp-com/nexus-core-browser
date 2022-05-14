@@ -1,7 +1,7 @@
 import {AnyWidget}                                                             from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag}                                         from "../Args_AnyWidget";
 import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
-import {WgtForm}                                                               from "../panels/WgtForm";
+import {AbstractWgtForm}                                                       from "../panels/AbstractWgtForm";
 import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}            from "../../data/DataProvider";
 import {classArgInstanceVal}                                                   from "../../CoreUtils";
 
@@ -99,10 +99,10 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
    /**
     * Find the nearest ancestor WgtForm that contains this simple component
     */
-   findForm(): WgtForm {
-      return this.findAncestor<WgtForm>(
+   findForm(): AbstractWgtForm {
+      return this.findAncestor<AbstractWgtForm>(
          (instance => {
-            return WgtForm.isWgtForm(instance);
+            return AbstractWgtForm.isWgtForm(instance);
          })
       );
    }
@@ -110,7 +110,7 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
 
    validate(): boolean {
       try {
-         let form: WgtForm = this.findForm();
+         let form: AbstractWgtForm = this.findForm();
          if (form) {
             let formValidator = form.formValidator;
             if (formValidator) {

@@ -14,7 +14,7 @@ export class Args_WgtForm {
 
 } // Args_WgtForm
 
-export class WgtForm extends AnyWidget<any, Args_AnyWidget, any> {
+export abstract class AbstractWgtForm extends AnyWidget<any, Args_AnyWidget, any> {
    args: Args_WgtForm;
    private _validator: FormValidator;
    readonly wgtForm: boolean = true;
@@ -24,13 +24,13 @@ export class WgtForm extends AnyWidget<any, Args_AnyWidget, any> {
    }
 
 
-   static create(args: Args_WgtForm): WgtForm {
-      args.formTag             = IArgs_HtmlTag_Utils.init(args.formTag);
-      args.formTag.htmlTagType = 'form';
-      let instance             = new WgtForm();
-      instance.initialize_WgtForm(args);
-      return instance;
-   }
+   // static create(args: Args_WgtForm): AbstractWgtForm {
+   //    args.formTag             = IArgs_HtmlTag_Utils.init(args.formTag);
+   //    args.formTag.htmlTagType = 'form';
+   //    let instance             = new AbstractWgtForm();
+   //    instance.initialize_WgtForm(args);
+   //    return instance;
+   // }
 
    static isWgtForm(instance: any): boolean {
       if (instance && instance.wgtForm) {
@@ -39,7 +39,7 @@ export class WgtForm extends AnyWidget<any, Args_AnyWidget, any> {
       return false;
    } // isForm
 
-   initialize_WgtForm(args: Args_WgtForm) {
+   initialize_AbstractWgtForm(args: Args_WgtForm) {
       this.args = args;
 
       let argsAnyWidget: Args_AnyWidget;
