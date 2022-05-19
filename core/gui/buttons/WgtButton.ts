@@ -37,6 +37,11 @@ export class Args_WgtButton implements IArgs_HtmlTag{
    htmlTagType?: string;
    htmlOtherAttr ?: { string: string };
    children ?: AbstractWidget[];
+
+   /**
+    *  Called after initLogic has been completed
+    */
+   onInitialized ?: (widget:any)=>void;
 }
 
 
@@ -70,6 +75,10 @@ export class WgtButton extends AnyWidget<Button> {
       }
       if ( args.children)
          descriptor.children = args.children;
+
+      if ( args.onInitialized)
+         descriptor.onInitialized = args.onInitialized;
+      
 
       descriptor.refresh = args.refresh;
       this.initialize_AnyWidget(descriptor);
