@@ -1,14 +1,13 @@
-import {Args_AbstractWidget}                                                   from "../AbstractWidget";
-import {AnyWidget}                                                             from "../AnyWidget";
-import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                                    from "../Args_AnyWidget";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
-import {DataManager}                                                           from "@syncfusion/ej2-data";
-import {TreeMapAjax}                                                           from "@syncfusion/ej2-treemap/src/treemap/utils/helper";
-import {TreeMap, TreeMapModel, TreeMapTooltip}                                 from '@syncfusion/ej2-treemap';
+import {Args_AbstractWidget}                                                                      from "../AbstractWidget";
+import {AnyWidget}                                                                                from "../AnyWidget";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                                                       from "../Args_AnyWidget";
+import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener}                    from "../Args_AnyWidget_Initialized_Listener";
+import {DataManager}                                                                              from "@syncfusion/ej2-data";
+import {TreeMapAjax}                                                                              from "@syncfusion/ej2-treemap/src/treemap/utils/helper";
+import {TreeMap, TreeMapHighlight, TreeMapLegend, TreeMapModel, TreeMapSelection, TreeMapTooltip} from '@syncfusion/ej2-treemap';
 
+TreeMap.Inject(TreeMapTooltip,TreeMapHighlight,TreeMapSelection, TreeMapLegend  );
 
-
-TreeMap.Inject(TreeMapTooltip);
 export class Args_WgtTreeMap extends Args_AbstractWidget {
    /**
     * If this is present,  a new wrapper div is created around the actual element.
