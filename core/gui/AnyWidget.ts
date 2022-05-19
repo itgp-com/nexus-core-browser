@@ -55,7 +55,8 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
       Args_AnyWidget.initialize(argsAnyWidget, this);
 
-      this.tagId       = getRandomString(argsAnyWidget.id);
+      if (!this.tagId)
+         this.tagId       = getRandomString(argsAnyWidget.id);
       argsAnyWidget.id = this.tagId;
       this.name        = argsAnyWidget.colName;
 
