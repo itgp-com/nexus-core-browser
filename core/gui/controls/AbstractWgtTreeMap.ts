@@ -24,7 +24,7 @@ export abstract class AbstractWgtTreeMap extends AnyWidget<TreeMap, Args_WgtTree
       super();
    }
 
-   initialize_AbstractWgtTreeView(args: Args_WgtTreeMap) {
+   initialize_AbstractWgtTreeMap(args: Args_WgtTreeMap) {
       let thisX = this;
 
       if (!args)
