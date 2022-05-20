@@ -253,8 +253,8 @@ export enum QUERY_OPERATORS {
    STARTS_WITH           = "startswith",
    ENDS_WITH             = "endswith",
    CONTAINS              = "contains",
-   ISNULL                = "isnull",      // not standard EJ2
-   ISNOTNULL             = "isnotnull",   // not standard EJ2
+   ISNULL                = "isnull",
+   NOTNULL               = "notnull",
 
 }
 
