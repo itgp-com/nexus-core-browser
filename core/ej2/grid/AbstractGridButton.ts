@@ -38,11 +38,11 @@ export abstract class AbstractGridButton {
       if (this.args.label != null) {
          label = this.args.label.escapeHTML()
       }
-      let template: string = `<button class="${this.args.buttonClass}">${label}</button>`;
+      let template: string = `<button type="button" class="${this.args.buttonClass}">${label}</button>`;
       if (this.args.fa_classes != null) {
          if (label != '')
             label = ' ' + label // add a space between the icon and the text
-         template = `<button class="${this.args.buttonClass} grid-btn-font-awesome"><i class="fa ${this.args.fa_classes}" aria-hidden="true"></i>${label}</button>`
+         template = `<button type="button" class="${this.args.buttonClass} grid-btn-font-awesome"><i class="fa ${this.args.fa_classes}" aria-hidden="true"></i>${label}</button>`
 
       }
 
