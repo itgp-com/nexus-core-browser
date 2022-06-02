@@ -2,8 +2,8 @@ import {AnyWidget}                                          from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 import {StringArg, stringArgVal, voidFunction}              from "../../CoreUtils";
 import {Button, ButtonModel}                                from '@syncfusion/ej2-buttons';
-import {enableRipple}                                       from '@syncfusion/ej2-base';
-import {AbstractWidget}                                     from "../AbstractWidget";
+import {enableRipple}                        from '@syncfusion/ej2-base';
+import {AbstractWidget, Args_AbstractWidget} from "../AbstractWidget";
 
 enableRipple(true);
 
@@ -14,7 +14,7 @@ export enum ButtonIconPosition {
    Top    = "Top"
 }
 
-export class Args_WgtButton implements IArgs_HtmlTag{
+export class Args_WgtButton extends Args_AbstractWidget implements IArgs_HtmlTag{
    /**
     * The name of the html tag used for this button will be prefixed by this string
     */
@@ -38,10 +38,6 @@ export class Args_WgtButton implements IArgs_HtmlTag{
    htmlOtherAttr ?: { string: string };
    children ?: AbstractWidget[];
 
-   /**
-    *  Called after initLogic has been completed
-    */
-   onInitialized ?: (widget:any)=>void;
 }
 
 
@@ -67,7 +63,7 @@ export class WgtButton extends AnyWidget<Button> {
       if ( ! args.label)
          args.label = '';
 
-      let descriptor: Args_AnyWidget = new Args_AnyWidget();
+      let descriptor: Args_AnyWidget = args as any;
       if (args.label || args.label == '')
          this.title = stringArgVal(args.label);
       if (args.id) {
@@ -76,9 +72,6 @@ export class WgtButton extends AnyWidget<Button> {
       if ( args.children)
          descriptor.children = args.children;
 
-      if ( args.onInitialized)
-         descriptor.onInitialized = args.onInitialized;
-      
 
       descriptor.refresh = args.refresh;
       this.initialize_AnyWidget(descriptor);

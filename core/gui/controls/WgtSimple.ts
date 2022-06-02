@@ -4,6 +4,7 @@ import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} f
 import {AbstractWgtForm}                                                       from "../panels/AbstractWgtForm";
 import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}            from "../../data/DataProvider";
 import {classArgInstanceVal}                                                   from "../../CoreUtils";
+import {Args_AbstractWidget}                                                   from "../AbstractWidget";
 
 export interface ISimpleValue<T> {
    value: T;
@@ -11,7 +12,7 @@ export interface ISimpleValue<T> {
    propertyName: string;
 }
 
-export class Args_WgtSimple<CONTROLMODEL = any> {
+export class Args_WgtSimple<CONTROLMODEL = any> extends Args_AbstractWidget{
    dataProviderName  ?: string;
    propertyName      ?: string;
    id                ?: string;  // duplicates Args_AnyWidget field
@@ -27,12 +28,6 @@ export class Args_WgtSimple<CONTROLMODEL = any> {
    wrapper           ?: IArgs_HtmlTag; // duplicates Args_AnyWidget field
    ej                ?: CONTROLMODEL;  // duplicates Args_AnyWidget field
 
-
-   /**
-    *  Called after initLogic has been completed.
-    *  It is a similar to  {@link afterInitLogic}, but is available in the create parameters instead of having to overwrite a method
-    */
-   onInitialized ?: (widget:any)=>void;
 }
 
 export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_AnyWidget = Args_AnyWidget, DATA_CLASS = any>
@@ -73,6 +68,9 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
       );
 
       if (!argsAnyWidget)
+         argsAnyWidget = argsWgtSimple as any; // they both inherit from Args_AbstractWidget
+
+      if (!argsAnyWidget)
          argsAnyWidget = {} as any;
 
       if (argsWgtSimple.validation)
@@ -84,9 +82,6 @@ export abstract class WgtSimple<EJCONTROL, WIDGET_DESCRIPTOR_TYPE extends Args_A
 
       if (argsAnyWidget.colName)
          this.propertyName = argsAnyWidget.colName;
-
-      if ( argsWgtSimple.onInitialized)
-         argsAnyWidget.onInitialized = argsWgtSimple.onInitialized;
 
       if (!argsAnyWidget.id)
          if (argsWgtSimple.id)

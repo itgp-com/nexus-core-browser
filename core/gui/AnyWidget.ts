@@ -108,25 +108,15 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
 
       this.descriptor = argsAnyWidget;
+      super.initialize_AbstractWidget(argsAnyWidget);
    } // initAnyWidget
 
 
-   async initLogic(): Promise<void> {
-      if (!this.initialized) {
-         await super.initLogic();
-
-
-         // assign fully instantiated instance to a variable
-         if (this.descriptor?.onInitialized) {
-            try {
-               this.descriptor.onInitialized(this);
-            } catch (ex) {
-               console.error(ex);
-               getErrorHandler().displayExceptionToUser(ex)
-            }
-         }
-      }
-   } // initLogic
+   // async initLogic(): Promise<void> {
+   //    if (!this.initialized) {
+   //       await super.initLogic();
+   //    }
+   // } // initLogic
 
    /**
     * Implementation based on initContent present in descriptor and children

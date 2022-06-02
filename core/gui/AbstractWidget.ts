@@ -29,6 +29,10 @@ export class Args_AbstractWidget {
    // was AbstractWidget
    beforeInitLogicListener ?: BeforeInitLogicType;
    afterInitLogicListener ?: AfterInitLogicType;
+   /**
+    *  Called after initLogic has been completed
+    */
+   onInitialized ?: (widget:any)=>void;
 }
 
 export class Args_Repaint {
@@ -62,10 +66,10 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private readonly _afterRepaintWidgetListeners: ListenerHandler<AfterRepaintWidgetEvent, AfterRepaintWidgetListener>    = new ListenerHandler<AfterRepaintWidgetEvent, AfterRepaintWidgetListener>();
    private readonly _parentAddedListener: ListenerHandler<ParentAddedEvent, ParentAddedListener>                          = new ListenerHandler<ParentAddedEvent, ParentAddedListener>();
    private _widgetErrorHandler: WidgetErrorHandler;
-
+   private _args_AbstractWidget:Args_AbstractWidget;
 
    constructor() {
-      this.initialize_AbstractWidget();
+      this.initialize_from_constructor();
    }
 
    get widgetErrorHandler(): WidgetErrorHandler {
@@ -240,11 +244,18 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       return null;
    }
 
-
-   initialize_AbstractWidget() {
+   /**
+    * The constructor calls this method as soon as the class is created.
+    * This is the absolute earliest time to initialize any fields in the object by extending/overriding this implementation
+    */
+   initialize_from_constructor(){
       this.thisClassName         = this.constructor.name; // the name of the class
       this.tagId                 = getRandomString(this.thisClassName);
       this.meta.currentClassName = this._thisClassName;
+   }
+
+   initialize_AbstractWidget(args:Args_AbstractWidget) {
+      this._args_AbstractWidget = args;
    } // initAbstractBase
 
    async localContentBegin(): Promise<string> {
@@ -507,6 +518,17 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                                               },
             );
          } // if (this.afterInitLogicListeners.count() > 0)
+
+
+         // assign fully instantiated instance to a variable
+         if (this._args_AbstractWidget?.onInitialized) {
+            try {
+               this._args_AbstractWidget.onInitialized(this);
+            } catch (ex) {
+               console.error(ex);
+               getErrorHandler().displayExceptionToUser(ex)
+            }
+         }
       }
    }
 

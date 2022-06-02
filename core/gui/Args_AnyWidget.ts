@@ -3,6 +3,7 @@ import {StringArg, voidFunction} from "../CoreUtils";
 import {AbstractWidget, wu}      from "../../core/index";
 import {BeforeInitLogicEvent}    from "./BeforeInitLogicListener";
 import {AfterInitLogicEvent}     from "./AfterInitLogicListener";
+import {Args_AbstractWidget}     from "./AbstractWidget";
 
 
 export interface IKeyValueString {
@@ -71,7 +72,7 @@ export class IArgs_HtmlTag_Utils {
 }
 
 
-export class Args_AnyWidget<CONTROLMODEL = any> {
+export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
 
    id?: string;
    title ?: string;
@@ -135,10 +136,6 @@ export class Args_AnyWidget<CONTROLMODEL = any> {
 
 
 
-   /**
-    *  Called after initLogic has been completed
-    */
-   onInitialized ?: (widget:any)=>void;
 
    static initialize(descriptor: Args_AnyWidget, widget: AnyWidget): void {
 

@@ -2,9 +2,10 @@ import {AnyWidget}                                                             f
 import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                                    from "../Args_AnyWidget";
 import {Args_AbstractWidget}                                                   from "../AbstractWidget";
 import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
+import {DataManager}                                                           from "@syncfusion/ej2-data";
+import {ExcelExport, Page, Resize, Toolbar, TreeGrid, TreeGridModel}           from '@syncfusion/ej2-treegrid';
 
-import {TreeGrid, TreeGridModel} from '@syncfusion/ej2-treegrid';
-import {DataManager}             from "@syncfusion/ej2-data";
+TreeGrid.Inject(Toolbar, ExcelExport, Page, Resize);
 
 export class Args_AbstractWgtTreeGrid extends Args_AbstractWidget {
    /**
@@ -85,7 +86,7 @@ export abstract class AbstractWgtTreeGrid extends AnyWidget<TreeGrid, Args_Abstr
       }
    } // localRefreshImplementation
 
-   get value(): Object | DataManager{
+   get value(): Object | DataManager {
       if (this.obj)
          return this.obj.dataSource;
       else
@@ -97,7 +98,6 @@ export abstract class AbstractWgtTreeGrid extends AnyWidget<TreeGrid, Args_Abstr
          this.obj.dataSource = value;
       }
    }
-
 
 
 } // main class
