@@ -3,6 +3,7 @@ import {Args_AnyWidget, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils
 import {DataProvider, IDataProviderSimple}                                        from "../../data/DataProvider";
 import {Args_WgtSimple, WgtSimple}                                                from "./WgtSimple";
 import {applyHtmlDecoration, StringArg, stringArgVal}                             from "../../CoreUtils";
+import {getRandomString}                                                          from "../../ej2/WidgetUtils";
 
 export class Args_WgtText_Multiline {
    /**
@@ -106,9 +107,12 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
       this.stayFocusedOnError = args.stayFocusedOnError;
       this.previousValue      = ''; // initialize at ''
 
+      if (!this.tagId)
+         this.tagId       = getRandomString(args.id);
+      args.id = this.tagId;
 
       if (!args.ej.autocomplete)
-         args.ej.autocomplete = 'off';
+         args.ej.autocomplete = `off-${this.tagId}`;  //https://stackoverflow.com/questions/30053167/autocomplete-off-vs-false
 
       if (!args.ej.floatLabelType)
          args.ej.floatLabelType = 'Always';
