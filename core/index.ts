@@ -42,9 +42,6 @@ export {AbstractWidgetStatic,
 import {DialogYesNo, DialogYesNoModel}     from "./ej2/DialogYesNo";
 export {DialogYesNo, DialogYesNoModel};
 
-import "./index.css";
-
-// Defined in index.css
 
 // Defined in index.css
 export const ej2_icon_menu_hamburger = 'ej2-icon-menu-hamburger';
