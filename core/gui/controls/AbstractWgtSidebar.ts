@@ -4,8 +4,14 @@ import {AbstractWidget, Args_AbstractWidget}                                   f
 import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
 
 import {Sidebar, SidebarModel} from '@syncfusion/ej2-navigations';
+import {EventArgs}             from "@syncfusion/ej2-navigations/src/sidebar/sidebar";
 
-export class Args_AbstractWgtSidebar extends Args_AbstractWidget {
+export class Args_WgtSidebar_VisualStateChanged<T extends AbstractWgtSidebar> {
+   wgtSidebar: T;
+   sidebarvisible: boolean;
+}
+
+export class Args_WgtSidebar extends Args_AbstractWidget {
    /**
     * If this is present,  a new wrapper div is created around the whole Sidebar (aside and content)
     */
@@ -17,19 +23,35 @@ export class Args_AbstractWgtSidebar extends Args_AbstractWidget {
     */
    contentWrapper?: IArgs_HtmlTag;
 
+   /**
+    * The exterior content that is still visible when the sidebar is hidden.
+    * For example a div containing a toggle button that opens and closes the Sidebar
+    */
+   exteriorContent ?: AbstractWidget | Promise<AbstractWidget>
 
+   /**
+    * Event triggered whenever the visual state changes (sidebar visible/hidden)
+    */
+   visualStateChanged ?: (ev: Args_WgtSidebar_VisualStateChanged<any>) => Promise<void>;
 }
 
-export abstract class AbstractWgtSidebar extends AnyWidget<Sidebar, Args_AbstractWgtSidebar, any> {
-   protected argsWgtSidebar: Args_AbstractWgtSidebar;
+export abstract class AbstractWgtSidebar extends AnyWidget<Sidebar, Args_WgtSidebar, any> {
+   protected argsWgtSidebar: Args_WgtSidebar;
    protected content: AbstractWidget | Promise<AbstractWidget>
-   private _resolvedContent: AbstractWidget;
+   protected contentResolved: AbstractWidget;
+   protected exteriorContent: AbstractWidget | Promise<AbstractWidget>
+   protected exteriorContentResolved: AbstractWidget;
+
+   /**
+    * Flag that reliably shows the status of the panel (whether visible or hidden)
+    */
+   sidebarVisible: boolean = false;
 
    protected constructor() {
       super();
    }
 
-   initialize_AbstractWgtSidebar(args: Args_AbstractWgtSidebar) {
+   async initialize_AbstractWgtSidebar(args: Args_WgtSidebar) {
       let thisX = this;
 
       if (!args)
@@ -37,7 +59,14 @@ export abstract class AbstractWgtSidebar extends AnyWidget<Sidebar, Args_Abstrac
       if (!args.ej)
          args.ej = {};
 
-      this.argsWgtSidebar = args;
+      this.argsWgtSidebar  = args;
+      this.content         = args.content;
+      this.exteriorContent = args.exteriorContent;
+      if (this.content)
+         this.contentResolved = await this.content
+      if (this.exteriorContent)
+         this.exteriorContentResolved = await this.exteriorContent
+
 
       this.initialize_AnyWidget(args);
       //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
@@ -54,29 +83,32 @@ export abstract class AbstractWgtSidebar extends AnyWidget<Sidebar, Args_Abstrac
    } // initialize_WgtTreeGrid
 
    async localContentBegin(): Promise<string> {
-      if (this._resolvedContent == null)
-         this._resolvedContent = await this.content
 
       let x: string = "";
-      if (this.argsWgtSidebar?.wrapper) {
-         this.argsWgtSidebar.wrapper = IArgs_HtmlTag_Utils.init(this.argsWgtSidebar.wrapper);
-         x += `<${this.argsWgtSidebar.wrapper.htmlTagType} id="${this.wrapperTagID}" ${IArgs_HtmlTag_Utils.all(this.argsWgtSidebar.wrapper)}>`;
-      }
 
-      x += `<aside id="${this.tagId}"></aside>`
-
+      // x += `<aside id="${this.tagId}"></aside>`
+      x += `<aside id="${this.tagId}">`
       if (this.argsWgtSidebar?.contentWrapper) {
          this.argsWgtSidebar.contentWrapper = IArgs_HtmlTag_Utils.init(this.argsWgtSidebar.contentWrapper);
          x += `<${this.argsWgtSidebar.contentWrapper.htmlTagType} id="${this.contentWrapperTagId}" ${IArgs_HtmlTag_Utils.all(this.argsWgtSidebar.contentWrapper)}>`;
       }
 
-      if (this._resolvedContent)
-         x += `${await this._resolvedContent.initContent()}`;
+      if (this.contentResolved)
+         x += `${await this.contentResolved.initContent()}`;
 
       if (this.argsWgtSidebar?.contentWrapper) {
          x += `</${this.argsWgtSidebar.contentWrapper.htmlTagType}>`; // <!-- id="${this.contentTagId}" -->
       }
 
+      x += `</aside>`;
+
+      if (this.argsWgtSidebar?.wrapper) {
+         this.argsWgtSidebar.wrapper = IArgs_HtmlTag_Utils.init(this.argsWgtSidebar.wrapper);
+         x += `<${this.argsWgtSidebar.wrapper.htmlTagType} id="${this.wrapperTagID}" ${IArgs_HtmlTag_Utils.all(this.argsWgtSidebar.wrapper)}>`;
+      }
+
+      if (this.exteriorContentResolved)
+         x += await this.exteriorContentResolved.initContent();
 
       if (this.argsWgtSidebar?.wrapper) {
          x += `</${this.argsWgtSidebar.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->
@@ -86,19 +118,82 @@ export abstract class AbstractWgtSidebar extends AnyWidget<Sidebar, Args_Abstrac
 
 
    async localLogicImplementation() {
-      let anchor = this.hget;
-      this.obj   = new Sidebar(this.argsWgtSidebar?.ej);
+      let thisX            = this;
+      let anchor           = this.hget;
+      let ej: SidebarModel = this.argsWgtSidebar?.ej || {}
+
+      let userOpen = ej.open;
+      ej.open      = (ev: EventArgs) => {
+         thisX.sidebarVisible = true;
+
+         try {
+            if (thisX.argsWgtSidebar.visualStateChanged) {
+               thisX.argsWgtSidebar.visualStateChanged({
+                                                          wgtSidebar:     thisX,
+                                                          sidebarvisible: true,
+                                                       })
+            }
+         } catch (err) {
+            thisX.handleWidgetError(err);
+         }
+
+         if (userOpen)
+            userOpen.call(this, ev);
+
+         // //after open, show close icon
+         // toggleButton.content = btnIconClosed;
+         // // toggleButton.refresh();
+      }
+
+      let userClose = ej.close;
+      ej.close      = (ev: EventArgs) => {
+         thisX.sidebarVisible = false;
+
+         try {
+            if (thisX.argsWgtSidebar.visualStateChanged) {
+               thisX.argsWgtSidebar.visualStateChanged({
+                                                          wgtSidebar:     thisX,
+                                                          sidebarvisible: false,
+                                                       })
+            }
+         } catch (err) {
+            thisX.handleWidgetError(err);
+         }
+
+         if (userClose)
+            userClose.call(this, ev);
+
+         // //after close, show open icon
+         // toggleButton.content = btnIconOpen;
+         // // toggleButton.refresh();
+      }
+
+
+      this.obj = new Sidebar(this.argsWgtSidebar?.ej);
       this.obj.appendTo(anchor);
+      try {
+         if (this.contentResolved)
+            await this.contentResolved.initLogic();
+
+      } catch (ex) {
+         this.widgetErrorHandler.handleWidgetError(ex);
+      }
+      try {
+         if (this.exteriorContentResolved)
+            await this.exteriorContentResolved.initLogic();
+      } catch (ex) {
+         this.widgetErrorHandler.handleWidgetError(ex);
+      }
+
+
    } // localLogicImplementation
 
 
    async localClearImplementation() {
       await super.localClearImplementation();
       if (this.obj) {
-         if (this._resolvedContent = null)
-            this._resolvedContent = await this.content;
-         await this._resolvedContent?.destroy();
-         this._resolvedContent                    = null
+         await this?.contentResolved?.destroy();
+         this.contentResolved                     = null
          this.content                             = null;
          this.contentWrapperHTMLElement.innerHTML = ''; // dispose of content
       }
@@ -110,22 +205,21 @@ export abstract class AbstractWgtSidebar extends AnyWidget<Sidebar, Args_Abstrac
             this.obj.refresh();
          }
       } catch (ex) {
-         this.handleError(ex);
+         this.widgetErrorHandler.handleWidgetError(ex);
       }
    } // localRefreshImplementation
 
 
    async localDestroyImplementation(): Promise<void> {
       try {
-         if (this.content) {
-            this._resolvedContent = await this.content
-            await this._resolvedContent.destroy();
-            this._resolvedContent = null;
-            this.content = null;
-            this.argsWgtSidebar = null;
+         if (this.contentResolved) {
+            await this.contentResolved.destroy();
+            this.contentResolved = null;
+            this.content         = null;
+            this.argsWgtSidebar  = null;
          }
       } catch (ex) {
-         this.handleError(ex);
+         this.widgetErrorHandler.handleWidgetError(ex);
       }
       return super.localDestroyImplementation();
    }
@@ -139,8 +233,11 @@ export abstract class AbstractWgtSidebar extends AnyWidget<Sidebar, Args_Abstrac
 
    set value(value: AbstractWidget | Promise<AbstractWidget>) {
       if (this.obj) {
-         this.content          = value;
-         this._resolvedContent = null;
+         this.content = value;
+         if (value)
+            setImmediate(async () => {
+               this.contentResolved = await value;
+            })
       }
    }
 
