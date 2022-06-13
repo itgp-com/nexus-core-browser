@@ -262,7 +262,8 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
              * no need for this refresh to fire here.
              */
             if (!(tabObj instanceof AnyScreen)) {
-               await tabObj.refresh(); // all the button enable/disable (the initialized flag prevents re-initialization of EJ2 components)
+               if (tabObj.hackRefreshOnWgtTabInit) // major hack to be eliminated
+                  await tabObj.refresh(); // all the button enable/disable (the initialized flag prevents re-initialization of EJ2 components)
             }
          } catch (error) {
             console.log(error);

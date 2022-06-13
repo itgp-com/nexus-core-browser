@@ -32,7 +32,9 @@ export class Args_AbstractWidget {
    /**
     *  Called after initLogic has been completed
     */
-   onInitialized ?: (widget:any)=>void;
+   onInitialized ?: (widget: any) => void;
+
+   hackRefreshOnWgtTabInit ?: boolean
 }
 
 export class Args_Repaint {
@@ -66,7 +68,9 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private readonly _afterRepaintWidgetListeners: ListenerHandler<AfterRepaintWidgetEvent, AfterRepaintWidgetListener>    = new ListenerHandler<AfterRepaintWidgetEvent, AfterRepaintWidgetListener>();
    private readonly _parentAddedListener: ListenerHandler<ParentAddedEvent, ParentAddedListener>                          = new ListenerHandler<ParentAddedEvent, ParentAddedListener>();
    private _widgetErrorHandler: WidgetErrorHandler;
-   private _args_AbstractWidget:Args_AbstractWidget;
+   private _args_AbstractWidget: Args_AbstractWidget;
+
+   private _hackRefreshOnWgtTabInit: boolean    = true;
 
    constructor() {
       this.initialize_from_constructor();
@@ -248,14 +252,16 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * The constructor calls this method as soon as the class is created.
     * This is the absolute earliest time to initialize any fields in the object by extending/overriding this implementation
     */
-   initialize_from_constructor(){
+   initialize_from_constructor() {
       this.thisClassName         = this.constructor.name; // the name of the class
       this.tagId                 = getRandomString(this.thisClassName);
       this.meta.currentClassName = this._thisClassName;
    }
 
-   initialize_AbstractWidget(args:Args_AbstractWidget) {
+   initialize_AbstractWidget(args: Args_AbstractWidget) {
       this._args_AbstractWidget = args;
+      if (args.hackRefreshOnWgtTabInit != null)
+         this.hackRefreshOnWgtTabInit = args.hackRefreshOnWgtTabInit;
    } // initAbstractBase
 
    async localContentBegin(): Promise<string> {
@@ -369,7 +375,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       await wu.updateWidgetInDOM({
                                     parentHTMLElement: container,
                                     newWidget:         this,
-                                    onInstantiated:          (args:Args_onInstantiated) => {
+                                    onInstantiated:    (args: Args_onInstantiated) => {
 
                                        //attach Ctrl-Alt-double-click on container
                                        if (thisX.doRegisterInfo)
@@ -871,7 +877,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     *
     * @param evt
     */
-   async onDialogWindow_BeforeOpen (evt: Args_OnDialogWindow_BeforeOpen): Promise<void>{}
+   async onDialogWindow_BeforeOpen(evt: Args_OnDialogWindow_BeforeOpen): Promise<void> {
+   }
 
    /**
     * Empty implementation to be overridden if necessary.
@@ -881,7 +888,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     *
     * @param evt
     */
-   async onDialogWindow_Open(evt:Args_OnDialogWindow_Open){}
+   async onDialogWindow_Open(evt: Args_OnDialogWindow_Open) {
+   }
 
    /**
     * Empty implementation to be overridden if necessary.
@@ -891,7 +899,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     *
     * @param evt
     */
-   async onDialogWindow_BeforeClose(evt:Args_OnDialogWindow_BeforeClose){}
+   async onDialogWindow_BeforeClose(evt: Args_OnDialogWindow_BeforeClose) {
+   }
 
    /**
     * Empty implementation to be overridden if necessary.
@@ -901,37 +910,48 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     *
     * @param evt
     */
-   async onDialogWindow_Close(evt:Args_OnDialogWindow_Close){}
+   async onDialogWindow_Close(evt: Args_OnDialogWindow_Close) {
+   }
 
+
+   get hackRefreshOnWgtTabInit(): boolean {
+      return this._hackRefreshOnWgtTabInit;
+   }
+
+   set hackRefreshOnWgtTabInit(value: boolean) {
+      this._hackRefreshOnWgtTabInit = value;
+   }
 
 } // main class
 
 export interface Args_onInstantiated {
-   widget:AbstractWidget;
-   extra?:any;
+   widget: AbstractWidget;
+   extra?: any;
 }
 
 export interface Args_UpdateWidgetInDOM {
    parentHTMLElement: HTMLElement;
    newWidget: AbstractWidget;
    existingWidgetHTMLElement?: HTMLElement;
-   onInstantiated ?: (args:Args_onInstantiated)=>void;
+   onInstantiated?: (args: Args_onInstantiated) => void;
 }
 
-export interface Args_OnDialogWindow_BeforeOpen{
+export interface Args_OnDialogWindow_BeforeOpen {
    dialog: AbstractDialogWindow;
    beforeOpenEventArgs: BeforeOpenEventArgs;
 }
 
-export interface Args_OnDialogWindow_Open{
+export interface Args_OnDialogWindow_Open {
    dialog: AbstractDialogWindow;
    openEventArgs: any;
 }
-export interface Args_OnDialogWindow_BeforeClose{
+
+export interface Args_OnDialogWindow_BeforeClose {
    dialog: AbstractDialogWindow;
    beforeCloseEventArgs: BeforeCloseEventArgs;
 }
-export interface Args_OnDialogWindow_Close{
+
+export interface Args_OnDialogWindow_Close {
    dialog: AbstractDialogWindow;
    closeEventArgs: any;
 }
