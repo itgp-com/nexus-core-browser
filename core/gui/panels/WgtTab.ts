@@ -254,21 +254,21 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
             // this.handleError(error);
          }
 
-         try {
-            /**
-             * Only perform the refresh if the component in the tab is not extending AnyScreen.
-             * AnyScreen will already trigger a refresh at the end of it's initLogic implementation
-             * and that initalization is also on setImmediate (as of 2020-05-11 Dave) so there's
-             * no need for this refresh to fire here.
-             */
-            if (!(tabObj instanceof AnyScreen)) {
-               if (tabObj.hackRefreshOnWgtTabInit) // major hack to be eliminated
-                  await tabObj.refresh(); // all the button enable/disable (the initialized flag prevents re-initialization of EJ2 components)
-            }
-         } catch (error) {
-            console.log(error);
-            this.handleError(error);
-         }
+         // try {
+         //    /**
+         //     * Only perform the refresh if the component in the tab is not extending AnyScreen.
+         //     * AnyScreen will already trigger a refresh at the end of it's initLogic implementation
+         //     * and that initalization is also on setImmediate (as of 2020-05-11 Dave) so there's
+         //     * no need for this refresh to fire here.
+         //     */
+         //    if (!(tabObj instanceof AnyScreen)) {
+         //       if (tabObj.hackRefreshOnWgtTabInit) // major hack to be eliminated
+         //          await tabObj.refresh(); // all the button enable/disable (the initialized flag prevents re-initialization of EJ2 components)
+         //    }
+         // } catch (error) {
+         //    console.log(error);
+         //    this.handleError(error);
+         // }
       }
       // });
 
