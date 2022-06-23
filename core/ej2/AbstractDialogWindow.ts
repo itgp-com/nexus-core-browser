@@ -478,7 +478,7 @@ export class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialogWindow = 
     */
    async open(e: any) {
       let thisX      = this;
-      e.preventFocus = true; // preventing focus ( Uncaught TypeError: Cannot read property 'matrix' of undefined in Dialog:  https://www.syncfusion.com/support/directtrac/incidents/255376 )
+      // e.preventFocus = true; // preventing focus ( Uncaught TypeError: Cannot read property 'matrix' of undefined in Dialog:  https://www.syncfusion.com/support/directtrac/incidents/255376 )
 
       if (thisX.initArgs && thisX.headerWidget) {
          try {
@@ -502,16 +502,35 @@ export class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialogWindow = 
                eh.displayExceptionToUser(ex);
             }
 
-            if (thisX.initArgs.onAfterOpen) {
-               thisX.initArgs.onAfterOpen(thisX); // call init function
-            } // if (thisX.initArgs.onOpen)
-
          } catch (ex) {
             let eh: ErrorHandler = getErrorHandler();
             eh.displayExceptionToUser(ex);
          }
 
       } //  if (this.initArgs)
+
+
+      let rootElem = thisX.dialog.getRootElement();
+      // If the currently focused element is not a descendand of the popup's root
+      // element, then request focus for the popup
+      let focusedElement = document.activeElement;
+      if (rootElem && focusedElement && rootElem != focusedElement) {
+         if (!rootElem.contains(focusedElement)) {
+            rootElem.focus();
+         }
+      }
+
+
+      if (thisX.initArgs){
+         try{
+            if (thisX.initArgs.onAfterOpen) {
+               thisX.initArgs.onAfterOpen(thisX); // call init function
+            } // if (thisX.initArgs.onOpen)
+         } catch (ex) {
+            let eh: ErrorHandler = getErrorHandler();
+            eh.displayExceptionToUser(ex);
+         }
+      }
    } // open
 
    /**
@@ -566,6 +585,30 @@ export class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialogWindow = 
             this.resolvedContent.dialogWindowContainer = undefined;
 
          this.dialog.destroy(); // clean up after this window
+
+
+
+         let focusedElement = document.activeElement;
+         if ( focusedElement) {
+            let elem = focusedElement.parentElement;
+            // if it's a rowcell, change the focus from the <a> tag to the grid before doing anything else
+            if (elem?.classList?.contains('e-rowcell')){
+               let dialog = elem.closest('.e-dialog') as HTMLElement
+               if (dialog){
+                  dialog.focus();
+               }
+            }
+
+         } else {
+            let anchorElem = document.getElementById(this.localAnchorID);
+            if (anchorElem){
+               let containingDialogHTMLElement = anchorElem.closest('.e-dialog') as HTMLElement;
+               if (containingDialogHTMLElement) {
+                  containingDialogHTMLElement.focus();
+               }
+            }
+         }
+
 
          if (this.initArgs) {
             if (this.initArgs.onAfterClose) {
