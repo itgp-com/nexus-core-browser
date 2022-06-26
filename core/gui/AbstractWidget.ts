@@ -33,6 +33,12 @@ export class Args_AbstractWidget {
     *  Called after initLogic has been completed
     */
    onInitialized ?: (widget: any) => void;
+   /**
+    * Set to true to continue to refresh, false to stop the refresh from happening this time
+    */
+   onBeforeRefresh ?: (args: Args_OnBeforeRefresh) => boolean;
+   onAfterRefresh ?: (args: Args_OnAfterRefresh) => void;
+
 
    hackRefreshOnWgtTabInit ?: boolean
 }
@@ -40,6 +46,15 @@ export class Args_AbstractWidget {
 export class Args_Repaint {
    callDestroyOnContents: boolean;
 }
+
+export class Args_OnBeforeRefresh<T = any> {
+   widget: T;
+}
+
+export class Args_OnAfterRefresh<T = any> {
+   widget: T;
+}
+
 
 export class Args_ActivatedAsInnerWidget<PARENT_WIDGET extends AbstractWidget> {
    parentWidget: PARENT_WIDGET;
@@ -70,7 +85,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private _widgetErrorHandler: WidgetErrorHandler;
    private _args_AbstractWidget: Args_AbstractWidget;
 
-   private _hackRefreshOnWgtTabInit: boolean    = true;
+   private _hackRefreshOnWgtTabInit: boolean = true;
 
    constructor() {
       this.initialize_from_constructor();
@@ -566,6 +581,19 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 // noinspection JSUnusedGlobalSymbols
    async refresh() {
       if (this.initialized) {
+         let allowRefreshToContinue: boolean = true;
+         if (this._args_AbstractWidget?.onBeforeRefresh) {
+
+            try {
+               allowRefreshToContinue = this._args_AbstractWidget.onBeforeRefresh({widget: this});
+            } catch (ex) {
+               console.log(ex);
+            }
+
+         } // if (this._args_AbstractWidget?.onBeforeRefresh)
+
+         if (!allowRefreshToContinue)
+            return;
 
 
          if (this.children) {
@@ -576,6 +604,15 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
          } // if ( this.children)
 
          await this.localRefreshImplementation();
+
+         if (this._args_AbstractWidget?.onAfterRefresh) {
+            try {
+               this._args_AbstractWidget.onAfterRefresh({widget: this});
+            } catch (ex) {
+               console.log(ex);
+            }
+         } // if (this._args_AbstractWidget?.onAfterRefresh)
+
       }
    }
 
@@ -955,4 +992,3 @@ export interface Args_OnDialogWindow_Close {
    dialog: AbstractDialogWindow;
    closeEventArgs: any;
 }
-

@@ -1,6 +1,6 @@
 import {Args_WgtSimple, WgtSimple}                          from "./WgtSimple";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {IDataProviderSimple}                                from "../../data/DataProvider";
+import {DataProvider, IDataProviderSimple}                  from "../../data/DataProvider";
 import {StringArg, stringArgVal}                            from "../../CoreUtils";
 
 
@@ -47,8 +47,27 @@ export abstract class AbstractWgtLbl extends WgtSimple<any, Args_AnyWidget, Stri
    }
 
    async localRefreshImplementation(): Promise<void> {
-      let x      = this.value; // triggers the function calculation if any
-      this.value = x; // resets the innerHTML
+
+      if (this.obj && this.args?.dataProviderName && this.args?.propertyName) {
+         let data             = DataProvider.byName(this, this.args.dataProviderName);
+         let value: string    = '';
+         let enabled: boolean = false;
+         if (data) {
+            value   = data[this.args.propertyName];
+            enabled = true; // there is data so it's enabled
+         }
+
+         this.value         = value;
+         this.previousValue = value;
+
+         if (this.args?.ej?.enabled) {
+            // if the general properties allow you to enable, the enable if there's data, disable when there's no data link
+            this.obj.enabled = enabled;
+         }
+      } else {
+         let x      = this.value; // triggers the function calculation if any
+         this.value = x; // resets the innerHTML
+      }
    }
 
 

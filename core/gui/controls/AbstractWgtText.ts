@@ -316,7 +316,7 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
 
    async localRefreshImplementation(): Promise<void> {
 
-      if (this.obj && this.args.dataProviderName) {
+      if (this.obj && this.args?.dataProviderName && this.args?.propertyName) {
          let data             = DataProvider.byName(this, this.args.dataProviderName);
          let value: string    = '';
          let enabled: boolean = false;
@@ -328,7 +328,7 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
          this.value         = value;
          this.previousValue = value;
 
-         if (this.args.ej.enabled) {
+         if (this.args?.ej?.enabled) {
             // if the general properties allow you to enable, the enable if there's data, disable when there's no data link
             this.obj.enabled = enabled;
          }
