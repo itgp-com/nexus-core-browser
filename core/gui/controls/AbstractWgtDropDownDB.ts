@@ -57,9 +57,9 @@ export class AbstractWgtDropDownDB<ARG_CLASS extends Args_WgtDropDownDB = Args_W
       if (args.enabled != null)
          args.ej.enabled = args.enabled;
 
-      this.pre_initialize_AbstractWgtDropDownDB(args);
+      this.pre_initialize_WgtDropDown(args);
       super.initialize_AbstractWgtDropDown(args);
-      this.post_initialize_AbstractWgtDropDownDB(args);
+      this.post_initialize_WgtDropDownDB(args);
 
    }
 
@@ -67,14 +67,14 @@ export class AbstractWgtDropDownDB<ARG_CLASS extends Args_WgtDropDownDB = Args_W
     * Allows extending classes to execute code before the super method is called, but after the code in the {@link #initialize_AbstractWgtDropDownDB} method has run
     * @param args
     */
-   pre_initialize_AbstractWgtDropDownDB(args: ARG_CLASS){
+   pre_initialize_WgtDropDown(args: ARG_CLASS){
 
    }
    /**
     * Allows extending classes to execute code right after the call to <pre>super.initialize_WgtDropDown(args);</pre> in  {@link #initialize_AbstractWgtDropDownDB} method has run
     * @param args
     */
-   post_initialize_AbstractWgtDropDownDB(args: ARG_CLASS){
+   post_initialize_WgtDropDownDB(args: ARG_CLASS){
 
    }
 
