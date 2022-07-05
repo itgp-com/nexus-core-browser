@@ -173,6 +173,8 @@ export async function openScreenInContainer(args: Args_OpenScreen) {
       console.error(ex);
       getErrorHandler().displayExceptionToUser(ex)
    }
-}
+} // openScreenInContainer
 
-
+export function getLastScreenInfo():LastScreenInfo{
+   return lastScreenInfo;
+} // getLastScreenInfo
