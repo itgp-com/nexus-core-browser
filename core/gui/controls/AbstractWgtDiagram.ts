@@ -72,12 +72,15 @@ export abstract class AbstractWgtDiagram extends AnyWidget<Diagram, Args_WgtDiag
 
       let thisX = this;
       if ( this.args_WgtDiagram_Abstract.synchronousInstantiation){
-         thisX.obj = new Diagram(diagramModel, `#${thisX.tagId}`);
+         thisX.obj = new Diagram(diagramModel );
+         thisX.obj.appendTo(document.getElementById(thisX.tagId));
       } else {
-         setImmediate(() => {
-            thisX.obj = new Diagram(diagramModel, `#${thisX.tagId}`);
-         });
+         setTimeout(() => {
+            thisX.obj = new Diagram(diagramModel );
+            thisX.obj.appendTo(document.getElementById(thisX.tagId));
+         }, 100);
       }
+
 
    } // localLogicImplementation
 
