@@ -20,11 +20,15 @@ import {DialogInfo}                                                             
 import {Args_WgtTab_SelectedAsTab}                                                       from "./panels/WgtTab";
 import {AbstractDialogWindow}                                                            from "../ej2/AbstractDialogWindow";
 import {ClientVersion}                                                                   from "./ClientVersion";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                       from "@syncfusion/ej2-popups";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs} from "@syncfusion/ej2-popups";
+import {isArray, isString}                         from "lodash";
 
 export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
 export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
 
+/**
+ * Base class for all Widget settings(arguments)
+ */
 export class Args_AbstractWidget {
    // was AbstractWidget
    beforeInitLogicListener ?: BeforeInitLogicType;
@@ -39,9 +43,44 @@ export class Args_AbstractWidget {
    onBeforeRefresh ?: (args: Args_OnBeforeRefresh) => boolean;
    onAfterRefresh ?: (args: Args_OnAfterRefresh) => void;
 
+   /**
+    * These classes are class specific extra classes
+    * These classes allow for specialization of css for both the top element and the child elements with custom look and feel for all instances of a class
+    *
+    * Use the {@link addCssClass(argsInstrance:Args_AbstractWidget, extraClasses:string|string[]} utility function to append unique new classes
+    */
+   cssClasses ?: (string | string[]);
 
+   /**
+    * Hack that will be removed in the future
+    */
    hackRefreshOnWgtTabInit ?: boolean
-}
+
+   static combineAllWidgetClasses(descriptor: Args_AbstractWidget): string[] {
+      let a: string[] = []
+      if (descriptor.cssClasses) {
+         if (isArray(descriptor.cssClasses)) {
+            a.push(...descriptor.cssClasses);
+         } else {
+            a.push(descriptor.cssClasses as string);
+         }
+      } // if (descriptor.cssClasses)
+      return a
+   } // combineAllWidgetClasses
+
+   /**
+    * classString will either be an empty string or class="class1 class2"
+    * @param descriptor
+    */
+   static combineAllWidgetClassesAsString(descriptor: Args_AbstractWidget, includePrefix: boolean): string {
+      let a: string[]         = this.combineAllWidgetClasses(descriptor);
+      let classString: string = a.join(' ');
+      if (includePrefix && classString)
+         classString = `class="${classString}"`;
+      return classString;
+   } // combineAllWidgetClassesAsString
+
+} // Args_AbstractWidget
 
 export class Args_Repaint {
    callDestroyOnContents: boolean;

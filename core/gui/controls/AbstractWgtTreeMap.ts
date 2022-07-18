@@ -1,19 +1,14 @@
 import {Args_AbstractWidget}                                                                      from "../AbstractWidget";
-import {AnyWidget}                                                                                from "../AnyWidget";
-import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                                                       from "../Args_AnyWidget";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener}                    from "../Args_AnyWidget_Initialized_Listener";
+import {AnyWidget}                                                             from "../AnyWidget";
+import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils}                    from "../Args_AnyWidget";
+import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
 import {DataManager}                                                                              from "@syncfusion/ej2-data";
 import {TreeMapAjax}                                                                              from "@syncfusion/ej2-treemap/src/treemap/utils/helper";
 import {TreeMap, TreeMapHighlight, TreeMapLegend, TreeMapModel, TreeMapSelection, TreeMapTooltip} from '@syncfusion/ej2-treemap';
 
 TreeMap.Inject(TreeMapTooltip,TreeMapHighlight,TreeMapSelection, TreeMapLegend  );
 
-export class Args_WgtTreeMap extends Args_AbstractWidget {
-   /**
-    * If this is present,  a new wrapper div is created around the actual element.
-    */
-   wrapper           ?: IArgs_HtmlTag;
-   ej ?: TreeMapModel
+export class Args_WgtTreeMap extends Args_AnyWidget<TreeMapModel> {
 }
 
 export abstract class AbstractWgtTreeMap extends AnyWidget<TreeMap, Args_WgtTreeMap, any> {
@@ -54,7 +49,8 @@ export abstract class AbstractWgtTreeMap extends AnyWidget<TreeMap, Args_WgtTree
          x += `<${this.args.wrapper.htmlTagType} id="${this.wrapperTagID}" ${IArgs_HtmlTag_Utils.all(this.args.wrapper)}>`;
       }
 
-      x += `<div id="${this.tagId}"></div>`; // NEVER use <div />
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
+      x += `<div id="${this.tagId}" ${classString}></div>`; // NEVER use <div />
 
       if (this.args?.wrapper) {
          x += `</${this.args.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->

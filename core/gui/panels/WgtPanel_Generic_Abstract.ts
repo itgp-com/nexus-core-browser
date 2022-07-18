@@ -1,16 +1,14 @@
 import {AnyWidget}                                                           from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils, IKeyValueString} from "../Args_AnyWidget";
-import {AbstractWidget}                                                      from "../AbstractWidget";
+import {AbstractWidget, Args_AbstractWidget}                                 from "../AbstractWidget";
 
 
-export class Args_WgtPanel_Generic_Abstract implements IArgs_HtmlTag {
+export class Args_WgtPanel_Generic_Abstract extends Args_AnyWidget implements IArgs_HtmlTag {
    htmlTagClass ?: string;
    htmlTagStyle ?: string;
    htmlTagType ?: string;
    htmlOtherAttr ?: IKeyValueString;
-   title ?: string           = 'n/a';
 
-   children ?: AbstractWidget[];
 }
 
 export abstract class WgtPanel_Generic_Abstract<INIT_TYPE extends Args_WgtPanel_Generic_Abstract> extends AnyWidget {
@@ -35,7 +33,15 @@ export abstract class WgtPanel_Generic_Abstract<INIT_TYPE extends Args_WgtPanel_
    }
 
    async localContentBegin(): Promise<string> {
-      return `<${this.args.htmlTagType} id="${this.tagId}"${IArgs_HtmlTag_Utils.class(this.args)}${IArgs_HtmlTag_Utils.style(this.args)}>`;
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, false);
+      IArgs_HtmlTag_Utils.init(this.args); // htmlTagClass is not null
+      if (classString) {
+         if (this.args.htmlTagClass )
+            this.args.htmlTagClass += ' '
+         this.args.htmlTagClass += classString
+      } // if classString
+
+      return `<${this.args.htmlTagType} id="${this.tagId}"${IArgs_HtmlTag_Utils.all(this.args)}}>`;
 
    }
 

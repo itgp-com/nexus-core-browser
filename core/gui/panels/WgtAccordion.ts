@@ -3,7 +3,7 @@ import {Args_AbstractWidget}                                                   f
 import {Accordion, AccordionItemModel, AccordionModel}                         from '@syncfusion/ej2-navigations';
 import {AbstractWidget}                                                        from "../../";
 import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
-import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                                    from "../Args_AnyWidget";
+import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils}                    from "../Args_AnyWidget";
 import {ExpandedEventArgs, ExpandEventArgs}                                    from "@syncfusion/ej2-navigations/src/accordion/accordion";
 import {AnyScreen}                                                             from "../AnyScreen";
 
@@ -87,12 +87,7 @@ export class AccordionChild {
    disabled?: boolean;
 }
 
-export class Args_WgtAccordion extends Args_AbstractWidget {
-   /**
-    * If this is present,  a new wrapper div is created around the actual element.
-    */
-   wrapper           ?: IArgs_HtmlTag;
-   ej ?: AccordionModel;
+export class Args_WgtAccordion extends Args_AnyWidget<AccordionModel> {
    childItems ?: AccordionChild[]
 }
 
@@ -148,7 +143,6 @@ export class WgtAccordion extends AnyWidget<Accordion, Args_AbstractWidget, any>
          items.push(item);
       } // for accordionChild
       argsAccordion.ej.items = items;
-      //    this.children          = children;
 
       this.initialize_AnyWidget(argsAccordion);
 
@@ -173,7 +167,9 @@ export class WgtAccordion extends AnyWidget<Accordion, Args_AbstractWidget, any>
          x += `<${this.args.wrapper.htmlTagType} id="${this.wrapperTagID}" ${IArgs_HtmlTag_Utils.all(this.args.wrapper)}>`;
       }
 
-      x += `<div id="${this.tagId}">`;
+
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
+      x += `<div id="${this.tagId}" ${classString}></div>`; // NEVER use <div />
 
       return x; // no call to super
    } // localContentBegin

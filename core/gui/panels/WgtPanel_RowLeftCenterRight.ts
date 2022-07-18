@@ -1,9 +1,9 @@
 import {AnyWidget}                                          from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {AbstractWidget}                                     from "../AbstractWidget";
+import {AbstractWidget, Args_AbstractWidget}                from "../AbstractWidget";
 import {WgtPanel_Generic}                                   from "./WgtPanel_Generic";
 
-export class Args_WgtPanel_RowLeftCenterRight implements IArgs_HtmlTag {
+export class Args_WgtPanel_RowLeftCenterRight extends Args_AnyWidget implements IArgs_HtmlTag {
    htmlTagClass ?: string;
    htmlTagStyle ?: string;
    htmlTagType ?: string;
@@ -84,10 +84,19 @@ export class WgtPanel_RowLeftCenterRight extends AnyWidget {
    } // initialize_WgtPanel_RowLeftCenterRight
 
    async localContentBegin(): Promise<string> {
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, false);
+      IArgs_HtmlTag_Utils.init(this.args); // htmlTagClass is not null
+      if (classString) {
+         if (this.args.htmlTagClass )
+            this.args.htmlTagClass += ' '
+         this.args.htmlTagClass += classString
+      } // if classString
+
       if (!this.args.hideDefaultClasses) {
          this.args.htmlTagClass = this.args.htmlTagClass || '';
                this.args.htmlTagClass += ' flex-container-lcr';
       }
+
       return `<${this.args.htmlTagType} id="${this.tagId}"${IArgs_HtmlTag_Utils.class(this.args)}${IArgs_HtmlTag_Utils.style(this.args)}>`;
 
    }

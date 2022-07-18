@@ -7,9 +7,10 @@ import {AnyScreen}                                    from "./gui/AnyScreen";
 import {DataManager, Query, ReturnOption, UrlAdaptor} from "@syncfusion/ej2-data";
 import {EJList}                                       from "./ej2/Ej2Comm";
 import {IArgs_HtmlDecoration, IKeyValueString}        from "./gui/Args_AnyWidget";
-import {isArray}                                      from "lodash";
+import {isArray, isString}                            from "lodash";
 import {ClientVersion}                                from "./gui/ClientVersion";
 import * as CSS                                       from 'csstype';
+import {Args_AbstractWidget}                          from "./gui/AbstractWidget";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY   = 1000;
@@ -1141,6 +1142,31 @@ export function htmlElement_link_clickFunction(elem: HTMLElement, clickFunction:
    }
 }
 
-//----------------------------------------------------------------------------
-//------------------- Start      section ------------------------------
-//----------------------------------------------------------------------------
+
+export function addCssClass(args: Args_AbstractWidget, classInstance: (string | string[])){
+   if (!classInstance)
+      return;
+
+   if (!args.cssClasses)
+      args.cssClasses = []
+   if (isString(args.cssClasses)){
+      let x =args.cssClasses
+      args.cssClasses = [x]
+   }
+   // at this point we have an array
+
+   if (isArray(classInstance)){
+      let classInstanceArray:string[] = classInstance;
+      for (let i = 0; i < classInstanceArray.length; i++) {
+         const classInstanceArrayElement = classInstanceArray[i];
+         if (classInstanceArrayElement) {
+            if ((args.cssClasses as string[]).indexOf(classInstanceArrayElement) < 0)
+               args.cssClasses.push(classInstanceArrayElement);
+         }
+      } // for
+   } else {
+      if ((args.cssClasses as string[]).indexOf(classInstance) < 0)
+         args.cssClasses.push(classInstance);
+
+   }
+} // addCssClass

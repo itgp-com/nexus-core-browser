@@ -1,17 +1,13 @@
 import {AnyWidget}                     from "./AnyWidget";
 import {Args_AnyWidget}                from "./Args_AnyWidget";
-import {getRandomString}               from "../ej2/WidgetUtils";
-import {AbstractWidget}                from "./AbstractWidget";
-import {htmlToElement, removeTemplate} from "../CoreUtils";
+import {getRandomString}                            from "../ej2/WidgetUtils";
+import {addCssClass, htmlToElement, removeTemplate} from "../CoreUtils";
+import {CSS_FLEX_MAX_XY}                            from "./css/CssDef";
+import {Args_AbstractWidget}           from "./AbstractWidget";
 
-export class Args_AnyScreen {
-   extraTagIdCount ?: number = 0;
-   tagName ?: string         = 'div';
-   classAttrReplacement ?: string;
-   classAttrPrefix ?: string;
-   classAttrSuffix ?: string;
-   title ?: string           = '';
-   children ?: AbstractWidget[];
+export class Args_AnyScreen extends Args_AnyWidget {
+   tagName ?: string = 'div';
+   overwriteDefaultClasses ?: string[];
 
 } //AnyScreenParams
 
@@ -29,14 +25,14 @@ export abstract class AnyScreen<DATA_TYPE = any>
    extends AnyWidget<HTMLElement, Args_AnyWidget, DATA_TYPE> {
 
    private _anyScreenDescriptor: Args_AnyScreen;
-   private _extraTagIdList: string[] = [];
+   private _extraTagIdList: string[]    = [];
    protected insideInitRefreshAnyScreen = false;
-   protected _templateIdList: string[] = [];
+   protected _templateIdList: string[]  = [];
 
    /**
     * Unique uuid that will uniquely identify this screen even after any future refactoring changes the name of the class
     */
-   private _ui_uuid:string;
+   private _ui_uuid: string;
 
    protected constructor() {
       super();
@@ -46,41 +42,33 @@ export abstract class AnyScreen<DATA_TYPE = any>
    initialize_AnyScreen(anyScreenDescriptor ?: Args_AnyScreen) {
       let thisX = this;
 
-      if (anyScreenDescriptor) {
+      if (anyScreenDescriptor)
          // ensure that default fields are filled, but overwritten by contents of parameter passed in
          anyScreenDescriptor = {...new Args_AnyScreen(), ...anyScreenDescriptor};
-      } else {
+      else
          anyScreenDescriptor = new Args_AnyScreen();
-      }
+
+      // Initialize as extension of AnyWidget
+      Args_AnyWidget.initialize(anyScreenDescriptor, this);
 
       this.anyScreenDescriptor = anyScreenDescriptor;
 
-      // this.title = anyScreenDescriptor.title; //Commented out 2020-06-05 DDP because it's now transferred to AnyWidget
+      if (anyScreenDescriptor.overwriteDefaultClasses) {
+         // anyScreenDescriptor.classSpecificCssClasses not null because of the  Args_AnyWidget.initialize call above
+         addCssClass(anyScreenDescriptor, anyScreenDescriptor.overwriteDefaultClasses);
+      } else {
+         addCssClass(anyScreenDescriptor, CSS_FLEX_MAX_XY);
+      }
 
-      // -------------- prepare the descriptor so we can properly initialize the super component ---------------
-      let descriptor: Args_AnyWidget = new Args_AnyWidget();
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(anyScreenDescriptor, true);
 
-      // ------------------ straight property movement -----------------
-      descriptor.extraTagIdCount = anyScreenDescriptor.extraTagIdCount;
-      descriptor.children        = anyScreenDescriptor.children;
-      descriptor.title           = anyScreenDescriptor.title;
-
-      // ------------------ initContentBegin --------------------------
-      let classAttrPrefix = (anyScreenDescriptor.classAttrPrefix ? anyScreenDescriptor.classAttrPrefix : '');
-      let classAttrSuffix = (anyScreenDescriptor.classAttrSuffix ? anyScreenDescriptor.classAttrSuffix : '');
-      let classAttrMain   = (anyScreenDescriptor.classAttrReplacement ? anyScreenDescriptor.classAttrReplacement : 'flex-component-max flex-full-height');
-
-      let classAttr = `${classAttrPrefix} ${classAttrMain} ${classAttrSuffix}`;
-
-      descriptor.localContentBegin = () => {
-         return `
-<${anyScreenDescriptor.tagName} id="${this.tagId}" class="${classAttr}">
-   `
+      anyScreenDescriptor.localContentBegin = () => {
+         return `<${anyScreenDescriptor.tagName} id="${this.tagId}" ${classString}>`
       };
 
 
       // ------------------ initContentEnd --------------------------
-      descriptor.localContentEnd = () => {
+      anyScreenDescriptor.localContentEnd = () => {
          let b: string = '';
 
          if (anyScreenDescriptor.extraTagIdCount > 0) {
@@ -103,18 +91,18 @@ export abstract class AnyScreen<DATA_TYPE = any>
       };
 
       // ------------------ initLogic --------------------------
-      descriptor.initLogic = () => {
+      anyScreenDescriptor.initLogic = () => {
          //2020-05-11 - The refresh MUST be AFTER the form is done painting if we want the spinner to show up in the grids of the screen
          setImmediate(async () => {
-             thisX.insideInitRefreshAnyScreen = true;
-             await thisX.refresh(); // a screen should always refresh the controls at the end of their being instantiated
+            thisX.insideInitRefreshAnyScreen = true;
+            await thisX.refresh(); // a screen should always refresh the controls at the end of their being instantiated
             thisX.insideInitRefreshAnyScreen = false;
          });
       };
 
 
       // -------------- NOW properly initialize the super component ---------------
-      super.initialize_AnyWidget(descriptor);
+      super.initialize_AnyWidget(anyScreenDescriptor);
    } // initAnyScreen
 
 
@@ -127,8 +115,8 @@ export abstract class AnyScreen<DATA_TYPE = any>
          let list = this.listTemplateIds();
 
          // remove all templates added to this screen
-         if(list?.length> 0){
-            for (let i = list.length-1; i >= 0 ; i--) {
+         if (list?.length > 0) {
+            for (let i = list.length - 1; i >= 0; i--) {
                let listTemplateId = list[i];
                if (listTemplateId) {
                   try {
@@ -139,7 +127,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
                }
             } // for
          } // if list
-      } catch (ex){
+      } catch (ex) {
          console.log(ex);
       }
       await super.localDestroyImplementation();
@@ -176,11 +164,12 @@ export abstract class AnyScreen<DATA_TYPE = any>
       return this.tagId;
    }
 
-   isInsideRefreshAnyScreen():boolean {
+   isInsideRefreshAnyScreen(): boolean {
       if (this.insideInitRefreshAnyScreen)
          return true;
       let parent = this.parent;
-      while(parent != null && parent instanceof AnyScreen){
+
+      while (parent != null && parent instanceof AnyScreen) {
          return parent.isInsideRefreshAnyScreen()
       }
       return false;
@@ -198,21 +187,21 @@ export abstract class AnyScreen<DATA_TYPE = any>
    }
 
 
-   addTemplateId(template_id:string){
+   addTemplateId(template_id: string) {
       let index = this._templateIdList.indexOf(template_id);
-      if (index < 0){
+      if (index < 0) {
          this._templateIdList.push(template_id)
       }
    }
 
-   removeTemplateId(template_id:string){
+   removeTemplateId(template_id: string) {
       let index = this._templateIdList.indexOf(template_id);
-      if (index >= 0){
-        this._templateIdList.splice(index, 1);
+      if (index >= 0) {
+         this._templateIdList.splice(index, 1);
       }
    }
-   
-   listTemplateIds(){
+
+   listTemplateIds() {
       return this._templateIdList;
    }
 
@@ -220,10 +209,10 @@ export abstract class AnyScreen<DATA_TYPE = any>
    /**
     * Append DIV with uniqueID to the screen and return that id if successful. Return null if it failed
     */
-   appendDivToScreen():string {
-      let id = getRandomString(this.thisClassName);
+   appendDivToScreen(): string {
+      let id          = getRandomString(this.thisClassName);
       let htmlContent = `<div id="${id}"></div>`
-      let success = this.appendHTMLToScreen(htmlContent);
+      let success     = this.appendHTMLToScreen(htmlContent);
       if (success) {
          return id;
       } else {
@@ -237,7 +226,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
     * @param htmlContent html to be added. Ex: <div id="2342342"></div>
     * @return <code>true</code> if successful, <code>false</code> if it fails (exception logged in console)
     */
-   appendHTMLToScreen(htmlContent:string):boolean{
+   appendHTMLToScreen(htmlContent: string): boolean {
 
       let success = false;
       try {

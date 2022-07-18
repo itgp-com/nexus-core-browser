@@ -86,8 +86,8 @@ export abstract class AbstractWgtSidebar extends AnyWidget<Sidebar, Args_WgtSide
 
       let x: string = "";
 
-      // x += `<aside id="${this.tagId}"></aside>`
-      x += `<aside id="${this.tagId}">`
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.argsWgtSidebar, true);
+      x += `<aside id="${this.tagId}" ${classString}></aside>`; // NEVER use <aside />
       if (this.argsWgtSidebar?.contentWrapper) {
          this.argsWgtSidebar.contentWrapper = IArgs_HtmlTag_Utils.init(this.argsWgtSidebar.contentWrapper);
          x += `<${this.argsWgtSidebar.contentWrapper.htmlTagType} id="${this.contentWrapperTagId}" ${IArgs_HtmlTag_Utils.all(this.argsWgtSidebar.contentWrapper)}>`;

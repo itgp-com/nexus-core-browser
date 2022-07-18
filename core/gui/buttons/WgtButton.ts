@@ -2,8 +2,8 @@ import {AnyWidget}                                          from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 import {StringArg, stringArgVal, voidFunction}              from "../../CoreUtils";
 import {Button, ButtonModel}                                from '@syncfusion/ej2-buttons';
-import {enableRipple}                        from '@syncfusion/ej2-base';
-import {AbstractWidget, Args_AbstractWidget} from "../AbstractWidget";
+import {enableRipple}                                       from '@syncfusion/ej2-base';
+import {AbstractWidget, Args_AbstractWidget}                from "../AbstractWidget";
 
 enableRipple(true);
 
@@ -14,7 +14,7 @@ export enum ButtonIconPosition {
    Top    = "Top"
 }
 
-export class Args_WgtButton extends Args_AbstractWidget implements IArgs_HtmlTag{
+export class Args_WgtButton extends Args_AbstractWidget implements IArgs_HtmlTag {
    /**
     * The name of the html tag used for this button will be prefixed by this string
     */
@@ -49,18 +49,18 @@ export class WgtButton extends AnyWidget<Button> {
    }
 
    static create(args?: Args_WgtButton): WgtButton {
-      let instance =  new WgtButton();
+      let instance = new WgtButton();
       instance.initialize_WgtButton(args);
       return instance;
    }
 
 
-   initialize_WgtButton( args ?: Args_WgtButton ){
-      args = args ||{};
+   initialize_WgtButton(args ?: Args_WgtButton) {
+      args      = args || {};
       args      = this.customizeArgs(args); // give extending classes a chance to modify
       this.args = args;
 
-      if ( ! args.label)
+      if (!args.label)
          args.label = '';
 
       let descriptor: Args_AnyWidget = args as any;
@@ -69,7 +69,7 @@ export class WgtButton extends AnyWidget<Button> {
       if (args.id) {
          descriptor.id = stringArgVal(args.id);
       }
-      if ( args.children)
+      if (args.children)
          descriptor.children = args.children;
 
 
@@ -79,6 +79,14 @@ export class WgtButton extends AnyWidget<Button> {
    } // initialize_WgtButton
 
    async localContentBegin(): Promise<string> {
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, false);
+      IArgs_HtmlTag_Utils.init(this.args); // htmlTagClass is not null
+      if (classString) {
+         if (this.args.htmlTagClass )
+            this.args.htmlTagClass += ' '
+         this.args.htmlTagClass += classString
+      } // if classString
+
       let b: string = `<button id="${this.tagId}" type="button" ${IArgs_HtmlTag_Utils.all(this.args)} >${this.title}`;
       return b;
    }
@@ -111,7 +119,6 @@ export class WgtButton extends AnyWidget<Button> {
    customizeArgs(args: Args_WgtButton): Args_WgtButton {
       return args;
    }
-
 
 
 } // class WButton

@@ -7,7 +7,6 @@ import {AfterInitLogicEvent, AfterInitLogicListener}                           f
 import {stringArgVal}                                                          from "../CoreUtils";
 import {ListenerHandler}                                                       from "../ListenerHandler";
 import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "./Args_AnyWidget_Initialized_Listener";
-import {getErrorHandler}                                                       from "../CoreErrorHandling";
 
 /**
  * The generic root component of all the widgets.

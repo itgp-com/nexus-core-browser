@@ -1,5 +1,5 @@
 import {AnyWidget}                                                             from "../AnyWidget";
-import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                                    from "../Args_AnyWidget";
+import {Args_AnyWidget, IArgs_HtmlTag_Utils}                                   from "../Args_AnyWidget";
 import {Args_AbstractWidget}                                                   from "../AbstractWidget";
 import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
 import {DataManager}                                                           from "@syncfusion/ej2-data";
@@ -7,12 +7,7 @@ import {ExcelExport, Page, Resize, Toolbar, TreeGrid, TreeGridModel}           f
 
 TreeGrid.Inject(Toolbar, ExcelExport, Page, Resize);
 
-export class Args_AbstractWgtTreeGrid extends Args_AbstractWidget {
-   /**
-    * If this is present,  a new wrapper div is created around the actual element.
-    */
-   wrapper           ?: IArgs_HtmlTag;
-   ej ?: TreeGridModel
+export class Args_AbstractWgtTreeGrid extends Args_AnyWidget<TreeGridModel> {
 }
 
 export abstract class AbstractWgtTreeGrid extends AnyWidget<TreeGrid, Args_AbstractWgtTreeGrid, any> {
@@ -53,7 +48,8 @@ export abstract class AbstractWgtTreeGrid extends AnyWidget<TreeGrid, Args_Abstr
          x += `<${this.args.wrapper.htmlTagType} id="${this.wrapperTagID}" ${IArgs_HtmlTag_Utils.all(this.args.wrapper)}>`;
       }
 
-      x += `<div id="${this.tagId}"></div>`; // NEVER use <div />
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
+      x += `<div id="${this.tagId}" ${classString}></div>`; // NEVER use <div />
 
       if (this.args?.wrapper) {
          x += `</${this.args.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->

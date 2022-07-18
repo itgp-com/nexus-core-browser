@@ -125,8 +125,7 @@ export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
    refresh ?: voidFunction;
    clear ?: voidFunction;
    destroy ?: voidFunction;
-   beforeInitLogicListener ?: (ev: BeforeInitLogicEvent) => void;
-   afterInitLogicListener ?: (ev: AfterInitLogicEvent) => void;
+
 
    /**
     * If this is present,  a new wrapper div is created around the actual input element.
@@ -158,7 +157,13 @@ export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
 
       if (!descriptor.error_id)
          descriptor.error_id = `${descriptor.id}ErrorMsg`;
+
       if (!descriptor.formGroup_id)
          descriptor.formGroup_id = `${descriptor.id}FormGroup`;
+
+      if ( !descriptor.cssClasses)
+         descriptor.cssClasses = [];
+
    } // initialize
-}
+
+ }

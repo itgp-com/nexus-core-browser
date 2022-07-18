@@ -1,16 +1,13 @@
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils, IKeyValueString} from "../Args_AnyWidget";
 import {AnyWidget}                                                           from "../AnyWidget";
 import {Diagram, DiagramModel}                                               from '@syncfusion/ej2-diagrams';
+import {Args_AbstractWidget}                                                 from "../AbstractWidget";
 
-export class Args_WgtDiagram_Abstract extends Args_AnyWidget implements IArgs_HtmlTag {
-   ej ?: DiagramModel;
-
+export class Args_WgtDiagram_Abstract extends Args_AnyWidget<DiagramModel> implements IArgs_HtmlTag {
    htmlOtherAttr?: IKeyValueString;
    htmlTagClass?: string;
    htmlTagStyle?: string;
    htmlTagType?: string;
-
-   wrapper ?: IArgs_HtmlTag;
 
    synchronousInstantiation?: boolean;
 } // Args_WgtDiagram_Abstract
@@ -24,24 +21,20 @@ export abstract class AbstractWgtDiagram extends AnyWidget<Diagram, Args_WgtDiag
       let thisX                      = this;
       thisX.args_WgtDiagram_Abstract = args_WgtDiagram_Abstract;
 
-      // //--------------- implement Args_AnyWidget_Initialized_Listener ------------- /
-      // this.args_AnyWidgetInitializedListeners.add(
-      //    new class extends Args_AnyWidget_Initialized_Listener {
-      //       argsAnyWidgetInitialized(evt: Args_AnyWidget_Initialized_Event): void {
-      //
-      //          // initialize the tags so they available in localContentBegin/End
-      //          thisX.wrapperTagID = `wrapper_${evt.widget.tagId}`;
-      //       }
-      //    }
-      // );
-
-
       this.initialize_AnyWidget(args_WgtDiagram_Abstract);
 
    } // initialize_WgtDiagram_Abstract
 
 
     async localContentBegin(): Promise<string> {
+       let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args_WgtDiagram_Abstract, false);
+       IArgs_HtmlTag_Utils.init(this.args_WgtDiagram_Abstract); // htmlTagClass is not null
+       if (classString) {
+          if (this.args_WgtDiagram_Abstract.htmlTagClass )
+             this.args_WgtDiagram_Abstract.htmlTagClass += ' '
+          this.args_WgtDiagram_Abstract.htmlTagClass += classString
+       } // if classString
+
 
       let x: string = "";
       if (this?.args_WgtDiagram_Abstract)

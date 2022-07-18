@@ -61,7 +61,8 @@ import {
    Trendlines,
    // WaterfallSeries,
    Zoom
-} from '@syncfusion/ej2-charts';
+}                            from '@syncfusion/ej2-charts';
+import {Args_AbstractWidget} from "../AbstractWidget";
 
 Chart.Inject(
    // AccumulationDistributionIndicator,
@@ -122,13 +123,7 @@ Chart.Inject(
    Zoom
 );
 
-export class Args_WgtChart extends Args_AnyWidget {
-   //---- should move from Args_WgtSimple to Args_AnyWidget -------
-   /**
-    * If this is present,  a new wrapper div is created around the actual input element.
-    */
-   wrapper           ?: IArgs_HtmlTag;
-   ej ?: ChartModel;
+export class Args_WgtChart extends Args_AnyWidget<ChartModel> {
 } // Args_WgtChart
 
 // noinspection JSUnusedGlobalSymbols
@@ -178,7 +173,9 @@ export abstract class AbstractWgtChart extends AnyWidget<Chart, Args_WgtChart, a
          x += `<${this.args.wrapper.htmlTagType} id="${this.wrapperTagID}" ${IArgs_HtmlTag_Utils.all(this.args.wrapper)}>`;
       }
 
-      x += `<div id="${this.tagId}"></div>`; // NEVER use <div />
+
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
+      x += `<div id="${this.tagId}" ${classString}></div>`; // NEVER use <div />
 
       if (this.args?.wrapper) {
          x += `</${this.args.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->

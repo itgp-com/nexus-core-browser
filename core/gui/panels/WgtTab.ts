@@ -2,18 +2,13 @@ import {AnyWidget}                                          from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 
 import {SelectEventArgs, SelectingEventArgs, Tab, TabItemModel, TabModel} from '@syncfusion/ej2-navigations';
-import {AbstractWidget}                                                   from "../AbstractWidget";
-import {AnyScreen}                                                        from "../AnyScreen";
+import {AbstractWidget, Args_AbstractWidget}                              from "../AbstractWidget";
 import {Event}                                                            from "@syncfusion/ej2-base";
 
-export class Args_WgtTab implements IArgs_HtmlTag {
+export class Args_WgtTab extends Args_AnyWidget<TabModel> implements IArgs_HtmlTag {
    htmlTagType ?: string;
    htmlTagClass ?: string;
    htmlTagStyle ?: string;
-
-   wrapper ?: IArgs_HtmlTag;
-   children: AbstractWidget[];
-   ej ?: TabModel;
 }
 
 export class Args_WgtTab_SelectedAsTab {
@@ -66,9 +61,19 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
 
    async localContentBegin(): Promise<string> {
       let args      = this.args;
+      IArgs_HtmlTag_Utils.init(this.args); // htmlTagClass is not null
+
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, false);
+      if (classString) {
+         if (this.args.htmlTagClass )
+            this.args.htmlTagClass += ' '
+         this.args.htmlTagClass += classString
+      } // if classString
+
+
       let x: string = "";
 
-      x += `<${args.htmlTagType} id="${this.tagId}" >`;
+      x += `<${args.htmlTagType} id="${this.tagId}"${IArgs_HtmlTag_Utils.all(this.args)}>`;
 
       if (args.wrapper) {
          args.wrapper   = IArgs_HtmlTag_Utils.init(args.wrapper);

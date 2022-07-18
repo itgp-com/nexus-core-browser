@@ -1,16 +1,15 @@
 import {AnyWidget}                                          from "../AnyWidget";
 import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {FormValidator, FormValidatorModel}                  from '@syncfusion/ej2-inputs';
-import {AbstractWidget}                                     from "../AbstractWidget";
+import {FormValidator, FormValidatorModel}   from '@syncfusion/ej2-inputs';
+import {AbstractWidget, Args_AbstractWidget} from "../AbstractWidget";
 
 
-export class Args_WgtForm {
+export class Args_WgtForm extends Args_AnyWidget {
    validation?: FormValidatorModel;
    /**
     * Create method will overwrite the formTag.htmlTagType to 'form'
     */
    formTag ?: IArgs_HtmlTag
-   children ?: AbstractWidget[];
 
 } // Args_WgtForm
 
@@ -22,15 +21,6 @@ export abstract class AbstractWgtForm extends AnyWidget<any, Args_AnyWidget, any
    protected constructor() {
       super();
    }
-
-
-   // static create(args: Args_WgtForm): AbstractWgtForm {
-   //    args.formTag             = IArgs_HtmlTag_Utils.init(args.formTag);
-   //    args.formTag.htmlTagType = 'form';
-   //    let instance             = new AbstractWgtForm();
-   //    instance.initialize_WgtForm(args);
-   //    return instance;
-   // }
 
    static isWgtForm(instance: any): boolean {
       if (instance && instance.wgtForm) {
@@ -55,6 +45,13 @@ export abstract class AbstractWgtForm extends AnyWidget<any, Args_AnyWidget, any
 
 
    async localContentBegin(): Promise<string> {
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, false);
+      if (classString) {
+         if (this.args.formTag.htmlTagClass )
+            this.args.formTag.htmlTagClass += ' '
+         this.args.formTag.htmlTagClass += classString
+      } // if classString
+
 
       let x: string = "";
       try {

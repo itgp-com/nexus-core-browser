@@ -1,30 +1,20 @@
-import {AnyWidget}                                                                                                                                                    from "../AnyWidget";
-import {Args_AnyWidget}                                                                                                                                               from "../Args_AnyWidget";
-import {DataManager, Query}                                                                                                                                           from "@syncfusion/ej2-data";
-import {Aggregate, ColumnMenu, ColumnModel, DataResult, ExcelExport, Filter, Grid, GridModel, Page, QueryCellInfoEventArgs, Resize, Sort, SortSettingsModel, Toolbar} from "@syncfusion/ej2-grids";
-import {AbstractWidget, Args_AbstractWidget}                                                                                                                          from "../AbstractWidget";
-import {ClassArg, classArgInstanceVal, hget}                                                                                                                          from "../../CoreUtils";
-import {
-   AggregateRowModel
-}                                                                                                                                                                     from "@syncfusion/ej2-grids/src/grid/models/models";
-import {AnyScreen}                                                                                                                                                    from "../AnyScreen";
+import {AnyWidget}                                                                                                                            from "../AnyWidget";
+import {Args_AnyWidget}                                                                                                                       from "../Args_AnyWidget";
+import {DataManager}                                                                                                                          from "@syncfusion/ej2-data";
+import {Aggregate, ColumnMenu, ColumnModel, DataResult, ExcelExport, Filter, Grid, GridModel, Page, Resize, Sort, SortSettingsModel, Toolbar} from "@syncfusion/ej2-grids";
+import {AbstractWidget, Args_AbstractWidget}                                                                                                  from "../AbstractWidget";
+import {ClassArg, classArgInstanceVal, hget}                                                                                                  from "../../CoreUtils";
+import {AnyScreen}                                                                                                                            from "../AnyScreen";
 
 Grid.Inject(Toolbar, ExcelExport, Page, Resize, ColumnMenu, Aggregate, Sort, Filter );
 
-export class Args_WgtGrid extends Args_AbstractWidget {
+export class Args_WgtGrid extends Args_AnyWidget<GridModel> {
 
    // functions to be called at constructor time
    dataSource ?: ClassArg<Object | DataManager | DataResult>;
-   query ?: Query;
    columns?: ClassArg<ColumnModel[]>;
    sortSettings?: ClassArg<SortSettingsModel>;
 
-   // regular properties
-   queryCellInfo ?: (args: (QueryCellInfoEventArgs | undefined)) => void;
-   created?: () => void;
-   dataBound?: () => void;
-   aggregates?: AggregateRowModel[];
-   ej?: GridModel;
    beforeGridInstantiated ?: { (wgtGrid: WgtGrid): void }; // allows model to be changed at the last moment
 
    /**
@@ -85,30 +75,30 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
       if (args.dataSource)
          this.gridModel.dataSource = classArgInstanceVal(args.dataSource);
 
-      if (args.query)
-         this.gridModel.query = args.query;
-
-      if (args.aggregates)
-         this.gridModel.aggregates = args.aggregates;
+      // if (args.query)
+      //    this.gridModel.query = args.query;
+      //
+      // if (args.aggregates)
+      //    this.gridModel.aggregates = args.aggregates;
 
       //--------------- function / events from here down
-      if (args.created)
-         this.gridModel.created = args.created;
+      // if (args.created)
+      //    this.gridModel.created = args.created;
 
-      // if default has databound, execute that after the args databound
-      let ejLevel_DataBound = this.gridModel.dataBound;
-      if (ejLevel_DataBound != null || args.dataBound != null) {
-         this.gridModel.dataBound = (arg) => {
-            if (ejLevel_DataBound != null)
-               ejLevel_DataBound(arg);
-
-            if (args.dataBound)
-               args.dataBound();
-         }
-      }
-
-      if (args.queryCellInfo)
-         this.gridModel.queryCellInfo = args.queryCellInfo;
+      // // if default has databound, execute that after the args databound
+      // let ejLevel_DataBound = this.gridModel.dataBound;
+      // if (ejLevel_DataBound != null || args.dataBound != null) {
+      //    this.gridModel.dataBound = (arg) => {
+      //       if (ejLevel_DataBound != null)
+      //          ejLevel_DataBound(arg);
+      //
+      //       if (args.dataBound)
+      //          args.dataBound();
+      //    }
+      // }
+      //
+      // if (args.queryCellInfo)
+      //    this.gridModel.queryCellInfo = args.queryCellInfo;
 
       if (args.ej) {
          // if exists, then overwrite default values
@@ -130,7 +120,8 @@ export class WgtGrid<T = any> extends AnyWidget<Grid, Args_AnyWidget, T> {
 
 
    async localContentBegin(): Promise<string> {
-      return `<div id="${this.tagId}"></div>`
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
+      return `<div id="${this.tagId}" ${classString}></div>`; // NEVER use <div />
    } // no children for a Grid, so all HTML can go in the Begin section
 
    async localContentEnd(): Promise<string> {

@@ -1,14 +1,10 @@
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils}                    from "../Args_AnyWidget";
+import {Args_AnyWidget, IArgs_HtmlTag_Utils}                                   from "../Args_AnyWidget";
 import {AnyWidget}                                                             from "../AnyWidget";
 import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
-import {RangeNavigator, RangeNavigatorModel} from '@syncfusion/ej2-charts';
+import {RangeNavigator, RangeNavigatorModel}                                   from '@syncfusion/ej2-charts';
+import {Args_AbstractWidget}                                                   from "../AbstractWidget";
 
-export class Args_WgtRangeSelector extends Args_AnyWidget {
-   //---- should move from Args_WgtSimple to Args_AnyWidget -------
-   /**
-    * If this is present,  a new wrapper div is created around the actual input element.
-    */
-   wrapper           ?: IArgs_HtmlTag;
+export class Args_WgtRangeSelector extends Args_AnyWidget<RangeNavigatorModel> {
    native ?: RangeNavigatorModel;
 
 } // Args_WgtChart
@@ -59,7 +55,9 @@ export class WgtRangeSelector extends AnyWidget<RangeNavigator, Args_WgtRangeSel
          x += `<${this.args.wrapper.htmlTagType} id="${this.wrapperTagID}" ${IArgs_HtmlTag_Utils.all(this.args.wrapper)}>`;
       }
 
-      x += `<div id="${this.tagId}"/>`;
+
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
+      x += `<div id="${this.tagId}" ${classString}></div>`; // NEVER use <div />
 
       if (this.args?.wrapper) {
          x += `</${this.args.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->

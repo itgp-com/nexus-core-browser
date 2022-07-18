@@ -1,14 +1,11 @@
 import {AnyWidget}               from "../AnyWidget";
-import {Args_AnyWidget}          from "../Args_AnyWidget";
-import {AbstractWidget}          from "../AbstractWidget";
-import {StringArg, stringArgVal} from "../../CoreUtils";
+import {Args_AnyWidget}                       from "../Args_AnyWidget";
+import {addCssClass, StringArg, stringArgVal} from "../../CoreUtils";
+import {Args_AbstractWidget}                  from "../AbstractWidget";
 
 
-export class Args_WgtPanel {
-   prefixClasses ?: StringArg;
-   suffixClasses ?: StringArg;
+export class Args_WgtPanel extends Args_AnyWidget {
    style ?: StringArg;
-   children ?: AbstractWidget[];
 
    /**
     * HTML tag to be used instead of the default 'div'
@@ -16,7 +13,7 @@ export class Args_WgtPanel {
    htmlTag ?: string;
 }
 
-export class Args_WgtPanel_SpecificClass  extends Args_WgtPanel{
+export class Args_WgtPanel_SpecificClass extends Args_WgtPanel {
    mandatoryClass: StringArg; // this is the class that MUST exist
 }
 
@@ -29,50 +26,51 @@ export class WgtPanel_SpecificClass extends AnyWidget {
 
 
    static create(args ?: Args_WgtPanel_SpecificClass): WgtPanel_SpecificClass {
-      let instance =  new WgtPanel_SpecificClass();
+      let instance = new WgtPanel_SpecificClass();
       instance.initialize_WgtPanel_SpecificClass(args);
       return instance;
    }
 
-   initialize_WgtPanel_SpecificClass(args: Args_WgtPanel_SpecificClass){
+   initialize_WgtPanel_SpecificClass(args: Args_WgtPanel_SpecificClass) {
       this.args = args;
 
-      let descriptor: Args_AnyWidget = {
-         id:               this.constructor.name,
-      }; //Args_AnyWidget
-
-      if ( args && args.children)
-         descriptor.children = args.children;
-      this.initialize_AnyWidget(descriptor);
+      Args_AnyWidget.initialize(args, this);
+      this.initialize_AnyWidget(args);
    }
 
    async localContentBegin(): Promise<string> {
       let args = this.args;
+      Args_AnyWidget.initialize(this.args, this);
 
-      let prefix = '';
-      let suffix = '';
-      let style  = '';
-      let tag    = this.getTag();
+      let style = '';
+      let tag   = this.getTag();
 
-      if (args && args.prefixClasses)
-         prefix = stringArgVal(args.prefixClasses) + ' ';
-      if (args && args.suffixClasses)
-         suffix = ' ' + stringArgVal(args.suffixClasses);
+
+      let mandatoryClassString: string = stringArgVal(args.mandatoryClass);
+
+      if (mandatoryClassString)
+         if (this.args.cssClasses.indexOf(mandatoryClassString) < 0)
+            addCssClass(this.args, mandatoryClassString);
+
+
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
+
       if (args && args.style)
          style = ` style="${stringArgVal(args.style)}"`;
-      return `<${tag} id="${this.tagId}" class="${prefix}${args.mandatoryClass}${suffix}"${style}>`;
+      return `<${tag} id="${this.tagId}" ${classString}${style}>`;
    }
+
    async localContentEnd(): Promise<string> {
-      let tag    = this.getTag();
+      let tag = this.getTag();
       return `</${tag}>`;
    }
 
 
-   private getTag():string{
+   private getTag(): string {
       let args = this.args;
-      let tag    = 'div';
-      if ( args?.htmlTag)
-         tag=args.htmlTag;
+      let tag  = 'div';
+      if (args?.htmlTag)
+         tag = args.htmlTag;
       return tag;
    }
 }

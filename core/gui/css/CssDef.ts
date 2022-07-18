@@ -1,6 +1,6 @@
 export const CSS_FLEX_MAX_XY                    = "flex-component-max flex-full-height";
 export const CSS_FLEX_MAX_HEIGHT                = "flex-full-height";
-export const CSS_FLEX_MAX_width                 = "flex-full-width";
+export const CSS_FLEX_MAX_WIDTH                 = "flex-full-width";
 export const CSS_FLEX_ROW_DIRECTION             = "flex-container-row";
 export const CSS_FLEX_COL_DIRECTION             = "flex-container-column";
 export const CSS_FLEX_COL_DIRECTION_MAX         = "core-full";

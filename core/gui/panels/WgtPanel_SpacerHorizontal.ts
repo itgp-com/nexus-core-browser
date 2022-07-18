@@ -3,7 +3,7 @@ import {StringArg, stringArgVal} from "../../CoreUtils";
 import {Args_AnyWidget}          from "../Args_AnyWidget";
 import {css_horizontal_spacer}   from "../controls/WgtCSS";
 
-export class Args_WgtPanel_SpacerHorizontal {
+export class Args_WgtPanel_SpacerHorizontal { // does not extend Args_AnyWidget on purpose, it's too simple
    pixels ?: number = 0;
    style ?: StringArg;
    extraClasses ?: StringArg;

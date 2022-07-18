@@ -1,15 +1,11 @@
 import {AnyWidget}               from "../AnyWidget";
-import {Args_AnyWidget}          from "../Args_AnyWidget";
-import {AbstractWidget}          from "../AbstractWidget";
-import {StringArg, stringArgVal} from "../../CoreUtils";
+import {Args_AnyWidget}                       from "../Args_AnyWidget";
+import {addCssClass, StringArg, stringArgVal} from "../../CoreUtils";
+import {Args_AbstractWidget}                  from "../AbstractWidget";
 
 
-export class Args_WgtPanel_Row_Bootstrap {
-   prefixClasses ?: StringArg;
-   suffixClasses ?: StringArg;
+export class Args_WgtPanel_Row_Bootstrap extends Args_AnyWidget {
    style ?: StringArg;
-   children ?: AbstractWidget[];
-
 }
 
 export class WgtPanel_Row_Bootstrap extends AnyWidget {
@@ -19,12 +15,12 @@ export class WgtPanel_Row_Bootstrap extends AnyWidget {
       super();
       this.args = args;
 
-      let descriptor: Args_AnyWidget = {
-         id:               'WgtPanel_Row_Bootstrap',
-         children:         args.children,
-      }; // AnyWidgetDescriptor
+      // let descriptor: Args_AnyWidget = {
+      //    id:               'WgtPanel_Row_Bootstrap',
+      //    children:         args.children,
+      // }; // AnyWidgetDescriptor
 
-      this.initialize_AnyWidget(descriptor);
+      this.initialize_AnyWidget(args);
    }
 
 
@@ -34,17 +30,18 @@ export class WgtPanel_Row_Bootstrap extends AnyWidget {
 
    async localContentBegin(): Promise<string> {
       let args   = this.args;
-      let prefix = '';
-      let suffix = '';
       let style  = '';
+      Args_AnyWidget.initialize(this.args, this);
+      if (this.args.cssClasses.indexOf('row') < 0 )
+         addCssClass(this.args, 'row');
 
-      if (args && args.prefixClasses)
-         prefix = stringArgVal(args.prefixClasses) + ' ';
-      if (args && args.suffixClasses)
-         suffix = ' ' + stringArgVal(args.suffixClasses);
+
       if (args && args.style)
          style = ` style="${stringArgVal(args.style)}"`;
-      return `<div id="${this.tagId}" class="${prefix}row${suffix}"${style}>`;
+
+
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
+      return `<div id="${this.tagId}" ${classString}${style}>`; // NEVER use <div />
    }
 
    async localContentEnd(): Promise<string> {

@@ -1,23 +1,16 @@
-import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}         from "../Args_AnyWidget";
-import {AnyWidget}                                  from "../AnyWidget";
+import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
+import {AnyWidget}                                          from "../AnyWidget";
 import {SelectedEventArgs, Uploader, UploaderModel} from "@syncfusion/ej2-inputs";
 import {EmitType}                                   from "@syncfusion/ej2-base";
+import {Args_AbstractWidget}                        from "../AbstractWidget";
 
-export class Args_WgtUpload implements IArgs_HtmlTag {
+export class Args_WgtUpload extends Args_AnyWidget<UploaderModel> implements IArgs_HtmlTag {
    propertyName: string;
-   autoUpload ?: boolean
-   allowedExtensions ?: string;
-   maxFileSize ?: number;
    htmlTagClass?: string;
    htmlTagStyle?: string;
    htmlTagType?: string;
-   /**
-    * If this is present,  a new wrapper div is created around the actual input element.
-    */
-   wrapper           ?: IArgs_HtmlTag;
    errorTag             ?: IArgs_HtmlTag;
 
-   ej                ?: UploaderModel
 
    /**
     * Triggers after selecting or dropping the files by adding the files in upload queue.
@@ -53,8 +46,6 @@ export abstract class AbstractWgtUpload extends AnyWidget<Uploader> {
 
       args      = this.customizeArgs(args); // give extending classes a chance to modify
       this.argsWgtUpload = args;
-      if (args.maxFileSize)
-         this.maxFileSize = args.maxFileSize
 
       super.initialize_AnyWidget(args);
 
@@ -69,6 +60,14 @@ export abstract class AbstractWgtUpload extends AnyWidget<Uploader> {
    }
 
     async localContentBegin(): Promise<string> {
+
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.argsWgtUpload, false);
+       IArgs_HtmlTag_Utils.init(this.argsWgtUpload); // htmlTagClass is not null
+       if (classString) {
+          if (this.argsWgtUpload.htmlTagClass )
+             this.argsWgtUpload.htmlTagClass += ' '
+          this.argsWgtUpload.htmlTagClass += classString
+       } // if classString
 
       if (!this.errorTagId)
          this.errorTagId = `${this.tagId}_error`
@@ -105,13 +104,12 @@ export abstract class AbstractWgtUpload extends AnyWidget<Uploader> {
       let args = this.argsWgtUpload;
 
       let uploaderModel: UploaderModel = args.ej || {}; // default to args.ej, but ensure it's not null
-      uploaderModel.autoUpload         = args.autoUpload;
-      uploaderModel.allowedExtensions  = args.allowedExtensions;
-      uploaderModel.maxFileSize        = this.maxFileSize;
       if (args.selected) {
          // specifically defined always wins over ej
          uploaderModel.selected = args.selected
       }
+      if (!uploaderModel.maxFileSize)
+         uploaderModel.maxFileSize = this.maxFileSize;
 
       this.obj = new Uploader(uploaderModel, this.hgetInput);
 

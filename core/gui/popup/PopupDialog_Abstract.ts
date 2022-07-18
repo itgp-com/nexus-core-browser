@@ -24,8 +24,8 @@ export interface Args_PopupDialog_Abstract {
 
    sortSettings?: ClassArg<SortSettingsModel>; // () => SortSettingsModel;
    queryCellInfo?: (args: (QueryCellInfoEventArgs | undefined)) => void;
-   created?: () => void;
-   dataBound?: (args?: Object | undefined) => void;
+   // created?: () => void;
+   // dataBound?: (args?: Object | undefined) => void;
    ej?: GridModel;
 
    /**
@@ -88,18 +88,12 @@ export abstract class PopupDialog_Abstract {
 
       let thisX   = this;
       thisX._args = args;
+      if (!args.ej)
+         args.ej = {};
 
       // if default has databound, execute that after the args databound
-      let userDataBound = args.dataBound;
-      args.dataBound    = (arg) => {
-
-         if (args?.ej?.dataBound) {
-            try {
-               args.ej.dataBound(arg); // execute default dataBound
-            } catch (e) {
-               console.error(e);
-            }
-         }
+      let userDataBound = args.ej.dataBound;
+      args.ej.dataBound    = (arg) => {
 
          if (userDataBound != null)
             userDataBound(arg);
