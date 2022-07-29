@@ -11,17 +11,18 @@ import {getClientVersion, getRandomString, hget, htmlToElement, StringArg, strin
 import {ListenerHandler}                                                                 from "../ListenerHandler";
 import {BeforeInitLogicEvent, BeforeInitLogicListener}                                   from "./BeforeInitLogicListener";
 import {AfterInitLogicEvent, AfterInitLogicListener}                                     from "./AfterInitLogicListener";
-import {ExceptionEvent}                                                                  from "../ExceptionEvent";
-import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}                             from "./AfterRepaintWidgetListener";
-import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener}                           from "./BeforeRepaintWidgetListener";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                    from "../WidgetErrorHandler";
-import {ParentAddedEvent, ParentAddedListener}                                           from "./ParentAddedListener";
-import {DialogInfo}                                                                      from "../ej2/DialogInfo";
-import {Args_WgtTab_SelectedAsTab}                                                       from "./panels/WgtTab";
-import {AbstractDialogWindow}                                                            from "../ej2/AbstractDialogWindow";
-import {ClientVersion}                                                                   from "./ClientVersion";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs} from "@syncfusion/ej2-popups";
-import {isArray, isString}                         from "lodash";
+import {ExceptionEvent}                                        from "../ExceptionEvent";
+import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}   from "./AfterRepaintWidgetListener";
+import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener} from "./BeforeRepaintWidgetListener";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}          from "../WidgetErrorHandler";
+import {ParentAddedEvent, ParentAddedListener}                 from "./ParentAddedListener";
+import {DialogInfo}                                            from "../ej2/DialogInfo";
+import {Args_WgtTab_SelectedAsTab}                             from "./panels/WgtTab";
+import {AbstractDialogWindow}                                  from "../ej2/AbstractDialogWindow";
+import {ClientVersion}                                         from "./ClientVersion";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs}             from "@syncfusion/ej2-popups";
+import {isArray, isString}              from "lodash";
+import {IArgs_HtmlTag, IKeyValueString} from "./Args_AnyWidget";
 
 export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
 export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
@@ -29,7 +30,7 @@ export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
 /**
  * Base class for all Widget settings(arguments)
  */
-export class Args_AbstractWidget {
+export class Args_AbstractWidget implements IArgs_HtmlTag {
    // was AbstractWidget
    beforeInitLogicListener ?: BeforeInitLogicType;
    afterInitLogicListener ?: AfterInitLogicType;
@@ -43,11 +44,19 @@ export class Args_AbstractWidget {
    onBeforeRefresh ?: (args: Args_OnBeforeRefresh) => boolean;
    onAfterRefresh ?: (args: Args_OnAfterRefresh) => void;
 
+
+   // --- Start IArgs_HtmlTag implementation ---
+   htmlTagClass?: string;
+   htmlTagStyle?: string;
+   htmlOtherAttr?: IKeyValueString; // {string:string};
+   htmlTagType?: string; // div by default
+   // --- End IArgs_HtmlTag implementation ---
+
    /**
     * These classes are class specific extra classes
     * These classes allow for specialization of css for both the top element and the child elements with custom look and feel for all instances of a class
     *
-    * Use the {@link addCssClass(argsInstrance:Args_AbstractWidget, extraClasses:string|string[]} utility function to append unique new classes
+    * Use the {@link addCssClass(argsInstance:Args_AbstractWidget, extraClasses:string|string[]} utility function (from CoreUtils) to append unique new classes
     */
    cssClasses ?: (string | string[]);
 

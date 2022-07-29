@@ -5,7 +5,7 @@ import {addCssClass, htmlToElement, removeTemplate} from "../CoreUtils";
 import {CSS_FLEX_MAX_XY}                            from "./css/CssDef";
 import {Args_AbstractWidget}           from "./AbstractWidget";
 
-export class Args_AnyScreen extends Args_AnyWidget {
+export class Args_AnyScreen<CONTROLMODEL = any>  extends Args_AnyWidget<CONTROLMODEL>  {
    tagName ?: string = 'div';
    overwriteDefaultClasses ?: string[];
 

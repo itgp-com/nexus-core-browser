@@ -4,6 +4,7 @@ import {DataProvider, IDataProviderSimple}                                      
 import {Args_WgtSimple, WgtSimple}                                                from "./WgtSimple";
 import {applyHtmlDecoration, StringArg, stringArgVal}                             from "../../CoreUtils";
 import {getRandomString}                                                          from "../../ej2/WidgetUtils";
+import {Args_AbstractWidget}                                                      from "../AbstractWidget";
 
 export class Args_WgtText_Multiline {
    /**
@@ -216,7 +217,10 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
       if (this.args.required)
          requiredAttribute = ' required';
 
+      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
       let textArgs = IArgs_HtmlTag_Utils.init(this.args.inputTagDecoration);
+      if (classString)
+         textArgs.htmlTagClass += classString;
       x += `<input id="${this.tagId}" name="${this.args.propertyName}"${IArgs_HtmlTag_Utils.all(textArgs)}${errorAttributes}${requiredAttribute}/>`;
 
       if (this.args.includeErrorLine) {
