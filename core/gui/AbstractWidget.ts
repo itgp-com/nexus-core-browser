@@ -1,30 +1,37 @@
 /**
  * This class serves as the base of every data enabled panel
  */
-import {ScreenMeta}                                                                      from "./ScreenMeta";
-import * as wu                                                                           from "../ej2/WidgetUtils";
-import {ArgsPost}                                                                        from "../ej2/WidgetUtils";
-import {Err}                                                                             from "../Core";
-import {AxiosResponse}                                                                   from "axios";
-import {getErrorHandler}                                                                 from "../CoreErrorHandling";
-import {getClientVersion, getRandomString, hget, htmlToElement, StringArg, stringArgVal} from "../CoreUtils";
-import {ListenerHandler}                                                                 from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                   from "./BeforeInitLogicListener";
-import {AfterInitLogicEvent, AfterInitLogicListener}                                     from "./AfterInitLogicListener";
-import {ExceptionEvent}                                        from "../ExceptionEvent";
-import {AfterRepaintWidgetEvent, AfterRepaintWidgetListener}   from "./AfterRepaintWidgetListener";
-import {BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener} from "./BeforeRepaintWidgetListener";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}          from "../WidgetErrorHandler";
-import {ParentAddedEvent, ParentAddedListener}                 from "./ParentAddedListener";
-import {DialogInfo}                                            from "../ej2/DialogInfo";
-import {Args_WgtTab_SelectedAsTab}                             from "./panels/WgtTab";
-import {AbstractDialogWindow}                                  from "../ej2/AbstractDialogWindow";
-import {ClientVersion}                                         from "./ClientVersion";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs}             from "@syncfusion/ej2-popups";
-import {isArray, isString}              from "lodash";
-import {IArgs_HtmlTag, IKeyValueString} from "./Args_AnyWidget";
+import {ScreenMeta}                                                                                    from "./ScreenMeta";
+import {Err}                                                                                           from "../Core";
+import {AxiosResponse}                                                                                 from "axios";
+import {getErrorHandler}                                                                               from "../CoreErrorHandling";
+import {getRandomString, hget, htmlToElement, IArgs_HtmlTag, IKeyValueString, StringArg, stringArgVal} from "../BaseUtils";
+import {ListenerHandler, StopListenerChain}                                                            from "../ListenerHandler";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                 from "./BeforeInitLogicListener";
+import {ExceptionEvent}                                                                                from "../ExceptionEvent";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                  from "../WidgetErrorHandler";
+import {DialogInfo}                                                                                    from "../ej2/DialogInfo";
+import {ClientVersion, getClientVersion}                                                               from "./ClientVersion";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                     from "@syncfusion/ej2-popups";
+import {isArray, isString}                                                                             from "lodash";
+import {IDialogWindow}                                                                                 from "./dialog/IDialogWindow";
+import {BaseListener}                                                                                  from "../BaseListener";
+import {ArgsPost, asyncPostRetVal}                                                                     from "../HttpUtils";
 
 export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
+
+export class AfterInitLogicEvent {
+   origin: AbstractWidget;
+}
+
+export abstract class AfterInitLogicListener extends BaseListener<AfterInitLogicEvent> {
+
+   eventFired(ev: AfterInitLogicEvent): void {
+      this.afterInitLogic(ev);
+   }
+
+   abstract afterInitLogic(ev: AfterInitLogicEvent): void;
+} // main class
 export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
 
 /**
@@ -56,7 +63,7 @@ export class Args_AbstractWidget implements IArgs_HtmlTag {
     * These classes are class specific extra classes
     * These classes allow for specialization of css for both the top element and the child elements with custom look and feel for all instances of a class
     *
-    * Use the {@link addCssClass(argsInstance:Args_AbstractWidget, extraClasses:string|string[]} utility function (from CoreUtils) to append unique new classes
+    * Use the {@link addCssClass(argsInstance:Args_AbstractWidget, extraClasses:string|string[]} utility function to append unique new classes
     */
    cssClasses ?: (string | string[]);
 
@@ -112,6 +119,84 @@ export class Args_ActivatedAsInnerWidget<PARENT_WIDGET extends AbstractWidget> {
    parentInfo: { [key: string]: any } = {};
 }
 
+export class AfterRepaintWidgetEvent {
+   widget: AbstractWidget;
+}
+
+export abstract class AfterRepaintWidgetListener extends BaseListener<AfterRepaintWidgetEvent> {
+
+   eventFired(ev: AfterRepaintWidgetEvent): void {
+      this.afterRepaintWidget(ev);
+   }
+
+   abstract afterRepaintWidget(ev: AfterRepaintWidgetEvent): void;
+}
+
+export class ParentAddedEvent {
+   parent: AbstractWidget;
+   child: AbstractWidget;
+}
+
+/**
+ * Listener that gets triggered on any AbstractWidget after the widget has been tagged with  parent (or a null parent)
+ */
+export abstract class ParentAddedListener extends BaseListener<ParentAddedEvent> {
+
+   eventFired(ev: ParentAddedEvent): void {
+      this.parentAdded(ev);
+   }
+
+   abstract parentAdded(ev: ParentAddedEvent): void;
+}
+
+export class BeforeRepaintWidgetEvent extends StopListenerChain {
+   widget: AbstractWidget;
+}
+
+export abstract class BeforeRepaintWidgetListener extends BaseListener<BeforeRepaintWidgetEvent> {
+
+   eventFired(ev: BeforeRepaintWidgetEvent): void {
+      this.beforeRepaintWidget(ev);
+   }
+
+   abstract beforeRepaintWidget(ev: BeforeRepaintWidgetEvent): void;
+}
+
+export async function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
+   try {
+      let newWidgetHTML = await args.newWidget.initContent();
+      if (args.existingWidgetHTMLElement) {
+         // replace the child
+         let newWidgetHTMLElement = htmlToElement(newWidgetHTML);
+         args.parentHTMLElement.replaceChild(newWidgetHTMLElement, args.existingWidgetHTMLElement);
+      } else {
+         //completely blow away the contents of parent
+         args.parentHTMLElement.innerHTML = newWidgetHTML;
+      }
+      // after giving it time to render, attach the JS logic
+      setImmediate(async () => {
+                      await args.newWidget.initLogic();
+                      if (args.onInstantiated)
+                         args.onInstantiated({
+                                                widget: args.newWidget,
+                                             });
+                   }
+      );
+
+   } catch (ex) {
+      getErrorHandler().displayExceptionToUser(ex);
+   }
+} // updateWidgetInDOM
+
+export class Args_WgtTab_SelectedAsTab {
+   initialized: boolean;
+   index: number;
+   /**
+    * Contains an instance of WgtTab. Cannot list the field as that class because of circular reference WgtTab->AbstractWidget->WgtTab
+    */
+   wgtTab: any;
+}
+
 export abstract class AbstractWidget<DATA_TYPE = any> {
    contentBeginFromExtendingClass: StringArg;
    contentEndFromExtendingClass: StringArg;
@@ -124,7 +209,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private _childrenMap: Map<string, AbstractWidget>                                                                      = new Map<string, AbstractWidget>(); // map of child tagID to child instance
    private _children: AbstractWidget[]                                                                                    = []; // ordered list of children
    private _parent: AbstractWidget;
-   private _dialogWindowContainer: AbstractDialogWindow;
+   private _dialogWindowContainer: IDialogWindow;
    private readonly _beforeInitLogicListeners: ListenerHandler<BeforeInitLogicEvent, BeforeInitLogicListener>             = new ListenerHandler<BeforeInitLogicEvent, BeforeInitLogicListener>();
    private readonly _afterInitLogicListeners: ListenerHandler<AfterInitLogicEvent, AfterInitLogicListener>                = new ListenerHandler<AfterInitLogicEvent, AfterInitLogicListener>();
    private readonly _beforeRepaintWidgetListeners: ListenerHandler<BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener> = new ListenerHandler<BeforeRepaintWidgetEvent, BeforeRepaintWidgetListener>();
@@ -230,11 +315,11 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * Direct DialogWindow Container of this component.
     * Use {@link #findDialogWindowContainer} to search up the tree of parent components and find the top component that has (possibly) a DialogWindow as a container
     */
-   get dialogWindowContainer(): AbstractDialogWindow {
+   get dialogWindowContainer(): IDialogWindow {
       return this._dialogWindowContainer;
    }
 
-   set dialogWindowContainer(value: AbstractDialogWindow) {
+   set dialogWindowContainer(value: IDialogWindow) {
       this._dialogWindowContainer = value;
    }
 
@@ -401,7 +486,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                      thisX.resetInitialize();
                   }
 
-                  await wu.updateWidgetInDOM.call(thisX, {
+                  await updateWidgetInDOM.call(thisX, {
                      parentHTMLElement:         parentNode,
                      newWidget:                 thisX,
                      existingWidgetHTMLElement: existingHtmlElement,
@@ -435,7 +520,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    async initContentAndLogic(container: HTMLElement, callback?: Function): Promise<void> {
       let thisX: AbstractWidget = this;
 
-      await wu.updateWidgetInDOM({
+      await updateWidgetInDOM({
                                     parentHTMLElement: container,
                                     newWidget:         this,
                                     onInstantiated:    (args: Args_onInstantiated) => {
@@ -714,7 +799,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     */
    async asyncPostRetVal<T = any>(argsPost: ArgsPost<T>, optionalErrorHandler ?: (err: (AxiosResponse | Err | Error | ExceptionEvent | any)) => void): Promise<T> {
       try {
-         return await wu.asyncPostRetVal(argsPost);
+         return await asyncPostRetVal(argsPost);
       } catch (err) {
          try {
             if (optionalErrorHandler) {
@@ -735,13 +820,13 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * @param argsPost
     */
    async asyncPostRetValRaw<T = any>(argsPost: ArgsPost<T>): Promise<T> {
-      return wu.asyncPostRetVal(argsPost);
+      return asyncPostRetVal(argsPost);
    } // asyncPostRetVal
 
    /**
     * Searches the chain of ancestors and returns the DialogWindow (if any) that contains any of the ancestors. (Usually it's the top level ancestor that has the DialogWindow.)
     */
-   findDialogWindowContainer(): AbstractDialogWindow {
+   findDialogWindowContainer(): IDialogWindow {
 
       if (this.dialogWindowContainer)
          return this.dialogWindowContainer; // if this actually has a DialogWindow, great, we're done
@@ -760,7 +845,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    closeIfDialog() {
       let dialog = this.findDialogWindowContainer();
       if (dialog)
-         dialog.hide();
+         (dialog as any).hide(); // Cannot reference AbstractDialogWindow directly because of circular re
+
    }
 
    /**
@@ -1022,21 +1108,62 @@ export interface Args_UpdateWidgetInDOM {
 }
 
 export interface Args_OnDialogWindow_BeforeOpen {
-   dialog: AbstractDialogWindow;
+   dialog: IDialogWindow;
    beforeOpenEventArgs: BeforeOpenEventArgs;
 }
 
 export interface Args_OnDialogWindow_Open {
-   dialog: AbstractDialogWindow;
+   dialog: IDialogWindow;
    openEventArgs: any;
 }
 
 export interface Args_OnDialogWindow_BeforeClose {
-   dialog: AbstractDialogWindow;
+   dialog: IDialogWindow;
    beforeCloseEventArgs: BeforeCloseEventArgs;
 }
 
 export interface Args_OnDialogWindow_Close {
-   dialog: AbstractDialogWindow;
+   dialog: IDialogWindow;
    closeEventArgs: any;
 }
+
+export abstract class AbstractWidgetStatic<T = any> extends AbstractWidget<T> {
+
+   // was AbstractWidgetStatic
+
+// noinspection JSUnusedGlobalSymbols
+   async localRefreshImplementation(): Promise<void> {
+   }
+
+// noinspection JSUnusedGlobalSymbols
+   async localClearImplementation(): Promise<void> {
+   }
+}
+
+export function addCssClass(args: Args_AbstractWidget, classInstance: (string | string[])) {
+   if (!classInstance)
+      return;
+
+   if (!args.cssClasses)
+      args.cssClasses = []
+   if (isString(args.cssClasses)) {
+      let x           = args.cssClasses
+      args.cssClasses = [x]
+   }
+   // at this point we have an array
+
+   if (isArray(classInstance)) {
+      let classInstanceArray: string[] = classInstance;
+      for (let i = 0; i < classInstanceArray.length; i++) {
+         const classInstanceArrayElement = classInstanceArray[i];
+         if (classInstanceArrayElement) {
+            if ((args.cssClasses as string[]).indexOf(classInstanceArrayElement) < 0)
+               args.cssClasses.push(classInstanceArrayElement);
+         }
+      } // for
+   } else {
+      if ((args.cssClasses as string[]).indexOf(classInstance) < 0)
+         args.cssClasses.push(classInstance);
+
+   }
+} // addCssClass

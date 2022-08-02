@@ -1,6 +1,6 @@
-import {AbstractWidget}                                                           from "../gui/AbstractWidget";
-import {Cls, DataProvider, DataProviderValue, IDataProvider, IDataProviderSimple} from "./DataProvider";
-import {ClassArgInstanceOrArray, classArgInstanceOrArrayVal}                      from "../CoreUtils";
+import {AbstractWidget}                                        from "../gui/AbstractWidget";
+import {Cls, DataProvider, IDataProvider, IDataProviderSimple} from "./DataProvider";
+import {ClassArgInstanceOrArray, classArgInstanceOrArrayVal}   from "../BaseUtils";
 
 
 export class DataProviderMulti_Args {

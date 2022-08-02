@@ -1,10 +1,9 @@
 import {HtmlEditor, Image, Link, QuickToolbar, RichTextEditor, RichTextEditorModel, Toolbar, Resize} from '@syncfusion/ej2-richtexteditor';
 
-import {IArgs_HtmlTag_Utils}               from "../Args_AnyWidget";
 import {DataProvider, IDataProviderSimple} from "../../data/DataProvider";
 import {Args_WgtSimple, WgtSimple}         from "./WgtSimple";
-import {ChangeEventArgs}         from "@syncfusion/ej2-richtexteditor/src/rich-text-editor/base/interface";
-import {StringArg, stringArgVal} from "../../CoreUtils";
+import {ChangeEventArgs}                              from "@syncfusion/ej2-richtexteditor/src/rich-text-editor/base/interface";
+import {IArgs_HtmlTag_Utils, StringArg, stringArgVal} from "../../BaseUtils";
 
 RichTextEditor.Inject(Toolbar, Link, Image, HtmlEditor, QuickToolbar, Resize);
 

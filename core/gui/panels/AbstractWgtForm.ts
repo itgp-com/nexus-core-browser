@@ -1,7 +1,7 @@
-import {AnyWidget}                                          from "../AnyWidget";
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {FormValidator, FormValidatorModel}   from '@syncfusion/ej2-inputs';
+import {AnyWidget, Args_AnyWidget}         from "../AnyWidget";
+import {FormValidator, FormValidatorModel} from '@syncfusion/ej2-inputs';
 import {AbstractWidget, Args_AbstractWidget} from "../AbstractWidget";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}  from "../../BaseUtils";
 
 
 export class Args_WgtForm extends Args_AnyWidget {

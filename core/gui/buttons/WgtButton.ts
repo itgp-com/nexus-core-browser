@@ -1,7 +1,6 @@
-import {AnyWidget}                                          from "../AnyWidget";
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {StringArg, stringArgVal, voidFunction}              from "../../CoreUtils";
-import {Button, ButtonModel}                                from '@syncfusion/ej2-buttons';
+import {AnyWidget, Args_AnyWidget}                                                 from "../AnyWidget";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction} from "../../BaseUtils";
+import {Button, ButtonModel}                                                       from '@syncfusion/ej2-buttons';
 import {enableRipple}                                       from '@syncfusion/ej2-base';
 import {AbstractWidget, Args_AbstractWidget}                from "../AbstractWidget";
 

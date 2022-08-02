@@ -1,8 +1,7 @@
-import {Args_AnyWidget, IArgs_HtmlTag_Utils}                                   from "../Args_AnyWidget";
-import {AnyWidget}                                                             from "../AnyWidget";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
-import {RangeNavigator, RangeNavigatorModel}                                   from '@syncfusion/ej2-charts';
+import {AnyWidget, Args_AnyWidget, Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../AnyWidget";
+import {RangeNavigator, RangeNavigatorModel}                                                              from '@syncfusion/ej2-charts';
 import {Args_AbstractWidget}                                                   from "../AbstractWidget";
+import {IArgs_HtmlTag_Utils}                                                   from "../../BaseUtils";
 
 export class Args_WgtRangeSelector extends Args_AnyWidget<RangeNavigatorModel> {
    native ?: RangeNavigatorModel;

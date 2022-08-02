@@ -1,17 +1,16 @@
 import {AdaptorOptions, DataManager, DataOptions, Query} from "@syncfusion/ej2-data";
 import {Ajax}                                            from "@syncfusion/ej2-base";
-import {nexusMain}                                       from "../NexusMain";
-import {applyPermanentHttpHeadersToHttpRequest}          from "./WidgetUtils";
+import {applyGlobalHttpHeadersToHttpRequest}             from "../HttpUtils";
 
 function customizeUrlAdaptor(dataSource: DataOptions | JSON[] | Object[]): (DataOptions | JSON[] | Object[]) {
    if (dataSource && !Array.isArray(dataSource)) {
       let adaptor = (dataSource as DataOptions).adaptor;
       if (adaptor) {
          if (!(adaptor['__beforeSendNexus'])) {
-            let originalBeforeSend = adaptor.beforeSend;
-            adaptor.beforeSend     = (dm: DataManager, request: XMLHttpRequest, settings?: Ajax): void => {
+            let originalBeforeSend       = adaptor.beforeSend;
+            adaptor.beforeSend           = (dm: DataManager, request: XMLHttpRequest, settings?: Ajax): void => {
 
-               applyPermanentHttpHeadersToHttpRequest(request);
+               applyGlobalHttpHeadersToHttpRequest(request);
 
                if (originalBeforeSend) {
                   originalBeforeSend.call(this, [dm, request, settings]);

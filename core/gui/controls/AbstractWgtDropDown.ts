@@ -1,7 +1,8 @@
 import {DropDownList, DropDownListModel}       from '@syncfusion/ej2-dropdowns';
-import {Args_AnyWidget, IArgs_HtmlTag_Utils}   from "../Args_AnyWidget";
 import {Args_WgtSimple, WgtSimple}             from "./WgtSimple";
 import {DataProvider, DataProviderChangeEvent} from "../../data/DataProvider";
+import {IArgs_HtmlTag_Utils}                   from "../../BaseUtils";
+import {Args_AnyWidget}                        from "../AnyWidget";
 
 export abstract class Args_WgtDropDown extends Args_WgtSimple<DropDownListModel> {
 

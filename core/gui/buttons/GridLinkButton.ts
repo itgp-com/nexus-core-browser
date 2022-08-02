@@ -1,6 +1,6 @@
-import {AbstractGridButton} from "../../ej2/grid/AbstractGridButton";
+import {AbstractGridButton}  from "../../ej2/grid/AbstractGridButton";
+import {ej2_icon_createlink} from "../controls/WgtCSS";
 
-export const ej2_icon_createlink        = 'ej2-icon-createlink';
 
 export class GridLinkButton extends AbstractGridButton {
    public static readonly BTN_LINK_CLASS: string   = 'btnLinkClass';

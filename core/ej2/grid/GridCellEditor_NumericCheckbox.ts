@@ -1,11 +1,11 @@
 import {Column, IEditCell} from '@syncfusion/ej2-grids';
-import {cu}                from "../../index";
 import {CheckBox}          from "@syncfusion/ej2-buttons";
+import {htmlToElement}     from "../../BaseUtils";
 
 export class GridCellEditor_NumericCheckbox implements IEditCell {
 
    template: string       = `<input id="element" class="numberCheckBox" type="checkbox"/>`;
-   hCheckbox: HTMLInputElement = <HTMLInputElement> cu.htmlToElement(this.template);
+   hCheckbox: HTMLInputElement = <HTMLInputElement> htmlToElement(this.template);
    rCheckBox: CheckBox;
    innerValue: number     = 0;
 

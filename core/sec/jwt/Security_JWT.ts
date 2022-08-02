@@ -1,8 +1,8 @@
 import {AuthenticationOrRefreshRequest} from "./AuthenticationOrRefreshRequest";
 import {AxiosResponse}                  from "axios";
 import {AuthenticationResult}           from "./AuthenticationResult";
-import {getAppPath}                     from "../../CoreUtils";
-import {asyncHttpPost}                  from "../../ej2/WidgetUtils";
+import {getAppPath}    from "../../AppPathUtils";
+import {asyncHttpPost} from "../../HttpUtils";
 
 export class Security_JWT {
 
@@ -167,4 +167,3 @@ export interface Security_JWT_Enabled_Listener {
     */
    enabledChanged(newValue: boolean): boolean;
 }
-

@@ -1,4 +1,4 @@
-import {getOrInitialize, getAtWindowPath} from "./CoreUtils";
+import {getOrInitialize, getAtWindowPath} from "./WindowPathUtils";
 import {getErrorHandler}                  from "./CoreErrorHandling";
 
 const moduleRegistry: string = 'moduleRegistry';

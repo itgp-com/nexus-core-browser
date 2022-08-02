@@ -19,4 +19,15 @@ export type ClientVersion = {
     */
    created: string;
 
+} //-------------------------------
+
+
+let _clientVersion: ClientVersion = null;
+
+export function getClientVersion() {
+   return _clientVersion;
+}
+
+export function setClientVersion(newClientVersion: ClientVersion): void {
+   _clientVersion = newClientVersion;
 }

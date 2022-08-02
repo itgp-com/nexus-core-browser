@@ -1,5 +1,5 @@
 import {Args_WgtButton, WgtButton} from "./WgtButton";
-import {StringArg, stringArgVal}   from "../../CoreUtils";
+import {StringArg, stringArgVal}   from "../../BaseUtils";
 
 export class Args_WgtBadge extends Args_WgtButton{
    badgeLabel: StringArg

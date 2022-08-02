@@ -1,7 +1,7 @@
-import {Args_WgtSimple, WgtSimple}                          from "./WgtSimple";
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {DataProvider, IDataProviderSimple}                  from "../../data/DataProvider";
-import {StringArg, stringArgVal}                            from "../../CoreUtils";
+import {Args_WgtSimple, WgtSimple}                                   from "./WgtSimple";
+import {DataProvider, IDataProviderSimple}                           from "../../data/DataProvider";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal} from "../../BaseUtils";
+import {Args_AnyWidget}                                              from "../AnyWidget";
 
 
 export class Args_WgtLbl extends Args_WgtSimple implements IArgs_HtmlTag {

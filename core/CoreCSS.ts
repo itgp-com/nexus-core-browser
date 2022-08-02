@@ -25,4 +25,3 @@ cssAddClass(CSS_CORE_CENTER_SELF, {
    display:"flex",
    "justify-content":"center",
 });
-

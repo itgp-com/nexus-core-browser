@@ -1,22 +1,15 @@
-import {AnyWidget}                                          from "../AnyWidget";
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
+import {AnyWidget, Args_AnyWidget} from "../AnyWidget";
 
 import {SelectEventArgs, SelectingEventArgs, Tab, TabItemModel, TabModel} from '@syncfusion/ej2-navigations';
 import {AbstractWidget, Args_AbstractWidget}                              from "../AbstractWidget";
 import {Event}                                                            from "@syncfusion/ej2-base";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                               from "../../BaseUtils";
 
 export class Args_WgtTab extends Args_AnyWidget<TabModel> implements IArgs_HtmlTag {
    htmlTagType ?: string;
    htmlTagClass ?: string;
    htmlTagStyle ?: string;
 }
-
-export class Args_WgtTab_SelectedAsTab {
-   initialized: boolean;
-   index: number;
-   wgtTab: WgtTab;
-}
-
 
 export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
 
@@ -163,7 +156,12 @@ export class WgtTab extends AnyWidget<Tab, Args_AnyWidget, any> {
                   await thisX.obj.refresh(); // hack to repaint tab scrollbar when it overflows
 
                   // Remove uppercasing from tab header
-                  $(".e-tab-text").addClass('app-tab-no-text-transform');
+                 // $(".e-tab-text").addClass('app-tab-no-text-transform');
+                  let tabs = thisX.hget.getElementsByClassName('e-tab-text');
+                  for (let i = 0; i < tabs.length; i++) {
+                     const tab = tabs[i];
+                     tab.classList.add('app-tab-no-text-transform')
+                  }
 
                   if (ejCreated) {
                      try {

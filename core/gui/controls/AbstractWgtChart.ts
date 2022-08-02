@@ -1,6 +1,4 @@
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils}                    from "../Args_AnyWidget";
-import {AnyWidget}                                                             from "../AnyWidget";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
+import {AnyWidget, Args_AnyWidget, Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../AnyWidget";
 
 import {
    // AccumulationDistributionIndicator,
@@ -61,8 +59,9 @@ import {
    Trendlines,
    // WaterfallSeries,
    Zoom
-}                            from '@syncfusion/ej2-charts';
-import {Args_AbstractWidget} from "../AbstractWidget";
+}                                           from '@syncfusion/ej2-charts';
+import {Args_AbstractWidget}                from "../AbstractWidget";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../../BaseUtils";
 
 Chart.Inject(
    // AccumulationDistributionIndicator,

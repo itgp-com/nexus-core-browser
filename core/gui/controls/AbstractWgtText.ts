@@ -1,10 +1,12 @@
-import {FormValidator, TextBox, TextBoxModel}                                     from "@syncfusion/ej2-inputs";
-import {Args_AnyWidget, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {DataProvider, IDataProviderSimple}                                        from "../../data/DataProvider";
-import {Args_WgtSimple, WgtSimple}                                                from "./WgtSimple";
-import {applyHtmlDecoration, StringArg, stringArgVal}                             from "../../CoreUtils";
-import {getRandomString}                                                          from "../../ej2/WidgetUtils";
-import {Args_AbstractWidget}                                                      from "../AbstractWidget";
+import {IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal} from "../../BaseUtils";
+import {applyHtmlDecoration}                                                               from "../../CoreUtils";
+import {DataProvider, IDataProviderSimple}                                                 from "../../data/DataProvider";
+import {getRandomString}                                                                   from "../../BaseUtils";
+import {Args_AbstractWidget}                                                               from "../AbstractWidget";
+import {Args_WgtSimple, WgtSimple}                                                         from "./WgtSimple";
+import {FormValidator, TextBox, TextBoxModel}                                              from "@syncfusion/ej2-inputs";
+import {Args_AnyWidget}                                                                    from "../AnyWidget";
+
 
 export class Args_WgtText_Multiline {
    /**
@@ -30,7 +32,7 @@ export class Args_WgtText_Multiline {
     * }
     * </code>
     */
-   autoresize_created_function_override ?: (args:any)=>void;
+   autoresize_created_function_override ?: (args: any) => void;
 
    /**
     * (Optional) This function will be called on the input event of the text box if the autoresize parameter above is set to true.
@@ -44,8 +46,7 @@ export class Args_WgtText_Multiline {
     * }
     * </code>
     */
-   autoresize_input_function_override ?: (args:any)=>void;
-
+   autoresize_input_function_override ?: (args: any) => void;
 
 
 } // Args_WgtText_Multiline
@@ -102,14 +103,14 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
       if (args.ej == null)
          args.ej = {}; // exists or becomes empty object
 
-      let ej:TextBoxModel = args.ej;
+      let ej: TextBoxModel = args.ej;
 
       this.args               = args;
       this.stayFocusedOnError = args.stayFocusedOnError;
       this.previousValue      = ''; // initialize at ''
 
       if (!this.tagId)
-         this.tagId       = getRandomString(args.id);
+         this.tagId = getRandomString(args.id);
       args.id = this.tagId;
 
       if (!args.ej.autocomplete)
@@ -125,23 +126,23 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
          args.ej.enabled = args.enabled;
 
 
-      if ( args.multiline != null){
+      if (args.multiline != null) {
          let autoresize: boolean = args?.multiline?.autoresize;
          if (autoresize == null)
             autoresize = true; // default to true
 
-         let initial_line_count : number = args?.multiline?.initial_line_count;
+         let initial_line_count: number = args?.multiline?.initial_line_count;
          if (initial_line_count == null)
             initial_line_count = 2; // default to 2 lines
 
-         let default_created_function : (ev:any)=>void =(ev: any) => {
-            this.obj.addAttributes({rows: ''+initial_line_count});
+         let default_created_function: (ev: any) => void = (ev: any) => {
+            this.obj.addAttributes({rows: '' + initial_line_count});
 
             this.obj.element.style.height = "auto";
             this.obj.element.style.height = (this.obj.element.scrollHeight - 7) + "px";
          }
 
-         let created_function : (ev:any)=>void = args?.multiline?.autoresize_created_function_override;
+         let created_function: (ev: any) => void = args?.multiline?.autoresize_created_function_override;
          // if (created_function == null) {
          //    if (autoresize) {
          //       created_function = (ev: any) => {
@@ -152,9 +153,9 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
          // }
 
 
-         let input_function: (ev:any)=>void = args?.multiline?.autoresize_input_function_override;
-         if (input_function == null){
-            if (autoresize){
+         let input_function: (ev: any) => void = args?.multiline?.autoresize_input_function_override;
+         if (input_function == null) {
+            if (autoresize) {
                input_function = (ev: any) => {
                   ev.event.currentTarget.style.height = "auto";
                   ev.event.currentTarget.style.height = (ev.event.currentTarget.scrollHeight) + "px";
@@ -166,35 +167,45 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
          ej.multiline = true;
 
          let ej_created_function = ej.created;
-         ej.created = (ev:any)=>{
+         ej.created              = (ev: any) => {
             try {
                default_created_function.call(this, ev);
-            } catch(e){ this.handleError(e);}
+            } catch (e) {
+               this.handleError(e);
+            }
 
-            if ( created_function != null)
-            try {
-               created_function.call(this, ev);
-            } catch(e){ this.handleError(e);}
+            if (created_function != null)
+               try {
+                  created_function.call(this, ev);
+               } catch (e) {
+                  this.handleError(e);
+               }
 
-            if ( ej_created_function != null)
+            if (ej_created_function != null)
                try {
                   ej_created_function.call(this, ev);
-               } catch(e){ this.handleError(e);}
+               } catch (e) {
+                  this.handleError(e);
+               }
          } // ej.created
 
 
          let ej_input_function = ej.input;
-         ej.input = (ev:any)=>{
+         ej.input              = (ev: any) => {
 
-            if ( input_function != null)
+            if (input_function != null)
                try {
                   input_function.call(this, ev);
-               } catch(e){ this.handleError(e);}
+               } catch (e) {
+                  this.handleError(e);
+               }
 
-            if ( ej_input_function != null)
+            if (ej_input_function != null)
                try {
                   ej_input_function.call(this, ev);
-               } catch(e){ this.handleError(e);}
+               } catch (e) {
+                  this.handleError(e);
+               }
          } // input
       } // multiline
 
@@ -218,7 +229,7 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
          requiredAttribute = ' required';
 
       let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(this.args, true);
-      let textArgs = IArgs_HtmlTag_Utils.init(this.args.inputTagDecoration);
+      let textArgs    = IArgs_HtmlTag_Utils.init(this.args.inputTagDecoration);
       if (classString)
          textArgs.htmlTagClass += classString;
       x += `<input id="${this.tagId}" name="${this.args.propertyName}"${IArgs_HtmlTag_Utils.all(textArgs)}${errorAttributes}${requiredAttribute}/>`;
@@ -259,11 +270,11 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
 
       let ejCreated = args.ej.created
 
-      args.ej.created = (arg_created) =>{
+      args.ej.created = (arg_created) => {
 
-          let inputElem = document.getElementById(this.tagId);
+         let inputElem = document.getElementById(this.tagId);
          if (inputElem) {
-            let wrapper:HTMLElement = inputElem.closest('div.e-control-wrapper'); // the first div with class 'e-control-wrapper' containing this
+            let wrapper: HTMLElement = inputElem.closest('div.e-control-wrapper'); // the first div with class 'e-control-wrapper' containing this
             if (wrapper) {
 
                if (args.eControlWrapperDecoration) {
@@ -292,14 +303,13 @@ export abstract class AbstractWgtText extends WgtSimple<TextBox, Args_AnyWidget,
          } // if inputElem
 
 
-         if ( ejCreated)
+         if (ejCreated)
             ejCreated(arg_created);
       } // created
 
 
-
       this.obj = new TextBox(args.ej);
-      this.obj.appendTo( this.hgetInput);
+      this.obj.appendTo(this.hgetInput);
 
       if (args.initialValue)
          this.value = stringArgVal(args.initialValue);

@@ -1,27 +1,27 @@
-import {cu} from "./index";
+import {getRandomString} from "./BaseUtils";
 
 export class ErrorHandler {
 
-   private _errorTemplateTagID: string = cu.getRandomString('errorTemplateID');
-   private _errorMessageTagID:string   = cu.getRandomString('errorMessage');
+   private _errorTemplateTagID: string = getRandomString('errorTemplateID');
+   private _errorMessageTagID: string  = getRandomString('errorMessage');
 
 
-   documentClickAdded:boolean = false;
+   documentClickAdded: boolean = false;
 
-   public displayExceptionToUser(ex:any) {
-      if (ex== null)
+   public displayExceptionToUser(ex: any) {
+      if (ex == null)
          return;
 
-      if ( ex instanceof Error) {
+      if (ex instanceof Error) {
          this.displayErrorMessageToUser(ex.message);
          console.log(ex);
-      } else if (typeof ex === 'string' || typeof ex === 'number'){
+      } else if (typeof ex === 'string' || typeof ex === 'number') {
          this.displayErrorMessageToUser(ex as string);
          console.log(ex);
-      } else if ( typeof ex === 'object' && (ex.hasOwnProperty('displayMessage') || ex.hasOwnProperty('logMessage')) ){ //  instanceof Err
+      } else if (typeof ex === 'object' && (ex.hasOwnProperty('displayMessage') || ex.hasOwnProperty('logMessage'))) { //  instanceof Err
          let displayMessage = ex.displayMessage;
-         let logMessage = ex.logMessage;
-         if ( displayMessage) {
+         let logMessage     = ex.logMessage;
+         if (displayMessage) {
             this.displayErrorMessageToUser(ex.displayMessage);
          } else {
             if (logMessage) {
@@ -40,23 +40,31 @@ export class ErrorHandler {
       }
    }
 
-   public displayErrorMessageToUser(errorText: string){
+   public displayErrorMessageToUser(errorText: string) {
 
-      setTimeout( ()=> {
-                     console.log(`Exception occurred. Message is: ${errorText}`);
+      setTimeout(() => {
+                    console.log(`Exception occurred. Message is: ${errorText}`);
 
-                     this._initDisplayExceptionHTML(errorText); // initialize HTML
+                    this._initDisplayExceptionHTML(errorText); // initialize HTML
 
-                     $(`#${this._errorTemplateTagID}`).show();
+                    // $(`#${this._errorTemplateTagID}`).show();
 
-                     if (!this.documentClickAdded) {
-                        $(document).on("click", (_) => {
-                           this.dismissVisibleErrorMessage(); // when any part of the document outside the error message is pressed, the error disappears
-                        });
-                        this.documentClickAdded = true;
-                     }
-                  },
-                  20
+                    let errorTemplateElement: HTMLElement = document.getElementById(this._errorTemplateTagID) as HTMLElement
+                    if (errorTemplateElement)
+                       errorTemplateElement.style.display = 'block';
+
+                    if (!this.documentClickAdded) {
+                       // $(document).on("click", (_) => {
+                       //    this.dismissVisibleErrorMessage(); // when any part of the document outside the error message is pressed, the error disappears
+                       // });
+
+                       document.addEventListener('click', (_) => {
+                          this.dismissVisibleErrorMessage(); // when any part of the document outside the error message is pressed, the error disappears
+                       });
+                       this.documentClickAdded = true;
+                    }
+                 },
+                 20
       );
 
    }
@@ -73,7 +81,6 @@ export class ErrorHandler {
         `;
 
 
-
       if (document.getElementById(this._errorTemplateTagID)) {
          // should update template with data from ex
       } else {
@@ -81,14 +88,25 @@ export class ErrorHandler {
          document.body.insertAdjacentHTML('beforeend', html);
       }
       this.dismissVisibleErrorMessage(); // hide it at first
-      $(`#${this.errorMessageTagID}`).first().text(errorText);
+      // $(`#${this.errorMessageTagID}`).first().text(errorText);
+
+      let errorTemplateElement: HTMLElement = document.getElementById(this._errorTemplateTagID) as HTMLElement
+      if (errorTemplateElement)
+         errorTemplateElement.style.display = 'block';
+
+      let errorMessageTag: HTMLElement = document.getElementById(this.errorMessageTagID) as HTMLElement
+      if (errorMessageTag) {
+         errorMessageTag.innerText = errorText;
+      }
 
    }
 
-   public dismissVisibleErrorMessage(){
-      $(`#${this._errorTemplateTagID}`).hide();
+   public dismissVisibleErrorMessage() {
+      //$(`#${this._errorTemplateTagID}`).hide();
+      let errorTemplateElement: HTMLElement = document.getElementById(this._errorTemplateTagID) as HTMLElement
+      if (errorTemplateElement)
+         errorTemplateElement.style.display = 'none';
    }
-
 
 
    //-------------------------------- getters and setters ------------------

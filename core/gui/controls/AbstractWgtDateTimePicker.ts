@@ -1,8 +1,8 @@
 import {ChangedEventArgs, DateTimePicker, DateTimePickerModel} from '@syncfusion/ej2-calendars';
 
-import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 import {Args_WgtSimple, WgtSimple}          from "../controls/WgtSimple";
 import {DataProvider, IDataProviderSimple}  from "../../data/DataProvider";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../../BaseUtils";
 
 export class Args_WgtDateTimePicker extends Args_WgtSimple<DateTimePickerModel> {
    includeErrorLine ?: boolean;

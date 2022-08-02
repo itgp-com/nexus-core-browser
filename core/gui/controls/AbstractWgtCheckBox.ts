@@ -1,8 +1,8 @@
-import {Args_WgtSimple, WgtSimple}                          from "./WgtSimple";
-import {CheckBox, CheckBoxModel}                            from '@syncfusion/ej2-buttons';
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {DataProviderChangeEvent}                            from "../../data/DataProvider";
-import {hget}                                               from "../../CoreUtils";
+import {Args_WgtSimple, WgtSimple}          from "./WgtSimple";
+import {CheckBox, CheckBoxModel}            from '@syncfusion/ej2-buttons';
+import {DataProviderChangeEvent}            from "../../data/DataProvider";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../../BaseUtils";
+import {Args_AnyWidget}                     from "../AnyWidget";
 
 export abstract class Args_WgtCheckBox_Label {
    position ?:  "Top"|"Leading"|"Trailing";

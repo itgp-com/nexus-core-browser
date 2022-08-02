@@ -1,6 +1,6 @@
 import {AbstractGridButton} from "../../ej2/grid/AbstractGridButton";
+import {ej2_icon_delete}    from "../controls/WgtCSS";
 
-export const ej2_icon_delete        = 'ej2-icon-delete';
 
 export class GridUnlinkButton extends AbstractGridButton {
    public static readonly BTN_UNLINK_CLASS: string   = 'btnUnlinkClass';

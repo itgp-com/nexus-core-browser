@@ -1,10 +1,9 @@
-import {AnyWidget}                                                             from "../AnyWidget";
-import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                                    from "../Args_AnyWidget";
-import {AbstractWidget, Args_AbstractWidget}                                   from "../AbstractWidget";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
+import {AnyWidget, Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../AnyWidget";
+import {AbstractWidget, Args_AbstractWidget}                                              from "../AbstractWidget";
 
-import {Sidebar, SidebarModel} from '@syncfusion/ej2-navigations';
-import {EventArgs}             from "@syncfusion/ej2-navigations/src/sidebar/sidebar";
+import {Sidebar, SidebarModel}              from '@syncfusion/ej2-navigations';
+import {EventArgs}                          from "@syncfusion/ej2-navigations/src/sidebar/sidebar";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../../BaseUtils";
 
 export class Args_WgtSidebar_VisualStateChanged<T extends AbstractWgtSidebar> {
    wgtSidebar: T;

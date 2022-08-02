@@ -1,7 +1,7 @@
-import {IArgs_HtmlTag_Utils}                                           from "../Args_AnyWidget";
 import {Args_WgtPanel_RowLeftCenterRight, WgtPanel_RowLeftCenterRight} from "./WgtPanel_RowLeftCenterRight";
 import {AbstractWidget}                                                from "../AbstractWidget";
 import {Args_WgtPanel_Generic, WgtPanel_Generic}                       from "./WgtPanel_Generic";
+import {IArgs_HtmlTag_Utils}                                           from "../../BaseUtils";
 
 export class Args_WgtPanel_TopBar extends IArgs_HtmlTag_Utils {
    htmlTagClass ?: string;

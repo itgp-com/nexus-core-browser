@@ -1,6 +1,6 @@
 import {DataManager, Query, UrlAdaptor}        from "@syncfusion/ej2-data";
 import {AbstractWgtDropDown, Args_WgtDropDown} from "./AbstractWgtDropDown";
-import {urlTableList}                          from "../../CoreUtils";
+import {urlTableList}                          from "../../AppPathUtils";
 import {DataManagerNexus}                      from "../../ej2/DataManagerNexus";
 
 

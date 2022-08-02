@@ -1,9 +1,9 @@
-import {getModules, ModuleInfo, ModuleInit} from "./ModuleRegistry";
-import {getErrorHandler}                    from "./CoreErrorHandling";
-import {nexusMain}                           from "./NexusMain";
+import {getModules, ModuleInfo, ModuleInit}  from "./ModuleRegistry";
+import {getErrorHandler}                     from "./CoreErrorHandling";
 import {AbstractWidget, Args_onInstantiated} from "./gui/AbstractWidget";
 import {ScreenAttributes}                    from "./sec/screen/ScreenAttributes";
-import {getRandomString}                    from "./CoreUtils";
+import {getRandomString}                     from "./BaseUtils";
+import {nexusMain}                           from "./NexusMain";
 
 
 

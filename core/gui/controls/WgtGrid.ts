@@ -1,9 +1,8 @@
-import {AnyWidget}                                                                                                                            from "../AnyWidget";
-import {Args_AnyWidget}                                                                                                                       from "../Args_AnyWidget";
+import {AnyWidget, Args_AnyWidget}                                                                                                            from "../AnyWidget";
 import {DataManager}                                                                                                                          from "@syncfusion/ej2-data";
 import {Aggregate, ColumnMenu, ColumnModel, DataResult, ExcelExport, Filter, Grid, GridModel, Page, Resize, Sort, SortSettingsModel, Toolbar} from "@syncfusion/ej2-grids";
 import {AbstractWidget, Args_AbstractWidget}                                                                                                  from "../AbstractWidget";
-import {ClassArg, classArgInstanceVal, hget}                                                                                                  from "../../CoreUtils";
+import {ClassArg, classArgInstanceVal, hget}                                                                                                  from "../../BaseUtils";
 import {AnyScreen}                                                                                                                            from "../AnyScreen";
 
 Grid.Inject(Toolbar, ExcelExport, Page, Resize, ColumnMenu, Aggregate, Sort, Filter );
@@ -231,4 +230,39 @@ export class WgtPanel_ColumnHeader extends AbstractWidget {
 
    }
 
+}
+
+/**
+ * Calculate the total height of all the padding that the deading, filters and bottom paging controls take in a grid
+ * @param wgtGrid
+ */
+export function gridDecoratorsHeight(wgtGrid: WgtGrid): number {
+   let gridDecoratorHeightVal: number = 0;
+
+   let gridElem = wgtGrid.hget;
+
+   let toolbarArray = gridElem.getElementsByClassName('e-toolbar');
+   if (toolbarArray.length > 0) {
+      let toolBar = toolbarArray[0];
+      if (toolBar) {
+         gridDecoratorHeightVal += toolBar.clientHeight;
+      }
+   }
+
+   let gridHeaderArray = gridElem.getElementsByClassName('e-gridheader');
+   if (gridHeaderArray.length > 0) {
+      let gridHeader = gridHeaderArray[0];
+      if (gridHeader) {
+         gridDecoratorHeightVal += gridHeader.clientHeight;
+      }
+   }
+
+   let gridPagerArray = gridElem.getElementsByClassName('e-gridpager');
+   if (gridPagerArray.length > 0) {
+      let gridPager = gridPagerArray[0];
+      if (gridPager) {
+         gridDecoratorHeightVal += gridPager.clientHeight;
+      }
+   }
+   return gridDecoratorHeightVal;
 }

@@ -3,7 +3,7 @@ import {DropDownList}                         from '@syncfusion/ej2-dropdowns';
 import {Query}                                from '@syncfusion/ej2-data';
 import {Column, Grid, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
 import {WgtGrid}                              from "../WgtGrid";
-import {getRandomString}                      from "../../../CoreUtils";
+import {getRandomString}                      from "../../../BaseUtils";
 import {ChangeEventArgs}                      from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
 import {CoreWgtDropDownDB}                    from "../CoreWgtDropDownDB";
 import {singleRecordDataProvider}             from "../../../data/DataProviderUtils";

@@ -1,16 +1,20 @@
 import {AnyScreen, Args_AnyScreen} from "../AnyScreen";
 import {AbstractWidget}            from "../AbstractWidget";
 import {WgtPanel_Row_Bootstrap}    from "../panels/WgtPanel_Row_Bootstrap";
-import {WgtPopupDialog_Grid}       from "./WgtPopupDialog_Grid";
 import {WgtPanel_ColumnFlex}       from "../panels/WgtPanel_ColumnFlex";
 import {WgtButton_Primary}         from "../buttons/WgtButton_Primary";
 import {WgtPanel_SpacerVertical}   from "../panels/WgtPanel_SpacerVertical";
-import {PopupDialog_Abstract}      from "./PopupDialog_Abstract";
 
 export class Args_WgtPopupDialog_Content {
    topPanel?: AbstractWidget;
-   wgtPopupDialogGrid: WgtPopupDialog_Grid;
-   popupDialog: PopupDialog_Abstract;
+   /**
+    * WgtPopupDialog_Grid
+    */
+   wgtPopupDialogGrid: any;
+   /**
+    * PopupDialog_Abstract
+    */
+   popupDialog: any;
 }
 
 export class WgtPopupDialog_Content extends AnyScreen {

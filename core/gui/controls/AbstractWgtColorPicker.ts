@@ -1,8 +1,8 @@
 import {ColorPicker, ColorPickerEventArgs, ColorPickerModel} from '@syncfusion/ej2-inputs';
 
-import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
 import {Args_WgtSimple, WgtSimple}          from "../controls/WgtSimple";
 import {DataProvider, IDataProviderSimple}  from "../../data/DataProvider";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../../BaseUtils";
 
 export class Args_WgtColorPicker extends Args_WgtSimple<ColorPickerModel> {
    includeErrorLine ?: boolean;

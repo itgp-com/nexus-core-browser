@@ -1,11 +1,10 @@
-import {AnyWidget}                                                             from "../AnyWidget";
-import {Args_AbstractWidget}                                                   from "../AbstractWidget";
+import {AnyWidget, Args_AnyWidget, Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../AnyWidget";
+import {Args_AbstractWidget}                                                                              from "../AbstractWidget";
 import {Accordion, AccordionItemModel, AccordionModel}                         from '@syncfusion/ej2-navigations';
 import {AbstractWidget}                                                        from "../../";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils}                    from "../Args_AnyWidget";
 import {ExpandedEventArgs, ExpandEventArgs}                                    from "@syncfusion/ej2-navigations/src/accordion/accordion";
 import {AnyScreen}                                                             from "../AnyScreen";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                                    from "../../BaseUtils";
 
 // noinspection JSUnusedGlobalSymbols
 export class AccordionChild {

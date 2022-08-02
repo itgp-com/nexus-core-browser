@@ -1,6 +1,6 @@
 import {WgtButton_Primary, WgtButton_Primary_Args} from "./WgtButton_Primary";
 import {Args_WgtButton}                            from "./WgtButton";
-import {ej2_icon_excel_export}                     from "../../index";
+import {ej2_icon_excel_export}                     from "../controls/WgtCSS";
 
 
 export class WgtButton_ExcelExportIcon extends WgtButton_Primary {

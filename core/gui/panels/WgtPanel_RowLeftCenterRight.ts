@@ -1,7 +1,7 @@
-import {AnyWidget}                                          from "../AnyWidget";
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {AbstractWidget, Args_AbstractWidget}                from "../AbstractWidget";
-import {WgtPanel_Generic}                                   from "./WgtPanel_Generic";
+import {AnyWidget, Args_AnyWidget}           from "../AnyWidget";
+import {AbstractWidget, Args_AbstractWidget} from "../AbstractWidget";
+import {WgtPanel_Generic}                    from "./WgtPanel_Generic";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}  from "../../BaseUtils";
 
 export class Args_WgtPanel_RowLeftCenterRight extends Args_AnyWidget implements IArgs_HtmlTag {
    htmlTagClass ?: string;

@@ -1,7 +1,7 @@
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils, IKeyValueString} from "../Args_AnyWidget";
-import {AnyWidget}                                                           from "../AnyWidget";
-import {Diagram, DiagramModel}                                               from '@syncfusion/ej2-diagrams';
-import {Args_AbstractWidget}                                                 from "../AbstractWidget";
+import {AnyWidget, Args_AnyWidget} from "../AnyWidget";
+import {Diagram, DiagramModel}     from '@syncfusion/ej2-diagrams';
+import {Args_AbstractWidget}                                 from "../AbstractWidget";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils, IKeyValueString} from "../../BaseUtils";
 
 export class Args_WgtDiagram_Abstract extends Args_AnyWidget<DiagramModel> implements IArgs_HtmlTag {
    htmlOtherAttr?: IKeyValueString;

@@ -1,6 +1,6 @@
 import {WgtButton_Primary, WgtButton_Primary_Args} from "./WgtButton_Primary";
 import {Args_WgtButton}                            from "./WgtButton";
-import {ej2_icon_search}                           from "../../index";
+import {ej2_icon_search}                           from "../controls/WgtCSS";
 
 
 export class WgtButton_SearchIcon extends WgtButton_Primary {

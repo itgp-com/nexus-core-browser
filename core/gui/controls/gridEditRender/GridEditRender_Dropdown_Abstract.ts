@@ -1,7 +1,7 @@
 import {DropDownList}                 from '@syncfusion/ej2-dropdowns';
 import {Grid, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
 import {ChangeEventArgs}              from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
-import {getRandomString}              from "../../../CoreUtils";
+import {getRandomString}              from "../../../BaseUtils";
 import {WgtGrid}                      from "../WgtGrid";
 import {getErrorHandler}              from "../../../CoreErrorHandling";
 import {DropDownSortOrder}            from "../AbstractWgtDropDown";

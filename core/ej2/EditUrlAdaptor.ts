@@ -1,6 +1,7 @@
 import {DataManager, Query, UrlAdaptor, DataOptions} from "@syncfusion/ej2-data";
 import {getErrorHandler}                             from "../CoreErrorHandling";
 import {cu}                                          from "../index";
+import {cast}                                        from "../BaseUtils";
 
 
 export class EditUrlAdaptor extends UrlAdaptor {
@@ -36,7 +37,7 @@ export class EditUrlAdaptor extends UrlAdaptor {
          return obj; // don't bother if there are no further listeners
 
 
-      let resultObject: ResultObject = cu.cast(obj, ResultObject);
+      let resultObject: ResultObject = cast(obj, ResultObject);
 
       let dataString: string = resultObject.data;
       let dataNew: any       = JSON.parse(dataString);
@@ -139,7 +140,7 @@ export class EditUrlAdaptor extends UrlAdaptor {
          return obj; // don't bother if there are no further listeners
 
 
-      let resultObject: ResultObject = cu.cast(obj, ResultObject);
+      let resultObject: ResultObject = cast(obj, ResultObject);
 
       let dataString: string = resultObject.data;
       let dataNew: any       = JSON.parse(dataString);

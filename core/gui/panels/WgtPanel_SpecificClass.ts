@@ -1,7 +1,6 @@
-import {AnyWidget}               from "../AnyWidget";
-import {Args_AnyWidget}                       from "../Args_AnyWidget";
-import {addCssClass, StringArg, stringArgVal} from "../../CoreUtils";
-import {Args_AbstractWidget}                  from "../AbstractWidget";
+import {AnyWidget, Args_AnyWidget} from "../AnyWidget";
+import {StringArg, stringArgVal}          from "../../BaseUtils";
+import {addCssClass, Args_AbstractWidget} from "../AbstractWidget";
 
 
 export class Args_WgtPanel extends Args_AnyWidget {

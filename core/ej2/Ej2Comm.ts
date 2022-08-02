@@ -1,4 +1,4 @@
-import {castArray} from "../CoreUtils";
+import {castArray} from "../BaseUtils";
 
 export abstract class EJBase{
 

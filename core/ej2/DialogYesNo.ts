@@ -1,6 +1,6 @@
-import {Dialog, DialogModel}          from "@syncfusion/ej2-popups";
-import {ej2_icon_close2, ej2_icon_ok} from "../../core/index";
-import {voidFunction}                 from "../CoreUtils";
+import {Dialog, DialogModel} from "@syncfusion/ej2-popups";
+import {voidFunction}                 from "../BaseUtils";
+import {ej2_icon_close2, ej2_icon_ok} from "../gui/controls/WgtCSS";
 
 export interface DialogYesNoModel {
    element: HTMLElement;

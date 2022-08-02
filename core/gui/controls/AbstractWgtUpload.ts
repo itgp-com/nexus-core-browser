@@ -1,8 +1,8 @@
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {AnyWidget}                                          from "../AnyWidget";
+import {AnyWidget, Args_AnyWidget}                  from "../AnyWidget";
 import {SelectedEventArgs, Uploader, UploaderModel} from "@syncfusion/ej2-inputs";
 import {EmitType}                                   from "@syncfusion/ej2-base";
 import {Args_AbstractWidget}                        from "../AbstractWidget";
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}         from "../../BaseUtils";
 
 export class Args_WgtUpload extends Args_AnyWidget<UploaderModel> implements IArgs_HtmlTag {
    propertyName: string;

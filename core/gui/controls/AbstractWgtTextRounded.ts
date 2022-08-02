@@ -1,8 +1,9 @@
-import {Args_AnyWidget, IArgs_HtmlTag_Utils} from "../Args_AnyWidget";
-import {FormValidator, TextBox}              from "@syncfusion/ej2-inputs";
-import {WgtSimple}                           from "./WgtSimple";
-import {DataProvider, IDataProviderSimple}   from "../../data/DataProvider";
-import {Args_WgtText}                        from "./AbstractWgtText";
+import {FormValidator, TextBox}            from "@syncfusion/ej2-inputs";
+import {WgtSimple}                         from "./WgtSimple";
+import {DataProvider, IDataProviderSimple} from "../../data/DataProvider";
+import {Args_WgtText}                      from "./AbstractWgtText";
+import {IArgs_HtmlTag_Utils}               from "../../BaseUtils";
+import {Args_AnyWidget}                    from "../AnyWidget";
 
 export abstract class AbstractWgtTextRounded extends WgtSimple<TextBox, Args_AnyWidget, string> {
    args: Args_WgtText;

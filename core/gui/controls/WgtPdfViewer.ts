@@ -1,8 +1,7 @@
-import {PdfViewer, PdfViewerModel}                                             from "@syncfusion/ej2-pdfviewer"
-import {AnyWidget}                                                             from "../AnyWidget";
-import {Args_AbstractWidget}                                                   from "../AbstractWidget";
-import {Args_AnyWidget, IArgs_HtmlTag_Utils}                                   from "../Args_AnyWidget";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
+import {PdfViewer, PdfViewerModel}                                                                        from "@syncfusion/ej2-pdfviewer"
+import {AnyWidget, Args_AnyWidget, Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../AnyWidget";
+import {Args_AbstractWidget}                                                                              from "../AbstractWidget";
+import {IArgs_HtmlTag_Utils}                                                   from "../../BaseUtils";
 
 export class Args_WgtPdfViewer extends Args_AnyWidget<PdfViewerModel>{
 }

@@ -1,13 +1,6 @@
-import {AbstractWidget}                                      from "..";
-import {
-   Cls, DataProvider,
-   DataProviderChangeEvent,
-   DataProviderChangeListener,
-   IDataProvider,
-   IDataProviderSimple
-} from "./DataProvider";
-import {DataProviderMulti_Args}                              from "./DataProviderMulti";
-import {ClassArgInstanceOrArray, classArgInstanceOrArrayVal} from "../CoreUtils";
+import {AbstractWidget}                                                                 from "..";
+import {Cls, DataProvider, DataProviderChangeEvent, IDataProvider, IDataProviderSimple} from "./DataProvider";
+import {ClassArgInstanceOrArray, classArgInstanceOrArrayVal}                            from "../BaseUtils";
 
 
 export class Args_DataProviderFacade {

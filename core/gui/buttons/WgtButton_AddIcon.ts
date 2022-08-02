@@ -1,6 +1,6 @@
 import {WgtButton_Primary, WgtButton_Primary_Args} from "./WgtButton_Primary";
 import {Args_WgtButton}                            from "./WgtButton";
-import {ej2_icon_add}                              from "../../index";
+import {ej2_icon_add}                              from "../controls/WgtCSS";
 
 
 export class WgtButton_AddIcon extends WgtButton_Primary {

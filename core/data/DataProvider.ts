@@ -3,11 +3,13 @@ import {
    classArgArrayVal,
    ClassArgInstanceOrArray,
    classArgInstanceOrArrayVal, classArgInstanceVal,
-   DataProviderFilter,
-   DataProviderFilterOptionalArgs,
-   isA, voidFunction,
-} from "../CoreUtils";
+   isA, noArgsFunction, voidFunction,
+} from "../BaseUtils";
 import {AbstractWidget} from "../gui/AbstractWidget";
+
+export type DataProviderFilterOptionalArgs = (any | noArgsFunction);
+export type DataProviderFilter<T> = (provider: IDataProvider, optionalArgs: DataProviderFilterOptionalArgs) => T;
+
 
 export type Cls<T> = { new(args: any): T };
 

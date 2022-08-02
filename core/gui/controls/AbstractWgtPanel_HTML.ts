@@ -1,6 +1,5 @@
-import {AnyWidget}       from "../AnyWidget";
-import {Args_AnyWidget}  from "../Args_AnyWidget";
-import {getErrorHandler} from "../../CoreErrorHandling";
+import {AnyWidget, Args_AnyWidget} from "../AnyWidget";
+import {getErrorHandler}           from "../../CoreErrorHandling";
 
 export class Args_WgtPanel_HTML {
    htmlContent: string

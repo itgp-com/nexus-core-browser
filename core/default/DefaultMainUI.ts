@@ -1,4 +1,4 @@
-import * as utils                                                    from "../CoreUtils";
+import * as utils                                                    from "../AppPathUtils";
 import {getErrorHandler}                                             from "../CoreErrorHandling";
 import {lastOpenModule_modId, openModule, STORAGE_CURRENT_MODULE_ID} from "../ModuleUtils";
 import {NexusUI}                                                     from "../NexusUI";

@@ -2,12 +2,12 @@ import {DialogModel}                                                            
 import {ColumnModel, Grid, GridModel, PredicateModel, QueryCellInfoEventArgs, RecordDoubleClickEventArgs, RowSelectEventArgs, SortSettingsModel} from "@syncfusion/ej2-grids";
 import {DataManager, DataResult, Query}                                                                                                          from "@syncfusion/ej2-data";
 import {Args_WgtPopupDialog_Content, WgtPopupDialog_Content}                                                                                     from "./WgtPopupDialog_Content";
-import {WgtPopupDialog_Grid}                                                                                                                     from "./WgtPopupDialog_Grid";
-import {ClassArg, classArgArrayVal, StringArg, stringArgVal}                                                                                     from "../../CoreUtils";
+import {ClassArg, classArgArrayVal, StringArg, stringArgVal}                                                                                     from "../../BaseUtils";
 import {btnLinkGridColumnModel, btnLinkInstantiate}                                                                                              from "../buttons/ButtonUtils";
 import {AbstractWidget}                                                                                                                          from "../AbstractWidget";
 import {AbstractDialogWindow, Args_AbstractDialogWindow}                                                                                         from "../../ej2/AbstractDialogWindow";
 import {DialogWindow}                                                                                                                            from "../../ej2/DialogWindow";
+import {WgtGrid_FilterPage}                                                                                                                      from "../controls/WgtGrid_FilterPage";
 
 
 export interface Args_PopupDialog_Abstract {
@@ -62,6 +62,49 @@ export interface Args_MultiSelect_PopupDialog_Abstract {
 }
 
 
+export class WgtPopupDialog_Grid<T = any> extends WgtGrid_FilterPage {
+
+   protected constructor() {
+      super();
+   }
+
+   static create<T = any>(args?: Args_PopupDialog_Abstract): WgtPopupDialog_Grid<T> {
+      let instance = new WgtPopupDialog_Grid<T>();
+      instance.initialize_WgtPopupDialog_Grid(args);
+      return instance;
+   }
+
+   initialize_WgtPopupDialog_Grid(popupArgs: Args_PopupDialog_Abstract) {
+      this.initialize_WgtGrid(popupArgs);
+
+      // AFTER initialization of the popup dialog
+
+      if (popupArgs.query)
+         this.gridModel.query = popupArgs.query;
+
+      //------ Pre-filter the popup
+      if (popupArgs.filters)
+         this.gridModel.filterSettings.columns = popupArgs.filters
+
+
+      if (popupArgs.popupDialog) {
+         // Overwrite row selection behavior
+         this.gridModel.rowSelected = (e: RowSelectEventArgs) => {
+            popupArgs.popupDialog.gridRowSelected(e);
+         }
+
+         if (!popupArgs?.singleSelectSettings?.disableRowDblClick) {
+            this.gridModel.recordDoubleClick = (e: RecordDoubleClickEventArgs) => {
+               popupArgs.popupDialog.gridRowDoubleClick(e);
+            }
+         }
+      } else {// if       if ( args.popupDialog)
+         window.alert('SERIOUS ERROR: args.popupDialog is empty when passed to WgtPopupDialog_Grid!!!');
+      }
+
+   }
+
+} // main class
 export abstract class PopupDialog_Abstract {
 
    protected _dialogObj: AbstractDialogWindow;

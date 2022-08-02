@@ -1,6 +1,5 @@
-import {AnyWidget}               from "../AnyWidget";
-import {StringArg, stringArgVal} from "../../CoreUtils";
-import {Args_AnyWidget}          from "../Args_AnyWidget";
+import {AnyWidget, Args_AnyWidget} from "../AnyWidget";
+import {StringArg, stringArgVal}   from "../../BaseUtils";
 import {css_vertical_spacer}     from "../controls/WgtCSS";
 
 export class Args_WgtPanel_SpacerVertical { // does not extend Args_AnyWidget on purpose, it's too simple

@@ -1,4 +1,4 @@
-import {getAtWindowPath, getOrInitialize} from "./CoreUtils"
+import {getAtWindowPath, getOrInitialize} from "./WindowPathUtils"
 import {ErrorHandler}                     from "./ErrorHandler";
 
 
@@ -30,7 +30,3 @@ export function setErrorHandler(newErrorHandler: ErrorHandler) {
     let obj                    = getErrorRegistryLocation();
     obj[HANDLER_INSTANCE_PATH] = newErrorHandler;
 }
-
-
-
-

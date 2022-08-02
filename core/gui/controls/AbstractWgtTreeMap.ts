@@ -1,10 +1,9 @@
-import {Args_AbstractWidget}                                                                      from "../AbstractWidget";
-import {AnyWidget}                                                             from "../AnyWidget";
-import {Args_AnyWidget, IArgs_HtmlTag, IArgs_HtmlTag_Utils}                    from "../Args_AnyWidget";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
-import {DataManager}                                                                              from "@syncfusion/ej2-data";
+import {Args_AbstractWidget}                                                                              from "../AbstractWidget";
+import {AnyWidget, Args_AnyWidget, Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../AnyWidget";
+import {DataManager}                                                                                      from "@syncfusion/ej2-data";
 import {TreeMapAjax}                                                                              from "@syncfusion/ej2-treemap/src/treemap/utils/helper";
 import {TreeMap, TreeMapHighlight, TreeMapLegend, TreeMapModel, TreeMapSelection, TreeMapTooltip} from '@syncfusion/ej2-treemap';
+import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                                                       from "../../BaseUtils";
 
 TreeMap.Inject(TreeMapTooltip,TreeMapHighlight,TreeMapSelection, TreeMapLegend  );
 

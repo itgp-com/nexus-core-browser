@@ -1,9 +1,8 @@
 import {AbstractWidget, Args_AbstractWidget}                                   from "../AbstractWidget";
-import {Args_AnyWidget, IArgs_HtmlTag_Utils}                                   from "../Args_AnyWidget";
-import {Splitter, SplitterModel}                                               from '@syncfusion/ej2-layouts';
-import {AnyWidget}                                                             from "../AnyWidget";
-import {Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../Args_AnyWidget_Initialized_Listener";
-import {PanePropertiesModel}                                                   from "@syncfusion/ej2-layouts/src/splitter/splitter-model";
+import {Splitter, SplitterModel}                                                                          from '@syncfusion/ej2-layouts';
+import {AnyWidget, Args_AnyWidget, Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../AnyWidget";
+import {PanePropertiesModel}                                                                              from "@syncfusion/ej2-layouts/src/splitter/splitter-model";
+import {IArgs_HtmlTag_Utils}                                                   from "../../BaseUtils";
 
 export class Args_WgtSplitter extends Args_AnyWidget<SplitterModel> {
    /**
