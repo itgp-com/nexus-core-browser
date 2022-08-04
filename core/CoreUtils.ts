@@ -358,17 +358,45 @@ export async function ej2Query(tablename: string, query: Query, options?: any): 
                                         adaptor:     new UrlAdaptor(),
                                         crossDomain: true
                                      });
-
+   EJList.name
    let promise: Promise<any[]> = new Promise((resolve, reject) => {
-                                                dataManager.executeQuery(query, (e: ReturnOption) => {
-                                                                            let result: any = e.result as EJList;
-                                                                            if (!result.errMsgDisplay) {
-                                                                               let records: any[] = <any[]>result.result;
-                                                                               resolve(records);
+                                                dataManager.executeQuery(query, (e: any) => {
+                                                                            let ejListFound: boolean = false;
+                                                                            let result: any          = e.result as EJList;
+                                                                            if ((result.i_d == 'EJList')) {
+                                                                               ejListFound = true;
                                                                             } else {
-                                                                               console.log(result.errMsgDisplay);
-                                                                               console.log(result.errMsgLog);
-                                                                               reject(result.errMsgDisplay);
+                                                                               if (result.result) {
+                                                                                  // sometimes it's nested
+                                                                                  if (result.result.i_d == 'EJList') {
+                                                                                     result      = result.result;
+                                                                                     ejListFound = true;
+                                                                                  }
+                                                                               }
+
+                                                                               if (!ejListFound) {
+                                                                                  if (e.actual) {
+                                                                                     result = e.actual;
+                                                                                     if ((result.i_d == 'EJList')) {
+                                                                                        ejListFound = true;
+                                                                                     } // if ( (result.i_d == 'EJList'))
+                                                                                  } // if (e.actual)
+                                                                               } // if (!ejListFound)
+
+                                                                            } //  if (! (result.i_d == 'EJList')){
+
+                                                                            if (ejListFound) {
+                                                                               if (!result.errMsgDisplay) {
+                                                                                  let records: any[] = <any[]>result.result;
+                                                                                  resolve(records);
+                                                                               } else {
+                                                                                  console.log(result.errMsgDisplay);
+                                                                                  console.log(result.errMsgLog);
+                                                                                  reject(result.errMsgDisplay);
+                                                                               }
+                                                                            } else {
+                                                                               let error = `EJList class not found in response!:\n ${JSON.stringify(e, null, 2)}`
+                                                                               reject(error);
                                                                             }
                                                                          },
                                                                          (error: any) => {
