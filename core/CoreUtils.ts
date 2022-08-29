@@ -2,7 +2,7 @@
 import {Component}                                    from "@syncfusion/ej2-base";
 import {getErrorHandler}                              from "./CoreErrorHandling";
 import {DataManager, Query, ReturnOption, UrlAdaptor} from "@syncfusion/ej2-data";
-import {EJList}                                       from "./ej2/Ej2Comm";
+import {EJList}                                       from "./data/Ej2Comm";
 import {isArray}                                      from "lodash";
 import * as CSS                                       from 'csstype';
 import {tModel, urlTableEj2}                          from "./AppPathUtils";
@@ -425,6 +425,7 @@ export function removeDoubleSpaces(s: string): string {
    return s.replace(/  +/g, ' ');
 }
 
+
 export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_HtmlDecoration): void {
    if (!htmlElement)
       return;
@@ -435,8 +436,11 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
    try {
       let htmlTagClass: string = decoration.htmlTagClass;
       htmlTagClass             = removeDoubleSpaces(htmlTagClass);
-      if (htmlTagClass)
-         htmlElement.classList.add(...htmlTagClass.split(' '));
+      if (htmlTagClass) {
+         let newClasses: string[] = htmlTagClass.split(' ');
+         htmlElement.classList.remove(...newClasses)
+         htmlElement.classList.add(...newClasses);
+      }
    } catch (ex) {
       console.log(ex);
    }

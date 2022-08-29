@@ -1,0 +1,1 @@
+rsync -cavrt --delete --info=stats2 "/_subversion/trunk/nexus/core/nexus-core-browser/core/" "/_subversion/trunk/nexus/customer/unknowa/medqc-web/medqc/node_modules/nexus-core-browser/core"

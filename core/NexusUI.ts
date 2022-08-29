@@ -1,5 +1,5 @@
-import {ScreenRegistry} from "./sec/screen/ScreenRegistry";
-import {MenuRegistry}   from "./sec/menu/MenuRegistry";
+import {ScreenRegistry} from "./gui/ScreenRegistry";
+import {MenuRegistry}   from "./gui/MenuRegistry";
 
 export abstract class NexusUI {
 

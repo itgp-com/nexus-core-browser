@@ -1,14 +1,15 @@
-import {IEditCell}                            from "@syncfusion/ej2/grids";
-import {DropDownList}                         from '@syncfusion/ej2-dropdowns';
-import {Query}                                from '@syncfusion/ej2-data';
-import {Column, Grid, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
-import {WgtGrid}                              from "../WgtGrid";
 import {getRandomString}                      from "../../../BaseUtils";
-import {ChangeEventArgs}                      from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
-import {CoreWgtDropDownDB}                    from "../CoreWgtDropDownDB";
 import {singleRecordDataProvider}             from "../../../data/DataProviderUtils";
-import {Args_WgtDropDownDB}                   from "../AbstractWgtDropDownDB";
-import {DropDownSortOrder}                    from "../AbstractWgtDropDown";
+import {CoreWgtDropDownDB}                    from "../../coreonly/CoreWgtDropDownDB";
+import {AbstractGrid}       from "../AbstractGrid";
+import {DropDownSortOrder}       from "../AbstractDropDown";
+import {Args_AbstractDropDownDB} from "../AbstractDropDownDB";
+import {ChangeEventArgs}         from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
+import {Column, Grid, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
+import {IEditCell}                            from "@syncfusion/ej2/grids";
+import {Query}                                from '@syncfusion/ej2-data';
+import {DropDownList}                         from '@syncfusion/ej2-dropdowns';
+
 
 export class Args_GridEditRender_DropdownDB {
    grid_value_column_name: string;
@@ -32,7 +33,7 @@ export class GridEditRender_DropdownDB {
 
    args: Args_GridEditRender_DropdownDB;
 
-   last_parentWgtGrid: WgtGrid;
+   last_parentWgtGrid: AbstractGrid;
    dropDownInstance: DropDownList;
 
    cachedRendererData: [] = null;
@@ -67,7 +68,7 @@ export class GridEditRender_DropdownDB {
    }
 
    // noinspection JSUnusedGlobalSymbols
-   async createRenderer(args: QueryCellInfoEventArgs, parentWgtGrid: WgtGrid): Promise<CoreWgtDropDownDB> {
+   async createRenderer(args: QueryCellInfoEventArgs, parentWgtGrid: AbstractGrid): Promise<CoreWgtDropDownDB> {
 
       //------------- make sure we tag the parent component of this renderer/editor --------------
       if (this.last_parentWgtGrid == null) {
@@ -95,8 +96,8 @@ export class GridEditRender_DropdownDB {
       let record = queryCellInfoEventArgs.data;
       if (anchor) {
 
-         let dataProvider               = singleRecordDataProvider({providerName: '___', record: record});
-         let ddArgs: Args_WgtDropDownDB = {
+         let dataProvider                    = singleRecordDataProvider({providerName: '___', record: record});
+         let ddArgs: Args_AbstractDropDownDB = {
             propertyName:     thisX.args.grid_value_column_name,
             listDataDBTable:  thisX.args.dropdown_table_name,
             textColumn:       thisX.args.dropdown_text_column_name,
@@ -117,7 +118,7 @@ export class GridEditRender_DropdownDB {
          if (itemTemplate != null && itemTemplate.length > 0)
             ddArgs.ej.itemTemplate = itemTemplate;
 
-         let wgtDD: CoreWgtDropDownDB = CoreWgtDropDownDB.create(ddArgs);
+         let wgtDD: CoreWgtDropDownDB = await CoreWgtDropDownDB.create(ddArgs);
          await wgtDD.initLogic();
          wgtDD.obj.change = (evt:ChangeEventArgs) => {
             if (thisX.args.change)

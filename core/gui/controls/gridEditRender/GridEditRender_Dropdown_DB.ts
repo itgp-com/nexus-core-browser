@@ -1,10 +1,10 @@
 import {IEditCell}                                                               from "@syncfusion/ej2/grids";
 import {Query}                                                                   from '@syncfusion/ej2-data';
 import {Column, QueryCellInfoEventArgs}                                          from "@syncfusion/ej2-grids";
-import {ChangeEventArgs}                                                         from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
-import {CoreWgtDropDownDB}                                                       from "../CoreWgtDropDownDB";
-import {Args_WgtDropDownDB}                                                      from "../AbstractWgtDropDownDB";
-import {singleRecordDataProvider}                                                from "../../../data/DataProviderUtils";
+import {ChangeEventArgs}    from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
+import {CoreWgtDropDownDB}        from "../../coreonly/CoreWgtDropDownDB";
+import {Args_AbstractDropDownDB}  from "../AbstractDropDownDB";
+import {singleRecordDataProvider} from "../../../data/DataProviderUtils";
 import {Args_GridEditRender_Dropdown_Abstract, GridEditRender_Dropdown_Abstract} from "./GridEditRender_Dropdown_Abstract";
 
 export class Args_GridEditRender_Dropdown_DB extends Args_GridEditRender_Dropdown_Abstract {
@@ -36,8 +36,8 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
 
       if (anchor) {
 
-         let dataProvider               = singleRecordDataProvider({providerName: '___', record: record});
-         let ddArgs: Args_WgtDropDownDB = {
+         let dataProvider                    = singleRecordDataProvider({providerName: '___', record: record});
+         let ddArgs: Args_AbstractDropDownDB = {
             propertyName:     thisX.args.grid_value_column_name,
             listDataDBTable:  thisX.args.dropdown_table_name,
             textColumn:       thisX.args.dropdown_text_column_name,
@@ -58,7 +58,7 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
          if (itemTemplate != null && itemTemplate.length > 0)
             ddArgs.ej.itemTemplate = itemTemplate;
 
-         let wgtDD: CoreWgtDropDownDB = CoreWgtDropDownDB.create(ddArgs);
+         let wgtDD: CoreWgtDropDownDB = await CoreWgtDropDownDB.create(ddArgs);
          await wgtDD.initLogic();
          wgtDD.obj.change = (evt: ChangeEventArgs) => {
             let queryCellInfoEventArgs: QueryCellInfoEventArgs = {

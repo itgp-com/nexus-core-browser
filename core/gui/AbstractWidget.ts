@@ -1,22 +1,25 @@
 /**
  * This class serves as the base of every data enabled panel
  */
-import {ScreenMeta}                                                                                    from "./ScreenMeta";
-import {Err}                                                                                           from "../Core";
-import {AxiosResponse}                                                                                 from "axios";
-import {getErrorHandler}                                                                               from "../CoreErrorHandling";
-import {getRandomString, hget, htmlToElement, IArgs_HtmlTag, IKeyValueString, StringArg, stringArgVal} from "../BaseUtils";
-import {ListenerHandler, StopListenerChain}                                                            from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                 from "./BeforeInitLogicListener";
-import {ExceptionEvent}                                                                                from "../ExceptionEvent";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                  from "../WidgetErrorHandler";
-import {DialogInfo}                                                                                    from "../ej2/DialogInfo";
-import {ClientVersion, getClientVersion}                                                               from "./ClientVersion";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                     from "@syncfusion/ej2-popups";
-import {isArray, isString}                                                                             from "lodash";
-import {IDialogWindow}                                                                                 from "./dialog/IDialogWindow";
-import {BaseListener}                                                                                  from "../BaseListener";
-import {ArgsPost, asyncPostRetVal}                                                                     from "../HttpUtils";
+import {BaseListener}                                                                                                                             from "../BaseListener";
+import {getRandomString, hget, htmlToElement, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils, IKeyValueString, StringArg, stringArgVal} from "../BaseUtils";
+import {Err}                                                                                                                                      from "../Core";
+import {getErrorHandler}                                                                                                    from "../CoreErrorHandling";
+import {ExceptionEvent}                                                                                                     from "../ExceptionEvent";
+import {ArgsPost, asyncPostRetVal}                                                                                          from "../HttpUtils";
+import {ListenerHandler, StopListenerChain}                                                                                 from "../ListenerHandler";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                      from "./BeforeInitLogicListener";
+import {ClientVersion, getClientVersion}                                                                                    from "./ClientVersion";
+import {DialogInfo}                                                                                                         from "./controls/DialogInfo";
+import {IDialogWindow}                                                                                                      from "./controls/IDialogWindow";
+import {ScreenMeta}                                                                                                         from "./ScreenMeta";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                                       from "./WidgetErrorHandler";
+import {enableRipple}                                                                                                       from "@syncfusion/ej2-base";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                                          from "@syncfusion/ej2-popups";
+import {AxiosResponse}                                                                                                      from "axios";
+import {isArray}                                                                                                            from "lodash";
+
+enableRipple(true);
 
 export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
 
@@ -60,41 +63,9 @@ export class Args_AbstractWidget implements IArgs_HtmlTag {
    // --- End IArgs_HtmlTag implementation ---
 
    /**
-    * These classes are class specific extra classes
-    * These classes allow for specialization of css for both the top element and the child elements with custom look and feel for all instances of a class
-    *
-    * Use the {@link addCssClass(argsInstance:Args_AbstractWidget, extraClasses:string|string[]} utility function to append unique new classes
-    */
-   cssClasses ?: (string | string[]);
-
-   /**
     * Hack that will be removed in the future
     */
    hackRefreshOnWgtTabInit ?: boolean
-
-   static combineAllWidgetClasses(descriptor: Args_AbstractWidget): string[] {
-      let a: string[] = []
-      if (descriptor.cssClasses) {
-         if (isArray(descriptor.cssClasses)) {
-            a.push(...descriptor.cssClasses);
-         } else {
-            a.push(descriptor.cssClasses as string);
-         }
-      } // if (descriptor.cssClasses)
-      return a
-   } // combineAllWidgetClasses
-
-   /**
-    * classString will either be an empty string or class="class1 class2"
-    * @param descriptor
-    */
-   static combineAllWidgetClassesAsString(descriptor: Args_AbstractWidget, includePrefix: boolean): string {
-      let a: string[]         = this.combineAllWidgetClasses(descriptor);
-      let classString: string = a.join(' ');
-      if (includePrefix && classString)
-         classString = `class="${classString}"`;
-      return classString;
-   } // combineAllWidgetClassesAsString
 
 } // Args_AbstractWidget
 
@@ -188,14 +159,15 @@ export async function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
    }
 } // updateWidgetInDOM
 
-export class Args_WgtTab_SelectedAsTab {
+export class Args_WgtTab_Action {
    initialized: boolean;
    index: number;
    /**
     * Contains an instance of WgtTab. Cannot list the field as that class because of circular reference WgtTab->AbstractWidget->WgtTab
     */
-   wgtTab: any;
+   instance: any;
 }
+
 
 export abstract class AbstractWidget<DATA_TYPE = any> {
    contentBeginFromExtendingClass: StringArg;
@@ -354,7 +326,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    // noinspection JSUnusedGlobalSymbols
    set children(newChildren: AbstractWidget[]) {
       this._childrenMap.forEach((value, key) => {
-         this.removeChildByTagId(key);
+         this._removeChildByTagId(key);
       });
 
       if (newChildren) {
@@ -406,10 +378,11 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       this.meta.currentClassName = this._thisClassName;
    }
 
-   initialize_AbstractWidget(args: Args_AbstractWidget) {
+   protected async initialize_AbstractWidget(args: Args_AbstractWidget) {
       this._args_AbstractWidget = args;
       if (args.hackRefreshOnWgtTabInit != null)
          this.hackRefreshOnWgtTabInit = args.hackRefreshOnWgtTabInit;
+      addWidgetClass(args, 'AbstractWidget');
    } // initAbstractBase
 
    async localContentBegin(): Promise<string> {
@@ -434,20 +407,20 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     *
     * It exists because a tab does not make the HTML available until this point, and only gets called if initialized is false
     */
-   initLogicAsTab(): void {
+   async initLogicAsTab(arg: Args_WgtTab_Action) {
    }
 
    /**
     * Gets called every time the tab is selected
     */
-   selectedAsTab(arg: Args_WgtTab_SelectedAsTab): void {
+   async selectedAsTab(arg: Args_WgtTab_Action) {
    }
 
    /**
     * Called when this component is a panel in a lazy-loading parent component like tab or accordion
     * @param args
     */
-   activatedAsInnerWidget(args: Args_ActivatedAsInnerWidget<any>): void {
+   async activatedAsInnerWidget(args: Args_ActivatedAsInnerWidget<any>) {
    }
 
 
@@ -600,7 +573,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
          b += localContentBegin;
 
 
-      for (const child of this.children) {
+      for (const child of this._children) {
          if (child) {
             let content = await child.initContent();
             if (content)
@@ -642,8 +615,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
             );
          }
 
-         if (this.children) {
-            for (const child of this.children) {
+         if (this._children) {
+            for (const child of this._children) {
                if (child)
                   await child.initLogic();
             }
@@ -691,8 +664,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 // noinspection JSUnusedGlobalSymbols
    async destroy() {
       this.initialized = false;
-      if (this.children) {
-         for (const child of this.children) {
+      if (this._children) {
+         for (const child of this._children) {
             if (child)
                await child.destroy();
          }
@@ -703,8 +676,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
    resetInitialize(): void {
       this.initialized = false;
-      if (this.children) {
-         this.children.forEach(child => {
+      if (this._children) {
+         this._children.forEach(child => {
             if (child)
                child.resetInitialize();
          });
@@ -729,8 +702,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
             return;
 
 
-         if (this.children) {
-            for (const child of this.children) {
+         if (this._children) {
+            for (const child of this._children) {
                if (child)
                   await child.refresh();
             }
@@ -751,8 +724,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
 // noinspection JSUnusedGlobalSymbols
    async clear() {
-      if (this.children) {
-         for (const child of this.children) {
+      if (this._children) {
+         for (const child of this._children) {
             if (child)
                await child.clear();
          }
@@ -926,13 +899,17 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       this._childrenMap.clear();
    }
 
-   removeChildByTagId(tagId: string): AbstractWidget {
+   protected _removeChildByTagId(tagId: string): AbstractWidget {
 
       let x: AbstractWidget = null;
       if (tagId) {
          let value = this._childrenMap.get(tagId);
-         if (value)
-            value.parent = null; // untag parent from this
+         if (value) {
+            if( value.parent == this) {
+               // only remove if this component is still the parent
+               value.parent = null; // untag parent from this
+            }
+         }
          x = this._childrenMap.get(tagId);
          this._childrenMap.delete(tagId);
 
@@ -991,7 +968,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    // noinspection JSUnusedGlobalSymbols
    removeChild(child: AbstractWidget) {
       if (child && child.tagId) {
-         this.removeChildByTagId(child.tagId);
+         this._removeChildByTagId(child.tagId);
       }
    }
 
@@ -1084,7 +1061,6 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    async onDialogWindow_Close(evt: Args_OnDialogWindow_Close) {
    }
 
-
    get hackRefreshOnWgtTabInit(): boolean {
       return this._hackRefreshOnWgtTabInit;
    }
@@ -1094,6 +1070,33 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    }
 
 } // main class
+
+
+/**
+ * Find the nearest ancestor WgtForm that contains this simple component
+ */
+export function findForm(widget: AbstractWidget): any {
+   return widget.findAncestor<any>(
+      (instance => {
+         return isWgtForm(instance);
+      })
+   );
+}
+
+/**
+ *
+ * @param instance Widget instance (set as any to eliminate any circular dependencies)
+ */
+export function isWgtForm(instance: any): boolean {
+   if (instance && instance.wgtForm) {
+      return true;
+   }
+   return false;
+} // isForm
+
+/**
+ * Find the nearest ancestor WgtForm that contains this simple component
+ */
 
 export interface Args_onInstantiated {
    widget: AbstractWidget;
@@ -1140,30 +1143,41 @@ export abstract class AbstractWidgetStatic<T = any> extends AbstractWidget<T> {
    }
 }
 
-export function addCssClass(args: Args_AbstractWidget, classInstance: (string | string[])) {
-   if (!classInstance)
-      return;
 
-   if (!args.cssClasses)
-      args.cssClasses = []
-   if (isString(args.cssClasses)) {
-      let x           = args.cssClasses
-      args.cssClasses = [x]
-   }
-   // at this point we have an array
 
-   if (isArray(classInstance)) {
-      let classInstanceArray: string[] = classInstance;
+/**
+ * Append classes to args.htmlTagClass.
+ *
+ * Duplicates will not be allowed
+ * @param args the arguments passed to the widget
+ * @param additionalClasses
+ */
+export function addWidgetClass(args: IArgs_HtmlDecoration, additionalClasses: (string | string[])):Args_AbstractWidget  {
+   args = IArgs_HtmlTag_Utils.init(args);
+   
+   if (!additionalClasses)
+      return args;
+
+
+   let classList: string[] = []
+   if (args.htmlTagClass)
+      classList = args.htmlTagClass.split(' ');
+
+   // at this point we have an array of classes (or an empty array)
+   if (isArray(additionalClasses)) {
+      let classInstanceArray: string[] = additionalClasses;
       for (let i = 0; i < classInstanceArray.length; i++) {
          const classInstanceArrayElement = classInstanceArray[i];
          if (classInstanceArrayElement) {
-            if ((args.cssClasses as string[]).indexOf(classInstanceArrayElement) < 0)
-               args.cssClasses.push(classInstanceArrayElement);
+            if ((classList as string[]).indexOf(classInstanceArrayElement) < 0)
+               classList.push(classInstanceArrayElement);
          }
       } // for
    } else {
-      if ((args.cssClasses as string[]).indexOf(classInstance) < 0)
-         args.cssClasses.push(classInstance);
+      if ((classList as string[]).indexOf(additionalClasses) < 0)
+         classList.push(additionalClasses);
 
    }
-} // addCssClass
+   args.htmlTagClass = classList.join(' ');
+   return args;
+} // addWidgetClass

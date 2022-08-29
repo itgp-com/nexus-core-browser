@@ -1,9 +1,10 @@
-import {AnyWidget, Args_AnyWidget}        from "./AnyWidget";
-import {getRandomString, htmlToElement}   from "../BaseUtils";
-import {CSS_FLEX_MAX_XY}                  from "./css/CssDef";
-import {addCssClass, Args_AbstractWidget} from "./AbstractWidget";
+import {getRandomString, htmlToElement}            from "../BaseUtils";
+import {CSS_FLEX_MAX_XY}                           from "../CoreCSS";
+import {addWidgetClass}                            from "./AbstractWidget";
+import {Args_AnyWidget, initialize_Args_AnyWidget} from "./AnyWidget";
+import {AnyWidgetStandard}                         from "./AnyWidgetStandard";
 
-export class Args_AnyScreen<CONTROLMODEL = any>  extends Args_AnyWidget<CONTROLMODEL>  {
+export class Args_AnyScreen<CONTROLMODEL = any> extends Args_AnyWidget<CONTROLMODEL> {
    tagName ?: string = 'div';
    overwriteDefaultClasses ?: string[];
 
@@ -75,12 +76,9 @@ export function removeTemplate(screen: AnyScreen, template_id: string): boolean 
  * @author David Pociu - InsiTech
  * @since 0.1
  */
-export abstract class AnyScreen<DATA_TYPE = any>
-   extends AnyWidget<HTMLElement, Args_AnyWidget, DATA_TYPE> {
+export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLElement, Args_AnyScreen, DATA_TYPE> {
 
-   private _anyScreenDescriptor: Args_AnyScreen;
    private _extraTagIdList: string[]    = [];
-   protected insideInitRefreshAnyScreen = false;
    protected _templateIdList: string[]  = [];
 
    /**
@@ -103,62 +101,42 @@ export abstract class AnyScreen<DATA_TYPE = any>
          anyScreenDescriptor = new Args_AnyScreen();
 
       // Initialize as extension of AnyWidget
-      Args_AnyWidget.initialize(anyScreenDescriptor, this);
-
-      this.anyScreenDescriptor = anyScreenDescriptor;
+      initialize_Args_AnyWidget(anyScreenDescriptor, this);
+      this.descriptor = anyScreenDescriptor;
 
       if (anyScreenDescriptor.overwriteDefaultClasses) {
-         // anyScreenDescriptor.classSpecificCssClasses not null because of the  Args_AnyWidget.initialize call above
-         addCssClass(anyScreenDescriptor, anyScreenDescriptor.overwriteDefaultClasses);
+         // anyScreenDescriptor.overwriteDefaultClasses not null because of the  Args_AnyWidget.initialize call above
+         addWidgetClass(anyScreenDescriptor, anyScreenDescriptor.overwriteDefaultClasses);
       } else {
-         addCssClass(anyScreenDescriptor, CSS_FLEX_MAX_XY);
+         addWidgetClass(anyScreenDescriptor, CSS_FLEX_MAX_XY);
       }
 
-      let classString = Args_AbstractWidget.combineAllWidgetClassesAsString(anyScreenDescriptor, true);
-
-      anyScreenDescriptor.localContentBegin = () => {
-         return `<${anyScreenDescriptor.tagName} id="${this.tagId}" ${classString}>`
-      };
+      // -------------- NOW properly initialize the super component ---------------
+      super.initialize_AnyWidgetStandard(anyScreenDescriptor);
+   } // initAnyScreen
 
 
-      // ------------------ initContentEnd --------------------------
-      anyScreenDescriptor.localContentEnd = () => {
-         let b: string = '';
+   async localContentEnd(): Promise<string> {
+      let b: string = '';
 
-         if (anyScreenDescriptor.extraTagIdCount > 0) {
-            for (let i = 0; i < anyScreenDescriptor.extraTagIdCount; i++) {
-               let extraTagId = getRandomString(`extraTagId${i}`);
+      if (this.descriptor?.extraTagIdCount > 0) {
+         for (let i = 0; i < this.descriptor.extraTagIdCount; i++) {
+            let extraTagId = getRandomString(`extraTagId${i}`);
 
-               // store the tag id in the list
-               this.extraTagIdList.push(extraTagId);
+            // store the tag id in the list
+            this.extraTagIdList.push(extraTagId);
 
-               // add the div tag in the HTML
-               b += `
+            // add the div tag in the HTML
+            b += `
 <div id="${extraTagId}"></div>
 `;
 
-            } //for anyScreenDescriptor.extraTagIdCount
-         } //if (descriptor.extraTagIdCount > 0)
+         } //for anyScreenDescriptor.extraTagIdCount
+      } //if (descriptor.extraTagIdCount > 0)
 
-         b += `</${anyScreenDescriptor.tagName}>`;
-         return b;
-      };
-
-      // ------------------ initLogic --------------------------
-      anyScreenDescriptor.initLogic = () => {
-         //2020-05-11 - The refresh MUST be AFTER the form is done painting if we want the spinner to show up in the grids of the screen
-         setImmediate(async () => {
-            thisX.insideInitRefreshAnyScreen = true;
-            await thisX.refresh(); // a screen should always refresh the controls at the end of their being instantiated
-            thisX.insideInitRefreshAnyScreen = false;
-         });
-      };
-
-
-      // -------------- NOW properly initialize the super component ---------------
-      super.initialize_AnyWidget(anyScreenDescriptor);
-   } // initAnyScreen
-
+      b += await super.localContentEnd();
+      return b
+   } // localContentEnd
 
    /**
     * @since 1,0.24
@@ -196,14 +174,7 @@ export abstract class AnyScreen<DATA_TYPE = any>
    } // extraTagId
 
 
-   // noinspection JSUnusedGlobalSymbols
-   get anyScreenDescriptor(): Args_AnyScreen {
-      return this._anyScreenDescriptor;
-   }
 
-   set anyScreenDescriptor(value: Args_AnyScreen) {
-      this._anyScreenDescriptor = value;
-   }
 
    get extraTagIdList(): string[] {
       return this._extraTagIdList;
@@ -216,17 +187,6 @@ export abstract class AnyScreen<DATA_TYPE = any>
 
    get contentTagId(): string {
       return this.tagId;
-   }
-
-   isInsideRefreshAnyScreen(): boolean {
-      if (this.insideInitRefreshAnyScreen)
-         return true;
-      let parent = this.parent;
-
-      while (parent != null && parent instanceof AnyScreen) {
-         return parent.isInsideRefreshAnyScreen()
-      }
-      return false;
    }
 
    /**

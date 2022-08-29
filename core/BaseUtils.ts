@@ -208,13 +208,17 @@ export class IArgs_HtmlTag_Utils {
    static init(args: IArgs_HtmlDecoration): IArgs_HtmlTag {
       if (!args)
          args = {};
-      if (!(args as IArgs_HtmlTag).htmlTagType)
+      if (!(args as any).htmlTagType)
          (args as IArgs_HtmlTag).htmlTagType = 'div';// default to 'div'
       if (!args.htmlTagClass)
          args.htmlTagClass = '';
+      if (!args.htmlTagStyle)
+         args.htmlTagStyle = '';
+      if (!args.htmlOtherAttr)
+         args.htmlOtherAttr = {};
+
       return args;
    }
-
 
    static class(args: IArgs_HtmlDecoration): string {
       args             = IArgs_HtmlTag_Utils.init(args);
@@ -241,7 +245,11 @@ export class IArgs_HtmlTag_Utils {
             let key   = entry[0];
             let value = entry[1];
             //use key and value here
-            htmlAttrs += ` ${key}="${value}"`;
+            if (value == null) {
+               htmlAttrs += ` ${key}` // attributes like 'required' that don't have an equal something after the name
+            } else {
+               htmlAttrs += ` ${key}="${value}"`;
+            }
          });
       }
       return htmlAttrs;

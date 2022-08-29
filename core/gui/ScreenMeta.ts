@@ -1,4 +1,4 @@
-import {MetaTableData} from "../ej2/MetaTableData";
+import {MetaTableData} from "../data/MetaTableData";
 
 export class ScreenMeta {
 

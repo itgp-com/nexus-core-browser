@@ -1,6 +1,6 @@
 import {NexusUI}           from "./NexusUI";
 import {ListenerHandler}   from "./ListenerHandler";
-import {UIStartedListener} from "./temp/UIStartedListener";
+import {UIStartedListener} from "./gui/UIStartedListener";
 import {setAppBase}        from "./AppPathUtils";
 import {getErrorHandler}   from "./CoreErrorHandling";
 

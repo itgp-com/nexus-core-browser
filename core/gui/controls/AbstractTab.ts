@@ -1,0 +1,247 @@
+import {IArgs_HtmlTag_Utils}                                              from "../../BaseUtils";
+import {AbstractWidget}                                                   from "../AbstractWidget";
+import {Args_AnyWidget}                                                   from "../AnyWidget";
+import {AnyWidgetStandard}                                                from "../AnyWidgetStandard";
+import {Event}                                                            from "@syncfusion/ej2-base";
+import {SelectEventArgs, SelectingEventArgs, Tab, TabItemModel, TabModel} from '@syncfusion/ej2-navigations';
+
+export class Args_AbstractTab extends Args_AnyWidget<TabModel>  {
+}
+
+export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget, any> {
+
+   wrapperTagID: string;
+   tabModel: TabModel;
+   lastSelectingIndex: number;
+   lastSelectingEvent: SelectingEventArgs;
+   lastSelectedEvent: SelectEventArgs;
+
+   protected constructor() {
+      super();
+      this.doRegisterInfo = false; // no not register an event at this level
+   }
+
+
+   protected async initialize_AbstractTab(args: Args_AbstractTab) {
+      let thisX       = this;
+      args            = IArgs_HtmlTag_Utils.init(args)
+      this.descriptor = args;
+
+      if (!args.children) {
+         args.children = []; // initialize to non-null
+      }
+      if (args.children.length > 0) {
+         args.children = args.children.filter(value => {
+            return value != null; // keep non-null children only
+         });
+      }
+
+      // The children cannot be passed to super because they would become initialized (initLogic) by AbstractWidget
+      // We need the Tab's children to ONLY be initialized after the tab is created (usually when tab is selected)
+      // otherwise the HTML for the tabs is not properly processed and the tab components will just show one under
+      // the other and not inside tabs
+      let hiddenChildren = args.children;
+      args.children      = [];
+      try {
+         await thisX.initialize_AnyWidgetStandard(args);
+      } finally {
+         args.children = hiddenChildren;
+      }
+   } // initialize_WgtTab
+
+
+   async localLogicImplementation() {
+      let thisX = this;
+      let args  = (this.descriptor as Args_AbstractTab);
+      if (!args?.children)
+         args.children = [];
+
+      args.ej = args.ej || {};
+
+      await this.createTabModel();
+      thisX.obj = new Tab(this.tabModel, thisX.hget);
+      // thisX.obj.appendTo(thisX.hget); <--- Must do extensive testing before enabling
+   } //doInitLogic
+
+   async createTabModel() {
+      let thisX = this;
+      let args  = (this.descriptor as Args_AbstractTab); // cannot be null because they have required properties
+      let ej    = this.descriptor.ej;
+
+      let itemModelList: TabItemModel[] = [];
+      for (let tabObj of this.descriptor.children) {
+         let tabHtml = await tabObj.initContent();
+         itemModelList.push(
+            {
+               header:  {'text': tabObj.title},
+               content: tabHtml,
+            }
+         );
+         tabObj.parent = thisX;
+
+      } // for
+
+      let ejCreated = ej.created;
+
+      // @ts-ignore
+      // @ts-ignore
+      // @ts-ignore
+      // @ts-ignore
+      thisX.tabModel = {
+         heightAdjustMode: 'None',
+         overflowMode:     "MultiRow", // "Popup", //"Extended",
+         // overflowMode: "Popup",
+         // height: 250,
+
+         items: itemModelList,
+
+         selecting: (e: SelectingEventArgs) => {
+            // this is the ACTUAL tab number being selected as far as the children are concerned.
+
+            thisX.lastSelectingIndex = e.selectingIndex; // e.selectedIndex;
+            thisX.lastSelectingEvent = e;
+         },
+         selected:  async (e: SelectEventArgs) => {
+            // let index: number = e.selectedIndex;
+            thisX.lastSelectedEvent = e;
+            let index               = thisX.lastSelectingIndex; // cached from event above
+            await thisX.tabSelected(index);
+         },
+         cssClass:  "e-fill", // fill tab header with accent background
+         created:   async (_e: Event) => {
+            // setImmediate is used because of Syncfusion implementation
+            setImmediate(
+               async () => {
+                  // await thisX.obj.refresh(); // hack to repaint tab scrollbar when it overflows
+
+                  // Remove uppercasing from tab header
+                  $(".e-tab-text").addClass('app-tab-no-text-transform');
+
+                  if (ejCreated) {
+                     try {
+                        ejCreated.call(thisX);
+                     } catch (ex) {
+                        thisX.handleWidgetError(ex);
+                     }
+                  }
+
+                  if ((this.descriptor as Args_AbstractTab).children.length > 0) {
+                     try {
+                        await thisX.tabSelected(0); // initialize the first tab on start
+                     } catch (ex) {
+                        thisX.handleWidgetError(ex);
+                     }
+                  }
+
+               }
+            );
+         }, // created
+      };
+
+      if (args.ej)
+         this.tabModel = {...this.tabModel, ...args.ej};
+
+   } // createTabModel
+
+
+   async tabSelected(index: number) {
+      if (index < 0 || index >= this.descriptor.children.length)
+         return;
+      
+      let thisX = this;
+
+      // setImmediate(async () => {
+      // Fix 2020-04-27 D. Pociu
+      // this is ABSOLUTELY necessary in order to give the HTML in the tab control
+      // a chance to be inserted. Without this, you get very weird Syncfusion EJ2
+      // error about parts of the widgets being undefined during refresh
+      let tabObj: AbstractWidget = this.descriptor.children[index];
+      if (tabObj) {
+         let initialized: boolean = tabObj.initialized;
+         if (!tabObj.initialized) {
+            try {
+               await tabObj.initLogic(); // this includes a refresh
+               await tabObj.initLogicAsTab({
+                                              initialized: tabObj.initialized,
+                                              index:       index,
+                                              instance:    thisX
+                                           }); // trigger this on the component inside the tab
+            } catch (error) {
+               console.log(error);
+               // this.handleError(error);
+            }
+         }
+
+         /**
+          * Added 2020-05-14 David Pociu to register the panes in the tab (since initContentAndLogic i
+          */
+         try {
+            if (tabObj.doRegisterInfo) {
+               tabObj.registerInfo(thisX.hget);
+            }
+         } catch (ex) {
+            console.log(ex)
+         }
+
+         try {
+            // trigger this on the component inside the tab
+            await tabObj.selectedAsTab({
+                                          index:       index,
+                                          initialized: initialized,
+                                          instance:    thisX,
+                                       });
+         } catch (error) {
+            console.log(error);
+            // this.handleError(error);
+         }
+
+
+         try {
+            // trigger this on the component inside the tab
+            await tabObj.activatedAsInnerWidget({
+                                                   parentWidget: thisX,
+                                                   parentInfo:   {
+                                                      'selecting': thisX.lastSelectingIndex,
+                                                      'selected':  thisX.lastSelectedEvent,
+                                                      'index':index,
+                                                   }
+                                                });
+         } catch (error) {
+            console.log(error);
+            // this.handleError(error);
+         }
+      }
+      // });
+
+
+   } // initializeTab
+
+   resetTabInitializations() {
+      for (let tabObj of this.descriptor.children) {
+         tabObj.initialized = false; // reset the state to not initialized
+      }
+   } // resetTabInitializations
+
+
+   async localDestroyImplementation() {
+      // destroy the children then this object
+      for (let tabObj of this.descriptor.children) {
+         await tabObj.destroy();
+      }
+      if (this.obj)
+         this.obj.destroy();
+   }
+
+   async localClearImplementation() {
+      for (let tabObj of this.descriptor.children) {
+         await tabObj.clear();
+      }
+   }
+
+   async localRefreshImplementation() {
+      for (let tabObj of this.descriptor.children) {
+         await tabObj.refresh();
+      }
+   }
+
+} // main class

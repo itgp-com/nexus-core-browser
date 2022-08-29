@@ -8,7 +8,7 @@ export {core};
 import * as cu from "./CoreUtils";
 export {cu};
 
-import * as wu from "./ej2/WidgetUtils";
+import * as wu from "./gui/WidgetUtils";
 export  {wu};
 
 import {hget, hgetInput, cleanUpHtml} from "./BaseUtils";
@@ -19,17 +19,17 @@ import * as moduleRegistry from "./ModuleRegistry";
 
 export {moduleRegistry};
 
-import * as ej2Comm from "./ej2/Ej2Comm";
+import * as ej2Comm from "./data/Ej2Comm";
 export {ej2Comm};
 
 
-import {InterceptorDataManager, OnSuccessExecuteQuery, OnFailExecuteQuery, ErrorResponse,SuccessResponse, OnAlwaysExecuteQuery} from "./ej2/InterceptorDataManager";
+import {InterceptorDataManager, OnSuccessExecuteQuery, OnFailExecuteQuery, ErrorResponse,SuccessResponse, OnAlwaysExecuteQuery} from "./data/InterceptorDataManager";
 export {InterceptorDataManager, OnSuccessExecuteQuery, OnFailExecuteQuery, ErrorResponse,SuccessResponse, OnAlwaysExecuteQuery};
 
 import {AbstractWidget, AbstractWidgetStatic} from "./gui/AbstractWidget";
-import {MetaTableData_Base}                   from "./gui/MetaTableData_Base";
-import {ScreenMeta}                        from "./gui/ScreenMeta";
-import {MetaTableData}                     from "./ej2/MetaTableData";
+import {MetaTableData_Base}                   from "./data/MetaTableData_Base";
+import {ScreenMeta}                           from "./gui/ScreenMeta";
+import {MetaTableData} from "./data/MetaTableData";
 
 
 export {AbstractWidgetStatic,
@@ -38,7 +38,7 @@ export {AbstractWidgetStatic,
    MetaTableData,
    ScreenMeta,
 };
-import {DialogYesNo, DialogYesNoModel}     from "./ej2/DialogYesNo";
+import {DialogYesNo, DialogYesNoModel} from "./gui/controls/DialogYesNo";
 export {DialogYesNo, DialogYesNoModel};
 
 

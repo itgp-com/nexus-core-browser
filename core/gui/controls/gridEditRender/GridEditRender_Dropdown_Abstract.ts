@@ -1,10 +1,10 @@
-import {DropDownList}                 from '@syncfusion/ej2-dropdowns';
-import {Grid, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
-import {ChangeEventArgs}              from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
 import {getRandomString}              from "../../../BaseUtils";
-import {WgtGrid}                      from "../WgtGrid";
 import {getErrorHandler}              from "../../../CoreErrorHandling";
-import {DropDownSortOrder}            from "../AbstractWgtDropDown";
+import {AbstractGrid}      from "../AbstractGrid";
+import {DropDownSortOrder} from "../AbstractDropDown";
+import {ChangeEventArgs}   from "@syncfusion/ej2-dropdowns/src/drop-down-list/drop-down-list";
+import {Grid, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
+import {DropDownList}                 from '@syncfusion/ej2-dropdowns';
 
 export class Args_GridEditRender_Dropdown_Abstract {
    grid_value_column_name: string;
@@ -28,7 +28,7 @@ export abstract class GridEditRender_Dropdown_Abstract {
    args: Args_GridEditRender_Dropdown_Abstract;
    record: any; // the grid record
 
-   last_parentWgtGrid: WgtGrid;
+   last_parentWgtGrid: AbstractGrid;
    dropDownInstance: DropDownList;
 
    cachedRendererData: [] = null;
@@ -85,7 +85,7 @@ export abstract class GridEditRender_Dropdown_Abstract {
     * @param parentWgtGrid
     */
    // noinspection JSUnusedGlobalSymbols
-   createRenderer(queryCellInfoEventArgs: QueryCellInfoEventArgs, parentWgtGrid: WgtGrid): void {
+   createRenderer(queryCellInfoEventArgs: QueryCellInfoEventArgs, parentWgtGrid: AbstractGrid): void {
 
       //------------- make sure we tag the parent component of this renderer/editor --------------
       if (this.last_parentWgtGrid == null) {
