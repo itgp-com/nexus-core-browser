@@ -228,6 +228,9 @@ export abstract class AbstractRadioButton<ARG_CLASS extends Args_AbstractRadioBu
       return dataProvider;
    }
 
+   get value():string {
+      return super.value;
+   }
 
    set value(value: string) {
       let stringValue = (value == null ? null : value.toString());

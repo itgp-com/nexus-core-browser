@@ -2,7 +2,6 @@ import {CheckBox, CheckBoxModel}            from '@syncfusion/ej2-buttons';
 import {DataProviderChangeEvent}            from "../../data/DataProvider";
 import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../../BaseUtils";
 import {AnyWidget, Args_AnyWidget}          from "../AnyWidget";
-import {AnyWidgetStandard}                  from "../AnyWidgetStandard";
 import {addWidgetClass}                     from "../AbstractWidget";
 
 export abstract class Args_WgtCheckBox_Label {

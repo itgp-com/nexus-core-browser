@@ -435,12 +435,14 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
    // first append any classes
    try {
       let htmlTagClass: string = decoration.htmlTagClass;
-      htmlTagClass             = removeDoubleSpaces(htmlTagClass);
-      if (htmlTagClass) {
-         let newClasses: string[] = htmlTagClass.split(' ');
-         htmlElement.classList.remove(...newClasses)
-         htmlElement.classList.add(...newClasses);
-      }
+      if ( htmlTagClass) {
+         htmlTagClass = removeDoubleSpaces(htmlTagClass);
+         if (htmlTagClass) {
+            let newClasses: string[] = htmlTagClass.split(' ');
+            htmlElement.classList.remove(...newClasses)
+            htmlElement.classList.add(...newClasses);
+         }
+      } // if ( htmlTagClass)
    } catch (ex) {
       console.log(ex);
    }
@@ -448,17 +450,19 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
    // now update the style attribute
    try {
       let htmlTagStyle: string = decoration.htmlTagStyle;
-      htmlTagStyle             = removeDoubleSpaces(htmlTagStyle);
       if (htmlTagStyle) {
-         let currentStyle: string = htmlElement.getAttribute('style');
-         if (!currentStyle)
-            currentStyle = ''
-         if (currentStyle.length > 0 && (!currentStyle.endsWith(';')))
-            currentStyle += ';'
+         htmlTagStyle = removeDoubleSpaces(htmlTagStyle);
+         if (htmlTagStyle) {
+            let currentStyle: string = htmlElement.getAttribute('style');
+            if (!currentStyle)
+               currentStyle = ''
+            if (currentStyle.length > 0 && (!currentStyle.endsWith(';')))
+               currentStyle += ';'
 
-         currentStyle += htmlTagStyle;
-         htmlElement.setAttribute('style', currentStyle);
-      }
+            currentStyle += htmlTagStyle;
+            htmlElement.setAttribute('style', currentStyle);
+         }
+      } // if (htmlTagStyle)
    } catch (ex) {
       console.log(ex);
    }
@@ -468,7 +472,6 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
    try {
       let htmlOtherAttr: IKeyValueString = decoration.htmlOtherAttr;
       if (htmlOtherAttr) {
-
          for (let key in htmlOtherAttr) {
             if (key) {
                let value: string = htmlOtherAttr[key];
