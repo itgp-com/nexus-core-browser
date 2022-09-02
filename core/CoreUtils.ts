@@ -7,6 +7,7 @@ import {isArray}                                      from "lodash";
 import * as CSS                                       from 'csstype';
 import {tModel, urlTableEj2}                          from "./AppPathUtils";
 import {IArgs_HtmlDecoration, IKeyValueString}        from "./BaseUtils";
+import {AbstractWidget}                               from "./gui/AbstractWidget";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY   = 1000;
@@ -675,4 +676,12 @@ export function htmlElement_link_clickFunction(elem: HTMLElement, clickFunction:
       elem.innerHTML = `<a href="#" onclick="return false;">${original}</a>`;
       elem.addEventListener('click', clickFunction);
    }
+}
+
+/**
+ *
+ * @param value true if the object looks like a Promise (has a then function)
+ */
+export function isPromise(obj:any) {
+   return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
 }

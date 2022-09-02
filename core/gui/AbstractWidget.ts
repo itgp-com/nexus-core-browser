@@ -21,154 +21,6 @@ import {isArray}                                                                
 
 enableRipple(true);
 
-export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
-
-export class AfterInitLogicEvent {
-   origin: AbstractWidget;
-}
-
-export abstract class AfterInitLogicListener extends BaseListener<AfterInitLogicEvent> {
-
-   eventFired(ev: AfterInitLogicEvent): void {
-      this.afterInitLogic(ev);
-   }
-
-   abstract afterInitLogic(ev: AfterInitLogicEvent): void;
-} // main class
-export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
-
-/**
- * Base class for all Widget settings(arguments)
- */
-export class Args_AbstractWidget implements IArgs_HtmlTag {
-   // was AbstractWidget
-   beforeInitLogicListener ?: BeforeInitLogicType;
-   afterInitLogicListener ?: AfterInitLogicType;
-   /**
-    *  Called after initLogic has been completed
-    */
-   onInitialized ?: (widget: any) => void;
-   /**
-    * Set to true to continue to refresh, false to stop the refresh from happening this time
-    */
-   onBeforeRefresh ?: (args: Args_OnBeforeRefresh) => boolean;
-   onAfterRefresh ?: (args: Args_OnAfterRefresh) => void;
-
-
-   // --- Start IArgs_HtmlTag implementation ---
-   htmlTagClass?: string;
-   htmlTagStyle?: string;
-   htmlOtherAttr?: IKeyValueString; // {string:string};
-   htmlTagType?: string; // div by default
-   // --- End IArgs_HtmlTag implementation ---
-
-   /**
-    * Hack that will be removed in the future
-    */
-   hackRefreshOnWgtTabInit ?: boolean
-
-} // Args_AbstractWidget
-
-export class Args_Repaint {
-   callDestroyOnContents: boolean;
-}
-
-export class Args_OnBeforeRefresh<T = any> {
-   widget: T;
-}
-
-export class Args_OnAfterRefresh<T = any> {
-   widget: T;
-}
-
-
-export class Args_ActivatedAsInnerWidget<PARENT_WIDGET extends AbstractWidget> {
-   parentWidget: PARENT_WIDGET;
-   /**
-    * Usually the name of the event(s) and the event(s) data, but could contain any info
-    */
-   parentInfo: { [key: string]: any } = {};
-}
-
-export class AfterRepaintWidgetEvent {
-   widget: AbstractWidget;
-}
-
-export abstract class AfterRepaintWidgetListener extends BaseListener<AfterRepaintWidgetEvent> {
-
-   eventFired(ev: AfterRepaintWidgetEvent): void {
-      this.afterRepaintWidget(ev);
-   }
-
-   abstract afterRepaintWidget(ev: AfterRepaintWidgetEvent): void;
-}
-
-export class ParentAddedEvent {
-   parent: AbstractWidget;
-   child: AbstractWidget;
-}
-
-/**
- * Listener that gets triggered on any AbstractWidget after the widget has been tagged with  parent (or a null parent)
- */
-export abstract class ParentAddedListener extends BaseListener<ParentAddedEvent> {
-
-   eventFired(ev: ParentAddedEvent): void {
-      this.parentAdded(ev);
-   }
-
-   abstract parentAdded(ev: ParentAddedEvent): void;
-}
-
-export class BeforeRepaintWidgetEvent extends StopListenerChain {
-   widget: AbstractWidget;
-}
-
-export abstract class BeforeRepaintWidgetListener extends BaseListener<BeforeRepaintWidgetEvent> {
-
-   eventFired(ev: BeforeRepaintWidgetEvent): void {
-      this.beforeRepaintWidget(ev);
-   }
-
-   abstract beforeRepaintWidget(ev: BeforeRepaintWidgetEvent): void;
-}
-
-export async function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
-   try {
-      let newWidgetHTML = await args.newWidget.initContent();
-      if (args.existingWidgetHTMLElement) {
-         // replace the child
-         let newWidgetHTMLElement = htmlToElement(newWidgetHTML);
-         args.parentHTMLElement.replaceChild(newWidgetHTMLElement, args.existingWidgetHTMLElement);
-      } else {
-         //completely blow away the contents of parent
-         args.parentHTMLElement.innerHTML = newWidgetHTML;
-      }
-      // after giving it time to render, attach the JS logic
-      setImmediate(async () => {
-                      await args.newWidget.initLogic();
-                      if (args.onInstantiated)
-                         args.onInstantiated({
-                                                widget: args.newWidget,
-                                             });
-                   }
-      );
-
-   } catch (ex) {
-      getErrorHandler().displayExceptionToUser(ex);
-   }
-} // updateWidgetInDOM
-
-export class Args_WgtTab_Action {
-   initialized: boolean;
-   index: number;
-   /**
-    * Contains an instance of WgtTab. Cannot list the field as that class because of circular reference WgtTab->AbstractWidget->WgtTab
-    */
-   instance: any;
-}
-
-
 export abstract class AbstractWidget<DATA_TYPE = any> {
    contentBeginFromExtendingClass: StringArg;
    contentEndFromExtendingClass: StringArg;
@@ -1181,3 +1033,151 @@ export function addWidgetClass(args: IArgs_HtmlDecoration, additionalClasses: (s
    args.htmlTagClass = classList.join(' ');
    return args;
 } // addWidgetClass
+
+
+export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
+
+export class AfterInitLogicEvent {
+   origin: AbstractWidget;
+}
+
+export abstract class AfterInitLogicListener extends BaseListener<AfterInitLogicEvent> {
+
+   eventFired(ev: AfterInitLogicEvent): void {
+      this.afterInitLogic(ev);
+   }
+
+   abstract afterInitLogic(ev: AfterInitLogicEvent): void;
+} // main class
+export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
+
+/**
+ * Base class for all Widget settings(arguments)
+ */
+export class Args_AbstractWidget implements IArgs_HtmlTag {
+   // was AbstractWidget
+   beforeInitLogicListener ?: BeforeInitLogicType;
+   afterInitLogicListener ?: AfterInitLogicType;
+   /**
+    *  Called after initLogic has been completed
+    */
+   onInitialized ?: (widget: any) => void;
+   /**
+    * Set to true to continue to refresh, false to stop the refresh from happening this time
+    */
+   onBeforeRefresh ?: (args: Args_OnBeforeRefresh) => boolean;
+   onAfterRefresh ?: (args: Args_OnAfterRefresh) => void;
+
+
+   // --- Start IArgs_HtmlTag implementation ---
+   htmlTagClass?: string;
+   htmlTagStyle?: string;
+   htmlOtherAttr?: IKeyValueString; // {string:string};
+   htmlTagType?: string; // div by default
+   // --- End IArgs_HtmlTag implementation ---
+
+   /**
+    * Hack that will be removed in the future
+    */
+   hackRefreshOnWgtTabInit ?: boolean
+
+} // Args_AbstractWidget
+
+export class Args_Repaint {
+   callDestroyOnContents: boolean;
+}
+
+export class Args_OnBeforeRefresh<T = any> {
+   widget: T;
+}
+
+export class Args_OnAfterRefresh<T = any> {
+   widget: T;
+}
+
+
+export class Args_ActivatedAsInnerWidget<PARENT_WIDGET extends AbstractWidget> {
+   parentWidget: PARENT_WIDGET;
+   /**
+    * Usually the name of the event(s) and the event(s) data, but could contain any info
+    */
+   parentInfo: { [key: string]: any } = {};
+}
+
+export class AfterRepaintWidgetEvent {
+   widget: AbstractWidget;
+}
+
+export abstract class AfterRepaintWidgetListener extends BaseListener<AfterRepaintWidgetEvent> {
+
+   eventFired(ev: AfterRepaintWidgetEvent): void {
+      this.afterRepaintWidget(ev);
+   }
+
+   abstract afterRepaintWidget(ev: AfterRepaintWidgetEvent): void;
+}
+
+export class ParentAddedEvent {
+   parent: AbstractWidget;
+   child: AbstractWidget;
+}
+
+/**
+ * Listener that gets triggered on any AbstractWidget after the widget has been tagged with  parent (or a null parent)
+ */
+export abstract class ParentAddedListener extends BaseListener<ParentAddedEvent> {
+
+   eventFired(ev: ParentAddedEvent): void {
+      this.parentAdded(ev);
+   }
+
+   abstract parentAdded(ev: ParentAddedEvent): void;
+}
+
+export class BeforeRepaintWidgetEvent extends StopListenerChain {
+   widget: AbstractWidget;
+}
+
+export abstract class BeforeRepaintWidgetListener extends BaseListener<BeforeRepaintWidgetEvent> {
+
+   eventFired(ev: BeforeRepaintWidgetEvent): void {
+      this.beforeRepaintWidget(ev);
+   }
+
+   abstract beforeRepaintWidget(ev: BeforeRepaintWidgetEvent): void;
+}
+
+export async function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
+   try {
+      let newWidgetHTML = await args.newWidget.initContent();
+      if (args.existingWidgetHTMLElement) {
+         // replace the child
+         let newWidgetHTMLElement = htmlToElement(newWidgetHTML);
+         args.parentHTMLElement.replaceChild(newWidgetHTMLElement, args.existingWidgetHTMLElement);
+      } else {
+         //completely blow away the contents of parent
+         args.parentHTMLElement.innerHTML = newWidgetHTML;
+      }
+      // after giving it time to render, attach the JS logic
+      setImmediate(async () => {
+                      await args.newWidget.initLogic();
+                      if (args.onInstantiated)
+                         args.onInstantiated({
+                                                widget: args.newWidget,
+                                             });
+                   }
+      );
+
+   } catch (ex) {
+      getErrorHandler().displayExceptionToUser(ex);
+   }
+} // updateWidgetInDOM
+
+export class Args_WgtTab_Action {
+   initialized: boolean;
+   index: number;
+   /**
+    * Contains an instance of WgtTab. Cannot list the field as that class because of circular reference WgtTab->AbstractWidget->WgtTab
+    */
+   instance: any;
+}

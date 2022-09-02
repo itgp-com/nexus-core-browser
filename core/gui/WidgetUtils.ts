@@ -2,6 +2,7 @@ import {Component}                                 from "@syncfusion/ej2-base";
 import {ColumnModel, Grid, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
 import {getErrorHandler}                           from "../CoreErrorHandling";
 import {AbstractWidget}                            from "./AbstractWidget";
+import {isPromise}                                 from "../CoreUtils";
 
 
 export type GridWidgetCallBack = (args?: QueryCellInfoEventArgs, thisX ?: any) => void;
@@ -143,7 +144,13 @@ export async function resolveWidgetArray(
          let instance: AbstractWidget                                      = null;
          if (mixedArrayElement) {
             try {
-               instance = await mixedArrayElement;
+               if ( isPromise(mixedArrayElement)){
+                  instance = await mixedArrayElement;
+               } else {
+                  // not a promise
+                  instance = mixedArrayElement as AbstractWidget ;
+               }
+               resolvedArray.push(instance);
             } catch (e) {
                if (errorCallback) {
                   try {
@@ -156,7 +163,6 @@ export async function resolveWidgetArray(
                }
             }
          }
-         resolvedArray.push()
       } // for
    }
    return resolvedArray;

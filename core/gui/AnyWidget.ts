@@ -6,6 +6,7 @@ import {AbstractWidget, addWidgetClass, AfterInitLogicEvent, AfterInitLogicListe
 import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                   from "./BeforeInitLogicListener";
 import {Component}                                                                                                       from "@syncfusion/ej2-base";
 import {isFunction}                                                                                                      from "lodash";
+import {resolveWidgetArray}                                                                                              from "./WidgetUtils";
 
 export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
 
@@ -37,7 +38,7 @@ export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
     */
    parent ?: AbstractWidget;
 
-   children ?: AbstractWidget[];
+   children ?: (AbstractWidget|Promise<AbstractWidget>)[];
 
    /**
     * Returns the HTML to be inserted before the children's HTML.
@@ -194,8 +195,12 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
          this.title = args.title;
 
       // descriptor.initLogic() handled inside _initLogic()
-      if (args.children)
-         this.children = args.children;
+      if (args.children) {
+         let paramChildren: (AbstractWidget|Promise<AbstractWidget>)[] = args.children;
+         let resolvedChildren: AbstractWidget[] = await resolveWidgetArray(args.children);
+         this.children = resolvedChildren;
+         args.children = resolvedChildren; // synchronize the arguments with the widget contents
+      }
 
 
       // initialize the tags so they available in initContentBegin/End
