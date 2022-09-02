@@ -23,7 +23,7 @@ export class AbstractDropDownButton extends AnyWidgetStandard<DropDownButton>{
    }
 
    async localLogicImplementation(): Promise<void> {
-      this.obj = new DropDownButton(this.descriptor.ej);
+      this.obj = new DropDownButton(this.initArgs.ej);
       this.obj.appendTo(this.hget);
    }
 
@@ -39,6 +39,7 @@ export class AbstractDropDownButton extends AnyWidgetStandard<DropDownButton>{
    set value(value: any | ItemModel[]) {
       if (this.obj) {
          this.obj.items = value;
+         this.value = value;
       }
    }
 

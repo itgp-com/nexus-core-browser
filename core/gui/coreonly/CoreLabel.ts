@@ -50,23 +50,24 @@ export class CoreLabel extends AnyWidgetStandard<any, Args_AnyWidget, StringArg>
 
    async localRefreshImplementation(): Promise<void> {
 
-      if (this.obj && this.descriptor?.dataProviderName && this.descriptor?.propertyName) {
-         let data             = DataProvider.byName(this, this.descriptor.dataProviderName);
+      if (this.obj && this.initArgs?.dataProviderName && this.initArgs?.propertyName) {
+         let data             = DataProvider.byName(this, this.initArgs.dataProviderName);
          let value: string    = '';
          let enabled: boolean = false;
          if (data) {
-            value   = data[this.descriptor.propertyName];
+            value   = data[this.initArgs.propertyName];
             enabled = true; // there is data so it's enabled
          }
 
          this.value         = value;
          this.previousValue = value;
 
-         if (this.descriptor?.ej?.enabled) {
+         if (this.initArgs?.ej?.enabled) {
             // if the general properties allow you to enable, then enable if there's data, disable when there's no data link
             this.obj.enabled = enabled;
          }
       } else {
+         // noinspection UnnecessaryLocalVariableJS
          let x      = this.value; // triggers the function calculation if any
          this.value = x; // resets the innerHTML
       }
@@ -74,15 +75,16 @@ export class CoreLabel extends AnyWidgetStandard<any, Args_AnyWidget, StringArg>
 
 
    get value(): StringArg {
-      return (this.descriptor as Args_CoreLabel).labelHTML;
+      return (this.initArgs as Args_CoreLabel).labelHTML;
    }
 
    set value(val: StringArg) {
-      (this.descriptor as Args_CoreLabel).labelHTML = val;
+      (this.initArgs as Args_CoreLabel).labelHTML = val;
       let anchor                                    = this.hget;
       if (anchor) {
          let sval         = stringArgVal(val);
          anchor.innerHTML = sval;
+         super.value = sval;
       }
    }
 }

@@ -1,6 +1,5 @@
 import {IArgs_HtmlTag_Utils}                           from "../../BaseUtils";
-import {Args_AbstractWidget, AbstractWidget}           from "../AbstractWidget";
-import {AnyScreen}                                     from "../AnyScreen";
+import {AbstractWidget, Args_AbstractWidget}           from "../AbstractWidget";
 import {Args_AnyWidget}                                from "../AnyWidget";
 import {AnyWidgetStandard}                             from "../AnyWidgetStandard";
 import {ExpandedEventArgs, ExpandEventArgs}            from "@syncfusion/ej2-navigations/src/accordion/accordion";
@@ -97,8 +96,8 @@ export abstract class AbstractAccordion extends AnyWidgetStandard<Accordion, Arg
    async initialize_AbstractAccordion(args: Args_AbstractAccordion) {
       let thisX = this;
 
-      args            = IArgs_HtmlTag_Utils.init(args) as Args_AbstractAccordion;
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args) as Args_AbstractAccordion;
+      this.initArgs = args;
       if (!args.ej)
          args.ej = {};
       if (!args.childItems)
@@ -144,7 +143,7 @@ export abstract class AbstractAccordion extends AnyWidgetStandard<Accordion, Arg
       let thisX  = this;
 
 
-      let model: AccordionModel = (this.descriptor as Args_AbstractAccordion)?.ej;
+      let model: AccordionModel = (this.initArgs as Args_AbstractAccordion)?.ej;
       if (!model) model = {};
 
       //----------- Handle Expanding event ----------
@@ -181,7 +180,7 @@ export abstract class AbstractAccordion extends AnyWidgetStandard<Accordion, Arg
       thisX.obj.appendTo(anchor);
 
 
-      for (const accordionChild of (this.descriptor as Args_AbstractAccordion).childItems) {
+      for (const accordionChild of (this.initArgs as Args_AbstractAccordion).childItems) {
          await (accordionChild.widget as AbstractWidget).initLogic();
       }
       await super.localLogicImplementation();
@@ -189,7 +188,7 @@ export abstract class AbstractAccordion extends AnyWidgetStandard<Accordion, Arg
 
    async localDestroyImplementation() {
       // destroy the children then this object
-      for (let tabObj of (this.descriptor as Args_AbstractAccordion).childItems) {
+      for (let tabObj of (this.initArgs as Args_AbstractAccordion).childItems) {
          try {
             await tabObj.widget.destroy();
          } catch (ex) {
@@ -201,13 +200,13 @@ export abstract class AbstractAccordion extends AnyWidgetStandard<Accordion, Arg
    }
 
    async localClearImplementation() {
-      for (let tabObj of (this.descriptor as Args_AbstractAccordion).childItems) {
+      for (let tabObj of (this.initArgs as Args_AbstractAccordion).childItems) {
          await tabObj.widget.clear();
       }
    }
 
    async localRefreshImplementation() {
-      for (let childItem of (this.descriptor as Args_AbstractAccordion).childItems) {
+      for (let childItem of (this.initArgs as Args_AbstractAccordion).childItems) {
          await childItem.widget.refresh();
       }
    }
@@ -227,7 +226,7 @@ export abstract class AbstractAccordion extends AnyWidgetStandard<Accordion, Arg
          // a chance to be inserted. Without this, you get very weird Syncfusion EJ2
          // error about parts of the widgets being undefined during refresh
 
-         let accordionChild: AccordionChild = (this.descriptor as Args_AbstractAccordion)?.childItems[expandingArgs.index];
+         let accordionChild: AccordionChild = (this.initArgs as Args_AbstractAccordion)?.childItems[expandingArgs.index];
          let panelObj: AbstractWidget       = accordionChild.widget;
          if (panelObj) {
             if (!panelObj.initialized) {

@@ -1,6 +1,6 @@
 import {IArgs_HtmlTag_Utils, StringArg, stringArgVal}                                                from "../../BaseUtils";
-import {DataProvider, IDataProviderSimple}                                                           from "../../data/DataProvider";
-import {AnyWidget, Args_AnyWidget}                                                                   from "../AnyWidget";
+import {DataProvider}                                                                                from "../../data/DataProvider";
+import {Args_AnyWidget}                                                                              from "../AnyWidget";
 import {ChangeEventArgs}                                                                             from "@syncfusion/ej2-richtexteditor/src/rich-text-editor/base/interface";
 import {HtmlEditor, Image, Link, QuickToolbar, Resize, RichTextEditor, RichTextEditorModel, Toolbar} from '@syncfusion/ej2-richtexteditor';
 import {AnyWidgetStandard}                                                                           from "../AnyWidgetStandard";
@@ -20,8 +20,8 @@ export abstract class AbstractRichTextEditor extends AnyWidgetStandard<RichTextE
    }
 
    protected async initialize_AbstractRichTextEditor(args: Args_AbstractRichTextEditor) {
-      args            = IArgs_HtmlTag_Utils.init(args);
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args);
+      this.initArgs = args;
       await this.initialize_AnyWidget(args);
       args.ej = args.ej || {};
       args.htmlTagType = 'textarea';
@@ -30,38 +30,27 @@ export abstract class AbstractRichTextEditor extends AnyWidgetStandard<RichTextE
 
    } // initialize_Base_WgtRichTextEditor
 
-   // async localContentBegin(): Promise<string> {
-   //    let x: string = "";
-   //    let args      = this.descriptor;
-   //    if (args?.wrapper) {
-   //       args.wrapper = IArgs_HtmlTag_Utils.init(args.wrapper);
-   //       x += `<${args.wrapper.htmlTagType} id="${this.wrapperTagID}" ${IArgs_HtmlTag_Utils.all(args.wrapper)}>`;
-   //    }
-   //
-   //    x += `<textarea id="${this.tagId}"></textarea>`; // NEVER use <div />
-   //
-   //    if (args?.wrapper) {
-   //       x += `</${args.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->
-   //    }
-   //    return x; // no call to super
-   // } // localContentBegin
 
    async localLogicImplementation() {
       let thisX = this;
-      let args  = this.descriptor;
+      let args  = this.initArgs;
 
-      let originalChange = args.ej?.change;
+      let originalChangeMethod = args.ej?.change;
       args.ej.change     = async (changeEv: ChangeEventArgs) => {
 
-         await thisX._onValueChanged(); // trigger change functionality
+         let valid:boolean = await thisX._localUpdateDataProvider(); // trigger change functionality
+         if (valid) {
 
-         if (originalChange) {
-            try {
-               originalChange.call(thisX, changeEv); // keep the context to thisX when executing
-            } catch (e) {
-               console.error(e);
+            thisX.value = changeEv.value; // update value based on change value
+
+            if (originalChangeMethod) {
+               try {
+                  originalChangeMethod.call(thisX, changeEv); // keep the context to thisX when executing
+               } catch (e) {
+                  console.error(e);
+               }
             }
-         }
+         } // if valid
 
       } // change
 
@@ -94,7 +83,7 @@ export abstract class AbstractRichTextEditor extends AnyWidgetStandard<RichTextE
    }
 
    async localRefreshImplementation(): Promise<void> {
-      let args = this.descriptor;
+      let args = this.initArgs;
 
       if (this.obj && args.dataProviderName) {
          let data             = DataProvider.byName(this, args.dataProviderName);
@@ -132,6 +121,7 @@ export abstract class AbstractRichTextEditor extends AnyWidgetStandard<RichTextE
       if (this.obj) {
          val            = this.convertValueBeforeSet(val);
          this.obj.value = val;
+         super.value = val; // updates the dataProvider also
       }
    }
 
@@ -141,11 +131,22 @@ export abstract class AbstractRichTextEditor extends AnyWidgetStandard<RichTextE
       return val;
    }
 
-   getDataProviderSimple(): IDataProviderSimple {
-      let dataProvider: IDataProviderSimple = null;
-      if (this.descriptor.dataProviderName)
-         dataProvider = DataProvider.dataProviderByName(this, this.descriptor.dataProviderName);
-      return dataProvider;
-   }
+   /**
+    * @returns {@value true} if valid, {@value false } otherwise
+    * @protected
+    */
+   protected async _localUpdateDataProvider(): Promise<boolean>{
+      let thisX     = this;
+      let valid = await thisX.validateForm(this);
+      if (!valid) {
+         if (this.stayFocusedOnError) {
+            if (this.hgetInput) {
+               this.hgetInput.focus(); // just stay in this field
+            }
+         }
+
+      } // if (!validated)
+      return valid;
+   } // _localUpdateDataProvider
 
 } // main class

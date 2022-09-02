@@ -73,13 +73,13 @@ export class CoreOnly_PopupDialogContent extends AnyScreen {
                                                                                       children:     [
                                                                                          await CoreOnly_Button_Primary.create({
                                                                                                                      label: 'Ok', onClick: (_ex) => {
-                                                                                               (thisX.descriptor as Args_CoreOnly_PopupDialogContent).popupDialog.closeWithSelectedData();
+                                                                                               (thisX.initArgs as Args_CoreOnly_PopupDialogContent).popupDialog.closeWithSelectedData();
                                                                                             }
                                                                                                                   }),
                                                                                          await CoreOnly__VerticalSpacer.create(),
                                                                                          await CoreOnly_Button_Primary.create({
                                                                                                                      label: 'Cancel', onClick: (_ex) => {
-                                                                                               (thisX.descriptor as Args_CoreOnly_PopupDialogContent).popupDialog.hide();
+                                                                                               (thisX.initArgs as Args_CoreOnly_PopupDialogContent).popupDialog.hide();
                                                                                             }
                                                                                                                   })
                                                                                       ]

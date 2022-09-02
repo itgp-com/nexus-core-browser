@@ -1,5 +1,5 @@
-import {AnyWidget, Args_AnyWidget, Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener} from "../AnyWidget";
-import {AbstractWidget, addWidgetClass, Args_AbstractWidget}                                              from "../AbstractWidget";
+import {AnyWidget, Args_AnyWidget}      from "../AnyWidget";
+import {AbstractWidget, addWidgetClass} from "../AbstractWidget";
 
 import {Sidebar, SidebarModel}              from '@syncfusion/ej2-navigations';
 import {EventArgs}                          from "@syncfusion/ej2-navigations/src/sidebar/sidebar";
@@ -214,13 +214,24 @@ export abstract class AbstractSidebar extends AnyWidget<Sidebar, Args_AbstractSi
    }
 
    set value(value: AbstractWidget | Promise<AbstractWidget>) {
+      let thisX = this;
       if (this.obj) {
          this.content = value;
          if (value)
             setImmediate(async () => {
-               this.contentResolved = await value;
+               thisX.contentResolved = await value;
+               thisX.setSuperValue(thisX.contentResolved);
             })
       }
+   }
+
+   /**
+    * Method exists because we cannot call super.value from setImmediate, but we can call thisX.setSuperValue
+    * @param val
+    * @private
+    */
+   private setSuperValue(val: AbstractWidget ){
+      super.value = val;
    }
 
    get contentWrapperTagId(): string {

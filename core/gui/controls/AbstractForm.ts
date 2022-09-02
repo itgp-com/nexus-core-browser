@@ -30,8 +30,8 @@ export abstract class AbstractForm extends AnyWidgetStandard<any, Args_AnyWidget
    } // initialize_WgtForm
 
    async localLogicImplementation(): Promise<void> {
-      if (this.descriptor?.validation && this.hgetForm) {
-         this._validator = new FormValidator(this.hgetForm, this.descriptor.validation);
+      if (this.initArgs?.validation && this.hgetForm) {
+         this._validator = new FormValidator(this.hgetForm, this.initArgs.validation);
       }
 
       // Disable Enter on Form but not on inputareas
@@ -58,7 +58,7 @@ export abstract class AbstractForm extends AnyWidgetStandard<any, Args_AnyWidget
 
    get formValidator(): FormValidator {
       if (!this._validator && this.hgetForm) {
-         this._validator = new FormValidator(this.hgetForm, this.descriptor?.validation);
+         this._validator = new FormValidator(this.hgetForm, this.initArgs?.validation);
       }
       return this._validator;
    }

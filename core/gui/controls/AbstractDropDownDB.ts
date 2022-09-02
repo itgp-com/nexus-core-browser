@@ -39,8 +39,8 @@ export abstract class AbstractDropDownDB<ARG_CLASS extends Args_AbstractDropDown
    }
 
    protected async initialize_AbstractDropDownDB(args: ARG_CLASS) {
-      args = IArgs_HtmlTag_Utils.init(args) as ARG_CLASS;
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args) as ARG_CLASS;
+      this.initArgs = args;
 
       let dm: DataManager = new DataManagerNexus({
                                                url:         urlTableList(args.listDataDBTable),

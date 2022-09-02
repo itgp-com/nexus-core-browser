@@ -20,8 +20,8 @@ export class CoreOnly__VerticalSpacer extends AnyWidgetStandard {
 
    protected constructor(args?: Args_CoreOnly__VerticalSpacer) {
       super();
-      args = IArgs_HtmlTag_Utils.init(args)
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args)
+      this.initArgs = args;
 
       if (!args.id)
          args.id = 'CoreOnly__VerticalSpacer';

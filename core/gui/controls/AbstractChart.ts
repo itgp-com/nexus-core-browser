@@ -1,4 +1,4 @@
-import {Args_AnyWidget, Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener}                                                                                                                                                                                                                               from "../AnyWidget";
+import {Args_AnyWidget}                                                                                                                                                                                                                                                                                                      from "../AnyWidget";
 import {AreaSeries, BarSeries, Category, Chart, ChartAnnotation, ChartModel, ColumnSeries, DataLabel, DateTime, DateTimeCategory, ErrorBar, Export, Highlight, Legend, LineSeries, Logarithmic, MultiColoredAreaSeries, MultiColoredLineSeries, MultiLevelLabel, ScrollBar, Selection, StripLine, Tooltip, Trendlines, Zoom} from '@syncfusion/ej2-charts';
 import {AnyWidgetStandard}                                                                                                                                                                                                                                                                                                   from "../AnyWidgetStandard";
 import {IArgs_HtmlTag_Utils}                                                                                                                                                                                                                                                                                                 from "../../BaseUtils";
@@ -73,7 +73,6 @@ export abstract class AbstractChart extends AnyWidgetStandard<Chart, Args_Abstra
    }
 
    protected async initialize_AbstractChart(args: Args_AbstractChart) {
-      let thisX = this;
       args = IArgs_HtmlTag_Utils.init(args);
 
       await this.initialize_AnyWidgetStandard(args);
@@ -81,7 +80,7 @@ export abstract class AbstractChart extends AnyWidgetStandard<Chart, Args_Abstra
    } // initialize_WgtChart
    async localLogicImplementation() {
       let anchor = this.hget;
-      this.obj   = new Chart(this.descriptor?.ej);
+      this.obj   = new Chart(this.initArgs?.ej);
       this.obj.appendTo(anchor);
    } // localLogicImplementation
 
@@ -101,6 +100,7 @@ export abstract class AbstractChart extends AnyWidgetStandard<Chart, Args_Abstra
    set value(value: any) {
       if (this.obj) {
          this.obj.dataSource = value;
+         super.value = value;
       }
    }
 } // main

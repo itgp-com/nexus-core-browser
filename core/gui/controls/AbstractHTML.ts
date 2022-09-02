@@ -24,8 +24,8 @@ export abstract class AbstractHTML extends AnyWidget {
          children: [],
          title:    null,
       };
-      anyArgs                     = IArgs_HtmlTag_Utils.init(anyArgs);
-      this.descriptor             = anyArgs;
+      anyArgs       = IArgs_HtmlTag_Utils.init(anyArgs);
+      this.initArgs = anyArgs;
       await this.initialize_AnyWidget(anyArgs);
    }
 

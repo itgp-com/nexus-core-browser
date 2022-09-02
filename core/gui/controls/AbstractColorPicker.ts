@@ -1,5 +1,5 @@
 import {ColorPicker, ColorPickerEventArgs, ColorPickerModel} from '@syncfusion/ej2-inputs';
-import {DataProvider, IDataProviderSimple}                   from "../../data/DataProvider";
+import {DataProvider}                                        from "../../data/DataProvider";
 import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                  from "../../BaseUtils";
 import {AnyWidget, Args_AnyWidget}                           from "../AnyWidget";
 import {addWidgetClass}                                      from "../AbstractWidget";
@@ -34,19 +34,19 @@ export abstract class AbstractColorPicker extends AnyWidget<ColorPicker, Args_An
    } // initialize_WgtDateTimePicker_Abstract
 
    async localContentBegin(): Promise<string> {
-      let args:Args_AbstractColorPicker = (this.descriptor as Args_AbstractColorPicker);
+      let args:Args_AbstractColorPicker = (this.initArgs as Args_AbstractColorPicker);
       let x: string = "";
-      if (this.descriptor.wrapper) {
-         this.descriptor.wrapper = IArgs_HtmlTag_Utils.init(this.descriptor.wrapper);
-         x += `<${this.descriptor.wrapper.htmlTagType} id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(this.descriptor.wrapper)}>`;
+      if (this.initArgs.wrapper) {
+         this.initArgs.wrapper = IArgs_HtmlTag_Utils.init(this.initArgs.wrapper);
+         x += `<${this.initArgs.wrapper.htmlTagType} id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(this.initArgs.wrapper)}>`;
       }
 
       let htmlTagArgs = IArgs_HtmlTag_Utils.init(args);
       htmlTagArgs.htmlTagType = 'input';
       htmlTagArgs.htmlOtherAttr['type'] = 'color';
-      htmlTagArgs.htmlOtherAttr['name'] = this.descriptor.propertyName;
+      htmlTagArgs.htmlOtherAttr['name'] = this.initArgs.propertyName;
 
-      if (this.descriptor.required)
+      if (this.initArgs.required)
          htmlTagArgs.htmlOtherAttr['required'] = null;
 
       if (args.includeErrorLine)
@@ -62,8 +62,8 @@ export abstract class AbstractColorPicker extends AnyWidget<ColorPicker, Args_An
          x += `</${errorArgs.htmlTagType}>`; // <!-- id="${this.errorTagID}"-->
       } // if (this.descriptor.includeErrorLine)
 
-      if (this.descriptor.wrapper) {
-         x += `</${this.descriptor.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->
+      if (this.initArgs.wrapper) {
+         x += `</${this.initArgs.wrapper.htmlTagType}>`; // <!-- id="${this.wrapperTagID}" -->
       }
       return x;
    } // localContentBegin
@@ -71,7 +71,7 @@ export abstract class AbstractColorPicker extends AnyWidget<ColorPicker, Args_An
    async localLogicImplementation() {
       let thisX = this;
 
-      let args:Args_AbstractColorPicker = (this.descriptor as Args_AbstractColorPicker);
+      let args:Args_AbstractColorPicker = (this.initArgs as Args_AbstractColorPicker);
       args.ej   = args.ej || {}; // ensure it's not null
 
 
@@ -106,7 +106,6 @@ export abstract class AbstractColorPicker extends AnyWidget<ColorPicker, Args_An
    protected doChange(currentValue: string) {
       if (currentValue !== this.previousValue) {
          this.value = currentValue; // must do this manually
-         this._onValueChanged(); // write to appserver
       }
    } // doChange
 
@@ -120,19 +119,15 @@ export abstract class AbstractColorPicker extends AnyWidget<ColorPicker, Args_An
 
    async localRefreshImplementation() {
 
-      if (this.obj && this.descriptor.dataProviderName) {
-         let data             = await DataProvider.byName(this, this.descriptor.dataProviderName);
+      if (this.obj && this.initArgs.dataProviderName) {
+         let data             = await DataProvider.byName(this, this.initArgs.dataProviderName);
          let value: string    = null;
-         let enabled: boolean = false;
          if (data) {
-            value   = data[this.descriptor.propertyName];
-            enabled = true; // there is data so it's enabled
+            value   = data[this.initArgs.propertyName];
          }
 
          this.value         = value;
          this.previousValue = value;
-
-      } else {
 
       }
 
@@ -163,6 +158,7 @@ export abstract class AbstractColorPicker extends AnyWidget<ColorPicker, Args_An
       if (this.obj) {
          val            = this.convertValueBeforeSet(val);
          this.obj.value = val;
+         super.value = val;
       }
    }
 
@@ -171,12 +167,5 @@ export abstract class AbstractColorPicker extends AnyWidget<ColorPicker, Args_An
          val = "#FFFFFFFF"; // transparent
       }
       return val;
-   }
-
-   getDataProviderSimple(): IDataProviderSimple {
-      let dataProvider: IDataProviderSimple = null;
-      if (this.descriptor.dataProviderName)
-         dataProvider = DataProvider.dataProviderByName(this, this.descriptor.dataProviderName);
-      return dataProvider;
    }
 } //main

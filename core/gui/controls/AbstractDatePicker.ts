@@ -1,5 +1,5 @@
 import {ChangedEventArgs, DatePicker, DatePickerModel} from '@syncfusion/ej2-calendars';
-import {DataProvider, IDataProviderSimple}             from "../../data/DataProvider";
+import {DataProvider}                                  from "../../data/DataProvider";
 import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}            from "../../BaseUtils";
 import {AnyWidget, Args_AnyWidget}                     from "../AnyWidget";
 import {addWidgetClass}                                from "../AbstractWidget";
@@ -34,7 +34,7 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
    }
 
    async localContentBegin(): Promise<string> {
-      let args: Args_AbstractDatePicker = (this.descriptor as Args_AbstractDatePicker);
+      let args: Args_AbstractDatePicker = (this.initArgs as Args_AbstractDatePicker);
 
       let x: string = "";
 
@@ -72,7 +72,7 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
 
    async localLogicImplementation() {
       let thisX = this;
-      let args  = (this.descriptor as Args_AbstractDatePicker);
+      let args  = (this.initArgs as Args_AbstractDatePicker);
       args.ej   = args.ej || {}; // ensure it's not null
 
       let blur = args.ej.blur;
@@ -81,7 +81,7 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
       } else {
          args.ej.blur = (arg, rest) => {
 
-            thisX._onValueChanged();      // local onBlur
+            thisX.updateDataProvider();      // local onBlur
 
             if (blur) {
                // execute the passed in blur
@@ -92,7 +92,7 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
 
       let oldChange  = args.ej.change;
       args.ej.change = (ev: ChangedEventArgs) => {
-         thisX._onValueChanged(); // write to appserver
+         thisX.updateDataProvider(); // write to appserver
 
          if (oldChange)
             oldChange(ev);
@@ -120,7 +120,7 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
 
    async localRefreshImplementation() {
 
-      let args: Args_AbstractDatePicker = (this.descriptor as Args_AbstractDatePicker);
+      let args: Args_AbstractDatePicker = (this.initArgs as Args_AbstractDatePicker);
 
       if (this.obj && args.dataProviderName) {
          let data             = DataProvider.byName(this, args.dataProviderName);
@@ -169,21 +169,16 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
       if (this.obj) {
          val            = this.convertValueBeforeSet(val);
          this.obj.value = val;
+         super.value = val;
+         this.updateDataProvider();
       }
    }
 
    convertValueBeforeSet(val: Date): Date {
-      if ((this.descriptor as Args_AbstractDatePicker).convertNullToToday) {
+      if ((this.initArgs as Args_AbstractDatePicker).convertNullToToday) {
          if (val == null)
             val = new Date(); //to now
       }
       return val;
-   }
-
-   getDataProviderSimple(): IDataProviderSimple {
-      let dataProvider: IDataProviderSimple = null;
-      if ((this.descriptor as Args_AbstractDatePicker).dataProviderName)
-         dataProvider = DataProvider.dataProviderByName(this, (this.descriptor as Args_AbstractDatePicker).dataProviderName);
-      return dataProvider;
    }
 } //main

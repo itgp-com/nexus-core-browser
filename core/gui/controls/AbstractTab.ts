@@ -24,8 +24,8 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
 
    protected async initialize_AbstractTab(args: Args_AbstractTab) {
       let thisX       = this;
-      args            = IArgs_HtmlTag_Utils.init(args)
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args)
+      this.initArgs = args;
 
       if (!args.children) {
          args.children = []; // initialize to non-null
@@ -52,7 +52,7 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
 
    async localLogicImplementation() {
       let thisX = this;
-      let args  = (this.descriptor as Args_AbstractTab);
+      let args  = (this.initArgs as Args_AbstractTab);
       if (!args?.children)
          args.children = [];
 
@@ -65,11 +65,11 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
 
    async createTabModel() {
       let thisX = this;
-      let args  = (this.descriptor as Args_AbstractTab); // cannot be null because they have required properties
-      let ej    = this.descriptor.ej;
+      let args  = (this.initArgs as Args_AbstractTab); // cannot be null because they have required properties
+      let ej    = this.initArgs.ej;
 
       let itemModelList: TabItemModel[] = [];
-      for (let tabObj of this.descriptor.children) {
+      for (let tabObj of this.initArgs.children) {
          let tabHtml = await tabObj.initContent();
          itemModelList.push(
             {
@@ -125,7 +125,7 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
                      }
                   }
 
-                  if ((this.descriptor as Args_AbstractTab).children.length > 0) {
+                  if ((this.initArgs as Args_AbstractTab).children.length > 0) {
                      try {
                         await thisX.tabSelected(0); // initialize the first tab on start
                      } catch (ex) {
@@ -145,7 +145,7 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
 
 
    async tabSelected(index: number) {
-      if (index < 0 || index >= this.descriptor.children.length)
+      if (index < 0 || index >= this.initArgs.children.length)
          return;
       
       let thisX = this;
@@ -155,7 +155,7 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
       // this is ABSOLUTELY necessary in order to give the HTML in the tab control
       // a chance to be inserted. Without this, you get very weird Syncfusion EJ2
       // error about parts of the widgets being undefined during refresh
-      let tabObj: AbstractWidget = this.descriptor.children[index];
+      let tabObj: AbstractWidget = this.initArgs.children[index];
       if (tabObj) {
          let initialized: boolean = tabObj.initialized;
          if (!tabObj.initialized) {
@@ -217,7 +217,7 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
    } // initializeTab
 
    resetTabInitializations() {
-      for (let tabObj of this.descriptor.children) {
+      for (let tabObj of this.initArgs.children) {
          tabObj.initialized = false; // reset the state to not initialized
       }
    } // resetTabInitializations
@@ -225,7 +225,7 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
 
    async localDestroyImplementation() {
       // destroy the children then this object
-      for (let tabObj of this.descriptor.children) {
+      for (let tabObj of this.initArgs.children) {
          await tabObj.destroy();
       }
       if (this.obj)
@@ -233,13 +233,13 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
    }
 
    async localClearImplementation() {
-      for (let tabObj of this.descriptor.children) {
+      for (let tabObj of this.initArgs.children) {
          await tabObj.clear();
       }
    }
 
    async localRefreshImplementation() {
-      for (let tabObj of this.descriptor.children) {
+      for (let tabObj of this.initArgs.children) {
          await tabObj.refresh();
       }
    }

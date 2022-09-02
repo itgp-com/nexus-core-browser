@@ -4,20 +4,20 @@
 import {BaseListener}                                                                                                                             from "../BaseListener";
 import {getRandomString, hget, htmlToElement, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils, IKeyValueString, StringArg, stringArgVal} from "../BaseUtils";
 import {Err}                                                                                                                                      from "../Core";
-import {getErrorHandler}                                                                                                    from "../CoreErrorHandling";
-import {ExceptionEvent}                                                                                                     from "../ExceptionEvent";
-import {ArgsPost, asyncPostRetVal}                                                                                          from "../HttpUtils";
-import {ListenerHandler, StopListenerChain}                                                                                 from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                      from "./BeforeInitLogicListener";
-import {ClientVersion, getClientVersion}                                                                                    from "./ClientVersion";
-import {DialogInfo}                                                                                                         from "./controls/DialogInfo";
-import {IDialogWindow}                                                                                                      from "./controls/IDialogWindow";
-import {ScreenMeta}                                                                                                         from "./ScreenMeta";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                                       from "./WidgetErrorHandler";
-import {enableRipple}                                                                                                       from "@syncfusion/ej2-base";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                                          from "@syncfusion/ej2-popups";
-import {AxiosResponse}                                                                                                      from "axios";
-import {isArray}                                                                                                            from "lodash";
+import {getErrorHandler}                                                                                                                          from "../CoreErrorHandling";
+import {ExceptionEvent}                                                                                                                           from "../ExceptionEvent";
+import {ArgsPost, asyncPostRetVal}                                                                                                                from "../HttpUtils";
+import {ListenerHandler, StopListenerChain}                                                                                                       from "../ListenerHandler";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                                            from "./BeforeInitLogicListener";
+import {ClientVersion, getClientVersion}                                                                                                          from "./ClientVersion";
+import {DialogInfo}                                                                                                                               from "./controls/DialogInfo";
+import {IDialogWindow}                                                                                                                            from "./controls/IDialogWindow";
+import {ScreenMeta}                                                                                                                               from "./ScreenMeta";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                                                             from "./WidgetErrorHandler";
+import {enableRipple}                                                                                                                             from "@syncfusion/ej2-base";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                                                                from "@syncfusion/ej2-popups";
+import {AxiosResponse}                                                                                                                            from "axios";
+import {isArray}                                                                                                                                  from "lodash";
 
 enableRipple(true);
 
@@ -188,7 +188,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private readonly _afterRepaintWidgetListeners: ListenerHandler<AfterRepaintWidgetEvent, AfterRepaintWidgetListener>    = new ListenerHandler<AfterRepaintWidgetEvent, AfterRepaintWidgetListener>();
    private readonly _parentAddedListener: ListenerHandler<ParentAddedEvent, ParentAddedListener>                          = new ListenerHandler<ParentAddedEvent, ParentAddedListener>();
    private _widgetErrorHandler: WidgetErrorHandler;
-   private _args_AbstractWidget: Args_AbstractWidget;
+   protected _initArgs: Args_AbstractWidget;
 
    private _hackRefreshOnWgtTabInit: boolean = true;
 
@@ -328,13 +328,15 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       this._childrenMap.forEach((value, key) => {
          this._removeChildByTagId(key);
       });
-
-      if (newChildren) {
+      if (newChildren == null) {
+         this._childrenMap.clear(); // destroy everything
+      } else {
          newChildren.forEach(child => {
             if (child)
                this.addChild(child);
          });
       } // if children
+
    }
 
    get hget(): HTMLElement {
@@ -379,7 +381,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    }
 
    protected async initialize_AbstractWidget(args: Args_AbstractWidget) {
-      this._args_AbstractWidget = args;
+      this._initArgs = args;
       if (args.hackRefreshOnWgtTabInit != null)
          this.hackRefreshOnWgtTabInit = args.hackRefreshOnWgtTabInit;
       addWidgetClass(args, 'AbstractWidget');
@@ -407,13 +409,13 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     *
     * It exists because a tab does not make the HTML available until this point, and only gets called if initialized is false
     */
-   async initLogicAsTab(arg: Args_WgtTab_Action) {
+   async initLogicAsTab(_arg: Args_WgtTab_Action) {
    }
 
    /**
     * Gets called every time the tab is selected
     */
-   async selectedAsTab(arg: Args_WgtTab_Action) {
+   async selectedAsTab(_arg: Args_WgtTab_Action) {
    }
 
    /**
@@ -494,18 +496,18 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       let thisX: AbstractWidget = this;
 
       await updateWidgetInDOM({
-                                    parentHTMLElement: container,
-                                    newWidget:         this,
-                                    onInstantiated:    (args: Args_onInstantiated) => {
+                                 parentHTMLElement: container,
+                                 newWidget:         this,
+                                 onInstantiated:    (args: Args_onInstantiated) => {
 
-                                       //attach Ctrl-Alt-double-click on container
-                                       if (thisX.doRegisterInfo)
-                                          thisX.registerInfo(container);
+                                    //attach Ctrl-Alt-double-click on container
+                                    if (thisX.doRegisterInfo)
+                                       thisX.registerInfo(container);
 
-                                       if (callback)
-                                          callback(args);
-                                    },
-                                 });
+                                    if (callback)
+                                       callback(args);
+                                 },
+                              });
    } // initContentAndLogic
 
    registerInfo(container: HTMLElement) {
@@ -648,9 +650,9 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
 
          // assign fully instantiated instance to a variable
-         if (this._args_AbstractWidget?.onInitialized) {
+         if (this._initArgs?.onInitialized) {
             try {
-               this._args_AbstractWidget.onInitialized(this);
+               this._initArgs.onInitialized(this);
             } catch (ex) {
                console.error(ex);
                getErrorHandler().displayExceptionToUser(ex)
@@ -688,10 +690,10 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    async refresh() {
       if (this.initialized) {
          let allowRefreshToContinue: boolean = true;
-         if (this._args_AbstractWidget?.onBeforeRefresh) {
+         if (this._initArgs?.onBeforeRefresh) {
 
             try {
-               allowRefreshToContinue = this._args_AbstractWidget.onBeforeRefresh({widget: this});
+               allowRefreshToContinue = this._initArgs.onBeforeRefresh({widget: this});
             } catch (ex) {
                console.log(ex);
             }
@@ -711,9 +713,9 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
          await this.localRefreshImplementation();
 
-         if (this._args_AbstractWidget?.onAfterRefresh) {
+         if (this._initArgs?.onAfterRefresh) {
             try {
-               this._args_AbstractWidget.onAfterRefresh({widget: this});
+               this._initArgs.onAfterRefresh({widget: this});
             } catch (ex) {
                console.log(ex);
             }
@@ -769,6 +771,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * If successful, the actual value inside the RetVal object is returned
     * On error any returned error/exception is caught and handled either by the optionalErrorHandler passed in, or by the default handleError method of the widget,  and 'undefined' is returned in that case.
     * @param argsPost
+    * @param optionalErrorHandler
     */
    async asyncPostRetVal<T = any>(argsPost: ArgsPost<T>, optionalErrorHandler ?: (err: (AxiosResponse | Err | Error | ExceptionEvent | any)) => void): Promise<T> {
       try {
@@ -905,7 +908,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       if (tagId) {
          let value = this._childrenMap.get(tagId);
          if (value) {
-            if( value.parent == this) {
+            if (value.parent == this) {
                // only remove if this component is still the parent
                value.parent = null; // untag parent from this
             }
@@ -1088,10 +1091,8 @@ export function findForm(widget: AbstractWidget): any {
  * @param instance Widget instance (set as any to eliminate any circular dependencies)
  */
 export function isWgtForm(instance: any): boolean {
-   if (instance && instance.wgtForm) {
-      return true;
-   }
-   return false;
+   return (instance && instance.wgtForm);
+
 } // isForm
 
 /**
@@ -1144,7 +1145,6 @@ export abstract class AbstractWidgetStatic<T = any> extends AbstractWidget<T> {
 }
 
 
-
 /**
  * Append classes to args.htmlTagClass.
  *
@@ -1152,9 +1152,9 @@ export abstract class AbstractWidgetStatic<T = any> extends AbstractWidget<T> {
  * @param args the arguments passed to the widget
  * @param additionalClasses
  */
-export function addWidgetClass(args: IArgs_HtmlDecoration, additionalClasses: (string | string[])):Args_AbstractWidget  {
+export function addWidgetClass(args: IArgs_HtmlDecoration, additionalClasses: (string | string[])): Args_AbstractWidget {
    args = IArgs_HtmlTag_Utils.init(args);
-   
+
    if (!additionalClasses)
       return args;
 

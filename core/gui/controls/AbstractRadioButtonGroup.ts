@@ -1,6 +1,6 @@
 import {RadioButton, RadioButtonModel}                                 from '@syncfusion/ej2-buttons';
 import {getRandomString, IArgs_HtmlTag_Utils, StringArg, stringArgVal} from "../../BaseUtils";
-import {DataProvider, IDataProviderSimple}                             from "../../data/DataProvider";
+import {DataProvider}                                                  from "../../data/DataProvider";
 import {getErrorHandler}                                               from "../../CoreErrorHandling";
 import {isFunction, isString}                                          from "lodash";
 import {AnyWidget, Args_AnyWidget}                                     from "../AnyWidget";
@@ -44,8 +44,8 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
    protected async initialize_AbstractRadioButtonGroup(args: ARG_CLASS) {
       this.obj = new Map<string, RadioButton>();
 
-      args = IArgs_HtmlTag_Utils.init(args) as ARG_CLASS;
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args) as ARG_CLASS;
+      this.initArgs = args;
       if (!args.ej)
          args.ej = {};
 
@@ -58,15 +58,15 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
    async localContentBegin(): Promise<string> {
       let x: string = "";
 
-      x += `<div id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all((this.descriptor as ARG_CLASS).wrapper)}>`;
+      x += `<div id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all((this.initArgs as ARG_CLASS).wrapper)}>`;
 
-      if ((this.descriptor as ARG_CLASS).records != null && (this.descriptor as ARG_CLASS).records.length > 0) {
+      if ((this.initArgs as ARG_CLASS).records != null && (this.initArgs as ARG_CLASS).records.length > 0) {
 
          if (!this.descriptorLocal.horizontalLayout) {
             x += `<ul class="wgt-radiobutton-ul">`
          }
 
-         let n = (this.descriptor as ARG_CLASS).records.length;
+         let n = (this.initArgs as ARG_CLASS).records.length;
          for (let i = 0; i < n; i++) {
             let record = this.descriptorLocal.records[i];
 
@@ -86,6 +86,7 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
                   } else if (isString(this.descriptorLocal.cssButtonClass)) {
                      extraClasses += this.descriptorLocal.cssButtonClass;
                   } else {
+                     // noinspection ExceptionCaughtLocallyJS
                      throw 'The cssButtonClass property in AbstractWgtRadioButton arguments is neither a string or a function';
                   }
                }
@@ -122,8 +123,8 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
    async localLogicImplementation(): Promise<void> {
       let thisX = this;
       await super.localLogicImplementation();
-      let args = this.descriptor as ARG_CLASS;
-      let ej   = this.descriptor.ej;
+      let args = this.initArgs as ARG_CLASS;
+      let ej   = this.initArgs.ej;
 
       if (args.records != null && args.records.length > 0) {
          let n = args.records.length;
@@ -165,7 +166,7 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
                thisX.previousValue = thisX.value;
                thisX.value         = evt.value
 
-               await thisX._onValueChanged();
+               await thisX.updateDataProvider();
 
                if (userChangeMethod) {
                   try {
@@ -202,10 +203,8 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
       if (this.obj && this.descriptorLocal?.dataProviderName) {
          let data             = DataProvider.byName(this, this.descriptorLocal.dataProviderName);
          let value: string    = '';
-         let enabled: boolean = false;
          if (data) {
             value   = data[this.descriptorLocal.propertyName];
-            enabled = true; // there is data so it's enabled
          }
 
          this.value         = value;
@@ -217,22 +216,19 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
 
    async localDestroyImplementation() {
       await super.localDestroyImplementation();
-      (this.descriptor as ARG_CLASS)        = null;
-      this._radioButton = null;
+      (this.initArgs as ARG_CLASS) = null;
+      this._radioButton            = null;
       this._label       = null;
       this.value        = null;
    }
 
-   getDataProviderSimple(): IDataProviderSimple {
-      let dataProvider = DataProvider.dataProviderByName(this, (this.descriptor as ARG_CLASS).dataProviderName);
-      return dataProvider;
-   }
 
    get value():string {
       return super.value;
    }
 
    set value(value: string) {
+      //TODO Add call to super.value to update dataProvider
       let stringValue = (value == null ? null : value.toString());
       if (stringValue == this.descriptorLocal?.not_selected_value) {
          if (this._radioButton)
@@ -257,7 +253,7 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
 
 
    get descriptorLocal(): Args_AbstractRadioButtonGroup {
-      return (this.descriptor as ARG_CLASS);
+      return (this.initArgs as ARG_CLASS);
    }
 
    get label(): string {

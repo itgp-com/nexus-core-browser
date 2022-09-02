@@ -1,6 +1,6 @@
 import {getRandomString, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal} from "../../BaseUtils";
 import {applyHtmlDecoration}                                                                                from "../../CoreUtils";
-import {DataProvider, IDataProviderSimple}                                                                  from "../../data/DataProvider";
+import {DataProvider}                                                                                       from "../../data/DataProvider";
 import {TextBox, TextBoxModel}                                                                              from "@syncfusion/ej2-inputs";
 import {AnyWidget, Args_AnyWidget}                                                                          from "../AnyWidget";
 
@@ -93,14 +93,14 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
 
    protected async initialize_AbstractText(args: Args_AbstractText) {
 
-      args            = IArgs_HtmlTag_Utils.init(args);
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args);
+      this.initArgs = args;
       if (!args.ej)
          args.ej = {};
 
       let ej: TextBoxModel = args.ej;
 
-      this.descriptor         = args;
+      this.initArgs           = args;
       this.stayFocusedOnError = args.stayFocusedOnError;
       this.previousValue      = ''; // initialize at ''
 
@@ -130,7 +130,7 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
          if (initial_line_count == null)
             initial_line_count = 2; // default to 2 lines
 
-         let default_created_function: (ev: any) => void = (ev: any) => {
+         let default_created_function: (ev: any) => void = (_ev: any) => {
             this.obj.addAttributes({rows: '' + initial_line_count});
 
             this.obj.element.style.height = "auto";
@@ -138,15 +138,6 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
          }
 
          let created_function: (ev: any) => void = args?.multiline?.autoresize_created_function_override;
-         // if (created_function == null) {
-         //    if (autoresize) {
-         //       created_function = (ev: any) => {
-         //          this.obj.element.style.height = "auto";
-         //          this.obj.element.style.height = (this.obj.element.scrollHeight - 7) + "px";
-         //       }
-         //    }
-         // }
-
 
          let input_function: (ev: any) => void = args?.multiline?.autoresize_input_function_override;
          if (input_function == null) {
@@ -211,16 +202,16 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
    async localContentBegin(): Promise<string> {
       let x: string = "";
 
-      let args: Args_AbstractText = (this.descriptor as Args_AbstractText);
+      let args: Args_AbstractText = (this.initArgs as Args_AbstractText);
       if (args.wrapper) {
          args.wrapper = IArgs_HtmlTag_Utils.init(args.wrapper);
          x += `<${args.wrapper.htmlTagType} id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(args.wrapper)}>`;
       }
 
 
-      args.htmlTagType = 'input';
+      args.htmlTagType                           = 'input';
       args.htmlOtherAttr['data-msg-containerid'] = this.errorTagID;
-      args.htmlOtherAttr['name'] = args.propertyName;
+      args.htmlOtherAttr['name']                 = args.propertyName;
       if (args.required) {
          args.includeErrorLine          = true;
          args.htmlOtherAttr['required'] = null;
@@ -243,21 +234,25 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
 
    async localLogicImplementation() {
       let thisX = this;
-      let args  = this.descriptor as Args_AbstractText;
+      let args  = this.initArgs as Args_AbstractText;
       args.ej   = args.ej || {}; // ensure it's not null
 
-      let blur = args.ej.blur;
+      let originalBlurMethod = args.ej.blur;
       if (args.updateOnBlurDisabled) {
          // do not add a blur event
       } else {
          args.ej.blur = async (arg, rest) => {
 
-            await thisX._onValueChanged();      // local onBlur
+            let valid: boolean = await thisX._localUpdateDataProvider();      // local onBlur
+            if (valid) {
 
-            if (blur) {
-               // execute the passed in blur
-               blur(arg, rest);
-            }
+               thisX.value = arg.value; // update value based on change value
+
+               if (originalBlurMethod) {
+                  // execute the passed in blur
+                  originalBlurMethod.call(thisX, arg, rest);
+               } // if (originalBlurMethod)
+            } // if (valid)
          };
       } // if updateOnBlurDisabled
 
@@ -324,19 +319,19 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
 
    async localRefreshImplementation(): Promise<void> {
 
-      if (this.obj && this.descriptor?.dataProviderName && this.descriptor?.propertyName) {
-         let data             = DataProvider.byName(this, this.descriptor.dataProviderName);
+      if (this.obj && this.initArgs?.dataProviderName && this.initArgs?.propertyName) {
+         let data             = DataProvider.byName(this, this.initArgs.dataProviderName);
          let value: string    = '';
          let enabled: boolean = false;
          if (data) {
-            value   = data[this.descriptor.propertyName];
+            value   = data[this.initArgs.propertyName];
             enabled = true; // there is data so it's enabled
          }
 
          this.value         = value;
          this.previousValue = value;
 
-         if (this.descriptor?.ej?.enabled) {
+         if (this.initArgs?.ej?.enabled) {
             // if the general properties allow you to enable, the enable if there's data, disable when there's no data link
             this.obj.enabled = enabled;
          }
@@ -371,20 +366,28 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
       if (this.obj) {
          val            = this.convertValueBeforeSet(val);
          this.obj.value = val;
+         super.value    = val;
       }
    }
 
-   convertValueBeforeSet(val: string): string {
+   convertValueBeforeSet(val: any): string {
       if (val == null)
          val = ''; // default null, undefined to ''
-      return val;
+      return val.toString();
    }
 
-   getDataProviderSimple(): IDataProviderSimple {
-      let dataProvider: IDataProviderSimple = null;
-      if (this.descriptor.dataProviderName)
-         dataProvider = DataProvider.dataProviderByName(this, this.descriptor.dataProviderName);
-      return dataProvider;
-   }
+   protected async _localUpdateDataProvider(): Promise<boolean> {
+      let thisX = this;
+      let valid = await thisX.validateForm(this);
+      if (!valid) {
+         if (this.stayFocusedOnError) {
+            if (this.hgetInput) {
+               this.hgetInput.focus(); // just stay in this field
+            }
+         }
+      } // if (!validated)
+      return valid;
+
+   } // _localUpdateDataProvider
 
 } // main class

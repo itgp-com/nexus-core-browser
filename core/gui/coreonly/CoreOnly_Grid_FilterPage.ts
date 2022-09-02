@@ -48,7 +48,7 @@ export class CoreOnly_Grid_FilterPage<T = any> extends AbstractGrid {
          },
       };
 
-      let localArgs: Args_CoreOnly_Grid_FilterPage = this.descriptor as Args_CoreOnly_Grid_FilterPage;
+      let localArgs: Args_CoreOnly_Grid_FilterPage = this.initArgs as Args_CoreOnly_Grid_FilterPage;
 
       if (!localArgs.filteringDisabled){
          this.gridModel = {
@@ -56,7 +56,7 @@ export class CoreOnly_Grid_FilterPage<T = any> extends AbstractGrid {
             ...{
                allowFiltering: true,
                filterSettings: {
-                  columns:             (thisX.descriptor as any)?.filters, // if filters are set, use them
+                  columns:             (thisX.initArgs as any)?.filters, // if filters are set, use them
                   showFilterBarStatus: true,
                   mode:                "Immediate",
                   immediateModeDelay:  IMMEDIATE_MODE_DELAY,

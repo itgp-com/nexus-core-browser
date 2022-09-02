@@ -1,5 +1,5 @@
 import {AbstractButton, Args_AbstractButton} from "../controls/AbstractButton";
-import {IArgs_HtmlTag_Utils, stringArgVal}   from "../../BaseUtils";
+import {IArgs_HtmlTag_Utils}                 from "../../BaseUtils";
 import {addWidgetClass}                      from "../AbstractWidget";
 
 export class Args_CoreOnly_AbstractButton_Primary extends Args_AbstractButton {
@@ -35,7 +35,7 @@ export abstract class CoreOnly_AbstractButton_Primary extends AbstractButton {
 
    async localClearImplementation(): Promise<void> {
       await super.localLogicImplementation();
-      if (!(this.descriptor as Args_CoreOnly_AbstractButton_Primary).enterKeyEnabled) {
+      if (!(this.initArgs as Args_CoreOnly_AbstractButton_Primary).enterKeyEnabled) {
          //Do not respond to enter Key
          this.hgetButton.onkeydown = (ev) => {
             if (ev.key === 'Enter' && !ev.ctrlKey && !ev.altKey && !ev.metaKey && !ev.shiftKey) {

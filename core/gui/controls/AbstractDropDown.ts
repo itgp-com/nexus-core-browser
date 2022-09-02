@@ -33,8 +33,8 @@ export abstract class AbstractDropDown<ARG_CLASS extends Args_AbstractDropDown =
    }
 
    protected async initialize_AbstractDropDown(args: ARG_CLASS) {
-      args            = IArgs_HtmlTag_Utils.init(args) as ARG_CLASS;
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args) as ARG_CLASS;
+      this.initArgs = args;
 
       if (args.sortOrder) {
          args.ej.sortOrder = args.sortOrder;
@@ -48,13 +48,13 @@ export abstract class AbstractDropDown<ARG_CLASS extends Args_AbstractDropDown =
 
       let x: string = "";
 
-      x += `<div id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(this.descriptor.wrapper)}>`;
+      x += `<div id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(this.initArgs.wrapper)}>`;
 
-      if ((this.descriptor as ARG_CLASS).label) {
-         x += `    <div id="${this.labelTagID}" class="e-float-text e-label-top">${(this.descriptor as ARG_CLASS).label.escapeHTML()}</div>`;
+      if ((this.initArgs as ARG_CLASS).label) {
+         x += `    <div id="${this.labelTagID}" class="e-float-text e-label-top">${(this.initArgs as ARG_CLASS).label.escapeHTML()}</div>`;
       }
 
-      x += `<input type="text" id="${this.tagId}" name="${this.descriptor.propertyName}"/>`;
+      x += `<input type="text" id="${this.tagId}" name="${this.initArgs.propertyName}"/>`;
       x += "</div>";
 
       return x;
@@ -62,7 +62,7 @@ export abstract class AbstractDropDown<ARG_CLASS extends Args_AbstractDropDown =
 
 
    async localLogicImplementation() {
-      let args = this.descriptor;
+      let args = this.initArgs;
       args.ej  = args.ej || {};
       let ej   = args.ej;
 
@@ -80,21 +80,21 @@ export abstract class AbstractDropDown<ARG_CLASS extends Args_AbstractDropDown =
             // https://ej2.syncfusion.com/documentation/drop-down-list/how-to/value-change/
 
             let currentValue = ev.value;
-            if (this.descriptor.dataProviderName != null) {
-               let dataProvider = DataProvider.dataProviderByName(this, this.descriptor.dataProviderName);
+            if (this.initArgs.dataProviderName != null) {
+               let dataProvider = DataProvider.dataProviderByName(this, this.initArgs.dataProviderName);
                if (dataProvider != null) {
                   let record = dataProvider.dataValue;
 
                   if (record != null) {
-                     let previousDataValue = record[this.descriptor.propertyName];
+                     let previousDataValue = record[this.initArgs.propertyName];
 
                      // make the change
-                     record[this.descriptor.propertyName] = currentValue;
+                     record[this.initArgs.propertyName] = currentValue;
 
                      if (currentValue != previousDataValue) {
                         // trigger the change event
                         let evt: DataProviderChangeEvent<any> = {
-                           propertyName:  this.descriptor.propertyName,
+                           propertyName:  this.initArgs.propertyName,
                            value:         currentValue,
                            previousValue: previousDataValue,
                         };
@@ -121,18 +121,18 @@ export abstract class AbstractDropDown<ARG_CLASS extends Args_AbstractDropDown =
 
    async localRefreshImplementation(): Promise<void> {
       if (this.obj) {
-         let data             = DataProvider.byName(this, this.descriptor.dataProviderName);
+         let data             = DataProvider.byName(this, this.initArgs.dataProviderName);
          let value: string    = '';
          let enabled: boolean = false;
          if (data) {
-            value   = data[this.descriptor.propertyName];
+            value   = data[this.initArgs.propertyName];
             enabled = true; // there is data so it's enabled
          }
 
          this.value         = value;
          this.previousValue = value;
 
-         if (this.descriptor.ej.enabled) {
+         if (this.initArgs.ej.enabled) {
             // if the general properties allow you to enable, the enable if there's data, disable when there's no data link
             this.obj.enabled = enabled;
          }
@@ -153,6 +153,7 @@ export abstract class AbstractDropDown<ARG_CLASS extends Args_AbstractDropDown =
                this.obj.clear();
             } else {
                this.obj.value = val;
+               super.value = val;
             }
          }
       } catch (ex) {

@@ -1,9 +1,9 @@
 import {BaseListener}                                                                                                    from "../BaseListener";
 import {classArgInstanceVal, getRandomString, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction} from "../BaseUtils";
 import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}                                                      from "../data/DataProvider";
-import {ListenerHandler}                                                                                            from "../ListenerHandler";
-import {AbstractWidget, addWidgetClass, AfterInitLogicEvent, AfterInitLogicListener, Args_AbstractWidget, findForm} from "./AbstractWidget";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                              from "./BeforeInitLogicListener";
+import {ListenerHandler}                                                                                                 from "../ListenerHandler";
+import {AbstractWidget, addWidgetClass, AfterInitLogicEvent, AfterInitLogicListener, Args_AbstractWidget, findForm}      from "./AbstractWidget";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                   from "./BeforeInitLogicListener";
 import {Component}                                                                                                       from "@syncfusion/ej2-base";
 import {isFunction}                                                                                                      from "lodash";
 
@@ -33,12 +33,8 @@ export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
    validation ?: any;
 
    /**
-    * @deprecated use localContentEnd()
-    * This is a static method because a class method would be required to be instantiated when  {@link htmlTextBoxFloating} is called with {colName:'aaa',...}
-    * See: https://stackoverflow.com/questions/47239507/property-getreadableschedule-is-missing-in-type
-    * @param options
+    * The {@link AbstractWidget} that contains this instance
     */
-
    parent ?: AbstractWidget;
 
    children ?: AbstractWidget[];
@@ -64,7 +60,7 @@ export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
 
 
    /**
-    * If thisis present,  a new wrapper div is created around the actual input element.
+    * If this is present,  a new wrapper div is created around the actual input element.
     */
    wrapper           ?: IArgs_HtmlTag;
    ej                ?: CONTROLMODEL
@@ -131,6 +127,7 @@ export interface ISimpleValue<T> {
    previousValue: T;
    propertyName: string;
 }
+
 /**
  * The generic root component of all the widgets.
  *
@@ -142,7 +139,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
    private _obj: EJ2COMPONENT;
    // noinspection SpellCheckingInspection
-   private _descriptor: ARGS_ANY_WIDGET;
+   // private _descriptor: ARGS_ANY_WIDGET;
    private _args_AnyWidgetInitializedListeners: ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener> = new ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener>();
 
 
@@ -181,8 +178,8 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
          args = <ARGS_ANY_WIDGET>new Args_AnyWidget();
       addWidgetClass(args, 'AnyWidget');
 
-      args = IArgs_HtmlTag_Utils.init(args) as ARGS_ANY_WIDGET;
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args) as ARGS_ANY_WIDGET;
+      this.initArgs = args;
 
       initialize_Args_AnyWidget(args, this);
 
@@ -245,7 +242,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       }
 
 
-      this.descriptor = args;
+      this.initArgs = args;
       await super.initialize_AbstractWidget(args);
    } // initAnyWidget
 
@@ -254,24 +251,24 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
     * Implementation based on initContent present in descriptor and children
     */
    async localLogicImplementation(): Promise<void> {
-      if (this.descriptor && this.descriptor.initLogic)
-         this.descriptor.initLogic();
+      if (this.initArgs && this.initArgs.initLogic)
+         this.initArgs.initLogic();
    } // _initLogic
 
    /**
     * Implementation based on initContent present in descriptor and children
     */
    async localClearImplementation(): Promise<void> {
-      if (this.descriptor && this.descriptor.clear)
-         this.descriptor.clear();
+      if (this.initArgs && this.initArgs.clear)
+         this.initArgs.clear();
    } // _clear
 
    /**
     * Implementation based on initContent present in descriptor and children
     */
    async localRefreshImplementation(): Promise<void> {
-      if (this.descriptor && this.descriptor.refresh)
-         this.descriptor.refresh();
+      if (this.initArgs && this.initArgs.refresh)
+         this.initArgs.refresh();
    } // _refresh
 
 
@@ -279,19 +276,49 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
     * Implementation based on initContent present in descriptor and children
     */
    async localDestroyImplementation(): Promise<void> {
+      try {
+         if (this.initArgs && this.initArgs.destroy)
+            this.initArgs.destroy();
+      } catch (e) {
+         console.error(e);
+      }
 
-      if (this.descriptor && this.descriptor.destroy)
-         this.descriptor.destroy();
+      this._value         = null; // release memory
+      this._previousValue = null;
 
       // just in case
       if (this.obj && !(this.obj as any).isDestroyed && (this.obj as any).destroy != null) {
          // Destroy this object itself
          try {
             await (this.obj as any).destroy();
-         } catch (ex) {
-            console.log(ex);
+         } catch (e) {
+            console.error(e);
          }
       }
+
+      this._obj                                = null;
+      this._initArgs                            = null;
+      this._args_AnyWidgetInitializedListeners = null;
+      this.wrapperTagID = null;
+      this._propertyName = null;
+      this.labelTagID =null;
+      this.errorTagID=null;
+      this.contentBeginFromExtendingClass = null;
+      this.contentEndFromExtendingClass = null;
+
+      this.initialized = false;
+      this.children = null;
+      this.tagId = null;
+      this.title = null;
+      this.parent = null;
+      this.dialogWindowContainer = null;
+      this.beforeInitLogicListeners.clear();
+      this.afterInitLogicListeners.clear();
+      this.beforeRepaintWidgetListeners.clear();
+      this.afterRepaintWidgetListeners.clear();
+      this.parentAddedListeners.clear();
+      this.widgetErrorHandler = null;
+
 
    } // _destroy
 
@@ -307,12 +334,12 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       this._obj = value;
    }
 
-   get descriptor(): ARGS_ANY_WIDGET {
-      return this._descriptor;
+   get initArgs(): ARGS_ANY_WIDGET {
+      return this._initArgs as ARGS_ANY_WIDGET;
    }
 
-   set descriptor(value: ARGS_ANY_WIDGET) {
-      this._descriptor = value;
+   set initArgs(value: ARGS_ANY_WIDGET) {
+      this._initArgs = value;
    }
 
 
@@ -324,23 +351,16 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       this._args_AnyWidgetInitializedListeners = value;
    }
 
+   protected updateDataProvider() {
+      let thisX = this;
 
-   protected async _onValueChanged() {
-      let thisX     = this;
-      let validated = await thisX.validateForm(this);
-      if (!validated) {
-         if (this.stayFocusedOnError) {
-            if (this.hgetInput) {
-               this.hgetInput.focus(); // just stay in this field
-            }
-         }
-         return;  // if not validated , don't execute any of the blur code
-      } // if (!validated)
+      if (!thisX.initArgs?.propertyName)
+         return;
+      if (!thisX.initArgs?.dataProviderName)
+         return;
 
       let currentValue = this.value; // get the actual value from the TextBox EJ2 object
       if (currentValue != this.previousValue) {
-
-
          let dataProvider = this.getDataProviderSimple();
          if (!dataProvider) {
             this.value = this.previousValue;
@@ -391,7 +411,6 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
             dataProvider.fireChange(evt);
          } // if record
-
       } // if (currentValue != this.previousValue)
    } // onBlur
 
@@ -401,23 +420,23 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
     */
    async validateForm(widget: AbstractWidget): Promise<boolean> {
       try {
-         let form: any =  findForm(widget);
+         let form: any = findForm(widget);
          if (form) {
             let formValidator = form.formValidator;
-            if (formValidator && this?.descriptor?.propertyName) {
-               if (this?.descriptor?.validation) {
-                  formValidator.addRules(this.descriptor.propertyName, this.descriptor.validation);
+            if (formValidator && this?.initArgs?.propertyName) {
+               if (this?.initArgs?.validation) {
+                  formValidator.addRules(this.initArgs.propertyName, this.initArgs.validation);
                }
 
 
                if (formValidator.rules) {
-                  if (formValidator.rules[this.descriptor.propertyName]) {
-                     return formValidator.validate(this.descriptor.propertyName); // validate this textfield alone
+                  if (formValidator.rules[this.initArgs.propertyName]) {
+                     return formValidator.validate(this.initArgs.propertyName); // validate this textfield alone
                   }
                }
             }
          } // if form
-         return true; // validated
+         return true; // valid
       } catch (ex) {
          this.handleError(ex);
          return false; // not validated if exception
@@ -435,8 +454,8 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
    getDataProviderSimple(): IDataProviderSimple {
       let dataProvider: IDataProviderSimple = null;
-      if (this.descriptor.dataProviderName != null) {
-         dataProvider = DataProvider.dataProviderByName(this, this.descriptor.dataProviderName);
+      if (this.initArgs.dataProviderName != null) {
+         dataProvider = DataProvider.dataProviderByName(this, this.initArgs.dataProviderName);
       }
       return dataProvider;
    }
@@ -471,16 +490,31 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       return this._value;
    }
 
-   set value(value: DATA_TYPE) {
-      this._value = value;
+   /**
+    * Sets the _value field and calls the {@link updateDataProvider} method
+    * @param val
+    */
+   set value(val: DATA_TYPE) {
+      this._value = val;
+      this.updateDataProvider();
+      this.previousValue = val; // at this point, everything is set in stone, and this is now the previous value
    }
-} // AnyWidget
 
+   /**
+    * Method that is usually called during set value to perform any necessary conversion.
+    * The default {@link set value} implementation in AnyWidget does not call this method, since it's the job of the overriding {@link set value} methods to do so as needed
+    * @param val
+    */
+   convertValueBeforeSet(val: any): any {
+      return val;
+   }
+
+} // AnyWidget
 
 
 export async function localContentBeginStandard(widget: AnyWidget): Promise<string> {
 
-   let args: Args_AnyWidget = widget.descriptor;
+   let args: Args_AnyWidget = widget.initArgs;
 
    args = IArgs_HtmlTag_Utils.init(args);
 
@@ -496,8 +530,8 @@ export async function localContentBeginStandard(widget: AnyWidget): Promise<stri
 } // localContentBeginStandard
 
 export async function localContentEndStandard(widget: AnyWidget): Promise<string> {
-   let args: Args_AnyWidget = widget.descriptor;
-   args = IArgs_HtmlTag_Utils.init(args);
+   let args: Args_AnyWidget = widget.initArgs;
+   args                     = IArgs_HtmlTag_Utils.init(args);
 
    let x: string = "";
    if (args.htmlTagType.toLowerCase() != 'input') // there is no separate end tag for 'input

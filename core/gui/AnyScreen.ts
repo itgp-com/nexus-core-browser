@@ -11,7 +11,7 @@ export class Args_AnyScreen<CONTROLMODEL = any> extends Args_AnyWidget<CONTROLMO
 } //AnyScreenParams
 
 /**
- * Creates a template under the {@link createTemplate.template_id} id, with the body being the {@link createTemplate.templateHtmlContent}
+ * Creates a template under the {@link template_id} id, with the body being the {@link templateHtmlContent}
  * Adds the template id to the screen list of templates
  *
  * <code>
@@ -92,7 +92,6 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
 
 
    initialize_AnyScreen(anyScreenDescriptor ?: Args_AnyScreen) {
-      let thisX = this;
 
       if (anyScreenDescriptor)
          // ensure that default fields are filled, but overwritten by contents of parameter passed in
@@ -102,7 +101,7 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
 
       // Initialize as extension of AnyWidget
       initialize_Args_AnyWidget(anyScreenDescriptor, this);
-      this.descriptor = anyScreenDescriptor;
+      this.initArgs = anyScreenDescriptor;
 
       if (anyScreenDescriptor.overwriteDefaultClasses) {
          // anyScreenDescriptor.overwriteDefaultClasses not null because of the  Args_AnyWidget.initialize call above
@@ -119,8 +118,8 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
    async localContentEnd(): Promise<string> {
       let b: string = '';
 
-      if (this.descriptor?.extraTagIdCount > 0) {
-         for (let i = 0; i < this.descriptor.extraTagIdCount; i++) {
+      if (this.initArgs?.extraTagIdCount > 0) {
+         for (let i = 0; i < this.initArgs.extraTagIdCount; i++) {
             let extraTagId = getRandomString(`extraTagId${i}`);
 
             // store the tag id in the list

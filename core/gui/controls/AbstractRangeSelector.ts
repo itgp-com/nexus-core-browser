@@ -16,8 +16,8 @@ export abstract class AbstractRangeSelector extends AnyWidgetStandard<RangeNavig
 
 
    protected async initialize_AbstractRangeSelector(args: Args_AbstractRangeSelector) {
-      args = IArgs_HtmlTag_Utils.init(args)
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args)
+      this.initArgs = args;
 
       if ( !args.native)
          args.native = {};
@@ -29,7 +29,7 @@ export abstract class AbstractRangeSelector extends AnyWidgetStandard<RangeNavig
 
    async localLogicImplementation() {
       let anchor = this.hget;
-      this.obj   = new RangeNavigator(this.descriptor?.native, anchor);
+      this.obj   = new RangeNavigator(this.initArgs?.native, anchor);
    } // localLogicImplementation
 
 
@@ -49,6 +49,7 @@ export abstract class AbstractRangeSelector extends AnyWidgetStandard<RangeNavig
    set value(value: any) {
       if (this.obj) {
          this.obj.dataSource = value;
+         super.value = value;
       }
    }
 } // main

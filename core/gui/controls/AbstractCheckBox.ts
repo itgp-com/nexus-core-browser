@@ -43,8 +43,8 @@ export abstract class AbstractCheckBox<ARG_CLASS extends Args_AbstractCheckBox =
    }
 
    protected async initialize_AbstractCheckBox(args: ARG_CLASS) {
-      args            = IArgs_HtmlTag_Utils.init(args) as ARG_CLASS;
-      args.ej = args.ej ||{};
+      args    = IArgs_HtmlTag_Utils.init(args) as ARG_CLASS;
+      args.ej = args.ej || {};
       addWidgetClass(args, 'AbstractCheckBox');
 
 
@@ -92,24 +92,26 @@ export abstract class AbstractCheckBox<ARG_CLASS extends Args_AbstractCheckBox =
 
    async localContentBegin(): Promise<string> {
 
-      let args      = (this.descriptor as ARG_CLASS);
+      let args      = (this.initArgs as ARG_CLASS);
       let x: string = "";
 
-      if(args?.wrapper)
+      if (args?.wrapper)
          x += `<${args.wrapper.htmlTagType} id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all(args.wrapper)}>`;
 
-      let label          = null;
-      let padding_suffix = 'bottom';
+      let label                  = null;
+      let paddingSuffix: string = 'bottom';
       switch (args.labelSettings.position) {
          case "Leading":
-            padding_suffix = "right";
+            paddingSuffix = "right";
             break;
          case "Trailing":
-            padding_suffix = "left";
+            paddingSuffix = "left";
       }
 
       if (args.label)
-         label = `    <${args.labelSettings.wrapper.htmlTagType} id="${this.labelTagID}" ${args.labelSettings.wrapper.htmlOtherAttr} class="e-float-text e-label-top ${args.labelSettings.wrapper.htmlTagClass}" style="padding-${padding_suffix}: ${args.labelSettings.margin}px;${args.labelSettings.wrapper.htmlTagStyle}">${args.label.escapeHTML()}</${args.labelSettings.wrapper.htmlTagType}>`;
+         { // noinspection CssUnknownProperty
+            label = `    <${args.labelSettings.wrapper.htmlTagType} id="${this.labelTagID}" ${args.labelSettings.wrapper.htmlOtherAttr} class="e-float-text e-label-top ${args.labelSettings.wrapper.htmlTagClass}" style="padding-${paddingSuffix}: ${args.labelSettings.margin}px;${args.labelSettings.wrapper.htmlTagStyle}">${args.label.escapeHTML()}</${args.labelSettings.wrapper.htmlTagType}>`;
+         }
 
 
       if (label != null && (args.labelSettings.position == "Top" || args.labelSettings.position == "Leading"))
@@ -123,7 +125,7 @@ export abstract class AbstractCheckBox<ARG_CLASS extends Args_AbstractCheckBox =
       if (label != null && (args.labelSettings.position == "Trailing"))
          x += label;
 
-      if(args.wrapper)
+      if (args.wrapper)
          x += `</${args.wrapper.htmlTagType}>`;
 
       return x;
@@ -131,7 +133,7 @@ export abstract class AbstractCheckBox<ARG_CLASS extends Args_AbstractCheckBox =
 
 
    async localLogicImplementation() {
-      let args = (this.descriptor as ARG_CLASS);
+      let args = (this.initArgs as ARG_CLASS);
       let ej   = args.ej;
 
       let argsChange = ej.change;
@@ -154,16 +156,16 @@ export abstract class AbstractCheckBox<ARG_CLASS extends Args_AbstractCheckBox =
          let dataProvider = this.getDataProviderSimple();
          let record       = this.getRecord();
          if (dataProvider != null && record != null) {
-            let modelPreviousDataValue           = record[this.descriptor.propertyName];
-            let modelCurrentValue                = this.convertViewToModel(currentValue);
+            let modelPreviousDataValue         = record[this.initArgs.propertyName];
+            let modelCurrentValue              = this.convertViewToModel(currentValue);
             // make the change
-            record[this.descriptor.propertyName] = modelCurrentValue;
+            record[this.initArgs.propertyName] = modelCurrentValue;
 
 
             if (modelCurrentValue != modelPreviousDataValue) {
                // trigger the change event
                let evt: DataProviderChangeEvent<any> = {
-                  propertyName:  this.descriptor.propertyName,
+                  propertyName:  this.initArgs.propertyName,
                   value:         modelCurrentValue,
                   previousValue: modelPreviousDataValue,
                };
@@ -190,14 +192,14 @@ export abstract class AbstractCheckBox<ARG_CLASS extends Args_AbstractCheckBox =
 
          let data = this.getRecord();
          if (data) {
-            value   = this.convertModelToView(data[this.descriptor.propertyName]);
+            value   = this.convertModelToView(data[this.initArgs.propertyName]);
             enabled = true; // there is data so it's enabled
          }
 
          this.value         = value;
          this.previousValue = value;
 
-         if (this.descriptor.ej.disabled == null) {
+         if (this.initArgs.ej.disabled == null) {
             // if the general properties don't specify something
             this.obj.disabled = !enabled;
          }
@@ -223,6 +225,7 @@ export abstract class AbstractCheckBox<ARG_CLASS extends Args_AbstractCheckBox =
                this.localClearImplementation(); // clear on separate thread (async function call)
             } else {
                this.obj.checked = val; // will trigger a change event
+               super.value      = val;
             }
          }
       } catch (ex) {

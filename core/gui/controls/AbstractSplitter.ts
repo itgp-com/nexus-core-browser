@@ -19,10 +19,9 @@ export abstract class AbstractSplitter extends AnyWidgetStandard<Splitter, Args_
    }
 
    protected async initialize_AbstractSplitter(args: Args_AbstractSplitter) {
-      let thisX = this;
 
-      args = IArgs_HtmlTag_Utils.init(args)
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args)
+      this.initArgs = args;
 
       if (!args.ej)
          args.ej = {};
@@ -38,8 +37,8 @@ export abstract class AbstractSplitter extends AnyWidgetStandard<Splitter, Args_
       // absolutely no super.refresh here because a refresh triggered on the splitter
       // will reset the html and eliminate any initLogic JS from the splitter pane elements
 
-      for (let i = 0; i < this.descriptor.panes.length; i++) {
-         const pane = this.descriptor.panes[i];
+      for (let i = 0; i < this.initArgs.panes.length; i++) {
+         const pane = this.initArgs.panes[i];
          try {
             await pane.refresh();
          } catch(e){
@@ -53,18 +52,18 @@ export abstract class AbstractSplitter extends AnyWidgetStandard<Splitter, Args_
       let anchor = this.hget;
       let thisX  = this;
 
-      if (thisX.descriptor.ej == null)
-         thisX.descriptor.ej = {};
+      if (thisX.initArgs.ej == null)
+         thisX.initArgs.ej = {};
 
-      if (thisX.descriptor?.panes) {
-         let panesOriginal: PanePropertiesModel[] = thisX.descriptor.ej.paneSettings;
+      if (thisX.initArgs?.panes) {
+         let panesOriginal: PanePropertiesModel[] = thisX.initArgs.ej.paneSettings;
          if (panesOriginal == null)
             panesOriginal = []
          let paneCount = panesOriginal.length;
 
          let panes: PanePropertiesModel[] = [];
-         for (let i = 0; i < thisX.descriptor.panes.length; i++) {
-            const pane = thisX.descriptor.panes[i];
+         for (let i = 0; i < thisX.initArgs.panes.length; i++) {
+            const pane = thisX.initArgs.panes[i];
 
             let paneModel: PanePropertiesModel;
 
@@ -76,16 +75,16 @@ export abstract class AbstractSplitter extends AnyWidgetStandard<Splitter, Args_
             panes.push(paneModel);
          } // for
 
-         thisX.descriptor.ej.paneSettings = panes;
+         thisX.initArgs.ej.paneSettings = panes;
       } // if panes
 
-      thisX.obj = new Splitter(this.descriptor?.ej);
+      thisX.obj = new Splitter(this.initArgs?.ej);
       thisX.obj.appendTo(anchor); // doing this in separate line because of EJ2 bug as of 2022-01-03
 
 
-      if (thisX.descriptor?.panes) {
-         for (let i = 0; i < thisX.descriptor.panes.length; i++) {
-            const pane = thisX.descriptor.panes[i];
+      if (thisX.initArgs?.panes) {
+         for (let i = 0; i < thisX.initArgs.panes.length; i++) {
+            const pane = thisX.initArgs.panes[i];
             await pane.initLogic();
          }
       }

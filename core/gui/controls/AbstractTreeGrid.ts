@@ -17,7 +17,6 @@ export abstract class AbstractTreeGrid extends AnyWidgetStandard<TreeGrid, Args_
    }
 
    protected async initialize_AbstractTreeGrid(args: Args_AbstractTreeGrid) {
-      let thisX = this;
       args = IArgs_HtmlTag_Utils.init(args);
       args.ej = args.ej || {};
       await this.initialize_AnyWidgetStandard(args);
@@ -27,7 +26,7 @@ export abstract class AbstractTreeGrid extends AnyWidgetStandard<TreeGrid, Args_
 
    async localLogicImplementation() {
       let anchor = this.hget;
-      this.obj   = new TreeGrid(this.descriptor?.ej);
+      this.obj   = new TreeGrid(this.initArgs?.ej);
       this.obj.appendTo(anchor);
    } // localLogicImplementation
 
@@ -48,7 +47,9 @@ export abstract class AbstractTreeGrid extends AnyWidgetStandard<TreeGrid, Args_
 
    set value(value: Object | DataManager) {
       if (this.obj) {
-         this.obj.dataSource = value;
+         let val = this.convertValueBeforeSet(value)
+         this.obj.dataSource = val;
+         super.value = val;
       }
    }
 

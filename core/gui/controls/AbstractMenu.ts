@@ -23,7 +23,7 @@ export class AbstractMenu extends AnyWidgetStandard<Menu>{
    }
 
    async localLogicImplementation(): Promise<void> {
-      this.obj = new Menu(this.descriptor.ej);
+      this.obj = new Menu(this.initArgs.ej);
       this.obj.appendTo(this.hget);
    }
 
@@ -39,6 +39,7 @@ export class AbstractMenu extends AnyWidgetStandard<Menu>{
    set value(value: any | MenuItemModel[]) {
       if (this.obj) {
          this.obj.items = value;
+         super.value = value;
       }
    }
 

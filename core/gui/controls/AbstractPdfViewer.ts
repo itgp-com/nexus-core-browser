@@ -23,7 +23,7 @@ export abstract class AbstractPdfViewer extends AnyWidgetStandard<PdfViewer, Arg
 
    async localLogicImplementation() {
       let anchor = this.hget;
-      this.obj   = new PdfViewer(this.descriptor?.ej);
+      this.obj   = new PdfViewer(this.initArgs?.ej);
       this.obj.appendTo(anchor);
    } // localLogicImplementation
 

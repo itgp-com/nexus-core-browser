@@ -6,7 +6,6 @@ import {GridWidgetCallBack}                                                     
 import {AbstractDialogWindow, Args_AbstractDialogWindow}                                                                                         from "./AbstractDialogWindow";
 import {DialogWindow}                                                                                                                            from "./DialogWindow";
 import {GridLinkButton}                                                                                                                          from "./GridLinkButton";
-import {GridUnlinkButton}                                                                                                                        from "./GridUnlinkButton";
 import {DataManager, DataResult, Query}                                                                                                          from "@syncfusion/ej2-data";
 import {ColumnModel, Grid, GridModel, PredicateModel, QueryCellInfoEventArgs, RecordDoubleClickEventArgs, RowSelectEventArgs, SortSettingsModel} from "@syncfusion/ej2-grids";
 import {DialogModel}                                                                                                                             from '@syncfusion/ej2-popups';
@@ -167,7 +166,7 @@ export abstract class PopupDialog_Abstract {
       if (this.args.ej == null)
          this.args.ej = {};
 
-      let hideLinkButton: boolean = false;
+      let hideLinkButton: boolean;
       let checkboxButton: boolean = false;
 
       if (this.args.multiSelect) {
@@ -228,6 +227,7 @@ export abstract class PopupDialog_Abstract {
    createDialogModel(): DialogModel {
       let thisX = this;
 
+      // noinspection UnnecessaryLocalVariableJS
       let dialogModel: DialogModel = {
          width:             this.args.width,
          isModal:           true,
@@ -259,6 +259,7 @@ export abstract class PopupDialog_Abstract {
          header = 'Please select:';
 
 
+      // noinspection UnnecessaryLocalVariableJS
       let dialogModel: Args_AbstractDialogWindow = {
          dialogTagId:       thisX.args.dialogTagId,
          content:           this.contentWidget,
@@ -272,7 +273,7 @@ export abstract class PopupDialog_Abstract {
          allowDragging:     true,
          visible:           false,
 
-         onAfterClose: async (instance) => {
+         onAfterClose: async (_instance) => {
             thisX.validateLocalData(thisX);
 
             if (thisX.args.onClose)
@@ -421,7 +422,7 @@ export abstract class PopupDialog_Abstract {
     * Extends WgtGrid and contains Grid as obj property. See ej2Grid for actual Grid
     */
    get wgtPopupDialog_Grid(): WgtPopupDialog_Grid {
-      return (this.contentWidget?.descriptor as any)?.wgtPopupDialogGrid;
+      return (this.contentWidget?.initArgs as any)?.wgtPopupDialogGrid;
    }
 
    get ej2Grid(): Grid {
@@ -455,7 +456,7 @@ export abstract class PopupDialog_Abstract {
 
 
 const BTN_GRID_LINK: GridLinkButton     = new GridLinkButton();
-const BTN_GRID_UNLINK: GridUnlinkButton = new GridUnlinkButton();
+// const BTN_GRID_UNLINK: GridUnlinkButton = new GridUnlinkButton();
 
 /** Adds a link button to a data grid
  *
@@ -481,20 +482,3 @@ async function coreOnlyBtnLinkInstantiate(args: QueryCellInfoEventArgs, callback
                                        toolTip:  toolTip,
                                     });
 }  // link
-function coreOnlyBtnUnlinkGridColumnModel(): ColumnModel {
-   return BTN_GRID_UNLINK.columnModel();
-}  // btnUnlinkGridColumnModel
-/** Instantiate a delete button to display in a data grid.  Used to unlink the record
- *
- * @param args
- * @param callback
- * @param toolTip
- * @param thisX
- */
-function coreOnlyBtnUnlinkInstantiate(args: QueryCellInfoEventArgs, callback ?: GridWidgetCallBack, toolTip?: string): HTMLElement {
-   return BTN_GRID_UNLINK.instantiate({
-                                         args:     args,
-                                         callback: callback,
-                                         toolTip:  toolTip
-                                      });
-}

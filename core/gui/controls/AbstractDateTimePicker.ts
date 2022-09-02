@@ -1,5 +1,5 @@
 import {ChangedEventArgs, DateTimePicker, DateTimePickerModel} from '@syncfusion/ej2-calendars';
-import {DataProvider, IDataProviderSimple}                     from "../../data/DataProvider";
+import {DataProvider}                                          from "../../data/DataProvider";
 import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}                    from "../../BaseUtils";
 import {AnyWidget, Args_AnyWidget}                             from "../AnyWidget";
 import {addWidgetClass}                                        from "../AbstractWidget";
@@ -34,7 +34,7 @@ export abstract class AbstractDateTimePicker extends AnyWidget<DateTimePicker, A
    } // initialize_WgtDateTimePicker_Abstract
 
    async localContentBegin(): Promise<string> {
-      let args: Args_AbstractDateTimePicker = (this.descriptor as Args_AbstractDateTimePicker);
+      let args: Args_AbstractDateTimePicker = (this.initArgs as Args_AbstractDateTimePicker);
 
       let x: string = "";
       if (args.wrapper) {
@@ -72,7 +72,7 @@ export abstract class AbstractDateTimePicker extends AnyWidget<DateTimePicker, A
 
    async localLogicImplementation() {
       let thisX = this;
-      let args  = this.descriptor as Args_AbstractDateTimePicker;
+      let args  = this.initArgs as Args_AbstractDateTimePicker;
       args.ej   = args.ej || {}; // ensure it's not null
 
       let blur = args.ej.blur;
@@ -81,7 +81,7 @@ export abstract class AbstractDateTimePicker extends AnyWidget<DateTimePicker, A
       } else {
          args.ej.blur = (arg, rest) => {
 
-            thisX._onValueChanged();      // local onBlur
+            thisX.updateDataProvider();      // local onBlur
 
             if (blur) {
                // execute the passed in blur
@@ -92,7 +92,7 @@ export abstract class AbstractDateTimePicker extends AnyWidget<DateTimePicker, A
 
       let oldChange  = args.ej.change;
       args.ej.change = (ev: ChangedEventArgs) => {
-         thisX._onValueChanged(); // write to appserver
+         thisX.updateDataProvider(); // write to appserver
 
          if (oldChange)
             oldChange(ev);
@@ -120,19 +120,19 @@ export abstract class AbstractDateTimePicker extends AnyWidget<DateTimePicker, A
 
    async localRefreshImplementation() {
 
-      if (this.obj && this.descriptor.dataProviderName) {
-         let data             = DataProvider.byName(this, this.descriptor.dataProviderName);
+      if (this.obj && this.initArgs.dataProviderName) {
+         let data             = DataProvider.byName(this, this.initArgs.dataProviderName);
          let value: Date      = null;
          let enabled: boolean = false;
          if (data) {
-            value   = data[this.descriptor.propertyName];
+            value   = data[this.initArgs.propertyName];
             enabled = true; // there is data so it's enabled
          }
 
          this.value         = value;
          this.previousValue = value;
 
-         if (this.descriptor.ej.enabled) {
+         if (this.initArgs.ej.enabled) {
             // if the general properties allow you to enable, the enable if there's data, disable when there's no data link
             this.obj.enabled = enabled;
          }
@@ -167,21 +167,15 @@ export abstract class AbstractDateTimePicker extends AnyWidget<DateTimePicker, A
       if (this.obj) {
          val            = this.convertValueBeforeSet(val);
          this.obj.value = val;
+         super.value = val;
       }
    }
 
    convertValueBeforeSet(val: Date): Date {
-      if ((this.descriptor as Args_AbstractDateTimePicker).convertNullToNow) {
+      if ((this.initArgs as Args_AbstractDateTimePicker).convertNullToNow) {
          if (val == null)
             val = new Date(); //to now
       }
       return val;
-   }
-
-   getDataProviderSimple(): IDataProviderSimple {
-      let dataProvider: IDataProviderSimple = null;
-      if (this.descriptor.dataProviderName)
-         dataProvider = DataProvider.dataProviderByName(this, this.descriptor.dataProviderName);
-      return dataProvider;
    }
 } //main

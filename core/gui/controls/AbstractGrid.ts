@@ -53,8 +53,8 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
    }
 
    protected async initialize_AbstractGrid(args: Args_AbstractGrid) {
-      args            = IArgs_HtmlTag_Utils.init(args) as Args_AbstractGrid;
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args) as Args_AbstractGrid;
+      this.initArgs = args;
 
       await this.createGridModel();
 
@@ -89,8 +89,8 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
       /**
        * Add all the column header templates right after the end grid div
        */
-      if (this.descriptor && (this.descriptor as Args_AbstractGrid).columnHeaderTemplates) {
-         for (const value of (this.descriptor as Args_AbstractGrid).columnHeaderTemplates) {
+      if (this.initArgs && (this.initArgs as Args_AbstractGrid).columnHeaderTemplates) {
+         for (const value of (this.initArgs as Args_AbstractGrid).columnHeaderTemplates) {
             if (value && value.templateWidget && value.columnId)
                x += await value.templateWidget.initContent();
          }
@@ -99,8 +99,8 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
    } // localContentEnd
 
    async localLogicImplementation(): Promise<void> {
-      if (this.descriptor && (this.descriptor as Args_AbstractGrid).beforeGridInstantiated) {
-         (this.descriptor as Args_AbstractGrid).beforeGridInstantiated.call(this);
+      if (this.initArgs && (this.initArgs as Args_AbstractGrid).beforeGridInstantiated) {
+         (this.initArgs as Args_AbstractGrid).beforeGridInstantiated.call(this);
       }
       try {
          this.obj = new Grid(this.gridModel);

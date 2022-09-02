@@ -11,3 +11,4 @@
 /ZZZ_Mirror-OVERWRITE-FROM-MEDQC.bat
 /List-circular-dependencies.bat
 /Mirror-to-MEDQC-ONLY.bat
+Mirror-to-MEDQC-ONLY.sh

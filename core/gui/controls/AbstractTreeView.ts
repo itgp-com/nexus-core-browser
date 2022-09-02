@@ -24,7 +24,7 @@ export abstract class AbstractTreeView extends AnyWidgetStandard<TreeView, Args_
 
    async localLogicImplementation() {
       let anchor = this.hget;
-      this.obj   = new TreeView(this.descriptor?.ej);
+      this.obj   = new TreeView(this.initArgs?.ej);
       this.obj.appendTo(anchor);
    } // localLogicImplementation
 
@@ -66,6 +66,7 @@ export abstract class AbstractTreeView extends AnyWidgetStandard<TreeView, Args_
    set value(value: DataManager | { [key: string]: Object }[]) {
       if (this.obj) {
          this.obj.fields.dataSource = value;
+         super.value = value;
       }
    }
 

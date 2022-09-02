@@ -40,8 +40,8 @@ export abstract class AbstractUpload extends AnyWidget<Uploader> {
     */
    protected async initialize_AbstractUpload(args ?: Args_AbstractUpload) {
 
-      args = IArgs_HtmlTag_Utils.init(args) as Args_AbstractUpload;
-      this.descriptor = args;
+      args          = IArgs_HtmlTag_Utils.init(args) as Args_AbstractUpload;
+      this.initArgs = args;
 
       if (!args) {
          args = {propertyName: 'upload'}

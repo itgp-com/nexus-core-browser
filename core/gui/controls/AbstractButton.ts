@@ -46,7 +46,7 @@ export abstract class AbstractButton extends AnyWidgetStandard<Button> {
       args = IArgs_HtmlTag_Utils.init(args);
       args.ej = args.ej ||{};
       addWidgetClass(args, 'AbstractButton');
-      this.descriptor = args; // needed for setting this.value
+      this.initArgs = args; // needed for setting this.value
 
       args = this.customizeArgs(args); // give extending classes a chance to modify
 
@@ -60,8 +60,8 @@ export abstract class AbstractButton extends AnyWidgetStandard<Button> {
       if (args.id)
          args.id = stringArgVal(args.id);
 
-      if (args.children)
-         args.children = args.children;
+      // if (args.children)
+      //    args.children = args.children;
 
       args.htmlTagType           = 'button';
       args.htmlOtherAttr['type'] = 'button';
@@ -72,7 +72,7 @@ export abstract class AbstractButton extends AnyWidgetStandard<Button> {
 
 
    async localLogicImplementation() {
-      let args = this.descriptor as Args_AbstractButton;
+      let args = this.initArgs as Args_AbstractButton;
 
 
       if (args.label)
@@ -87,7 +87,7 @@ export abstract class AbstractButton extends AnyWidgetStandard<Button> {
    }
 
    async localRefreshImplementation() {
-      let args = this.descriptor as Args_AbstractButton
+      let args = this.initArgs as Args_AbstractButton
       if (args.label && isFunction(args.label))
          this.value = args.label; // trigger the function and button repaint
       await super.localRefreshImplementation();
@@ -114,8 +114,7 @@ export abstract class AbstractButton extends AnyWidgetStandard<Button> {
             return; // no changes
       }
 
-      super.value                   = value;
-      let args: Args_AbstractButton = this.descriptor as Args_AbstractButton;
+      let args: Args_AbstractButton = this.initArgs as Args_AbstractButton;
       if (isFunction(value) || isString(value)) {
          try {
             args.label = value;
@@ -125,7 +124,12 @@ export abstract class AbstractButton extends AnyWidgetStandard<Button> {
       }
 
       if (this.obj) {
-         this.obj.content = stringArgVal(args.label);
+         // this is the button content
+         let val = this.convertValueBeforeSet(value);
+         let val2 = stringArgVal(val);
+         this.obj.content = val2;
+         super.value = val2;
       }
    }
+
 } // class WButton

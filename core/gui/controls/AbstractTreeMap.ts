@@ -26,7 +26,7 @@ export abstract class AbstractTreeMap extends AnyWidgetStandard<TreeMap, Args_Ab
 
    async localLogicImplementation() {
       let anchor = this.hget;
-      this.obj   = new TreeMap(this.descriptor?.ej);
+      this.obj   = new TreeMap(this.initArgs?.ej);
       this.obj.appendTo(anchor);
    } // localLogicImplementation
 
@@ -48,6 +48,7 @@ export abstract class AbstractTreeMap extends AnyWidgetStandard<TreeMap, Args_Ab
    set value(value: DataManager | TreeMapAjax | Object[]) {
       if (this.obj) {
          this.obj.dataSource = value;
+         super.value = value;
       }
    }
 
