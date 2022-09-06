@@ -81,7 +81,7 @@ export abstract class AbstractDateTimePicker extends AnyWidget<DateTimePicker, A
       } else {
          args.ej.blur = (arg, rest) => {
 
-            thisX.updateDataProvider();      // local onBlur
+            thisX.updateDataProvider(arg.value);      // local onBlur
 
             if (blur) {
                // execute the passed in blur
@@ -92,7 +92,7 @@ export abstract class AbstractDateTimePicker extends AnyWidget<DateTimePicker, A
 
       let oldChange  = args.ej.change;
       args.ej.change = (ev: ChangedEventArgs) => {
-         thisX.updateDataProvider(); // write to appserver
+         thisX.updateDataProvider(ev.value); // write to appserver
 
          if (oldChange)
             oldChange(ev);

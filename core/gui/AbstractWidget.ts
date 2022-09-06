@@ -42,6 +42,12 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private _widgetErrorHandler: WidgetErrorHandler;
    protected _initArgs: Args_AbstractWidget;
 
+   private _initLogicInProgress: boolean;
+   private _refreshInProgress: boolean;
+   private _repaintInProgress: boolean;
+   private _clearInProgress: boolean;
+   private _destroyInProgress: boolean;
+
    private _hackRefreshOnWgtTabInit: boolean = true;
 
    constructor() {
@@ -247,6 +253,15 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       return '';
    }
 
+   /**
+    * This is the method that gives a component the chance to call any JavaScript and instantiate the widget.
+    *
+    * At this point all the HTML for the component has been created (from calls to {@link localContentBegin} and {@link localContentEnd}
+    *
+    * The method is called from {@link AbstractWidget}'s {@link initLogic} method, after all the children's {@link initLogic} methods have been called.
+    * Therefore, all children JS objects are available at this point in time.
+    *
+    */
    abstract localLogicImplementation(): Promise<void> ;
 
    abstract localDestroyImplementation(): Promise<void>;
@@ -284,6 +299,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
          args = new Args_Repaint(); // default values
 
       try {
+         this.repaintInProgress = true;
          if (this.initialized && this.tagId) {
             if (thisX.beforeRepaintWidgetListeners.countListeners() > 0) {
 
@@ -313,11 +329,14 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                      thisX.resetInitialize();
                   }
 
+                  // re-instantiate the component inside this function (calls setImmediate
                   await updateWidgetInDOM.call(thisX, {
                      parentHTMLElement:         parentNode,
                      newWidget:                 thisX,
                      existingWidgetHTMLElement: existingHtmlElement,
                      callback:                  () => {
+                        this.repaintInProgress = false;
+
                         // execute after repaint if there are any listeners
                         if (thisX.afterRepaintWidgetListeners.countListeners() > 0) {
                            let afterEvent: AfterRepaintWidgetEvent = new AfterRepaintWidgetEvent();
@@ -446,86 +465,101 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       if (!this.initialized) {
          this.initialized = true; // set the flag here, so if we call refresh() from inside the _initLogic implementation, it goes through
 
-         let thisX = this;
-
-         // ------------ Before Init Logic Listeners -----------------------
-         let beforeEvt: BeforeInitLogicEvent = {
-            origin: thisX
-         };
-
          try {
-            await this.beforeInitLogic(beforeEvt)
-         } catch (ex) {
-            thisX.handleError(ex);
-         }
+            this.initLogicInProgress = true;
+            let thisX                 = this;
 
-         if (this.beforeInitLogicListeners.countListeners() > 0) {
-            this.beforeInitLogicListeners.fire({
-                                                  event:            beforeEvt,
-                                                  exceptionHandler: (event) => {
-                                                     thisX.handleError(event);
-                                                  }
-                                               }
-            );
-         }
+            // ------------ Before Init Logic Listeners -----------------------
+            let beforeEvt: BeforeInitLogicEvent = {
+               origin: thisX
+            };
 
-         if (this._children) {
-            for (const child of this._children) {
-               if (child)
-                  await child.initLogic();
-            }
-         } // if ( this.children)
-
-         // run this component's logic after the children
-         await this.localLogicImplementation();
-
-         // ------------ After Init Logic Listeners -----------------------
-         let afterEvt: AfterInitLogicEvent = {
-            origin: thisX
-         };
-
-         try {
-            await this.afterInitLogic(afterEvt)
-         } catch (ex) {
-            thisX.handleError(ex);
-         }
-
-         if (this.afterInitLogicListeners.countListeners() > 0) {
-            this.afterInitLogicListeners.fire({
-                                                 event:            afterEvt,
-                                                 exceptionHandler: (event) => {
-                                                    thisX.handleError(event);
-                                                 }
-                                              },
-            );
-         } // if (this.afterInitLogicListeners.count() > 0)
-
-
-         // assign fully instantiated instance to a variable
-         if (this._initArgs?.onInitialized) {
             try {
-               this._initArgs.onInitialized(this);
+               await this.beforeInitLogic(beforeEvt)
             } catch (ex) {
-               console.error(ex);
-               getErrorHandler().displayExceptionToUser(ex)
+               thisX.handleError(ex);
             }
+
+            if (this.beforeInitLogicListeners.countListeners() > 0) {
+               this.beforeInitLogicListeners.fire({
+                                                     event:            beforeEvt,
+                                                     exceptionHandler: (event) => {
+                                                        thisX.handleError(event);
+                                                     }
+                                                  }
+               );
+            }
+
+            if (this._children) {
+               for (const child of this._children) {
+                  if (child)
+                     await child.initLogic();
+               }
+            } // if ( this.children)
+
+            // run this component's logic after the children
+            await this.localLogicImplementation();
+
+            // ------------ After Init Logic Listeners -----------------------
+            let afterEvt: AfterInitLogicEvent = {
+               origin: thisX
+            };
+
+            try {
+               await this.afterInitLogic(afterEvt)
+            } catch (ex) {
+               thisX.handleError(ex);
+            }
+
+            if (this.afterInitLogicListeners.countListeners() > 0) {
+               this.afterInitLogicListeners.fire({
+                                                    event:            afterEvt,
+                                                    exceptionHandler: (event) => {
+                                                       thisX.handleError(event);
+                                                    }
+                                                 },
+               );
+            } // if (this.afterInitLogicListeners.count() > 0)
+
+
+            // assign fully instantiated instance to a variable
+            if (this._initArgs?.onInitialized) {
+               try {
+                  this._initArgs.onInitialized(this);
+               } catch (ex) {
+                  console.error(ex);
+                  getErrorHandler().displayExceptionToUser(ex)
+               }
+            }
+         } finally {
+            this.initLogicInProgress = false;
          }
-      }
-   }
+      } // if (!this.initialized)
+   } // initLogic
 
 //--------------------------- Find parent instance in different ways ---------------------
 
 // noinspection JSUnusedGlobalSymbols
    async destroy() {
-      this.initialized = false;
-      if (this._children) {
-         for (const child of this._children) {
-            if (child)
-               await child.destroy();
-         }
-      } // if ( this.children)
+      try {
+         this.destroyInProgress = true;
+         this.initialized        = false;
+         if (this._children) {
+            for (const child of this._children) {
+               if (child) {
+                  try {
+                     await child.destroy();
+                  } catch (e) {
+                     console.error(e);
+                  }
+               } // if child
+            } // for
+         } // if ( this.children)
 
-      await this.localDestroyImplementation(); // this will take care of this.obj
+         await this.localDestroyImplementation(); // this will take care of this.obj
+      } finally {
+         this.destroyInProgress = false;
+      }
    }
 
    resetInitialize(): void {
@@ -541,51 +575,62 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 // noinspection JSUnusedGlobalSymbols
    async refresh() {
       if (this.initialized) {
-         let allowRefreshToContinue: boolean = true;
-         if (this._initArgs?.onBeforeRefresh) {
+         try {
+            this.refreshInProgress = true;
 
-            try {
-               allowRefreshToContinue = this._initArgs.onBeforeRefresh({widget: this});
-            } catch (ex) {
-               console.log(ex);
-            }
+            let allowRefreshToContinue: boolean = true;
+            if (this._initArgs?.onBeforeRefresh) {
 
-         } // if (this._args_AbstractWidget?.onBeforeRefresh)
+               try {
+                  allowRefreshToContinue = this._initArgs.onBeforeRefresh({widget: this});
+               } catch (ex) {
+                  console.log(ex);
+               }
 
-         if (!allowRefreshToContinue)
-            return;
+            } // if (this._args_AbstractWidget?.onBeforeRefresh)
+
+            if (!allowRefreshToContinue)
+               return;
 
 
-         if (this._children) {
-            for (const child of this._children) {
-               if (child)
-                  await child.refresh();
-            }
-         } // if ( this.children)
+            if (this._children) {
+               for (const child of this._children) {
+                  if (child)
+                     await child.refresh();
+               }
+            } // if ( this.children)
 
-         await this.localRefreshImplementation();
+            await this.localRefreshImplementation();
 
-         if (this._initArgs?.onAfterRefresh) {
-            try {
-               this._initArgs.onAfterRefresh({widget: this});
-            } catch (ex) {
-               console.log(ex);
-            }
-         } // if (this._args_AbstractWidget?.onAfterRefresh)
+            if (this._initArgs?.onAfterRefresh) {
+               try {
+                  this._initArgs.onAfterRefresh({widget: this});
+               } catch (ex) {
+                  console.log(ex);
+               }
+            } // if (this._args_AbstractWidget?.onAfterRefresh)
 
-      }
-   }
+         } finally {
+            this.refreshInProgress = false;
+         }
+      } // if (this.initialized)
+   } // refresh
 
 // noinspection JSUnusedGlobalSymbols
    async clear() {
-      if (this._children) {
-         for (const child of this._children) {
-            if (child)
-               await child.clear();
-         }
-      } // if this.children
+      try {
+         this.clearInProgress = true;
+         if (this._children) {
+            for (const child of this._children) {
+               if (child)
+                  await child.clear();
+            }
+         } // if this.children
 
-      await this.localClearImplementation();
+         await this.localClearImplementation();
+      } finally {
+         this.clearInProgress = false;
+      }
    }
 
    /**
@@ -916,6 +961,72 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    async onDialogWindow_Close(evt: Args_OnDialogWindow_Close) {
    }
 
+
+   get initLogicInProgress(): boolean {
+      return this._initLogicInProgress;
+   }
+
+   /**
+    * Used by system to set the flag.
+    * Developers, please do not use this method unless you REALLY, REALLY understand the effects.
+    * @param value
+    */
+   set initLogicInProgress(value: boolean) {
+      this._initLogicInProgress = value;
+   }
+
+   get refreshInProgress(): boolean {
+      return this._refreshInProgress;
+   }
+
+   /**
+    * Used by system to set the flag.
+    * Developers, please do not use this method unless you REALLY, REALLY understand the effects.
+    * @param value
+    */
+   set refreshInProgress(value: boolean) {
+      this._refreshInProgress = value;
+   }
+
+   get repaintInProgress(): boolean {
+      return this._repaintInProgress;
+   }
+
+   /**
+    * Used by system to set the flag.
+    * Developers, please do not use this method unless you REALLY, REALLY understand the effects.
+    * @param value
+    */
+   set repaintInProgress(value: boolean) {
+      this._repaintInProgress = value;
+   }
+
+   get clearInProgress(): boolean {
+      return this._clearInProgress;
+   }
+
+   /**
+    * Used by system to set the flag.
+    * Developers, please do not use this method unless you REALLY, REALLY understand the effects.
+    * @param value
+    */
+   set clearInProgress(value: boolean) {
+      this._clearInProgress = value;
+   }
+
+   get destroyInProgress(): boolean {
+      return this._destroyInProgress;
+   }
+
+   /**
+    * Used by system to set the flag.
+    * Developers, please do not use this method unless you REALLY, REALLY understand the effects.
+    * @param value
+    */
+   set destroyInProgress(value: boolean) {
+      this._destroyInProgress = value;
+   }
+
    get hackRefreshOnWgtTabInit(): boolean {
       return this._hackRefreshOnWgtTabInit;
    }
@@ -1169,6 +1280,7 @@ export async function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
       );
 
    } catch (ex) {
+      args.newWidget.repaintInProgress = false; // reset on error (otherwise it is reset during onInstantiated callback
       getErrorHandler().displayExceptionToUser(ex);
    }
 } // updateWidgetInDOM

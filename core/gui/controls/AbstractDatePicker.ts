@@ -81,7 +81,7 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
       } else {
          args.ej.blur = (arg, rest) => {
 
-            thisX.updateDataProvider();      // local onBlur
+            thisX.updateDataProvider(arg.value);      // local onBlur
 
             if (blur) {
                // execute the passed in blur
@@ -92,7 +92,7 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
 
       let oldChange  = args.ej.change;
       args.ej.change = (ev: ChangedEventArgs) => {
-         thisX.updateDataProvider(); // write to appserver
+         thisX.updateDataProvider(ev.value); // write to appserver
 
          if (oldChange)
             oldChange(ev);
@@ -170,7 +170,7 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
          val            = this.convertValueBeforeSet(val);
          this.obj.value = val;
          super.value = val;
-         this.updateDataProvider();
+         this.updateDataProvider(val);
       }
    }
 

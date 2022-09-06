@@ -1,6 +1,6 @@
 import {BaseListener}                                                                                                    from "../BaseListener";
 import {classArgInstanceVal, getRandomString, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction} from "../BaseUtils";
-import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}                                                      from "../data/DataProvider";
+import {DataProvider, DataProviderChangeEvent, IDataProvider, IDataProviderSimple}                                       from "../data/DataProvider";
 import {ListenerHandler}                                                                                                 from "../ListenerHandler";
 import {AbstractWidget, addWidgetClass, AfterInitLogicEvent, AfterInitLogicListener, Args_AbstractWidget, findForm}      from "./AbstractWidget";
 import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                   from "./BeforeInitLogicListener";
@@ -146,7 +146,6 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
    wrapperTagID: string;
 
-   private _propertyName: string        = null;
    private _value: DATA_TYPE;
    private _previousValue: DATA_TYPE;
    private _stayFocusedOnError: boolean = false;
@@ -281,6 +280,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
     * Implementation based on initContent present in descriptor and children
     */
    async localDestroyImplementation(): Promise<void> {
+      // by this time children are already destroyed
       try {
          if (this.initArgs && this.initArgs.destroy)
             this.initArgs.destroy();
@@ -290,6 +290,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
       this._value         = null; // release memory
       this._previousValue = null;
+
 
       // just in case
       if (this.obj && !(this.obj as any).isDestroyed && (this.obj as any).destroy != null) {
@@ -305,14 +306,12 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       this._initArgs                            = null;
       this._args_AnyWidgetInitializedListeners = null;
       this.wrapperTagID = null;
-      this._propertyName = null;
       this.labelTagID =null;
       this.errorTagID=null;
       this.contentBeginFromExtendingClass = null;
       this.contentEndFromExtendingClass = null;
-
-      this.initialized = false;
       this.children = null;
+      this.initialized = false;
       this.tagId = null;
       this.title = null;
       this.parent = null;
@@ -356,7 +355,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       this._args_AnyWidgetInitializedListeners = value;
    }
 
-   protected updateDataProvider() {
+   protected updateDataProvider(val: DATA_TYPE) {
       let thisX = this;
 
       if (!thisX.initArgs?.propertyName)
@@ -364,7 +363,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       if (!thisX.initArgs?.dataProviderName)
          return;
 
-      let currentValue = this.value; // get the actual value from the TextBox EJ2 object
+      let currentValue = val; // get the actual value from the TextBox EJ2 object
       if (currentValue != this.previousValue) {
          let dataProvider = this.getDataProviderSimple();
          if (!dataProvider) {
@@ -414,10 +413,24 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
                }
             };
 
-            dataProvider.fireChange(evt);
+            //dataProvider.fireChange(evt);
+            thisX.fireDataProviderChangeEvent(dataProvider, evt);
          } // if record
       } // if (currentValue != this.previousValue)
    } // onBlur
+
+
+   /**
+    * This method can be customized/overwritten by extending widgets
+    * @param dataProvider
+    * @param evt
+    */
+   protected fireDataProviderChangeEvent(dataProvider: IDataProviderSimple, evt: DataProviderChangeEvent<any>){
+      // by default fire it after 200ms to give focus components a chance to tansfer focus
+      setTimeout(()=>{
+         dataProvider.fireChange(evt); // async function but it doesn't matter
+      }, 200);
+   }
 
 
    /**
@@ -474,12 +487,20 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    }
 
 
+   /**
+    * The column name in the dataProvider record
+    * This property actually comes from initArgs.propertyName
+    */
    get propertyName(): string {
-      return this._propertyName;
+      return this.initArgs?.propertyName;
    }
 
    set propertyName(value: string) {
-      this._propertyName = value;
+      try {
+         this.initArgs.propertyName = value;
+      } catch (e) {
+         console.error(e);
+      }
    }
 
    get stayFocusedOnError(): boolean {
@@ -501,8 +522,18 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
     */
    set value(val: DATA_TYPE) {
       this._value = val;
-      this.updateDataProvider();
+
+      // Only update if refresh is not in progress
+      if ( !this.refreshInProgress || !this.repaintInProgress)
+         this.updateDataProvider(val);
+
+
       this.previousValue = val; // at this point, everything is set in stone, and this is now the previous value
+   }
+
+   set valueNoDataProvider(val: DATA_TYPE){
+      this._value = val;
+      this.previousValue = val;
    }
 
    /**

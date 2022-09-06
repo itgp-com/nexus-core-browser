@@ -1,40 +1,38 @@
-import {RadioButton, RadioButtonModel}                                 from '@syncfusion/ej2-buttons';
-import {getRandomString, IArgs_HtmlTag_Utils, StringArg, stringArgVal} from "../../BaseUtils";
-import {DataProvider}                                                  from "../../data/DataProvider";
-import {getErrorHandler}                                               from "../../CoreErrorHandling";
-import {isFunction, isString}                                          from "lodash";
-import {AnyWidget, Args_AnyWidget}                                     from "../AnyWidget";
+import {RadioButtonModel}                              from '@syncfusion/ej2-buttons';
+import {IArgs_HtmlTag_Utils, StringArg, stringArgVal}  from "../../BaseUtils";
+import {Args_AnyWidget}                                from "../AnyWidget";
+import {AnyWidgetStandard}                             from "../AnyWidgetStandard";
+import {AbstractRadioButton, Args_AbstractRadioButton} from "./AbstractRadioButton";
+import {DataProvider}                                  from "../../data/DataProvider";
+import {resolveWidgetArray}                            from "../WidgetUtils";
+import {addWidgetClass}                                from "../AbstractWidget";
 
 export class Args_AbstractRadioButtonGroup extends Args_AnyWidget<RadioButtonModel> {
+   children:(AbstractRadioButton|Promise<AbstractRadioButton>)[];
 
-   records: any[];
-   valueFieldName ?: StringArg;
-   /**
-    * Takes precedence over valueFieldName
-    */
-   valueFunction ?: ((record: any) => string);
-
-   labelFieldName ?: StringArg;
-
-   /**
-    * Takes precedence over labelFieldName
-    */
-   labelFunction ?: ((record: any) => string);
+   initialCheckedValue?:StringArg
 
    horizontalLayout ?: boolean;
-   cssButtonClass ?: string | ((record: any) => string);
 
-   initialValue ?: StringArg;  // defaults to null
-   not_selected_value ?: StringArg; // defaults to null
+   /**
+    * Individual radio button class(es) set as ej.cssClass on every button in the group if layout is vertical
+    */
+   verticalButtonClass?: string;
+
+   /**
+    * Individual radio button class(es) set as ej.cssClass on every button in the group if layout is horizontal
+    */
+   horizontalButtonClass?: string;
+
 }
 
 /**
  * Abstract implementation of a group of Syncfusion radio buttons
  */
-export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRadioButtonGroup = Args_AbstractRadioButtonGroup>
-   extends AnyWidget<Map<string, RadioButton>, Args_AnyWidget, string> {
-   private _label: string
-   private _radioButton: RadioButton;
+export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRadioButtonGroup = Args_AbstractRadioButtonGroup>   extends AnyWidgetStandard<any, Args_AnyWidget, string> {
+
+   verticalButtonClass:string = `w_radiobutton_vertical`
+   horizontalButtonClass:string = `w_radiobutton_horizontal`
 
    protected constructor() {
       super();
@@ -42,170 +40,59 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
 
 
    protected async initialize_AbstractRadioButtonGroup(args: ARG_CLASS) {
-      this.obj = new Map<string, RadioButton>();
-
       args          = IArgs_HtmlTag_Utils.init(args) as ARG_CLASS;
-      this.initArgs = args;
-      if (!args.ej)
-         args.ej = {};
+      args.ej       = args.ej || {};
 
-      this.wrapperTagID = (args.propertyName == null ? getRandomString('radioButtonGroup') : getRandomString(args.propertyName));
+      if ( args.verticalButtonClass)
+         this.verticalButtonClass = args.verticalButtonClass;
+      if ( args.horizontalButtonClass)
+         this.horizontalButtonClass = args.horizontalButtonClass;
 
-      await this.initialize_AnyWidget(args);
-   }
+      let vertical:boolean = ! args.horizontalLayout;
+      if (vertical)
+         addWidgetClass(args, 'flex-container-column'); // the button wrapper becomes a line
 
-   //TODO Implement using standard local content if possible
-   async localContentBegin(): Promise<string> {
-      let x: string = "";
+      let name:string = args.propertyName;
+      if (!name)
+         name = this.tagId; // tagId is one of the few properties initialized by the constructor
 
-      x += `<div id="${this.wrapperTagID}"${IArgs_HtmlTag_Utils.all((this.initArgs as ARG_CLASS).wrapper)}>`;
+      // args children are resolved during call to {@link initialize_AnyWidget)
+      let resolvedChildren:AbstractRadioButton[] = await resolveWidgetArray(args.children) as AbstractRadioButton[];
+      args.children = resolvedChildren;
 
-      if ((this.initArgs as ARG_CLASS).records != null && (this.initArgs as ARG_CLASS).records.length > 0) {
+      // fill in or overwrite the properties of the child buttons
+      for (let i = 0; i < resolvedChildren.length; i++) {
+         const wRadioButton: AbstractRadioButton = resolvedChildren[i] as AbstractRadioButton;
+         let argRadioButton: Args_AbstractRadioButton = wRadioButton.initArgs;
 
-         if (!this.descriptorLocal.horizontalLayout) {
-            x += `<ul class="wgt-radiobutton-ul">`
-         }
+         // argRadioButton.propertyName = args.propertyName; // same property name for all buttons in the group
+         // argRadioButton.dataProviderName = args.dataProviderName; // same dataprovider for all buttons in the group
+         argRadioButton.ej.name = name; // make sure they belong to the same radio button group
 
-         let n = (this.initArgs as ARG_CLASS).records.length;
-         for (let i = 0; i < n; i++) {
-            let record = this.descriptorLocal.records[i];
+         argRadioButton.ej.cssClass = (vertical? this.verticalButtonClass : this.horizontalButtonClass);
 
-            let extraClasses: string = '';
-            try {
-               if (this.descriptorLocal.cssButtonClass != null && this.descriptorLocal.cssButtonClass.length > 0) {
-                  if (isFunction(this.descriptorLocal.cssButtonClass)) {
-                     let s: string = this.descriptorLocal.cssButtonClass(record);
-                     if (s != null && s.length > 0) {
-                        if (extraClasses.length == 0) {
-                           extraClasses += s;
-                        } else {
-                           extraClasses += ' ';
-                           extraClasses += s;
-                        }
-                     }
-                  } else if (isString(this.descriptorLocal.cssButtonClass)) {
-                     extraClasses += this.descriptorLocal.cssButtonClass;
-                  } else {
-                     // noinspection ExceptionCaughtLocallyJS
-                     throw 'The cssButtonClass property in AbstractWgtRadioButton arguments is neither a string or a function';
-                  }
-               }
+      } // for
 
-            } catch (ex) {
-               this.handleWidgetError(ex);
-            }
-
-
-            if (!this.descriptorLocal.horizontalLayout) {
-               x += `<li class="wgt-radiobutton-li ${extraClasses}">`
-               extraClasses = ''
-            }
-            x += `<input type='radio' id='${this.buttonId(i)}' name="${this.wrapperTagID}" ${(extraClasses.length == 0 ? '' : 'classes="' + extraClasses + '" ')}/>`;
-
-            if (!this.descriptorLocal.horizontalLayout) {
-               x += `</li>`
-            }
-
-         } // for
-
-         if (!this.descriptorLocal.horizontalLayout) {
-            x += `</ul>`
-         }
-      }
-      x += "</div>";
-      return x;
-   }
-
-   private buttonId(i: number): string {
-      return `${this.wrapperTagID}_${i}`;
+      await this.initialize_AnyWidget(args); // resolves children
    }
 
    async localLogicImplementation(): Promise<void> {
-      let thisX = this;
-      await super.localLogicImplementation();
-      let args = this.initArgs as ARG_CLASS;
-      let ej   = this.initArgs.ej;
-
-      if (args.records != null && args.records.length > 0) {
-         let n = args.records.length;
-         for (let i = 0; i < n; i++) {
-            let rec           = args.records[i];
-            let val: string   = null;
-            let label: string = null
-
-            if (args.valueFunction != null) {
-               try {
-                  val = args.valueFunction(rec);
-               } catch (t) {
-                  thisX.handleError(t)
-               }
-            } else {
-               let valueFieldName: string = stringArgVal(args.valueFieldName);
-               val                        = rec[valueFieldName] as string;
-            }
-
-            if (args.labelFunction != null) {
-               try {
-                  label = args.labelFunction(rec);
-               } catch (t) {
-                  thisX.handleWidgetError(t)
-               }
-            } else {
-               let labelFieldName: string = stringArgVal(args.labelFieldName);
-               label                      = rec[labelFieldName] as string;
-            }
-
-            let model: RadioButtonModel = {...ej}
-            model.label                 = label;
-            model.value                 = val;
-
-
-            let userChangeMethod = ej.change;
-            model.change         = async (evt) => {
-
-               thisX.previousValue = thisX.value;
-               thisX.value         = evt.value
-
-               await thisX.updateDataProvider();
-
-               if (userChangeMethod) {
-                  try {
-                     userChangeMethod(evt);
-                  } catch (e) {
-                     this.handleWidgetError(e);
-                  }
-               }
-            }
-
-            let radio = new RadioButton(model)
-            radio.appendTo(`#${thisX.buttonId(i)}`)
-
-            thisX.obj.set(model.value.toString(), radio);
-
-         } // for
-
-         if (thisX.descriptorLocal.initialValue) {
-            let initialValue: string = stringArgVal(thisX.descriptorLocal.initialValue);
-            if (initialValue != null) {
-               thisX.value = initialValue;
-
-               // if we have an initial value, then set it the previous value to same
-               if (thisX.value)
-                  thisX.previousValue = thisX.value; // if the value is actually set, also change the previous value initially
-
-            }
-         }
-      }
-   } // logic
+     await super.localLogicImplementation();
+     let args: Args_AbstractRadioButtonGroup = this.initArgs as Args_AbstractRadioButtonGroup;
+     if ( args.initialCheckedValue === undefined){
+        // do nothing
+     } else {
+        this.value = stringArgVal(args.initialCheckedValue);
+     }
+   } // localLogicImplementation
 
    async localRefreshImplementation(): Promise<void> {
-
-      if (this.obj && this.descriptorLocal?.dataProviderName) {
-         let data             = DataProvider.byName(this, this.descriptorLocal.dataProviderName);
+      // refresh only makes sense if there's a dataProvider to refresh from
+      if (this.initArgs?.dataProviderName && this.initArgs.propertyName) {
+         let data             = DataProvider.byName(this, this.initArgs.dataProviderName);
          let value: string    = '';
-         if (data) {
-            value   = data[this.descriptorLocal.propertyName];
-         }
+         if (data)
+            value   = data[this.initArgs.propertyName];
 
          this.value         = value;
          this.previousValue = value;
@@ -213,13 +100,9 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
       }
    }
 
-
-   async localDestroyImplementation() {
-      await super.localDestroyImplementation();
-      (this.initArgs as ARG_CLASS) = null;
-      this._radioButton            = null;
-      this._label       = null;
-      this.value        = null;
+   async localClearImplementation(): Promise<void> {
+      this.value = stringArgVal((this.initArgs as Args_AbstractRadioButtonGroup).initialCheckedValue);
+      return await super.localClearImplementation();
    }
 
 
@@ -227,42 +110,32 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
       return super.value;
    }
 
+   /**
+    * Set the internal value of the group to the value that should show as checked
+    * @param value
+    */
    set value(value: string) {
-      //TODO Add call to super.value to update dataProvider
-      let stringValue = (value == null ? null : value.toString());
-      if (stringValue == this.descriptorLocal?.not_selected_value) {
-         if (this._radioButton)
-            this._radioButton.checked = false; // turn the currently checked button to not-checked
-         this.previousValue = this.value;
-         super.value         = stringValue;
-         this._label        = null;
-         this._radioButton  = null;
-      } else {
-         let radioButton: RadioButton = this.obj.get(stringValue);
-         if (radioButton) {
-            this.previousValue        = this.value;
-            super.value                = stringValue;
-            this._label               = radioButton.label;
-            this._radioButton         = radioButton;
-            this._radioButton.checked = true;
-         } else {
-            getErrorHandler().displayErrorMessageToUser(`Value "${stringValue}" set to the following radiobutton: ${JSON.stringify(this.descriptorLocal, null, 2)}`)
+
+      for (let i = 0; i < this.children.length; i++) {
+         const wRadioButton:AbstractRadioButton = this.children[i] as AbstractRadioButton;
+         let radioButtonValue:string = wRadioButton.initArgs?.ej?.value
+         let origRefreshState = wRadioButton.refreshInProgress
+         try {
+            wRadioButton.refreshInProgress = this.refreshInProgress; // status should be the same for update data Provider purposes
+            if (value == radioButtonValue) {
+               wRadioButton.value             = true; // sets the checked value and updates the undelying dataProvider record if any
+               break; // we're done here, since only one button in the group can be checked (the other ones are automatically unchecked)
+            } else {
+               wRadioButton.value = false; // do this for every button that does not match. If none match, all will be unchecked
+            }
+         } finally {
+            wRadioButton.refreshInProgress = origRefreshState;
          }
-      }
+         
+      } // for
+
+      super.value = value;
    }
 
-
-   get descriptorLocal(): Args_AbstractRadioButtonGroup {
-      return (this.initArgs as ARG_CLASS);
-   }
-
-   get label(): string {
-      return this._label;
-   }
-
-
-   get radioButton(): RadioButton {
-      return this._radioButton;
-   }
 
 } // WgtRadioButton
