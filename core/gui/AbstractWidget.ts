@@ -330,11 +330,12 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                   }
 
                   // re-instantiate the component inside this function (calls setImmediate
-                  await updateWidgetInDOM.call(thisX, {
+
+                  let argsUpdate: Args_UpdateWidgetInDOM = {
                      parentHTMLElement:         parentNode,
                      newWidget:                 thisX,
                      existingWidgetHTMLElement: existingHtmlElement,
-                     callback:                  () => {
+                     onInstantiated:            (_ev) => {
                         this.repaintInProgress = false;
 
                         // execute after repaint if there are any listeners
@@ -351,8 +352,9 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                                                                   });
 
                         }   //if count > 0
-                     } // callback
-                  });
+                     },
+                  };
+                  await updateWidgetInDOM.call(thisX, argsUpdate);
                } //if (parentNode)
             } // if ( existingHtmlElement)
 
@@ -467,7 +469,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
          try {
             this.initLogicInProgress = true;
-            let thisX                 = this;
+            let thisX                = this;
 
             // ------------ Before Init Logic Listeners -----------------------
             let beforeEvt: BeforeInitLogicEvent = {
@@ -543,7 +545,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    async destroy() {
       try {
          this.destroyInProgress = true;
-         this.initialized        = false;
+         this.initialized       = false;
          if (this._children) {
             for (const child of this._children) {
                if (child) {
@@ -1270,14 +1272,14 @@ export async function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
          args.parentHTMLElement.innerHTML = newWidgetHTML;
       }
       // after giving it time to render, attach the JS logic
-      setImmediate(async () => {
-                      await args.newWidget.initLogic();
-                      if (args.onInstantiated)
-                         args.onInstantiated({
-                                                widget: args.newWidget,
-                                             });
-                   }
-      );
+      setImmediate(
+         async () => {
+            await args.newWidget.initLogic();
+            if (args.onInstantiated)
+               args.onInstantiated({
+                                      widget: args.newWidget,
+                                   });
+         }); // setImmediate
 
    } catch (ex) {
       args.newWidget.repaintInProgress = false; // reset on error (otherwise it is reset during onInstantiated callback
