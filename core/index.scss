@@ -3,7 +3,7 @@
   z-index: 999999 ;
   position: absolute !important;
   width: 100%;
-  bottom: 0px;
+  bottom: 0;
 }
 
 .core_vertical_spacer{
@@ -109,9 +109,9 @@
 }
 
 .w_radiobutton_vertical {
-  margin:1px 0px;
+  margin:3px 0;
 }
 
 .w_radiobutton_horizontal {
-  mmargin:0px 1px;
+  margin:0 3px;
 }

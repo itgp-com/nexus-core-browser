@@ -1,10 +1,11 @@
 import {BaseListener}                                                                                                    from "../BaseListener";
 import {classArgInstanceVal, getRandomString, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction} from "../BaseUtils";
-import {DataProvider, DataProviderChangeEvent, IDataProvider, IDataProviderSimple}                                       from "../data/DataProvider";
+import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}                                                      from "../data/DataProvider";
 import {ListenerHandler}                                                                                                 from "../ListenerHandler";
 import {AbstractWidget, addWidgetClass, AfterInitLogicEvent, AfterInitLogicListener, Args_AbstractWidget, findForm}      from "./AbstractWidget";
 import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                   from "./BeforeInitLogicListener";
 import {Component}                                                                                                       from "@syncfusion/ej2-base";
+import * as _                                                                                                            from "lodash";
 import {isFunction}                                                                                                      from "lodash";
 import {resolveWidgetArray}                                                                                              from "./WidgetUtils";
 
@@ -38,7 +39,7 @@ export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
     */
    parent ?: AbstractWidget;
 
-   children ?: (AbstractWidget|Promise<AbstractWidget>)[];
+   children ?: (AbstractWidget | Promise<AbstractWidget>)[];
 
    /**
     * Returns the HTML to be inserted before the children's HTML.
@@ -67,7 +68,42 @@ export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
    ej                ?: CONTROLMODEL
 
 
-}
+   onBeforeValueChange ?: (ev: Args_onBeforeValueChange) => void;
+
+   onAfterValueChange ?: (ev: Args_onAfterValueChange) => void;
+} // Args_AnyWidget
+
+export class Args_onBeforeValueChange {
+   /**
+    * Value to be set
+    */
+   newValue: any;
+   /**
+    * Value before setting the new value
+    */
+   previousValue: any;
+   /**
+    * Actual widget instance
+    */
+   widget: AnyWidget;
+} // Args_onBeforeValueChange
+
+export class Args_onAfterValueChange {
+   /**
+    * Value to be set
+    */
+   newValue: any;
+   /**
+    * Value before setting the new value
+    */
+   previousValue: any;
+   /**
+    * Actual widget instance
+    */
+   widget: AnyWidget;
+
+} // Args_onAfterValueChange
+
 
 export function initializeWrapperTagID(widget: AnyWidget) {
    if (!widget)
@@ -195,10 +231,9 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
       // descriptor.initLogic() handled inside _initLogic()
       if (args.children) {
-         let paramChildren: (AbstractWidget|Promise<AbstractWidget>)[] = args.children;
          let resolvedChildren: AbstractWidget[] = await resolveWidgetArray(args.children);
-         this.children = resolvedChildren;
-         args.children = resolvedChildren; // synchronize the arguments with the widget contents
+         this.children                          = resolvedChildren;
+         args.children                          = resolvedChildren; // synchronize the arguments with the widget contents
       }
 
 
@@ -303,19 +338,19 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
       }
 
       this._obj                                = null;
-      this._initArgs                            = null;
+      this._initArgs                           = null;
       this._args_AnyWidgetInitializedListeners = null;
-      this.wrapperTagID = null;
-      this.labelTagID =null;
-      this.errorTagID=null;
-      this.contentBeginFromExtendingClass = null;
-      this.contentEndFromExtendingClass = null;
-      this.children = null;
-      this.initialized = false;
-      this.tagId = null;
-      this.title = null;
-      this.parent = null;
-      this.dialogWindowContainer = null;
+      this.wrapperTagID                        = null;
+      this.labelTagID                          = null;
+      this.errorTagID                          = null;
+      this.contentBeginFromExtendingClass      = null;
+      this.contentEndFromExtendingClass        = null;
+      this.children                            = null;
+      this.initialized                         = false;
+      this.tagId                               = null;
+      this.title                               = null;
+      this.parent                              = null;
+      this.dialogWindowContainer               = null;
       this.beforeInitLogicListeners.clear();
       this.afterInitLogicListeners.clear();
       this.beforeRepaintWidgetListeners.clear();
@@ -425,9 +460,9 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
     * @param dataProvider
     * @param evt
     */
-   protected fireDataProviderChangeEvent(dataProvider: IDataProviderSimple, evt: DataProviderChangeEvent<any>){
+   protected fireDataProviderChangeEvent(dataProvider: IDataProviderSimple, evt: DataProviderChangeEvent<any>) {
       // by default fire it after 200ms to give focus components a chance to tansfer focus
-      setTimeout(()=>{
+      setTimeout(() => {
          dataProvider.fireChange(evt); // async function but it doesn't matter
       }, 200);
    }
@@ -521,18 +556,50 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
     * @param val
     */
    set value(val: DATA_TYPE) {
+      let previousValue = this.previousValue;
+
+      try {
+         if (_.isEqual(previousValue, val))
+            return; // nothing to do
+      } catch (e) {
+         console.error(e)
+      }
+
+      if (this.initArgs?.onBeforeValueChange) {
+         // do not catch exception in case it's triggered on purpose to avoid the set
+         this.initArgs.onBeforeValueChange({
+                                              newValue:      val,
+                                              previousValue: previousValue,
+                                              widget:        this
+                                           });
+      } // if ( this.initArgs?.onBeforeValueChange)
+
+
       this._value = val;
 
       // Only update if refresh is not in progress
-      if ( !this.refreshInProgress || !this.repaintInProgress)
+      if (!this.refreshInProgress || !this.repaintInProgress)
          this.updateDataProvider(val);
 
 
       this.previousValue = val; // at this point, everything is set in stone, and this is now the previous value
+
+
+      if (this.initArgs?.onAfterValueChange) {
+         try {
+            this.initArgs.onAfterValueChange({
+                                                newValue:      val,
+                                                previousValue: previousValue,
+                                                widget:        this
+                                             });
+         } catch (e) {
+            console.error(e); // catch exception here since the set already happened
+         }
+      } // if ( this.initArgs?.onBeforeValueChange)
    }
 
-   set valueNoDataProvider(val: DATA_TYPE){
-      this._value = val;
+   set valueNoDataProvider(val: DATA_TYPE) {
+      this._value        = val;
       this.previousValue = val;
    }
 
