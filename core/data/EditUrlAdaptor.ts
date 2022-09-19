@@ -1,7 +1,6 @@
-import {DataManager, Query, UrlAdaptor, DataOptions} from "@syncfusion/ej2-data";
-import {getErrorHandler}                             from "../CoreErrorHandling";
-import {cu}                                          from "../index";
-import {cast}                                        from "../BaseUtils";
+import {DataManager, Query, UrlAdaptor} from "@syncfusion/ej2-data";
+import {getErrorHandler}                from "../CoreErrorHandling";
+import {cast}                           from "../BaseUtils";
 
 
 export class EditUrlAdaptor extends UrlAdaptor {
