@@ -5,10 +5,6 @@ import {SelectedEventArgs, Uploader, UploaderModel} from "@syncfusion/ej2-inputs
 
 
 export class Args_AbstractUpload extends Args_AnyWidget<UploaderModel> implements IArgs_HtmlTag {
-   propertyName: string;
-   htmlTagClass?: string;
-   htmlTagStyle?: string;
-   htmlTagType?: string;
    errorTag             ?: IArgs_HtmlTag;
 
 

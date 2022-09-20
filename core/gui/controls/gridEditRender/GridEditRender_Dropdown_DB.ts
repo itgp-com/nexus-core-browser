@@ -9,9 +9,6 @@ import {Args_GridEditRender_Dropdown_Abstract, GridEditRender_Dropdown_Abstract}
 
 export class Args_GridEditRender_Dropdown_DB extends Args_GridEditRender_Dropdown_Abstract {
 
-   dropdown_table_name: string;
-   dropdown_value_column_name: string;
-   dropdown_text_column_name: string;
    /**
     * Any query that needs to be run to filter/sort the list data returned from the database
     */
@@ -19,6 +16,7 @@ export class Args_GridEditRender_Dropdown_DB extends Args_GridEditRender_Dropdow
    enabled ?: boolean;
 }
 
+// noinspection UnnecessaryLocalVariableJS
 export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract {
 
    protected constructor(args: Args_GridEditRender_Dropdown_DB) {
@@ -26,8 +24,9 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
    }
 
    static create(argsDB: Args_GridEditRender_Dropdown_DB): GridEditRender_Dropdown_DB {
-      let instance: GridEditRender_Dropdown_DB = new GridEditRender_Dropdown_DB(argsDB);
-      return instance;
+      // noinspection UnnecessaryLocalVariableJS
+      let _instance: GridEditRender_Dropdown_DB = new GridEditRender_Dropdown_DB(argsDB);
+      return _instance;
    }
 
 
@@ -71,8 +70,8 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
          dataProvider.children = [wgtDD];
 
          this.dropDownInstance       = wgtDD.obj; //new DropDownList(dropdown_options);
-         let currentValue            = record[this.grid_value_column_name];
-         this.dropDownInstance.value = currentValue; // set the initial value in the dropdown to whatever is in the record
+         let _currentValue            = record[this.grid_value_column_name];
+         this.dropDownInstance.value = _currentValue; // set the initial value in the dropdown to whatever is in the record
 
          this.dropDownInstance.appendTo(anchor);
 
@@ -94,7 +93,7 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
    // noinspection JSUnusedGlobalSymbols
    createEditor(): IEditCell {
       let editorTemplateInstance = this.template;
-      let instance: IEditCell    = {
+      let _instance: IEditCell    = {
          create:  () => {
             return editorTemplateInstance;
          },
@@ -108,7 +107,7 @@ export class GridEditRender_Dropdown_DB extends GridEditRender_Dropdown_Abstract
             this.createDropDown(editorTemplateInstance, args.rowData);
          }
       } // instance
-      return instance;
+      return _instance;
    } // editor
 
 

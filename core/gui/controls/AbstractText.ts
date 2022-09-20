@@ -60,7 +60,6 @@ export abstract class Args_AbstractText extends Args_AnyWidget<TextBoxModel> {
 
    includeErrorLine ?: boolean;
    error ?: IArgs_HtmlTag;
-   required ?: boolean;
    /**
     * Controls if the textbox string triggers an 'onBlur' event when its contents are changed, the provider data propertyName attribute will be updated and a DataProviderChangeEvent will be fired
     */
