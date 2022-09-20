@@ -7,7 +7,6 @@ import {addWidgetClass}                                      from "../AbstractWi
 export abstract class Args_AbstractColorPicker extends Args_AnyWidget<ColorPickerModel> {
    includeErrorLine ?: boolean;
    error ?: IArgs_HtmlTag;
-   required ?: boolean;
    stayFocusedOnError ?: boolean;
 
    initialValue ?: string;

@@ -8,7 +8,7 @@ import {resolveWidgetArray}                            from "../WidgetUtils";
 import {addWidgetClass}                                from "../AbstractWidget";
 
 export class Args_AbstractRadioButtonGroup extends Args_AnyWidget<RadioButtonModel> {
-   children:(AbstractRadioButton|Promise<AbstractRadioButton>)[];
+   declare children:(AbstractRadioButton|Promise<AbstractRadioButton>)[];
 
    initialCheckedValue?:StringArg
 

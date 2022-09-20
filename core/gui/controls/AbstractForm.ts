@@ -5,7 +5,7 @@ import {FormValidator, FormValidatorModel} from '@syncfusion/ej2-inputs';
 import {addWidgetClass}                    from "../AbstractWidget";
 
 export class Args_AbstractForm extends Args_AnyWidget {
-   validation?: FormValidatorModel;
+   declare validation?: FormValidatorModel;
 
 } // Args_WgtForm
 
