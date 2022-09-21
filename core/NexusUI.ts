@@ -8,6 +8,7 @@ export abstract class NexusUI {
    // private _permanentHttpHeaders:Map<string,string> = new Map<string,string>();
 
    private _mainUITagID: string = '_nexus_moduleContainer';
+   private _lastUITagID:string  = 'app__l_a_s_t__';
 
    /**
     * First method to be called to initialize any initial settings before calling {@link createNewScreenRegistry}
@@ -54,6 +55,14 @@ export abstract class NexusUI {
       this._mainUITagID = value;
    }
 
+
+   get lastUITagID(): string {
+      return this._lastUITagID;
+   }
+
+   set lastUITagID(value: string) {
+      this._lastUITagID = value;
+   }
 
    get screenRegistry(): ScreenRegistry {
       return this._screenRegistry;
