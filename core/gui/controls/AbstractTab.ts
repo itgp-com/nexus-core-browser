@@ -115,8 +115,8 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
          },
          cssClass:  "e-fill", // fill tab header with accent background
          created:   async (_e: Event) => {
-            // setImmediate is used because of Syncfusion implementation
-            setImmediate(
+            // setTimeout is used because of Syncfusion implementation
+            setTimeout(
                async () => {
                   // await thisX.obj.refresh(); // hack to repaint tab scrollbar when it overflows
 
@@ -140,7 +140,7 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
                   }
 
                }
-            );
+            ); // setTimeout no delay
          }, // created
       };
 
@@ -158,7 +158,6 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
       if (!_intermediate)
          return;
 
-      // setImmediate(async () => {
       // Fix 2020-04-27 D. Pociu
       // this is ABSOLUTELY necessary in order to give the HTML in the tab control
       // a chance to be inserted. Without this, you get very weird Syncfusion EJ2

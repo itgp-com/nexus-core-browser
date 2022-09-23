@@ -35,15 +35,10 @@ export class NexusMain {
 
          await thisX.ui.initUI();
 
+         thisX.fireUIStartedListeners();
+
          // Menu system started, process any initial parameters passed in (appended to) the baseURL.
          await thisX.ui?.processURLParameters(initialParamsAsString);
-
-
-
-         /**
-          * TODO: This is a horrible hack that needs to disappear - allows all the table models to register their UIStartedListeners
-          */
-         thisX.fireUIStartedListeners();
 
 
       } catch (ex) {

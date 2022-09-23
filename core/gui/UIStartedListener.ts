@@ -1,5 +1,4 @@
-import {BaseListener}        from "../BaseListener";
-import {AfterInitLogicEvent} from "./AbstractWidget";
+import {BaseListener} from "../BaseListener";
 
 /**
  * Allows the developer to be informed when all the basic parts of the UI are initialized (but the
@@ -9,7 +8,7 @@ import {AfterInitLogicEvent} from "./AbstractWidget";
  */
 export abstract class UIStartedListener extends BaseListener<any>{
 
-   eventFired(ev: AfterInitLogicEvent): void {
+   eventFired(ev: any): void {
       this.uiStarted();
    }
 

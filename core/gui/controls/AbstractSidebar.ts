@@ -218,15 +218,15 @@ export abstract class AbstractSidebar extends AnyWidget<Sidebar, Args_AbstractSi
       if (this.obj) {
          this.content = value;
          if (value)
-            setImmediate(async () => {
+            setTimeout(async () => {
                thisX.contentResolved = await value;
                thisX.setSuperValue(thisX.contentResolved);
-            })
+            }); // set timeout to immediate
       }
    }
 
    /**
-    * Method exists because we cannot call super.value from setImmediate, but we can call thisX.setSuperValue
+    * Method exists because we cannot call super.value from setTimeout, but we can call thisX.setSuperValue
     * @param val
     * @private
     */

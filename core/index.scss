@@ -1,16 +1,16 @@
 
-.core-alert-bottom{
-  z-index: 999999 ;
+.core-alert-bottom {
+  z-index: 999999;
   position: absolute !important;
   width: 100%;
   bottom: 0;
 }
 
-.core_vertical_spacer{
+.core_vertical_spacer {
   margin-bottom: 8px;
 }
 
-.core-horizontal-spacer{
+.core-horizontal-spacer {
   margin-right: 10px;
 }
 
@@ -21,7 +21,7 @@
   flex-grow: 1;
 }
 
-.core_height_width_100_percent{
+.core_height_width_100_percent {
   height: 100%;
   width: 100%;
 }
@@ -76,25 +76,32 @@
   display: flex;
   justify-content: center;
 }
-.flex-lcr-box-left  > * { margin-right: auto; }
-.flex-lcr-box-right > * { margin-left: auto;  }
 
+.flex-lcr-box-left > * {
+  margin-right: auto;
+}
+
+.flex-lcr-box-right > * {
+  margin-left: auto;
+}
 
 
 .ej2-icon-menu-hamburger:before {
   content: '\e99a';
 }
+
 .ej2-icon-close:before {
-  content:'\e7fc';
+  content: '\e7fc';
 }
 
 .ej2-icon-add:before {
-  content:'\e95c';
+  content: '\e95c';
 }
 
 .ej2-icon-search:before {
   content: '\e993';
 }
+
 .ej2-icon-excel-export:before {
   content: '\e242';
 }
@@ -109,9 +116,9 @@
 }
 
 .w_radiobutton_vertical {
-  margin:3px 0;
+  margin: 3px 0;
 }
 
 .w_radiobutton_horizontal {
-  margin:0 3px;
+  margin: 0 3px;
 }

@@ -218,9 +218,10 @@ export abstract class AbstractAccordion extends AnyWidgetStandard<Accordion, Arg
       if (!thisX.lastExpandingArgs)
          return;
 
-      let expandingArgs = thisX.lastExpandingArgs; // so it doesn't get overwritten if someone clicks fast while setImmediate is executed
+      let expandingArgs = thisX.lastExpandingArgs; // so it doesn't get overwritten if someone clicks fast while setTimeout is executed
 
-      setImmediate(async () => {
+      // no delay on timeout
+      setTimeout(async () => {
          // Fixed 2020-04-27 D. Pociu
          // this is ABSOLUTELY necessary in order to give the HTML in the tab control
          // a chance to be inserted. Without this, you get very weird Syncfusion EJ2
@@ -270,7 +271,7 @@ export abstract class AbstractAccordion extends AnyWidgetStandard<Accordion, Arg
             }
 
          } // if panelObj
-      }); // setImmediate
+      }); // setTimeout no delay
 
    }
 

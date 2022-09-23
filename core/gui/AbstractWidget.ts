@@ -329,7 +329,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                      thisX.resetInitialize();
                   }
 
-                  // re-instantiate the component inside this function (calls setImmediate
+                  // re-instantiate the component inside this function
 
                   let argsUpdate: Args_UpdateWidgetInDOM = {
                      parentHTMLElement:         parentNode,
@@ -1271,15 +1271,15 @@ export async function updateWidgetInDOM(args: Args_UpdateWidgetInDOM) {
          //completely blow away the contents of parent
          args.parentHTMLElement.innerHTML = newWidgetHTML;
       }
-      // after giving it time to render, attach the JS logic
-      setImmediate(
+      // after giving it time to render, attach the JS logic (delay = 0)
+      setTimeout(
          async () => {
             await args.newWidget.initLogic();
             if (args.onInstantiated)
                args.onInstantiated({
                                       widget: args.newWidget,
                                    });
-         }); // setImmediate
+         }); // setTimeout no delay
 
    } catch (ex) {
       args.newWidget.repaintInProgress = false; // reset on error (otherwise it is reset during onInstantiated callback
