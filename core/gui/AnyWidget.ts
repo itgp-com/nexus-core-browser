@@ -1,9 +1,9 @@
 import {BaseListener}                                                                                                    from "../BaseListener";
 import {classArgInstanceVal, getRandomString, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction} from "../BaseUtils";
 import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}                                                      from "../data/DataProvider";
-import {ListenerHandler}                                                                                                 from "../ListenerHandler";
-import {AbstractWidget, addWidgetClass, AfterInitLogicEvent, AfterInitLogicListener, Args_AbstractWidget, findForm}      from "./AbstractWidget";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                   from "./BeforeInitLogicListener";
+import {ListenerHandler}                                                                                                                        from "../ListenerHandler";
+import {AbstractWidget, AbstractWidgetVoidFunction, addWidgetClass, AfterInitLogicEvent, AfterInitLogicListener, Args_AbstractWidget, findForm} from "./AbstractWidget";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                                          from "./BeforeInitLogicListener";
 import {Component}                                                                                                       from "@syncfusion/ej2-base";
 import * as _                                                                                                            from "lodash";
 import {isFunction}                                                                                                      from "lodash";
@@ -53,12 +53,18 @@ export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
     */
    localContentEnd ?: StringArg; // ()=>string;
 
+   /**
+    * Called during the localLogicImplementation phase of the component's initialization.
+    * It is called if the component's localLogicImplementation method is not overridden or if the overridden method calls super.localLogicImplementation
+    * Timing of the call depends on the implementation of the override. Normally it should be the first call in the override.
+    */
+   localLogicImplementation ?: AbstractWidgetVoidFunction;
+   localRefreshImplementation ?: AbstractWidgetVoidFunction;
+   localClearImplementation ?: AbstractWidgetVoidFunction;
+   localDestroyImplementation ?: AbstractWidgetVoidFunction;
+
    extraTagIdCount ?: number = 0;
 
-   initLogic ?: voidFunction;
-   refresh ?: voidFunction;
-   clear ?: voidFunction;
-   destroy ?: voidFunction;
 
 
    /**
@@ -290,24 +296,24 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
     * Implementation based on initContent present in descriptor and children
     */
    async localLogicImplementation(): Promise<void> {
-      if (this.initArgs && this.initArgs.initLogic)
-         this.initArgs.initLogic();
+      if (this.initArgs && this.initArgs.localLogicImplementation)
+         this.initArgs.localLogicImplementation.call(this, this);
    } // _initLogic
 
    /**
     * Implementation based on initContent present in descriptor and children
     */
    async localClearImplementation(): Promise<void> {
-      if (this.initArgs && this.initArgs.clear)
-         this.initArgs.clear();
+      if (this.initArgs && this.initArgs.localClearImplementation)
+         this.initArgs.localClearImplementation.call(this, this);
    } // _clear
 
    /**
     * Implementation based on initContent present in descriptor and children
     */
    async localRefreshImplementation(): Promise<void> {
-      if (this.initArgs && this.initArgs.refresh)
-         this.initArgs.refresh();
+      if (this.initArgs && this.initArgs.localRefreshImplementation)
+         this.initArgs.localRefreshImplementation.call(this, this);
    } // _refresh
 
 
@@ -317,8 +323,8 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    async localDestroyImplementation(): Promise<void> {
       // by this time children are already destroyed
       try {
-         if (this.initArgs && this.initArgs.destroy)
-            this.initArgs.destroy();
+         if (this.initArgs && this.initArgs.localDestroyImplementation)
+            this.initArgs.localDestroyImplementation.call(this, this);
       } catch (e) {
          console.error(e);
       }

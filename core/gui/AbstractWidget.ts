@@ -1039,7 +1039,9 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
 } // main class
 
-
+export interface AbstractWidgetVoidFunction {
+   (widget:AbstractWidget): void;
+}
 /**
  * Find the nearest ancestor WgtForm that contains this simple component
  */

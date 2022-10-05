@@ -44,7 +44,6 @@ export class Args_AbstractText_Multiline {
     */
    autoresize_input_function_override ?: (args: any) => void;
 
-
 }
 
 export abstract class Args_AbstractText extends Args_AnyWidget<TextBoxModel> {
@@ -61,9 +60,9 @@ export abstract class Args_AbstractText extends Args_AnyWidget<TextBoxModel> {
    includeErrorLine ?: boolean;
    error ?: IArgs_HtmlTag;
    /**
-    * Controls if the textbox string triggers an 'onBlur' event when its contents are changed, the provider data propertyName attribute will be updated and a DataProviderChangeEvent will be fired
+    * Controls if the textbox updates the DataProvider on 'blur' or 'change' of the input contents, the provider data propertyName attribute will be updated and a DataProviderChangeEvent will be fired
     */
-   updateOnBlurDisabled ?: boolean;
+   updateDataProviderDisabled ?: boolean;
    stayFocusedOnError ?: boolean;
 
    initialValue ?: StringArg;
@@ -76,6 +75,17 @@ export abstract class Args_AbstractText extends Args_AnyWidget<TextBoxModel> {
     */
    multiline ?: Args_AbstractText_Multiline;
 
+   onKeyUp?: (widget: AbstractText, event: KeyboardEvent) => Promise<void>;
+   onKeyDown?: (widget: AbstractText, event: KeyboardEvent) => Promise<void>;
+   onChange ?: (widget: AbstractText, event: Event) => Promise<void>;
+
+   /**
+    * Called whenever either change/blur/both warrant a modification of the underlying data.
+    * Use this even as a catch all for when data has been changed.
+    */
+   onDataProviderChange ?: (widget: AbstractText, value:string) => Promise<void>;
+
+
 }
 
 /**
@@ -86,12 +96,13 @@ export abstract class Args_AbstractText extends Args_AnyWidget<TextBoxModel> {
  */
 export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, string> {
 
+   protected _lastInputValue:string = '';
+
    protected constructor() {
       super();
    }
 
    protected async initialize_AbstractText(args: Args_AbstractText) {
-
       args          = IArgs_HtmlTag_Utils.init(args);
       this.initArgs = args;
       if (!args.ej)
@@ -233,27 +244,27 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
 
    async localLogicImplementation() {
       let thisX = this;
+      thisX._lastInputValue = this.hgetInput?.value; // raw input value
+      await super.localLogicImplementation();
+
       let args  = this.initArgs as Args_AbstractText;
       args.ej   = args.ej || {}; // ensure it's not null
 
+
       let originalBlurMethod = args.ej.blur;
-      if (args.updateOnBlurDisabled) {
-         // do not add a blur event
-      } else {
          args.ej.blur = async (arg, rest) => {
 
-            let valid: boolean = await thisX._localUpdateDataProvider();      // local onBlur
-            if (valid) {
+            let currentInputValue = arg.value; // raw input value (from the parameter because in multiline this is the only good value)
 
-               thisX.value = arg.value; // update value based on change value
+            await thisX._updateDataProvider(thisX, args, currentInputValue);
 
-               if (originalBlurMethod) {
-                  // execute the passed in blur
-                  originalBlurMethod.call(thisX, arg, rest);
-               } // if (originalBlurMethod)
-            } // if (valid)
+            if (originalBlurMethod) {
+               try {
+                  originalBlurMethod.call(thisX, arg, rest); // execute the passed in blur
+               }catch(e){console.error(e)};
+            } // if (originalBlurMethod)
+
          };
-      } // if updateOnBlurDisabled
 
 
       let ejCreated = args.ej.created
@@ -298,6 +309,58 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
 
       this.obj = new TextBox(args.ej);
       this.obj.appendTo(this.hgetInput);
+
+
+      this.hgetInput.addEventListener("keydown", async (event: KeyboardEvent) => {
+         let args = this.initArgs as Args_AbstractText
+         if (args.onKeyDown) {
+            try {
+               await args.onKeyDown(thisX, event);
+            } catch (e) {
+               console.error(e); // don't stop for an error in the user onKeyUp
+            }
+
+         }
+      });
+
+      this.hgetInput.addEventListener("keyup", async (event: KeyboardEvent) => {
+         let args = this.initArgs as Args_AbstractText
+         if (args.onKeyUp) {
+            try {
+               await args.onKeyUp(thisX, event);
+            } catch (e) {
+               console.error(e); // don't stop for an error in the user onKeyUp
+            }
+
+         }
+      });
+
+
+      this.hgetInput.addEventListener("change", async (ev: Event) => {
+
+         let currentInputValue = this.hgetInput?.value; // raw input value
+         if ( this._lastInputValue == currentInputValue ) {
+            return;
+         }
+
+         let args = this.initArgs as Args_AbstractText
+         if (args?.updateDataProviderDisabled) {
+            // do nothing
+         } else {
+            await thisX._updateDataProvider(thisX, args, currentInputValue);
+         }
+
+         if (args.onChange) {
+            try {
+               await args.onChange(thisX, ev);
+            } catch (e) {
+               console.error(e); // don't stop for an error in the user onChange
+            }
+         }
+
+      });
+
+
 
       if (args.initialValue)
          this.value = stringArgVal(args.initialValue);
@@ -375,7 +438,7 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
       return val.toString();
    }
 
-   protected async _localUpdateDataProvider(): Promise<boolean> {
+   protected async _validateCurrentForm(): Promise<boolean> {
       let thisX = this;
       let valid = await thisX.validateForm(this);
       if (!valid) {
@@ -388,5 +451,32 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
       return valid;
 
    } // _localUpdateDataProvider
+
+   protected async _updateDataProvider(thisX: AbstractText, args:Args_AbstractText, currentInputValue: string): Promise<void> {
+
+      if ( thisX._lastInputValue == currentInputValue ) {
+         // no update
+      } else {
+
+         if (args.updateDataProviderDisabled) {
+            // do nothing
+         } else {
+            let valid: boolean = await thisX._validateCurrentForm.call(thisX);      // local onBlur
+            if (valid) {
+               thisX.value = currentInputValue; // update value based on new changed value
+
+               if (args?.onDataProviderChange) {
+                  try {
+                     await args?.onDataProviderChange.call(thisX, thisX, currentInputValue);
+                  } catch (e) {
+                     console.error(e)
+                  }
+                  ;
+               }
+               thisX._lastInputValue = currentInputValue;
+            } // if (valid)
+         } // if (args.updateDataProviderDisabled)
+      } // if ( this._lastInputValue == currentInputValue )
+   }
 
 } // main class
