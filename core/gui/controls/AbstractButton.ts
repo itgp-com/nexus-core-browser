@@ -55,7 +55,7 @@ export abstract class AbstractButton extends AnyWidgetStandard<Button> {
 
 
       if (args.label || args.label == '')
-         this.value = stringArgVal(args.label);
+         this.value = args.label; // set value takes care of functions or strings
 
       if (args.id)
          args.id = stringArgVal(args.id);
