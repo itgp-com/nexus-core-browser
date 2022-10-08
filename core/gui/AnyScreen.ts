@@ -164,6 +164,14 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
       await super.localDestroyImplementation();
    }
 
+   /**
+    * Reset variables before repaint re-initializes the screen
+    */
+   resetInitialize() {
+      super.resetInitialize();
+      this._extraTagIdList = [];
+      this._templateIdList = [];
+   }
 
    // noinspection JSUnusedGlobalSymbols
    extraTagId(position: number): string {
