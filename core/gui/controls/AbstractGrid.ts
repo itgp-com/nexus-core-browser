@@ -219,29 +219,31 @@ export function gridDecoratorsHeight(wgtGrid: AbstractGrid): number {
    let gridDecoratorHeightVal: number = 0;
 
    let gridElem = wgtGrid.hget;
+   if (gridElem) {
 
-   let toolbarArray = gridElem.getElementsByClassName('e-toolbar');
-   if (toolbarArray.length > 0) {
-      let toolBar = toolbarArray[0];
-      if (toolBar) {
-         gridDecoratorHeightVal += toolBar.clientHeight;
-      }
-   }
+      let toolbarArray = gridElem.getElementsByClassName('e-toolbar');
+      if (toolbarArray.length > 0) {
+         let toolBar = toolbarArray[0];
+         if (toolBar) {
+            gridDecoratorHeightVal += toolBar.clientHeight;
+         }
+      } // if toolbarArray
 
-   let gridHeaderArray = gridElem.getElementsByClassName('e-gridheader');
-   if (gridHeaderArray.length > 0) {
-      let gridHeader = gridHeaderArray[0];
-      if (gridHeader) {
-         gridDecoratorHeightVal += gridHeader.clientHeight;
-      }
-   }
+      let gridHeaderArray = gridElem.getElementsByClassName('e-gridheader');
+      if (gridHeaderArray.length > 0) {
+         let gridHeader = gridHeaderArray[0];
+         if (gridHeader) {
+            gridDecoratorHeightVal += gridHeader.clientHeight;
+         }
+      } //  if gridHeaderArray
 
-   let gridPagerArray = gridElem.getElementsByClassName('e-gridpager');
-   if (gridPagerArray.length > 0) {
-      let gridPager = gridPagerArray[0];
-      if (gridPager) {
-         gridDecoratorHeightVal += gridPager.clientHeight;
-      }
-   }
+      let gridPagerArray = gridElem.getElementsByClassName('e-gridpager');
+      if (gridPagerArray.length > 0) {
+         let gridPager = gridPagerArray[0];
+         if (gridPager) {
+            gridDecoratorHeightVal += gridPager.clientHeight;
+         }
+      } // if gridPagerArray
+   } // if gridElem
    return gridDecoratorHeightVal;
 } // gridDecoratorsHeight

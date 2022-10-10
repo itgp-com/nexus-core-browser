@@ -118,10 +118,15 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
             // setTimeout is used because of Syncfusion implementation
             setTimeout(
                async () => {
-                  // await thisX.obj.refresh(); // hack to repaint tab scrollbar when it overflows
 
-                  // Remove uppercasing from tab header
-                  $(".e-tab-text").addClass('app-tab-no-text-transform');
+                  try {
+                     // Remove uppercasing from tab header
+                     thisX.hget.querySelectorAll('.e-tab-text')?.forEach((e: HTMLElement) => {
+                        e.classList.add('app-tab-no-text-transform');
+                     });
+                  } catch (e) {
+                     console.error(e);
+                  }
 
                   if (ejCreated) {
                      try {

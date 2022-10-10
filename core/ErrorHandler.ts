@@ -47,20 +47,17 @@ export class ErrorHandler {
 
                     this._initDisplayExceptionHTML(errorText); // initialize HTML
 
-                    // $(`#${this._errorTemplateTagID}`).show();
-
                     let errorTemplateElement: HTMLElement = document.getElementById(this._errorTemplateTagID) as HTMLElement
                     if (errorTemplateElement)
                        errorTemplateElement.style.display = 'block';
 
                     if (!this.documentClickAdded) {
-                       // $(document).on("click", (_) => {
-                       //    this.dismissVisibleErrorMessage(); // when any part of the document outside the error message is pressed, the error disappears
-                       // });
 
-                       document.addEventListener('click', (_) => {
+                       let eventListener: EventListener = (_) => {
                           this.dismissVisibleErrorMessage(); // when any part of the document outside the error message is pressed, the error disappears
-                       });
+                       };
+                       document.addEventListener('click', eventListener);
+
                        this.documentClickAdded = true;
                     }
                  },
@@ -88,7 +85,6 @@ export class ErrorHandler {
          document.body.insertAdjacentHTML('beforeend', html);
       }
       this.dismissVisibleErrorMessage(); // hide it at first
-      // $(`#${this.errorMessageTagID}`).first().text(errorText);
 
       let errorTemplateElement: HTMLElement = document.getElementById(this._errorTemplateTagID) as HTMLElement
       if (errorTemplateElement)
@@ -102,7 +98,6 @@ export class ErrorHandler {
    }
 
    public dismissVisibleErrorMessage() {
-      //$(`#${this._errorTemplateTagID}`).hide();
       let errorTemplateElement: HTMLElement = document.getElementById(this._errorTemplateTagID) as HTMLElement
       if (errorTemplateElement)
          errorTemplateElement.style.display = 'none';

@@ -156,8 +156,36 @@ export function htmlToElement(htmlString: string): HTMLElement {
  * @param lastIdTag the last tag of the application html inside body. Defaults to 'app__l_a_s_t__' if not passed in
  */
 export function cleanUpHtml(lastIdTag: string = 'app__l_a_s_t__') {
-   $(`#${lastIdTag}`).nextAll('div').remove() // get rid of all the junk in the page
+   // get rid of all the junk in the page
+   nextAll(null, document.getElementById(lastIdTag)).forEach((el: HTMLElement) => {
+      el.remove();
+   });
 } // noinspection SpellCheckingInspection
+
+/**
+ * Select all HTMLElements at the same level as the element passed in and return them in an array
+ * Equivalent to jQuery nextAll()
+ * @param selector null or selector for which siblings to return
+ * @param element anchor element to start from
+ */
+export function nextAll(selector: string, element: HTMLElement): HTMLElement[] {
+   let all: HTMLElement[] = [];
+   if ( element) {
+      while (element.nextElementSibling) {
+         element = element.nextElementSibling as HTMLElement;
+         if (selector) {
+            if (element.matches(selector)) {
+               all.push(element);
+            }
+         }else {
+            // no selector - all elements go in
+            all.push(element);
+         }
+      }
+   }
+   return all;
+}
+
 // noinspection SpellCheckingInspection
 /** Return the document element by it's ID or null if it doesn't exist
  *

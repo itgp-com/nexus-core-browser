@@ -34,13 +34,20 @@ export abstract class AbstractForm extends AnyWidgetStandard<any, Args_AnyWidget
          this._validator = new FormValidator(this.hgetForm, this.initArgs.validation);
       }
 
-      // Disable Enter on Form but not on inputareas
-      $(document).on("keydown", ":input:not(textarea)", function(event) {
-         if (event.key == "Enter") {
-            event.preventDefault();
-         }
-      });
+      this.hget.querySelectorAll('input:not(textarea)').forEach((input: HTMLInputElement) => {
+         const nexusCoreKeydownEvent = '__nexusKeydown__';
+         let previousEvent = input[nexusCoreKeydownEvent];
+         if ( !previousEvent){
+            let eventListener:EventListener = (event:KeyboardEvent) => {
+               if (event.key === 'Enter') {
+                  event.preventDefault();
+               }
+            };
+            input.addEventListener('keydown', eventListener);
+            input[nexusCoreKeydownEvent] = eventListener;
+         } // if ( !previousEvent)
 
+      });
    }
 
    async localDestroyImplementation(): Promise<void> {

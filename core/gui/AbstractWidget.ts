@@ -1,6 +1,7 @@
 /**
  * This class serves as the base of every data enabled panel
  */
+
 import {BaseListener}                                                                                                                             from "../BaseListener";
 import {getRandomString, hget, htmlToElement, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils, IKeyValueString, StringArg, stringArgVal} from "../BaseUtils";
 import {Err}                                                                                                                                      from "../Core";
@@ -492,11 +493,15 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                );
             }
 
-            if (this._children) {
-               for (const child of this._children) {
+            if (this._children && this._children.length > 0) {
+               await Promise.all(this._children.map(async (child) => {
                   if (child)
-                     await child.initLogic();
-               }
+                     return child.initLogic();
+               }));
+               // for (const child of this._children) {
+               //    if (child)
+               //       await child.initLogic();
+               // }
             } // if ( this.children)
 
             // run this component's logic after the children
