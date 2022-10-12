@@ -1,12 +1,8 @@
 import {getRandomString, htmlToElement}            from "../BaseUtils";
-import {CSS_FLEX_MAX_XY}                           from "../CoreCSS";
-import {addWidgetClass}                            from "./AbstractWidget";
 import {Args_AnyWidget, initialize_Args_AnyWidget} from "./AnyWidget";
 import {AnyWidgetStandard}                         from "./AnyWidgetStandard";
 
 export class Args_AnyScreen<CONTROLMODEL = any> extends Args_AnyWidget<CONTROLMODEL> {
-   tagName ?: string = 'div';
-   overwriteDefaultClasses ?: string[];
 
 } //AnyScreenParams
 
@@ -70,7 +66,7 @@ export function removeTemplate(screen: AnyScreen, template_id: string): boolean 
  * The base component of any screen - be it in the base window itself or inside a Dialog/Popup
  *
  * Default HTML is:
- * <div id="contentXYZ" class="flex-component-max flex-full-height">
+ * <div id="${tagID}" >
  * </div>
  *
  * @author David Pociu - InsiTech
@@ -78,8 +74,8 @@ export function removeTemplate(screen: AnyScreen, template_id: string): boolean 
  */
 export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLElement, Args_AnyScreen, DATA_TYPE> {
 
-   private _extraTagIdList: string[]    = [];
-   protected _templateIdList: string[]  = [];
+   private _extraTagIdList: string[]   = [];
+   protected _templateIdList: string[] = [];
 
    /**
     * Unique uuid that will uniquely identify this screen even after any future refactoring changes the name of the class
@@ -91,7 +87,7 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
    }
 
 
-   initialize_AnyScreen(anyScreenDescriptor ?: Args_AnyScreen) {
+   async initialize_AnyScreen(anyScreenDescriptor ?: Args_AnyScreen) {
 
       if (anyScreenDescriptor)
          // ensure that default fields are filled, but overwritten by contents of parameter passed in
@@ -103,15 +99,8 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
       initialize_Args_AnyWidget(anyScreenDescriptor, this);
       this.initArgs = anyScreenDescriptor;
 
-      if (anyScreenDescriptor.overwriteDefaultClasses) {
-         // anyScreenDescriptor.overwriteDefaultClasses not null because of the  Args_AnyWidget.initialize call above
-         addWidgetClass(anyScreenDescriptor, anyScreenDescriptor.overwriteDefaultClasses);
-      } else {
-         addWidgetClass(anyScreenDescriptor, CSS_FLEX_MAX_XY);
-      }
-
       // -------------- NOW properly initialize the super component ---------------
-      super.initialize_AnyWidgetStandard(anyScreenDescriptor);
+      await super.initialize_AnyWidgetStandard(anyScreenDescriptor);
    } // initAnyScreen
 
 
@@ -120,15 +109,13 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
 
       if (this.initArgs?.extraTagIdCount > 0) {
          for (let i = 0; i < this.initArgs.extraTagIdCount; i++) {
-            let extraTagId = getRandomString(`extraTagId${i}`);
+            let extraTagId = getRandomString(`${this.tagId}_extra{i}`);
 
             // store the tag id in the list
             this.extraTagIdList.push(extraTagId);
 
             // add the div tag in the HTML
-            b += `
-<div id="${extraTagId}"></div>
-`;
+            b += this.extraTagTemplate(extraTagId);
 
          } //for anyScreenDescriptor.extraTagIdCount
       } //if (descriptor.extraTagIdCount > 0)
@@ -136,6 +123,14 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
       b += await super.localContentEnd();
       return b
    } // localContentEnd
+
+   /**
+    * Override this method to change the html created for extra tags to the screen
+    * @param extraTagId
+    */
+   extraTagTemplate(extraTagId: string): string {
+      return `<div id="${extraTagId}"></div>`;
+   }
 
    /**
     * @since 1,0.24
@@ -179,8 +174,6 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
          return null;
       return this.extraTagIdList[position];
    } // extraTagId
-
-
 
 
    get extraTagIdList(): string[] {
