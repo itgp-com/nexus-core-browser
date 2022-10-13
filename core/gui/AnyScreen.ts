@@ -109,7 +109,7 @@ export abstract class AnyScreen<DATA_TYPE = any> extends AnyWidgetStandard<HTMLE
 
       if (this.initArgs?.extraTagIdCount > 0) {
          for (let i = 0; i < this.initArgs.extraTagIdCount; i++) {
-            let extraTagId = getRandomString(`${this.tagId}_extra{i}`);
+            let extraTagId = getRandomString(`${this.tagId}_extra${i}`);
 
             // store the tag id in the list
             this.extraTagIdList.push(extraTagId);
