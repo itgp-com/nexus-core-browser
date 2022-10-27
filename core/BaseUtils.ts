@@ -1,7 +1,9 @@
 /**
  * Basic utils that have no 'import' statements from anywhere else in Core
  */
-import {isFunction} from "lodash";
+import {isFunction}       from "lodash";
+import {CssStyle}         from "./gui/AbstractWidget";
+import {cssStyleToString} from "./CoreUtils";
 
 export type StringFunction = () => string;
 export type StringArg = (string | StringFunction);
@@ -223,7 +225,7 @@ export interface IKeyValueString {
 
 export interface IArgs_HtmlDecoration {
    htmlTagClass?: string;
-   htmlTagStyle?: string;
+   htmlTagStyle?: CssStyle;
    htmlOtherAttr?: IKeyValueString; // {string:string};
 }
 
@@ -241,7 +243,7 @@ export class IArgs_HtmlTag_Utils {
       if (!args.htmlTagClass)
          args.htmlTagClass = '';
       if (!args.htmlTagStyle)
-         args.htmlTagStyle = '';
+         args.htmlTagStyle = {};
       if (!args.htmlOtherAttr)
          args.htmlOtherAttr = {};
 
@@ -261,7 +263,7 @@ export class IArgs_HtmlTag_Utils {
       args             = IArgs_HtmlTag_Utils.init(args);
       let htmlTagStyle = '';
       if (args.htmlTagStyle)
-         htmlTagStyle = ` style="${args.htmlTagStyle}"`;
+         htmlTagStyle = ` style="${cssStyleToString(args.htmlTagStyle)}"`;
       return htmlTagStyle;
    }
 

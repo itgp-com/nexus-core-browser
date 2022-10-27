@@ -8,17 +8,18 @@ import {Err}                                                                    
 import {getErrorHandler}                                                                                                                          from "../CoreErrorHandling";
 import {ExceptionEvent}                                                                                                                           from "../ExceptionEvent";
 import {ArgsPost, asyncPostRetVal}                                                                                                                from "../HttpUtils";
-import {ListenerHandler, StopListenerChain}                                                                                                       from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                                            from "./BeforeInitLogicListener";
-import {ClientVersion, getClientVersion}                                                                                                          from "./ClientVersion";
-import {DialogInfo}                                                                                                                               from "./controls/DialogInfo";
-import {IDialogWindow}                                                                                                                            from "./controls/IDialogWindow";
-import {ScreenMeta}                                                                                                                               from "./ScreenMeta";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                                                             from "./WidgetErrorHandler";
-import {enableRipple}                                                                                                                             from "@syncfusion/ej2-base";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                                                                from "@syncfusion/ej2-popups";
-import {AxiosResponse}                                                                                                                            from "axios";
-import {isArray}                                                                                                                                  from "lodash";
+import {ListenerHandler, StopListenerChain}            from "../ListenerHandler";
+import {BeforeInitLogicEvent, BeforeInitLogicListener} from "./BeforeInitLogicListener";
+import {ClientVersion, getClientVersion}               from "./ClientVersion";
+import {DialogInfo}                                    from "./controls/DialogInfo";
+import {IDialogWindow}                                 from "./controls/IDialogWindow";
+import {ScreenMeta}                                    from "./ScreenMeta";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}  from "./WidgetErrorHandler";
+import {enableRipple}                                  from "@syncfusion/ej2-base";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs}     from "@syncfusion/ej2-popups";
+import {AxiosResponse}                                 from "axios";
+import {isArray}                                       from "lodash";
+import * as CSS                                        from "csstype";
 
 enableRipple(true);
 
@@ -493,6 +494,9 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                );
             }
 
+            // run this component's logic BEFORE the children
+            await this.localLogicImplementation();
+
             if (this._children && this._children.length > 0) {
                await Promise.all(this._children.map(async (child) => {
                   if (child)
@@ -504,8 +508,6 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                // }
             } // if ( this.children)
 
-            // run this component's logic after the children
-            await this.localLogicImplementation();
 
             // ------------ After Init Logic Listeners -----------------------
             let afterEvt: AfterInitLogicEvent = {
@@ -1171,6 +1173,12 @@ export abstract class AfterInitLogicListener extends BaseListener<AfterInitLogic
 } // main class
 export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
 
+
+/**
+ * Allows the style to be either a hardcoded string or an object that translates to read kebab-case CSS that (**NOT** the JS camelCase)
+ */
+export type CssStyle = CSS.PropertiesHyphen;
+
 /**
  * Base class for all Widget settings(arguments)
  */
@@ -1191,7 +1199,7 @@ export class Args_AbstractWidget implements IArgs_HtmlTag {
 
    // --- Start IArgs_HtmlTag implementation ---
    htmlTagClass?: string;
-   htmlTagStyle?: string;
+   htmlTagStyle?: CssStyle;
    htmlOtherAttr?: IKeyValueString; // {string:string};
    htmlTagType?: string; // div by default
    // --- End IArgs_HtmlTag implementation ---

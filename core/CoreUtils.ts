@@ -3,11 +3,11 @@ import {Component}                                    from "@syncfusion/ej2-base
 import {getErrorHandler}                              from "./CoreErrorHandling";
 import {DataManager, Query, ReturnOption, UrlAdaptor} from "@syncfusion/ej2-data";
 import {EJList}                                       from "./data/Ej2Comm";
-import {isArray}                                      from "lodash";
+import {isArray, isString}                            from "lodash";
 import * as CSS                                       from 'csstype';
 import {tModel, urlTableEj2}                          from "./AppPathUtils";
 import {IArgs_HtmlDecoration, IKeyValueString}        from "./BaseUtils";
-import {AbstractWidget}                               from "./gui/AbstractWidget";
+import {AbstractWidget, CssStyle}                     from "./gui/AbstractWidget";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY   = 1000;
@@ -436,7 +436,7 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
    // first append any classes
    try {
       let htmlTagClass: string = decoration.htmlTagClass;
-      if ( htmlTagClass) {
+      if (htmlTagClass) {
          htmlTagClass = removeDoubleSpaces(htmlTagClass);
          if (htmlTagClass) {
             let newClasses: string[] = htmlTagClass.split(' ');
@@ -450,17 +450,17 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
 
    // now update the style attribute
    try {
-      let htmlTagStyle: string = decoration.htmlTagStyle;
-      if (htmlTagStyle) {
-         htmlTagStyle = removeDoubleSpaces(htmlTagStyle);
-         if (htmlTagStyle) {
+      let styleAsString: string = cssStyleToString(decoration.htmlTagStyle);
+      if (styleAsString) {
+         styleAsString = removeDoubleSpaces(styleAsString);
+         if (styleAsString) {
             let currentStyle: string = htmlElement.getAttribute('style');
             if (!currentStyle)
                currentStyle = ''
             if (currentStyle.length > 0 && (!currentStyle.endsWith(';')))
                currentStyle += ';'
 
-            currentStyle += htmlTagStyle;
+            currentStyle += styleAsString;
             htmlElement.setAttribute('style', currentStyle);
          }
       } // if (htmlTagStyle)
@@ -525,58 +525,6 @@ export function cssAddClass(className: string, rules: string | CssLikeObject) {
 
    className = `.${className}`;
    return cssAddSelector(className, rules);
-
-   // if (!className) {
-   //    getErrorHandler().displayExceptionToUser(`CoreUtils.cssAddClass method was passed an empty className parameter! className = ${className}`);
-   //    return;
-   // }
-   //
-   // while (className.startsWith('.') || className.startsWith(' ')) {
-   //    className = className.substr(1); // eliminate starting periods and spaces
-   // }
-   //
-   // if (!rules) {
-   //    getErrorHandler().displayExceptionToUser(`CoreUtils.cssAddClass method was passed an empty rules parameter! rules = ${rules}`);
-   //    return;
-   // }
-   //
-   // let classArray: cssRule[];
-   // let t = typeof rules;
-   // if ((t === 'string')) {
-   //    classArray = [{className: className, body: rules as string}];
-   // } else {
-   //    classArray = cssNestedDeclarationToRuleStrings(className, rules as CssLikeObject);
-   // }
-   //
-   // if (!cachedStyle) {
-   //    // Create it the first time through
-   //    cachedStyle      = document.createElement('style');
-   //    // noinspection JSDeprecatedSymbols
-   //    cachedStyle.type = 'text/css';
-   //    document.getElementsByTagName('head')[0].appendChild(cachedStyle);
-   // }
-   //
-   //
-   // if (ruleMap.get(className)) {
-   //    // First, remove the class if it already exists
-   //    let removed = cssRemoveClass(className);
-   //    if (removed)
-   //       ruleMap.delete(className);
-   // }
-   //
-   //
-   // for (const cssRule of classArray) {
-   //    if (!(cachedStyle.sheet || {}).insertRule) {
-   //       // noinspection JSDeprecatedSymbols
-   //       (((cachedStyle as any).styleSheet || cachedStyle.sheet) as any).addRule(`.${cssRule.className}`, cssRule.body);
-   //    } else {
-   //       // Modern browsers use this path
-   //       let n: number = cachedStyle.sheet?.cssRules.length; // insert at the end
-   //       cachedStyle.sheet.insertRule(`.${cssRule.className}{${cssRule.body}}`, n); // insert at the end
-   //       ruleMap.set(cssRule.className, 1); // keep track of the fact that it's already been added
-   //    }
-   // } // for cssRule
-
 } // cssAddClass
 
 
@@ -587,29 +535,7 @@ export function cssAddClass(className: string, rules: string | CssLikeObject) {
  */
 export function cssRemoveClass(className: string): boolean {
    return cssRemoveSelector(className);
-   // let removed: boolean           = false;
-   // let cachedSheet: CSSStyleSheet = cachedStyle.sheet;
-   // if (cachedSheet) {
-   //
-   //
-   //    for (let j = 0; j < cachedSheet.cssRules.length; j++) {
-   //       if ((cachedSheet.cssRules[j] as CSSStyleRule).selectorText == `.${className}`) {
-   //          try {
-   //             cachedSheet.deleteRule(j);
-   //             removed = true;
-   //             break;
-   //          } catch (ex) {
-   //             console.error(ex);
-   //             getErrorHandler().displayExceptionToUser(ex);
-   //          }
-   //       } // if
-   //    } //for
-   // } // cssRemoveClass
-   //
-   // return removed;
 } // cssRemoveClass
-
-
 
 
 /**
@@ -702,12 +628,9 @@ export function cssRemoveSelector(cssSelectorName: string): boolean {
 } // cssRemoveSelector
 
 
-
-
-
-
 //https://yyjhao.com/posts/roll-your-own-css-in-js/
-type CssLikeObject = | { [selector: string]: CSS.PropertiesHyphen | CssLikeObject; } | CSS.PropertiesHyphen;
+export type CssLikeObject = | { [selector: string]: CSS.PropertiesHyphen | CssLikeObject; } | CSS.PropertiesHyphen;
+
 
 function joinSelectors(parentSelector: string, nestedSelector: string) {
    if (nestedSelector[0] === ":") {
@@ -717,13 +640,13 @@ function joinSelectors(parentSelector: string, nestedSelector: string) {
    }
 }
 
-class cssRule {
+export class cssRule {
    className: string;
    body: string;
 }
 
 // https://yyjhao.com/posts/roll-your-own-css-in-js/
-function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: CssLikeObject): cssRule[] {
+export function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: CssLikeObject): cssRule[] {
    const result: cssRule[] = [];
 
    // We use a helper here to walk through the tree recursively
@@ -770,6 +693,39 @@ function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: C
    return result;
 }
 
+/**
+ *
+ * @param cssStyle either a string of css or a CssPropertiesHyphen object
+ * @param cssDelimiter - default is '' (no delimiter between css rules)
+ */
+export function cssStyleToString(cssStyle: CssStyle, cssDelimiter :string = ''): string {
+   const cssProps: CSS.PropertiesHyphen = {};
+   let style                            = '';
+
+   if (cssStyle) {
+      if (isString(cssStyle)) {
+         style = cssStyle;
+      } else {
+         for (let prop in cssStyle) {
+            const value = (<any>cssStyle)[prop];
+            if (value instanceof Object) {
+               // do nothing
+            } else {
+               (<any>cssProps)[prop] = value;
+            }
+         } // for
+         const lines: string[] = [];
+         for (let prop in cssProps) {
+            // collect the top level css rules
+            lines.push(`${prop}:${(<any>cssProps)[prop]};`);
+         }
+         style = lines.join(cssDelimiter); // no spaces needed
+      } // if cssStyle is string
+   } // if cssStyle
+
+   return style;
+} //cssStyleToString
+
 
 export function htmlElement_link_clickFunction(elem: HTMLElement, clickFunction: (evt: any) => (void | Promise<void>)) {
    if (!elem)
@@ -787,6 +743,6 @@ export function htmlElement_link_clickFunction(elem: HTMLElement, clickFunction:
  *
  * @param value true if the object looks like a Promise (has a then function)
  */
-export function isPromise(obj:any) {
+export function isPromise(obj: any) {
    return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
 }

@@ -1,6 +1,7 @@
 import {AnyWidget, Args_AnyWidget} from "../AnyWidget";
 import {addWidgetClass}            from "../AbstractWidget";
 import {css_horizontal_spacer}     from "../../CoreCSS";
+import {cssStyleToString}          from "../../CoreUtils";
 
 export class Args_CoreOnly_HorizontalSpacer extends Args_AnyWidget { // does not extend Args_AnyWidget on purpose, it's too simple
    pixels ?: number = 0;
@@ -28,7 +29,7 @@ export class CoreOnly_SpacerHorizontal extends AnyWidget {
       addWidgetClass(args,'WxSpacer_Horizontal');
 
       if (args.pixels) {
-         args.htmlTagStyle += `margin-right:${args.pixels}px;`;
+         Object.assign(args.htmlTagStyle  , {"margin-right":`${args.pixels}px`})
       } else {
          addWidgetClass(args, css_horizontal_spacer)
       }

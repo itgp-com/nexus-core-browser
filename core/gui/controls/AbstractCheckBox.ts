@@ -3,6 +3,7 @@ import {DataProviderChangeEvent}            from "../../data/DataProvider";
 import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../../BaseUtils";
 import {AnyWidget, Args_AnyWidget}          from "../AnyWidget";
 import {addWidgetClass}                     from "../AbstractWidget";
+import {cssStyleToString}                   from "../../CoreUtils";
 
 export abstract class Args_WgtCheckBox_Label {
    position ?: "Top" | "Leading" | "Trailing";
@@ -110,7 +111,7 @@ export abstract class AbstractCheckBox<ARG_CLASS extends Args_AbstractCheckBox =
 
       if (args.label)
          { // noinspection CssUnknownProperty
-            label = `    <${args.labelSettings.wrapper.htmlTagType} id="${this.labelTagID}" ${args.labelSettings.wrapper.htmlOtherAttr} class="e-float-text e-label-top ${args.labelSettings.wrapper.htmlTagClass}" style="padding-${paddingSuffix}: ${args.labelSettings.margin}px;${args.labelSettings.wrapper.htmlTagStyle}">${args.label.escapeHTML()}</${args.labelSettings.wrapper.htmlTagType}>`;
+            label = `    <${args.labelSettings.wrapper.htmlTagType} id="${this.labelTagID}" ${args.labelSettings.wrapper.htmlOtherAttr} class="e-float-text e-label-top ${args.labelSettings.wrapper.htmlTagClass}" style="padding-${paddingSuffix}: ${args.labelSettings.margin}px;${cssStyleToString(args.labelSettings.wrapper.htmlTagStyle)}">${args.label.escapeHTML()}</${args.labelSettings.wrapper.htmlTagType}>`;
          }
 
 

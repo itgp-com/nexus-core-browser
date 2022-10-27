@@ -3,6 +3,7 @@ import {IArgs_HtmlTag_Utils} from "../../BaseUtils";
 import {AnyWidgetStandard}   from "../AnyWidgetStandard";
 import {addWidgetClass}      from "../AbstractWidget";
 import {css_vertical_spacer} from "../../CoreCSS";
+import {cssStyleToString}    from "../../CoreUtils";
 
 export class Args_CoreOnly__VerticalSpacer extends Args_AnyWidget { // does not extend Args_AnyWidget on purpose, it's too simple
    pixels ?: number;
@@ -27,7 +28,7 @@ export class CoreOnly__VerticalSpacer extends AnyWidgetStandard {
          args.id = 'CoreOnly__VerticalSpacer';
 
       if (args.pixels) {
-         args.htmlTagStyle += `padding-bottom:${args.pixels}px;`;
+         args.htmlTagStyle = { ...args.htmlTagStyle , "padding-bottom":`${args.pixels}px`} ;
       } else {
          addWidgetClass(args, css_vertical_spacer)
       }

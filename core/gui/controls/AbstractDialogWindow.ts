@@ -302,7 +302,12 @@ export abstract class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialog
 
       return await CoreOnly_RowFlex.create(
          {
-            htmlTagStyle:    `flex-shrink:0;flex-grow:1;align-content:stretch;`,
+            // htmlTagStyle:    `flex-shrink:0;flex-grow:1;align-content:stretch;`,
+            htmlTagStyle: {
+               "flex-shrink": 0,
+               "flex-grow":   1,
+               "align-content": "stretch",
+            },
             children: children
          });
    } // headerMakeHeaderMainRow
@@ -322,14 +327,14 @@ export abstract class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialog
       let headerFromInitArgs: AbstractWidget;
       if (isString(arg_header)) {
          // html
-         headerFromInitArgs = await CoreLabel.create({labelHTML: arg_header as string, htmlTagStyle: 'align-self: center;margin-left:2px;', htmlTagType: 'span'});
+         headerFromInitArgs = await CoreLabel.create({labelHTML: arg_header as string, htmlTagStyle: {"align-self": "center", "margin-left":"2px"}, htmlTagType: 'span'});
       } else {
          // AbstractWidget
          headerFromInitArgs = arg_header as AbstractWidget;
       }
       let wrapper = await CoreOnly_RowFlex.create(
          {
-            htmlTagStyle:    `flex-shrink:0;flex-grow:1;align-content:stretch;`,
+            htmlTagStyle:    {"flex-shrink":0, "flex-grow":1,"align-content":"stretch"},
             children: [headerFromInitArgs],
          });
       return wrapper;

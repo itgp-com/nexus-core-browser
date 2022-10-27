@@ -4,8 +4,8 @@ import {Args_AnyWidget}                                from "../AnyWidget";
 import {AnyWidgetStandard}                             from "../AnyWidgetStandard";
 import {AbstractRadioButton, Args_AbstractRadioButton} from "./AbstractRadioButton";
 import {DataProvider}                                  from "../../data/DataProvider";
-import {resolveWidgetArray}                            from "../WidgetUtils";
-import {addWidgetClass}                                from "../AbstractWidget";
+import {resolveWidgetArray}                  from "../WidgetUtils";
+import {addWidgetClass, AfterInitLogicEvent} from "../AbstractWidget";
 
 export class Args_AbstractRadioButtonGroup extends Args_AnyWidget<RadioButtonModel> {
    declare children:(AbstractRadioButton|Promise<AbstractRadioButton>)[];
@@ -76,15 +76,21 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
       await this.initialize_AnyWidget(args); // resolves children
    }
 
-   async localLogicImplementation(): Promise<void> {
-     await super.localLogicImplementation();
-     let args: Args_AbstractRadioButtonGroup = this.initArgs as Args_AbstractRadioButtonGroup;
-     if ( args.initialCheckedValue === undefined){
-        // do nothing
-     } else {
-        this.value = stringArgVal(args.initialCheckedValue);
-     }
-   } // localLogicImplementation
+   // async localLogicImplementation(): Promise<void> {
+   //   await super.localLogicImplementation();
+   // } // localLogicImplementation
+
+
+   async afterInitLogic(evt: AfterInitLogicEvent): Promise<void> {
+      await super.afterInitLogic(evt);
+
+      let args: Args_AbstractRadioButtonGroup = this.initArgs as Args_AbstractRadioButtonGroup;
+      if ( args.initialCheckedValue === undefined){
+         // do nothing
+      } else {
+         this.value = stringArgVal(args.initialCheckedValue);
+      }
+   }
 
    async localRefreshImplementation(): Promise<void> {
       // refresh only makes sense if there's a dataProvider to refresh from

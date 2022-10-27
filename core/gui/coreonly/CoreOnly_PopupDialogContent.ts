@@ -59,7 +59,7 @@ export class CoreOnly_PopupDialogContent extends AnyScreen {
       children.push(
          await CoreOnly__VerticalSpacer.create(),
          await CoreOnly_RowFlex.create({
-                                    htmlTagStyle: 'margin-left:2px !important;margin-right:2px !important;', // default for bootstrap is -15px for both
+                                    htmlTagStyle: {'margin-left':'2px !important', 'margin-right':'2px !important'}, // default for bootstrap is -15px for both
                                     children:
                                                   (showOkCancelPanel ? [
                                                         await CoreOnly_ColumnFlex.create({
