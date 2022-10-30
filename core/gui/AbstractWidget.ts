@@ -497,6 +497,17 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
             // run this component's logic BEFORE the children
             await this.localLogicImplementation();
 
+            // assign fully instantiated instance to a variable
+            if (this._initArgs?.onInitialized) {
+               try {
+                  this._initArgs.onInitialized(this);
+               } catch (ex) {
+                  console.error(ex);
+                  getErrorHandler().displayExceptionToUser(ex)
+               }
+            }
+
+
             if (this._children && this._children.length > 0) {
                await Promise.all(this._children.map(async (child) => {
                   if (child)
@@ -531,15 +542,6 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
             } // if (this.afterInitLogicListeners.count() > 0)
 
 
-            // assign fully instantiated instance to a variable
-            if (this._initArgs?.onInitialized) {
-               try {
-                  this._initArgs.onInitialized(this);
-               } catch (ex) {
-                  console.error(ex);
-                  getErrorHandler().displayExceptionToUser(ex)
-               }
-            }
          } finally {
             this.initLogicInProgress = false;
          }
@@ -1187,7 +1189,8 @@ export class Args_AbstractWidget implements IArgs_HtmlTag {
    beforeInitLogicListener ?: BeforeInitLogicType;
    afterInitLogicListener ?: AfterInitLogicType;
    /**
-    *  Called after initLogic has been completed
+    *  Called after initLogic has been completed for this component but NOT for any child components
+    *  Overwrite the afterInitLogic method or use the afterInitLogicListener property to  have the children components also initialized
     */
    onInitialized ?: (widget: any) => void;
    /**
