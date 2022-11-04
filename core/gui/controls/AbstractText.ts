@@ -3,6 +3,7 @@ import {applyHtmlDecoration}                                                    
 import {DataProvider}                                                                                       from "../../data/DataProvider";
 import {TextBox, TextBoxModel}                                                                              from "@syncfusion/ej2-inputs";
 import {AnyWidget, Args_AnyWidget}                                                                          from "../AnyWidget";
+import {ChangedEventArgs}                                                                                   from "@syncfusion/ej2-inputs/src/textbox/textbox";
 
 export class Args_AbstractText_Multiline {
    /**
@@ -251,20 +252,20 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
       args.ej   = args.ej || {}; // ensure it's not null
 
 
-      let originalBlurMethod = args.ej.blur;
-         args.ej.blur = async (arg, rest) => {
-
-            let currentInputValue = arg.value; // raw input value (from the parameter because in multiline this is the only good value)
-
-            await thisX._updateDataProvider(thisX, args, currentInputValue);
-
-            if (originalBlurMethod) {
-               try {
-                  originalBlurMethod.call(thisX, arg, rest); // execute the passed in blur
-               }catch(e){console.error(e)};
-            } // if (originalBlurMethod)
-
-         };
+      // let originalBlurMethod = args.ej.blur;
+      //    args.ej.blur = async (arg, rest) => {
+      //
+      //       let currentInputValue = arg.value; // raw input value (from the parameter because in multiline this is the only good value)
+      //
+      //       await thisX._updateDataProvider(thisX, args, currentInputValue);
+      //
+      //       if (originalBlurMethod) {
+      //          try {
+      //             originalBlurMethod.call(thisX, arg, rest); // execute the passed in blur
+      //          }catch(e){console.error(e)};
+      //       } // if (originalBlurMethod)
+      //
+      //    };
 
 
       let ejCreated = args.ej.created
@@ -307,6 +308,25 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
       } // created
 
 
+      let existingChangeFunction = args.ej.change;
+      args.ej.change = async (ev:ChangedEventArgs)  => {
+         if ( existingChangeFunction){
+            try {
+               existingChangeFunction.call(this, ev);
+            }catch(e){console.error(e)};
+         }
+
+         if ( ev.previousValue ==ev.value ) // if the value is the same as before or the change was not interacted with, then don't update the data provider) {
+            return;
+
+         if (args?.updateDataProviderDisabled) {
+            // do nothing
+         } else {
+            await thisX._updateDataProvider(thisX, args, ev.value);
+         }
+
+      } // change
+
       this.obj = new TextBox(args.ej);
       this.obj.appendTo(this.hgetInput);
 
@@ -337,19 +357,6 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
 
 
       this.hgetInput.addEventListener("change", async (ev: Event) => {
-
-         let currentInputValue = this.hgetInput?.value; // raw input value
-         if ( this._lastInputValue == currentInputValue ) {
-            return;
-         }
-
-         let args = this.initArgs as Args_AbstractText
-         if (args?.updateDataProviderDisabled) {
-            // do nothing
-         } else {
-            await thisX._updateDataProvider(thisX, args, currentInputValue);
-         }
-
          if (args.onChange) {
             try {
                await args.onChange(thisX, ev);
@@ -357,7 +364,6 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
                console.error(e); // don't stop for an error in the user onChange
             }
          }
-
       });
 
 

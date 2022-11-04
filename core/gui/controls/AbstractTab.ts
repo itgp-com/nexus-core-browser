@@ -168,63 +168,65 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
       // a chance to be inserted. Without this, you get very weird Syncfusion EJ2
       // error about parts of the widgets being undefined during refresh
       let tabObj: AbstractWidget = await _intermediate;
-      if (tabObj) {
-         let initialized: boolean = tabObj.initialized;
-         if (!tabObj.initialized) {
+
+      setTimeout(async () => {
+         if (tabObj) {
+            let initialized: boolean = tabObj.initialized;
+            if (!tabObj.initialized) {
+               try {
+                  await tabObj.initLogic(); // this includes a refresh
+                  await tabObj.initLogicAsTab({
+                                                 initialized: tabObj.initialized,
+                                                 index:       index,
+                                                 instance:    thisX
+                                              }); // trigger this on the component inside the tab
+               } catch (error) {
+                  console.log(error);
+                  // this.handleError(error);
+               }
+            }
+
+            /**
+             * Added 2020-05-14 David Pociu to register the panes in the tab (since initContentAndLogic i
+             */
             try {
-               await tabObj.initLogic(); // this includes a refresh
-               await tabObj.initLogicAsTab({
-                                              initialized: tabObj.initialized,
-                                              index:       index,
-                                              instance:    thisX
-                                           }); // trigger this on the component inside the tab
+               if (tabObj.doRegisterInfo) {
+                  tabObj.registerInfo(thisX.hget);
+               }
+            } catch (ex) {
+               console.log(ex)
+            }
+
+            try {
+               // trigger this on the component inside the tab
+               await tabObj.selectedAsTab({
+                                             index:       index,
+                                             initialized: initialized,
+                                             instance:    thisX,
+                                          });
+            } catch (error) {
+               console.log(error);
+               // this.handleError(error);
+            }
+
+
+            try {
+               // trigger this on the component inside the tab
+               await tabObj.activatedAsInnerWidget({
+                                                      parentWidget: thisX,
+                                                      parentInfo:   {
+                                                         'selecting': thisX.lastSelectingIndex,
+                                                         'selected':  thisX.lastSelectedEvent,
+                                                         'index':     index,
+                                                      }
+                                                   });
             } catch (error) {
                console.log(error);
                // this.handleError(error);
             }
          }
-
-         /**
-          * Added 2020-05-14 David Pociu to register the panes in the tab (since initContentAndLogic i
-          */
-         try {
-            if (tabObj.doRegisterInfo) {
-               tabObj.registerInfo(thisX.hget);
-            }
-         } catch (ex) {
-            console.log(ex)
-         }
-
-         try {
-            // trigger this on the component inside the tab
-            await tabObj.selectedAsTab({
-                                          index:       index,
-                                          initialized: initialized,
-                                          instance:    thisX,
-                                       });
-         } catch (error) {
-            console.log(error);
-            // this.handleError(error);
-         }
-
-
-         try {
-            // trigger this on the component inside the tab
-            await tabObj.activatedAsInnerWidget({
-                                                   parentWidget: thisX,
-                                                   parentInfo:   {
-                                                      'selecting': thisX.lastSelectingIndex,
-                                                      'selected':  thisX.lastSelectedEvent,
-                                                      'index':     index,
-                                                   }
-                                                });
-         } catch (error) {
-            console.log(error);
-            // this.handleError(error);
-         }
-      }
-      // });
-
+         // });
+      }); // setTimeout
 
    } // initializeTab
 
@@ -240,12 +242,14 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
       for (let tabObj of this.tabWidgets) {
          try {
             await tabObj.destroy();
-         } catch (e) { console.error(e);}
+         } catch (e) {
+            console.error(e);
+         }
       }
 
-      this._tabWidgets = null;
+      this._tabWidgets        = null;
       this.lastSelectingEvent = null;
-      this.lastSelectedEvent = null;
+      this.lastSelectedEvent  = null;
       this.lastSelectingIndex = -1;
 
       if (this.obj)
@@ -262,7 +266,9 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
       for (let tabObj of this.tabWidgets) {
          try {
             await tabObj.refresh();
-         } catch (e) { console.error(e);}
+         } catch (e) {
+            console.error(e);
+         }
       }
    }
 
@@ -289,12 +295,12 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
       }
    }
 
-   removeTab(index:number){
-      if ( this.obj && this.initialized) {
+   removeTab(index: number) {
+      if (this.obj && this.initialized) {
          let widget = this._tabWidgets[index];
          if (widget) {
-               this.obj.removeTab(index);
-               this._tabWidgets.splice(index, 1); // changes the array IN PLACE
+            this.obj.removeTab(index);
+            this._tabWidgets.splice(index, 1); // changes the array IN PLACE
          }
       }
 
