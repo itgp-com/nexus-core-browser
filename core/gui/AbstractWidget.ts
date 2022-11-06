@@ -202,7 +202,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    }
 
    get hget(): HTMLElement {
-      return this.htmlElement;
+      return hget(this.tagId);
    }
 
    get htmlElement(): HTMLElement {
