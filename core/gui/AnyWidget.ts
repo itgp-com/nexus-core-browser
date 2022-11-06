@@ -1,13 +1,13 @@
-import {BaseListener}                                                                                                    from "../BaseListener";
-import {classArgInstanceVal, getRandomString, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction} from "../BaseUtils";
-import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}                                                      from "../data/DataProvider";
+import {BaseListener}                                                                                                                           from "../BaseListener";
+import {classArgInstanceVal, getRandomString, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction}                        from "../BaseUtils";
+import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}                                                                             from "../data/DataProvider";
 import {ListenerHandler}                                                                                                                        from "../ListenerHandler";
 import {AbstractWidget, AbstractWidgetVoidFunction, addWidgetClass, AfterInitLogicEvent, AfterInitLogicListener, Args_AbstractWidget, findForm} from "./AbstractWidget";
 import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                                          from "./BeforeInitLogicListener";
-import {Component}                                                                                                       from "@syncfusion/ej2-base";
-import * as _                                                                                                            from "lodash";
-import {isFunction}                                                                                                      from "lodash";
-import {resolveWidgetArray}                                                                                              from "./WidgetUtils";
+import {Component}                                                                                                                              from "@syncfusion/ej2-base";
+import * as _                                                                                                                                   from "lodash";
+import {isFunction}                                                                                                                             from "lodash";
+import {resolveWidgetArray}                                                                                                                     from "./WidgetUtils";
 
 export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
 
@@ -64,7 +64,6 @@ export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
    localDestroyImplementation ?: AbstractWidgetVoidFunction;
 
    extraTagIdCount ?: number = 0;
-
 
 
    /**
@@ -180,11 +179,9 @@ export interface ISimpleValue<T> {
 export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any, ARGS_ANY_WIDGET extends Args_AnyWidget = Args_AnyWidget, DATA_TYPE = any>
    extends AbstractWidget<DATA_TYPE> implements ISimpleValue<DATA_TYPE> {
 
-   private _obj: EJ2COMPONENT;
    // noinspection SpellCheckingInspection
    // private _descriptor: ARGS_ANY_WIDGET;
    private _args_AnyWidgetInitializedListeners: ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener> = new ListenerHandler<Args_AnyWidget_Initialized_Event, Args_AnyWidget_Initialized_Listener>();
-
 
    wrapperTagID: string;
 
@@ -343,7 +340,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
          }
       }
 
-      this._obj                                = null;
+      this.obj                                 = null;
       this._initArgs                           = null;
       this._args_AnyWidgetInitializedListeners = null;
       this.wrapperTagID                        = null;
@@ -368,15 +365,16 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    } // _destroy
 
 
+
    //--------------- simple getters and setters ------------
 
    get obj(): EJ2COMPONENT {
-      return this._obj;
+      return <EJ2COMPONENT> super.obj;
    }
 
    // noinspection JSUnusedGlobalSymbols
    set obj(value: EJ2COMPONENT) {
-      this._obj = value;
+      super.obj = value;
    }
 
    get initArgs(): ARGS_ANY_WIDGET {
@@ -651,6 +649,7 @@ export async function localContentEndStandard(widget: AnyWidget): Promise<string
    }
    return x; // no call to super
 } // localContentEndStandard
+
 export async function localRefreshImplementationStandard(widget: AnyWidget) {
    try {
       let objAny: any = widget.obj as any;

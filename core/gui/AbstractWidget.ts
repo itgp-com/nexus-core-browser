@@ -8,18 +8,18 @@ import {Err}                                                                    
 import {getErrorHandler}                                                                                                                          from "../CoreErrorHandling";
 import {ExceptionEvent}                                                                                                                           from "../ExceptionEvent";
 import {ArgsPost, asyncPostRetVal}                                                                                                                from "../HttpUtils";
-import {ListenerHandler, StopListenerChain}            from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener} from "./BeforeInitLogicListener";
-import {ClientVersion, getClientVersion}               from "./ClientVersion";
-import {DialogInfo}                                    from "./controls/DialogInfo";
-import {IDialogWindow}                                 from "./controls/IDialogWindow";
-import {ScreenMeta}                                    from "./ScreenMeta";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}  from "./WidgetErrorHandler";
-import {enableRipple}                                  from "@syncfusion/ej2-base";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs}     from "@syncfusion/ej2-popups";
-import {AxiosResponse}                                 from "axios";
-import {isArray}                                       from "lodash";
-import * as CSS                                        from "csstype";
+import {ListenerHandler, StopListenerChain}                                                                                                       from "../ListenerHandler";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                                            from "./BeforeInitLogicListener";
+import {ClientVersion, getClientVersion}                                                                                                          from "./ClientVersion";
+import {DialogInfo}                                                                                                                               from "./controls/DialogInfo";
+import {IDialogWindow}                                                                                                                            from "./controls/IDialogWindow";
+import {ScreenMeta}                                                                                                                               from "./ScreenMeta";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                                                             from "./WidgetErrorHandler";
+import {enableRipple}                                                                                                                             from "@syncfusion/ej2-base";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                                                                from "@syncfusion/ej2-popups";
+import {AxiosResponse}                                                                                                                            from "axios";
+import {isArray}                                                                                                                                  from "lodash";
+import * as CSS                                                                                                                                   from "csstype";
 
 enableRipple(true);
 
@@ -51,6 +51,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    private _destroyInProgress: boolean;
 
    private _hackRefreshOnWgtTabInit: boolean = true;
+   private _obj: any;
+   private _htmlElement: HTMLElement;
 
    constructor() {
       this.initialize_from_constructor();
@@ -200,7 +202,19 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    }
 
    get hget(): HTMLElement {
-      return hget(this.tagId);
+      return this.htmlElement;
+   }
+
+   get htmlElement(): HTMLElement {
+      if (!this._htmlElement )
+         this._htmlElement = hget(this.tagId); // this takes care of the case where the string initContent is called
+
+      return this._htmlElement;
+   }
+
+   async htmlElementReset() {
+      this._htmlElement = null;
+      await this.initContent();
    }
 
    //----------------------- Error Handling --------------------------
@@ -253,6 +267,10 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
    async localContentEnd(): Promise<string> {
       return '';
+   }
+
+   async localHTMLElement(): Promise<HTMLElement> {
+      return null;
    }
 
    /**
@@ -465,6 +483,25 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       return b;
    };
 
+   // /**
+   //  *
+   //  */
+   // async initHtmlElement(): Promise<HTMLElement> {
+   //    // TODO finish implementing
+   //    this._htmlElement = await this.localHTMLElement();
+   //    if ( !this._htmlElement)
+   //       return null; //TODO cannot have this
+   //
+   //    for (const child of this._children) {
+   //       if (child) {
+   //          let childElement = await child.initHtmlElement();
+   //          if (childElement)
+   //             this._htmlElement.appendChild(childElement);
+   //       }
+   //    } // for
+   //    return this._htmlElement;
+   // } // initHtmlElement
+
    async initLogic(): Promise<void> {
       if (!this.initialized) {
          this.initialized = true; // set the flag here, so if we call refresh() from inside the _initLogic implementation, it goes through
@@ -513,11 +550,17 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                   if (child)
                      return child.initLogic();
                }));
-               // for (const child of this._children) {
-               //    if (child)
-               //       await child.initLogic();
-               // }
             } // if ( this.children)
+
+            // ------------ onChildrenInitialized -----------------------
+            if (this._initArgs?.onChildrenInitialized) {
+               try {
+                  this._initArgs.onChildrenInitialized(this);
+               } catch (ex) {
+                  console.error(ex);
+                  getErrorHandler().displayExceptionToUser(ex)
+               }
+            }
 
 
             // ------------ After Init Logic Listeners -----------------------
@@ -573,8 +616,41 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
       }
    }
 
+
+   /**
+    * Get the JS instance underlying this AbstractWidget
+    * Base method that is overwritten by typed method in AnyWidget
+    */
+   get obj(): any {
+      return this._obj;
+   }
+
+   /**
+    * Set the JS instance underlying this AbstractWidget
+    * Base method that is overwritten by typed method in AnyWidget
+    */
+   set obj(value: any) {
+      this._obj = value;
+   }
+
    resetInitialize(): void {
+      try {
+         if (this._initArgs?.onResetInitialize) {
+            let onResetArgs: Args_OnResetInitialize = {
+               widget: this,
+               cancel: false,
+            };
+            this._initArgs.onResetInitialize(onResetArgs);
+            if (onResetArgs.cancel) {
+               return;
+            } // if (onResetArgs.cancel)
+         } // if (this._initArgs?.onResetInitialize)
+      } catch (ex) {
+         console.error(ex);
+      }
+
       this.initialized = false;
+      this.obj         = null; // reset the underlying object
       if (this._children) {
          this._children.forEach(child => {
             if (child)
@@ -1049,8 +1125,9 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 } // main class
 
 export interface AbstractWidgetVoidFunction {
-   (widget:AbstractWidget): void;
+   (widget: AbstractWidget): void;
 }
+
 /**
  * Find the nearest ancestor WgtForm that contains this simple component
  */
@@ -1190,14 +1267,28 @@ export class Args_AbstractWidget implements IArgs_HtmlTag {
    afterInitLogicListener ?: AfterInitLogicType;
    /**
     *  Called after initLogic has been completed for this component but NOT for any child components
-    *  Overwrite the afterInitLogic method or use the afterInitLogicListener property to  have the children components also initialized
+    *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
     */
    onInitialized ?: (widget: any) => void;
+
+   /**
+    *  Called after initLogic has been completed for this component AND for ALL the child components
+    *  Use the <link>onInitialized</link> event if you need the component initialized but not the child components
+    */
+   onChildrenInitialized ?: (widget: any) => void;
+
    /**
     * Set to true to continue to refresh, false to stop the refresh from happening this time
     */
    onBeforeRefresh ?: (args: Args_OnBeforeRefresh) => boolean;
    onAfterRefresh ?: (args: Args_OnAfterRefresh) => void;
+
+
+   /**
+    * Called when this widget's state is being reset (usually in preparation for a repaint).
+    * The reset consists of clearing the widget's HTMLElement instance, the JS instance and resetting the initialized flag.
+    */
+   onResetInitialize ?: (args: Args_OnResetInitialize) => void;
 
 
    // --- Start IArgs_HtmlTag implementation ---
@@ -1224,6 +1315,17 @@ export class Args_OnBeforeRefresh<T = any> {
 
 export class Args_OnAfterRefresh<T = any> {
    widget: T;
+}
+
+export class Args_OnResetInitialize<T = any> {
+   /**
+    * The widget that is being reset
+    */
+   widget: T;
+   /**
+    * set to true to prevent the reset from happening
+    */
+   cancel: boolean;
 }
 
 
