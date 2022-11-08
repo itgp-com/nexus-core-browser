@@ -97,7 +97,6 @@ export abstract class Args_AbstractText extends Args_AnyWidget<TextBoxModel> {
  */
 export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, string> {
 
-   protected _lastInputValue:string = '';
 
    protected constructor() {
       super();
@@ -245,7 +244,6 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
 
    async localLogicImplementation() {
       let thisX = this;
-      thisX._lastInputValue = this.hgetInput?.value; // raw input value
       await super.localLogicImplementation();
 
       let args  = this.initArgs as Args_AbstractText;
@@ -313,7 +311,7 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
          if ( existingChangeFunction){
             try {
                existingChangeFunction.call(this, ev);
-            }catch(e){console.error(e)};
+            }catch(e){console.error(e)}
          }
 
          if ( ev.previousValue ==ev.value ) // if the value is the same as before or the change was not interacted with, then don't update the data provider) {
@@ -460,7 +458,7 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
 
    protected async _updateDataProvider(thisX: AbstractText, args:Args_AbstractText, currentInputValue: string): Promise<void> {
 
-      if ( thisX._lastInputValue == currentInputValue ) {
+      if ( thisX.previousValue == currentInputValue ) {
          // no update
       } else {
 
@@ -477,12 +475,10 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
                   } catch (e) {
                      console.error(e)
                   }
-                  ;
                }
-               thisX._lastInputValue = currentInputValue;
             } // if (valid)
          } // if (args.updateDataProviderDisabled)
-      } // if ( this._lastInputValue == currentInputValue )
+      } // if ( this.previousValue == currentInputValue )
    }
 
 } // main class
