@@ -537,7 +537,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
             // assign fully instantiated instance to a variable
             if (this._initArgs?.onInitialized) {
                try {
-                  this._initArgs.onInitialized(this);
+                  await this._initArgs.onInitialized(this);
                } catch (ex) {
                   console.error(ex);
                   getErrorHandler().displayExceptionToUser(ex)
@@ -553,9 +553,15 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
             } // if ( this.children)
 
             // ------------ onChildrenInitialized -----------------------
+            try {
+               await thisX.onChildrenInitialized()
+            } catch (ex) {
+               thisX.handleError(ex);
+            }
+
             if (this._initArgs?.onChildrenInitialized) {
                try {
-                  this._initArgs.onChildrenInitialized(this);
+                  await this._initArgs.onChildrenInitialized(this);
                } catch (ex) {
                   console.error(ex);
                   getErrorHandler().displayExceptionToUser(ex)
@@ -1001,6 +1007,16 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * @since 1.0.24
     */
    async afterInitLogic(evt: AfterInitLogicEvent): Promise<void> {
+      //empty implementation
+   }
+
+   /**
+    * Override this method that is called after children are initialized.
+    *
+    * Empty implementation by default
+    * @since 2.5.14
+    */
+   async onChildrenInitialized(): Promise<void> {
       //empty implementation
    }
 
