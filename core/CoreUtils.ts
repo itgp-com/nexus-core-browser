@@ -15,7 +15,7 @@ export const IMMEDIATE_MODE_DELAY   = 1000;
 declare global {
    // noinspection JSUnusedGlobalSymbols
    interface Array<T> {
-      insert(index: number, item: any): Array<T>
+      insert(index: number, ...items: any): Array<T>
    }
 
    interface String {
@@ -23,8 +23,13 @@ declare global {
    }
 }
 
-Array.prototype.insert      = function (index: number, item: any) {
-   return this.splice(index, 0, item);
+Array.prototype.insert      = function (index: number, ...items: any) {
+   //return this.splice(index, 0, item);
+   return [
+      ...this.slice(0, index),
+      ...items,
+      ...this.slice(index)
+   ];
 };
 String.prototype.escapeHTML = function (this: Object) {
    if (this === undefined)

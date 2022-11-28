@@ -5,6 +5,8 @@ import {AnyWidgetStandard}                                                from "
 import {Event}                                                            from "@syncfusion/ej2-base";
 import {SelectEventArgs, SelectingEventArgs, Tab, TabItemModel, TabModel} from '@syncfusion/ej2-navigations';
 import {resolveWidgetArray}                                               from "../WidgetUtils";
+import {isArray}                                                          from "lodash";
+import {RemoveEventArgs}                                                  from "@syncfusion/ej2-navigations/src/tab/tab";
 
 export class Args_AbstractTab extends Args_AnyWidget<TabModel> {
 }
@@ -56,65 +58,89 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
    async localLogicImplementation() {
       let thisX = this;
       let args  = (this.initArgs as Args_AbstractTab);
-      if (!args?.children)
+      if (!args.children)
          args.children = [];
+      if (!thisX._tabWidgets)
+         thisX._tabWidgets = [];
 
       args.ej = args.ej || {};
 
-      await this.createTabModel();
+      await this.createTabModel(this.tabWidgets);
       thisX.obj = new Tab(this.tabModel, thisX.hget);
       // thisX.obj.appendTo(thisX.hget); <--- Must do extensive testing before enabling
    } //doInitLogic
 
 
-   async createTabItemModels(): Promise<TabItemModel[]> {
+   async createTabItemModels(widgetList: AbstractWidget[]): Promise<TabItemModel[]> {
       let thisX                         = this;
       let tabItemModels: TabItemModel[] = [];
-      for (let tabObj of thisX.tabWidgets) {
-         let tabHtml = await tabObj.initContent();
-         tabItemModels.push(
-            {
-               header:  {'text': tabObj.title},
-               content: tabHtml,
-            }
-         );
-         tabObj.parent = thisX;
-      } // for
+
+      if (widgetList && widgetList.length > 0) {
+         for (let tabObj of widgetList) {
+            let tabHtml = await tabObj.initContent();
+            tabItemModels.push(
+               {
+                  header:  {'text': tabObj.title},
+                  content: tabHtml,
+               }
+            );
+            tabObj.parent = thisX;
+         } // for
+      } // if
       return tabItemModels;
    } // createTabItemModels
 
-   async createTabModel() {
+   async createTabModel(widgetList: AbstractWidget[]) {
       let thisX = this;
       let args  = (this.initArgs as Args_AbstractTab); // cannot be null because they have required properties
-      let ej    = this.initArgs.ej;
+      let ej    = this.initArgs.ej || {};
 
-      let itemModelList: TabItemModel[] = await thisX.createTabItemModels();
+      let itemModelList: TabItemModel[] = await thisX.createTabItemModels(widgetList);
 
-      let ejCreated = ej.created;
+      let ejSelecting = ej.selecting;
+      let ejSelected  = ej.selected;
+      let ejCssClass  = ej.cssClass || '';
+      let ejCreated   = ej.created;
+      let ejRemoved   = ej.removed;
+
+      // e-fill: fill tab header with accent background
+      if (ejCssClass.length > 0) {
+         ejCssClass += `e-fill ${ejCssClass}`;
+      } else {
+         ejCssClass = 'e-fill';
+      }
 
       // @ts-ignore
-      thisX.tabModel = {
-         heightAdjustMode: 'None',
-         overflowMode:     "MultiRow", // "Popup", //"Extended",
-         // overflowMode: "Popup",
-         // height: 250,
-
-         items: itemModelList,
+      let baseTabModel: TabModel = {
 
          selecting: (e: SelectingEventArgs) => {
             // this is the ACTUAL tab number being selected as far as the children are concerned.
 
             thisX.lastSelectingIndex = e.selectingIndex; // e.selectedIndex;
             thisX.lastSelectingEvent = e;
+
+            if (ejSelecting) {
+               ejSelecting(e);
+            }
          },
          selected:  async (e: SelectEventArgs) => {
+            try {
+               if (ejSelected) {
+                  ejSelected(e);
+               }
+            } catch (e) {
+               thisX.handleWidgetError(e);
+               ;
+            }
+
+
             // let index: number = e.selectedIndex;
             thisX.lastSelectedEvent = e;
             let index               = thisX.lastSelectingIndex; // cached from event above
             await thisX.tabSelected(index);
          },
-         cssClass:  "e-fill", // fill tab header with accent background
-         created:   async (_e: Event) => {
+         cssClass:  ejCssClass,
+         created:   async (ev: Event) => {
             // setTimeout is used because of Syncfusion implementation
             setTimeout(
                async () => {
@@ -130,7 +156,7 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
 
                   if (ejCreated) {
                      try {
-                        ejCreated.call(thisX);
+                        ejCreated(ev);
                      } catch (ex) {
                         thisX.handleWidgetError(ex);
                      }
@@ -147,19 +173,48 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
                }
             ); // setTimeout no delay
          }, // created
+         removed:   (ev: RemoveEventArgs) => {
+            if (ejRemoved) {
+               try {
+                  ejRemoved(ev);
+               } catch (ex) {
+                  thisX.handleWidgetError(ex);
+               }
+            } // if ejRemoved
+
+            try {
+               let index: number = ev.removedIndex;
+               if (this.obj && this.initialized) {
+                  let widget = this._tabWidgets[index];
+                  if (widget) {
+                     this._tabWidgets.splice(index, 1); // changes the array IN PLACE
+                  }
+               }
+            } catch (ex) {
+               thisX.handleWidgetError(ex);
+            }
+
+         }, // removed
       };
 
-      if (args.ej)
-         this.tabModel = {...this.tabModel, ...args.ej};
+
+      thisX.tabModel = {
+         heightAdjustMode: 'None',
+         overflowMode:     "MultiRow", // "Popup", //"Extended",
+         items:            itemModelList,
+
+         ...args.ej,
+         ...baseTabModel
+      };
    } // createTabModel
 
 
    async tabSelected(index: number) {
-      if (index < 0 || index >= this.initArgs.children.length)
+      if (index < 0 || index >= this.tabWidgets.length)
          return;
 
       let thisX         = this;
-      let _intermediate = thisX.initArgs.children[index];
+      let _intermediate = thisX.tabWidgets[index];
       if (!_intermediate)
          return;
 
@@ -284,15 +339,33 @@ export abstract class AbstractTab extends AnyWidgetStandard<Tab, Args_AnyWidget,
     * @param newWidgets new tabs to add
     * @param index position to add the tabs at
     */
-   async addTab(newWidgets: (AbstractWidget | Promise<AbstractWidget>)[], index: number) {
-      if (this.obj && this.initialized) {
-         let resolvedWidgets: AbstractWidget[]     = await resolveWidgetArray(newWidgets);
-         let resolvedTabItemModels: TabItemModel[] = await this.createTabItemModels();
+   async addTab(newWidgets: AbstractWidget | Promise<AbstractWidget> | (AbstractWidget | Promise<AbstractWidget>)[], index?: number): Promise<number> {
+      try {
+         if (this.obj && this.initialized) {
 
-         this.obj.addTab(resolvedTabItemModels, index);
+            if (index == null) {
+               index = this.obj.items?.length;
+            }
 
-         this._tabWidgets.splice(index, 0, ...resolvedWidgets); // changes the array IN PLACE
+            let localArray: (AbstractWidget | Promise<AbstractWidget>)[] = []
+            if (newWidgets) {
+               if (isArray(newWidgets)) {
+                  localArray = newWidgets;
+               } else {
+                  localArray = [newWidgets];
+               }
+            } // if newWidgets
+
+            let resolvedWidgets: AbstractWidget[]     = await resolveWidgetArray(localArray);
+            let resolvedTabItemModels: TabItemModel[] = await this.createTabItemModels(resolvedWidgets);
+            this.obj.addTab(resolvedTabItemModels, index);
+            this._tabWidgets.splice(index, 0, ...resolvedWidgets); // changes the array IN PLACE
+            return index;
+         }
+      } catch (e) {
+         console.error(e);
       }
+      return -1;
    }
 
    removeTab(index: number) {
