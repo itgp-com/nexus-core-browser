@@ -4,6 +4,7 @@
 import {isFunction}       from "lodash";
 import {CssStyle}         from "./gui/AbstractWidget";
 import {cssStyleToString} from "./CoreUtils";
+import base32Encode from 'base32-encode'
 
 export type StringFunction = () => string;
 export type StringArg = (string | StringFunction);
@@ -218,6 +219,31 @@ export function castArray<T>(array: Object[], cl: { new(args: any): T }): T[] {
    }
    return array as T[];
 }
+
+export class Args_FunctionsTable {
+   functionName: string;
+   /**
+    * Concatenation of arguments to pass to this function complete with surrounding quotes, commas between parameters, etc
+    * Ex: arguments = "'arg1', 'arg2', 'arg3'"
+    */
+   arguments ?: string;
+}
+export function functionAsTable(param:Args_FunctionsTable): string {
+      if ( !param.arguments){
+         return `${param.functionName}()`; // no arguments
+      } else {
+         // Base32 encode, then add second set of paranthesis to indicate encoding
+
+         let uint8array = new TextEncoder().encode(param.arguments);
+         // https://www.npmjs.com/package/base32-encode
+         let encodedArgs = base32Encode(uint8array, 'RFC4648'); // RFC4648 is the default standard that the application server uses
+
+         // double paranthesis to indicate encoded arguments
+         return `${param.functionName}((${encodedArgs}))`;
+
+      } // if arguments
+} // functionAsTable
+
 
 export interface IKeyValueString {
    [key: string]: string
