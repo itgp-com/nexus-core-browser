@@ -581,8 +581,8 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
 
       this._value = val;
 
-      // Only update if refresh is not in progress
-      if (!this.refreshInProgress || !this.repaintInProgress)
+      // Only update if refresh or repaint is NOT in progress
+      if ( !(this.refreshInProgress || this.repaintInProgress) )
          this.updateDataProvider(val);
 
 

@@ -3,6 +3,8 @@ import {DataProvider}                                  from "../../data/DataProv
 import {IArgs_HtmlTag, IArgs_HtmlTag_Utils}            from "../../BaseUtils";
 import {AnyWidget, Args_AnyWidget}                     from "../AnyWidget";
 import {addWidgetClass}                                from "../AbstractWidget";
+import * as _                                          from "lodash";
+
 
 export class Args_AbstractDatePicker extends Args_AnyWidget<DatePickerModel> {
    includeErrorLine ?: boolean;
@@ -81,11 +83,14 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
       } else {
          args.ej.blur = (arg, rest) => {
 
-            thisX.updateDataProvider(arg.value);      // local onBlur
+            if (arg.value) {
+               // if no edit, then the value is undefined, so don't do ANYTHING
+               thisX.updateDataProvider(arg.value);      // local onBlur
 
-            if (blur) {
-               // execute the passed in blur
-               blur(arg, rest);
+               if (blur) {
+                  // execute the passed in blur
+                  blur(arg, rest);
+               }
             }
          };
       } // if updateOnBlurDisabled
@@ -167,12 +172,14 @@ export abstract class AbstractDatePicker extends AnyWidget<DatePicker, Args_AnyW
 
    set value(val: Date) {
       if (this.obj) {
-         val            = this.convertValueBeforeSet(val);
-         this.obj.value = val;
-         super.value = val;
-         this.updateDataProvider(val);
-      }
-   }
+         val = this.convertValueBeforeSet(val);
+         if (!_.isEqual(this.obj.value, val)) {
+            this.obj.value = val;
+            super.value    = val;
+            // this.updateDataProvider(val);
+         } // if (!_.isEqual(this.obj.value, val))
+      } // if (this.obj)
+   } // set value
 
    convertValueBeforeSet(val: Date): Date {
       if ((this.initArgs as Args_AbstractDatePicker).convertNullToToday) {
