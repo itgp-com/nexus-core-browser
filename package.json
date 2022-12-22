@@ -1,13 +1,13 @@
 {
   "name": "nexus-core-browser",
-  "version": "2.5.18",
+  "version": "2.5.19",
   "private": true,
   "description": "nexus-core-browser",
   "author": "InsiTech",
   "license": "UNLICENSED",
   "dependencies": {
     "@stomp/stompjs": "6.1.2",
-    "@syncfusion/ej2": "20.3.61",
+    "@syncfusion/ej2": "20.4.38",
     "@types/collections": "5.1.2",
     "@types/sockjs-client": "1.5.1",
     "axios": "1.2.1",
