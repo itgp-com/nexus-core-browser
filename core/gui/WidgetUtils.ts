@@ -1,8 +1,8 @@
 import {Component}                                 from "@syncfusion/ej2-base";
 import {ColumnModel, Grid, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
-import {getErrorHandler}                           from "../CoreErrorHandling";
-import {AbstractWidget}                            from "./AbstractWidget";
-import {isPromise}                                 from "../CoreUtils";
+import {getErrorHandler}                       from "../CoreErrorHandling";
+import {AbstractWidget, PROPERTY_NEXUS_WIDGET} from "./AbstractWidget";
+import {isPromise}                             from "../CoreUtils";
 
 
 export type GridWidgetCallBack = (args?: QueryCellInfoEventArgs, thisX ?: any) => void;
@@ -166,4 +166,48 @@ export async function resolveWidgetArray(
       } // for
    }
    return resolvedArray;
+}
+
+/**
+ * Get the full height of an HTMLElement, including padding, border and margin
+ * @param element the element to be measured
+ */
+export function fullHeight(element: HTMLElement) {
+   if (!element) return 0;
+   let height = element.offsetHeight;
+   let style  = getComputedStyle(element);
+
+   try {
+      height += parseFloat(style.marginTop) + parseFloat(style.marginBottom);
+   } catch (e) { console.error(e); }
+   return height;
+} // fullHeight
+/**
+ * Get the full width of an HTMLElement, including padding, border and margin
+ * @param element the element to be measured
+ */
+export function fullWidth(element: HTMLElement) {
+   if (!element) return 0;
+   let width = element.offsetWidth;
+   let style  = getComputedStyle(element);
+
+   try {
+      width += parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+   } catch (e) { console.error(e); }
+   return width;
+} // fullWidth
+
+/**
+ * Get the Nexus Widget contained in this HTMLElement
+ * @param element the element to be examined
+ */
+export function getNexusWidget<T extends AbstractWidget=AbstractWidget>(element: HTMLElement): T {
+   if (!element) return null;
+   let rawWidget = element[PROPERTY_NEXUS_WIDGET];
+   if (rawWidget) {
+      if (rawWidget instanceof AbstractWidget) {
+         return rawWidget as T;
+      }
+   }
+   return null;
 }

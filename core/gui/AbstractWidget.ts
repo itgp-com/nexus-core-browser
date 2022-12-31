@@ -23,6 +23,8 @@ import * as CSS                                                                 
 
 enableRipple(true);
 
+export const PROPERTY_NEXUS_WIDGET = '_nexusWidget_';
+
 export abstract class AbstractWidget<DATA_TYPE = any> {
    contentBeginFromExtendingClass: StringArg;
    contentEndFromExtendingClass: StringArg;
@@ -206,7 +208,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    }
 
    get htmlElement(): HTMLElement {
-      if (!this._htmlElement )
+      if (!this._htmlElement)
          this._htmlElement = hget(this.tagId); // this takes care of the case where the string initContent is called
 
       return this._htmlElement;
@@ -534,6 +536,10 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
             // run this component's logic BEFORE the children
             await this.localLogicImplementation();
 
+            if (this.obj) {
+               this.hget[PROPERTY_NEXUS_WIDGET] = this; // tag this HTMLElement with the widget
+            }
+
             // assign fully instantiated instance to a variable
             if (this._initArgs?.onInitialized) {
                try {
@@ -601,6 +607,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
 // noinspection JSUnusedGlobalSymbols
    async destroy() {
+      let htmlElement:HTMLElement = this.hget;
+
       try {
          this.destroyInProgress = true;
          this.initialized       = false;
@@ -617,6 +625,10 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
          } // if ( this.children)
 
          await this.localDestroyImplementation(); // this will take care of this.obj
+
+         if (htmlElement)
+            htmlElement[PROPERTY_NEXUS_WIDGET] = null; // remove the tag
+
       } finally {
          this.destroyInProgress = false;
       }
