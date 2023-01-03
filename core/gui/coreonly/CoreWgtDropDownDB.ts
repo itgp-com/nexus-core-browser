@@ -1,4 +1,4 @@
-import {Args_AbstractDropDownDB, AbstractDropDownDB} from "../controls/AbstractDropDownDB";
+import {Args_AbstractDropDownDB, AbstractDropDownDB} from "../ej2/abstract/AbstractDropDownDB";
 import {IArgs_HtmlTag_Utils}                         from "../../BaseUtils";
 
 /**
@@ -23,7 +23,7 @@ export class CoreWgtDropDownDB<ARG_CLASS extends Args_AbstractDropDownDB = Args_
    protected async initialize_WgtDropDownDB(args: ARG_CLASS) {
       args          = IArgs_HtmlTag_Utils.init(args)as ARG_CLASS;
       this.initArgs = args;
-      await super.initialize_AbstractDropDownDB(args);
+      await super._initialize(args);
    }
 
 }

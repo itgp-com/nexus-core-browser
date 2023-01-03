@@ -1,4 +1,4 @@
-import {AbstractButton, Args_AbstractButton} from "../controls/AbstractButton";
+import {AbstractButton, Args_AbstractButton} from "../ej2/abstract/AbstractButton";
 import {IArgs_HtmlTag_Utils}                 from "../../BaseUtils";
 import {addWidgetClass}                      from "../AbstractWidget";
 

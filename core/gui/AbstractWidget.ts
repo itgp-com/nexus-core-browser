@@ -10,10 +10,10 @@ import {ExceptionEvent}                                                         
 import {ArgsPost, asyncPostRetVal}                                                                                                                from "../HttpUtils";
 import {ListenerHandler, StopListenerChain}                                                                                                       from "../ListenerHandler";
 import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                                            from "./BeforeInitLogicListener";
-import {ClientVersion, getClientVersion}                                                                                                          from "./ClientVersion";
-import {DialogInfo}                                                                                                                               from "./controls/DialogInfo";
-import {IDialogWindow}                                                                                                                            from "./controls/IDialogWindow";
-import {ScreenMeta}                                                                                                                               from "./ScreenMeta";
+import {ClientVersion, getClientVersion} from "./ClientVersion";
+import {DialogInfo}                      from "./ej2/abstract/DialogInfo";
+import {IDialogWindow}                   from "./ej2/abstract/IDialogWindow";
+import {ScreenMeta}                      from "./ScreenMeta";
 import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                                                             from "./WidgetErrorHandler";
 import {enableRipple}                                                                                                                             from "@syncfusion/ej2-base";
 import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                                                                from "@syncfusion/ej2-popups";
