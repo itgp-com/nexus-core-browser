@@ -102,7 +102,7 @@ export class WxPanelBase<DATA_TYPE, ARGS_TYPE extends Args_WxPanelBase = Args_Wx
    } // localLogicImplementation
 
    panelResized(evt: Evt_PanelResized<any>) {
-      // console.log(`panelResized: id: ${evt.panel.tagId}, height:${evt.size.height}, width:${evt.size.width}`);
+      // console.log(`panelResized: id: ${evt.panel.tagId}, height:${evt.size.height}, width:${evt.size.width}`); //
    }
 
    /**
