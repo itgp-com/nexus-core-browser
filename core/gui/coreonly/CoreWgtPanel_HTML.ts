@@ -2,7 +2,7 @@
 // https://stackoverflow.com/questions/1720320/how-to-dynamically-create-css-class-in-javascript-and-apply
 
 
-import {AbstractHTML, Args_AbstractHTML} from "../controls/AbstractHTML";
+import {AbstractHTML, Args_AbstractHTML} from "../ej2/abstract/AbstractHTML";
 
 /**
  * This class is for the EXCLUSIVE use of other core components.

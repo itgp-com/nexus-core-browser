@@ -1,5 +1,5 @@
 import {IMMEDIATE_MODE_DELAY}            from "../../CoreUtils";
-import {Args_AbstractGrid, AbstractGrid} from "../controls/AbstractGrid";
+import {Args_AbstractGrid, AbstractGrid} from "../ej2/abstract/AbstractGrid";
 import {Grid}                            from "@syncfusion/ej2-grids";
 
 export class Args_CoreOnly_Grid_FilterPage extends Args_AbstractGrid {
