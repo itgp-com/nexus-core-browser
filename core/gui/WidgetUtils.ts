@@ -137,18 +137,25 @@ export async function resolveWidgetArray(
    mixedArray: (AbstractWidget | Promise<AbstractWidget>)[],
    errorCallback ?: (instance: AbstractWidget | Promise<AbstractWidget>, index: number) => Promise<void>
 ): Promise<AbstractWidget[]> {
-   let resolvedArray: AbstractWidget[] = []
+   return resolveMixedPromiseArray<AbstractWidget>(mixedArray, errorCallback);
+}
+
+export async function resolveMixedPromiseArray<T>(
+   mixedArray: (T | Promise<T>)[],
+   errorCallback ?: (instance: T | Promise<T>, index: number) => Promise<void>
+): Promise<T[]> {
+   let resolvedArray: T[] = []
    if (mixedArray) {
       for (let i = 0; i < mixedArray.length; i++) {
-         const mixedArrayElement: AbstractWidget | Promise<AbstractWidget> = mixedArray[i];
-         let instance: AbstractWidget                                      = null;
+         const mixedArrayElement: T | Promise<T> = mixedArray[i];
+         let instance: T                                      = null;
          if (mixedArrayElement) {
             try {
                if ( isPromise(mixedArrayElement)){
                   instance = await mixedArrayElement;
                } else {
                   // not a promise
-                  instance = mixedArrayElement as AbstractWidget ;
+                  instance = mixedArrayElement as T ;
                }
                resolvedArray.push(instance);
             } catch (e) {
@@ -166,7 +173,7 @@ export async function resolveWidgetArray(
       } // for
    }
    return resolvedArray;
-}
+} // resolveMixedPromiseArray
 
 /**
  * Get the full height of an HTMLElement, including padding, border and margin

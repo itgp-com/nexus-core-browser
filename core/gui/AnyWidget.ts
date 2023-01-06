@@ -1,13 +1,14 @@
-import {BaseListener}                                                                                                                           from "../BaseListener";
-import {classArgInstanceVal, getRandomString, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction}                        from "../BaseUtils";
-import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}                                                                             from "../data/DataProvider";
-import {ListenerHandler}                                                                                                                        from "../ListenerHandler";
-import {AbstractWidget, AbstractWidgetVoidFunction, addWidgetClass, AfterInitLogicEvent, AfterInitLogicListener, Args_AbstractWidget, findForm} from "./AbstractWidget";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                                          from "./BeforeInitLogicListener";
-import {Component}                                                                                                                              from "@syncfusion/ej2-base";
-import * as _                                                                                                                                   from "lodash";
-import {isFunction}                                                                                                                             from "lodash";
-import {resolveWidgetArray}                                                                                                                     from "./WidgetUtils";
+import {BaseListener}                                                                                                    from "../BaseListener";
+import {classArgInstanceVal, getRandomString, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction} from "../BaseUtils";
+import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}                                                      from "../data/DataProvider";
+import {ListenerHandler}                                                                                                 from "../ListenerHandler";
+import {AbstractWidget, AbstractWidgetVoidFunction, addWidgetClass, Args_AbstractWidget, findForm}  from "./AbstractWidget";
+import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                   from "./BeforeInitLogicListener";
+import {Component}                                                                                                       from "@syncfusion/ej2-base";
+import * as _                                                                                                            from "lodash";
+import {isFunction}                                                                                                      from "lodash";
+import {resolveWidgetArray}                          from "./WidgetUtils";
+import {AfterInitLogicEvent, AfterInitLogicListener} from "./AfterInitLogicListener";
 
 export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
 

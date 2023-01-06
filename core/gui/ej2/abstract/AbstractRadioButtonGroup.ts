@@ -5,7 +5,8 @@ import {AnyWidgetStandard}                             from "../../AnyWidgetStan
 import {AbstractRadioButton, Args_AbstractRadioButton} from "./AbstractRadioButton";
 import {DataProvider}                                  from "../../../data/DataProvider";
 import {resolveWidgetArray}                            from "../../WidgetUtils";
-import {addWidgetClass, AfterInitLogicEvent}           from "../../AbstractWidget";
+import {addWidgetClass}                                from "../../AbstractWidget";
+import {AfterInitLogicEvent}                           from "../../AfterInitLogicListener";
 
 export class Args_AbstractRadioButtonGroup extends Args_AnyWidget<RadioButtonModel> {
    declare children:(AbstractRadioButton|Promise<AbstractRadioButton>)[];

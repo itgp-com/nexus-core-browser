@@ -1,11 +1,12 @@
-import {Args_AnyWidget}                                      from "../../AnyWidget";
-import {Carousel, CarouselModel}                             from "@syncfusion/ej2-navigations";
-import {AnyWidgetStandard}                                   from "../../AnyWidgetStandard";
-import {IArgs_HtmlTag_Utils}                                 from "../../../BaseUtils";
-import {AbstractWidget, addWidgetClass, AfterInitLogicEvent} from "../../AbstractWidget";
-import {CarouselItemModel}                                   from "@syncfusion/ej2-navigations/src/carousel/carousel-model";
-import {SlideChangedEventArgs}                               from "@syncfusion/ej2-navigations/src/carousel/carousel";
-import {resolveWidgetArray}                                  from "../../WidgetUtils";
+import {Args_AnyWidget}                 from "../../AnyWidget";
+import {Carousel, CarouselModel}        from "@syncfusion/ej2-navigations";
+import {AnyWidgetStandard}              from "../../AnyWidgetStandard";
+import {IArgs_HtmlTag_Utils}            from "../../../BaseUtils";
+import {AbstractWidget, addWidgetClass} from "../../AbstractWidget";
+import {CarouselItemModel}              from "@syncfusion/ej2-navigations/src/carousel/carousel-model";
+import {SlideChangedEventArgs}          from "@syncfusion/ej2-navigations/src/carousel/carousel";
+import {resolveWidgetArray}             from "../../WidgetUtils";
+import {AfterInitLogicEvent}            from "../../AfterInitLogicListener";
 
 export class Args_WxCarousel extends Args_AnyWidget<CarouselModel> {
 

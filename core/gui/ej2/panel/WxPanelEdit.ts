@@ -1,6 +1,6 @@
 import {ListenerAfterUpdate, ListenerAfterUpdate_Event}         from "../../events/ListenerAfterUpdate";
 import {createSpinner, DialogUtility, hideSpinner, showSpinner}            from "@syncfusion/ej2-popups";
-import {AbstractWidget, addWidgetClass, AfterInitLogicEvent}               from "../../AbstractWidget";
+import {AbstractWidget, addWidgetClass}                                    from "../../AbstractWidget";
 import {AnyScreen}                                                         from "../../AnyScreen";
 import {AnyWidget}                                                         from "../../AnyWidget";
 import {resolveWidgetArray}                                                from "../../WidgetUtils";
@@ -11,6 +11,7 @@ import {ListenerHandler}                                                   from 
 import {singleRecordDataProvider}                                          from "../../../data/DataProviderUtils";
 import {getErrorHandler}                                                   from "../../../CoreErrorHandling";
 import {classArgInstanceVal}                                               from "../../../BaseUtils";
+import {AfterInitLogicEvent}                                               from "../../AfterInitLogicListener";
 
 
 export class Args_WxPanelEdit<T = any> extends Args_WxPanelBase {

@@ -1,8 +1,9 @@
 import {CssStyle}         from "../gui/AbstractWidget";
 import {IKeyValueString}  from "../BaseUtils";
 import {cssStyleToString} from "../CoreUtils";
+import {Ix2State}         from "./Ix2State";
 
-export interface IHtmlDecorator {
+export interface Ix2HtmlDecorator {
    /**
     * the tag type of the HTMLElement
     */
@@ -22,17 +23,21 @@ export interface IHtmlDecorator {
     */
    otherAttr ?: IKeyValueString;
 
-} // end of IHtmlDecorator
+} // end of Ix2HtmlDecorator
 
 
 export class IHtmlUtils {
+
+   static initDecorator(state:Ix2State) {
+      state.decorator = IHtmlUtils.init(state.decorator);
+   }
 
    /**
     * Initializes the decorator with default values.
     * If the original decorator is null, a new one is created.
     * @param decorator
     */
-   static init(decorator: IHtmlDecorator): IHtmlDecorator {
+   static init(decorator: Ix2HtmlDecorator): Ix2HtmlDecorator {
       if (!decorator)
          decorator = {};
       if (!decorator.tag)
@@ -46,7 +51,7 @@ export class IHtmlUtils {
       return decorator;
    } //init
 
-   static class(decorator: IHtmlDecorator): string {
+   static class(decorator: Ix2HtmlDecorator): string {
       decorator             = IHtmlUtils.init(decorator);
       let c:string  = '';
       if (decorator.class.length > 0)
@@ -54,7 +59,7 @@ export class IHtmlUtils {
       return c;
    }
 
-   static style(decorator: IHtmlDecorator): string {
+   static style(decorator: Ix2HtmlDecorator): string {
       decorator             = IHtmlUtils.init(decorator);
       let htmlTagStyle = '';
       if (decorator.style)
@@ -62,7 +67,7 @@ export class IHtmlUtils {
       return htmlTagStyle;
    }
 
-   static otherAttr(decorator: IHtmlDecorator): string {
+   static otherAttr(decorator: Ix2HtmlDecorator): string {
       decorator          = IHtmlUtils.init(decorator);
       let htmlAttrs = '';
       if (decorator.otherAttr) {
@@ -80,7 +85,7 @@ export class IHtmlUtils {
       return htmlAttrs;
    }
 
-   static all(args: IHtmlDecorator): string {
+   static all(args: Ix2HtmlDecorator): string {
       return `${IHtmlUtils.class(args)}${IHtmlUtils.style(args)}${IHtmlUtils.otherAttr(args)}`;
    }
 

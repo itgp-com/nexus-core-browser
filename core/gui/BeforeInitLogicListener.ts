@@ -1,7 +1,7 @@
 import {BaseListener} from "../BaseListener";
 
-export class BeforeInitLogicEvent {
-   origin:any;
+export class BeforeInitLogicEvent<T=any> {
+   origin:T;
 }
 
 export abstract class BeforeInitLogicListener extends BaseListener<BeforeInitLogicEvent>{
@@ -13,3 +13,4 @@ export abstract class BeforeInitLogicListener extends BaseListener<BeforeInitLog
    abstract beforeInitLogic(ev:BeforeInitLogicEvent): void;
 
 } // BeforeInitLogicListener
+export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;

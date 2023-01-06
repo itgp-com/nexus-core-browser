@@ -9,17 +9,18 @@ import {getErrorHandler}                                                        
 import {ExceptionEvent}                                                                                                                           from "../ExceptionEvent";
 import {ArgsPost, asyncPostRetVal}                                                                                                                from "../HttpUtils";
 import {ListenerHandler, StopListenerChain}                                                                                                       from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                                            from "./BeforeInitLogicListener";
-import {ClientVersion, getClientVersion} from "./ClientVersion";
-import {DialogInfo}                      from "./ej2/abstract/DialogInfo";
-import {IDialogWindow}                   from "./ej2/abstract/IDialogWindow";
-import {ScreenMeta}                      from "./ScreenMeta";
+import {BeforeInitLogicEvent, BeforeInitLogicListener, BeforeInitLogicType}                                                                       from "./BeforeInitLogicListener";
+import {ClientVersion, getClientVersion}                                                                                                          from "./ClientVersion";
+import {DialogInfo}                                                                                                                               from "./ej2/abstract/DialogInfo";
+import {IDialogWindow}                                                                                                                            from "./ej2/abstract/IDialogWindow";
+import {ScreenMeta}                                                                                                                               from "./ScreenMeta";
 import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                                                             from "./WidgetErrorHandler";
 import {enableRipple}                                                                                                                             from "@syncfusion/ej2-base";
 import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                                                                from "@syncfusion/ej2-popups";
 import {AxiosResponse}                                                                                                                            from "axios";
-import {isArray}                                                                                                                                  from "lodash";
+import {escape, isArray}                                                                                                                          from "lodash";
 import * as CSS                                                                                                                                   from "csstype";
+import {AfterInitLogicEvent, AfterInitLogicListener, AfterInitLogicType}                                                                          from "./AfterInitLogicListener";
 
 enableRipple(true);
 
@@ -161,7 +162,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
 
    /**
-    * True if this component is allowed to register it's info, false otherwise
+    * True if this component is allowed to register its info, false otherwise
     * Defaults to true
     *
     */
@@ -270,15 +271,15 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    async localContentEnd(): Promise<string> {
       return '';
    }
-
-   async localHTMLElement(): Promise<HTMLElement> {
-      return null;
-   }
+   //
+   // async localHTMLElement(): Promise<HTMLElement> {
+   //    return null;
+   // }
 
    /**
     * This is the method that gives a component the chance to call any JavaScript and instantiate the widget.
     *
-    * At this point all the HTML for the component has been created (from calls to {@link localContentBegin} and {@link localContentEnd}
+    * At this point all the HTML for the component has been created (from calls to {@link localContentBegin} and {@link localContentEnd} )
     *
     * The method is called from {@link AbstractWidget}'s {@link initLogic} method, after all the children's {@link initLogic} methods have been called.
     * Therefore, all children JS objects are available at this point in time.
@@ -1018,7 +1019,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     * @param evt
     * @since 1.0.24
     */
-   async afterInitLogic(evt: AfterInitLogicEvent): Promise<void> {
+   async afterInitLogic(evt: AfterInitLogicEvent<AbstractWidget>): Promise<void> {
       //empty implementation
    }
 
@@ -1262,23 +1263,6 @@ export function addWidgetClass(args: IArgs_HtmlDecoration, additionalClasses: (s
    args.htmlTagClass = classList.join(' ');
    return args;
 } // addWidgetClass
-
-
-export type BeforeInitLogicType = (ev: BeforeInitLogicEvent) => void;
-
-export class AfterInitLogicEvent {
-   origin: AbstractWidget;
-}
-
-export abstract class AfterInitLogicListener extends BaseListener<AfterInitLogicEvent> {
-
-   eventFired(ev: AfterInitLogicEvent): void {
-      this.afterInitLogic(ev);
-   }
-
-   abstract afterInitLogic(ev: AfterInitLogicEvent): void;
-} // main class
-export type AfterInitLogicType = (ev: AfterInitLogicEvent) => void;
 
 
 /**
