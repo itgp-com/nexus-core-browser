@@ -1,10 +1,11 @@
 // noinspection JSUnusedGlobalSymbols
 
-import {Args_MultiSelect_PopupDialog_Abstract, Args_PopupDialog_Abstract, Args_SingleSelect_PopupDialog_Abstract, PopupDialog_Abstract, WgtPopupDialog_Grid} from "../abstract/PopupDialog_Abstract";
+import dateFormat from "dateformat";
+import {now}      from "lodash";
+
 import {enableExcelToolbarEvent, excelToolbarInGridModel}                                                                                                    from "../../ej2/utils/GridUtils";
-import dateFormat                                                                                                                                            from "dateformat";
-import {now}                                                                                                                                                 from "lodash";
-import {WxDialogWindow}                                                                                                                                      from "../../ej2/dialog/WxDialogWindow";
+import {Args_MultiSelect_PopupDialog_Abstract, Args_PopupDialog_Abstract, Args_SingleSelect_PopupDialog_Abstract, PopupDialog_Abstract, WgtPopupDialog_Grid} from "../abstract/PopupDialog_Abstract";
+import {WxDialogWindow}                                                                                                                                      from "./WxDialogWindow";
 
 export interface Args_WxPopupDialog extends Args_PopupDialog_Abstract {
    /**
@@ -29,27 +30,19 @@ export interface Args_MultiSelect_WxPopupDialog_Orca01 extends Args_MultiSelect_
 
 
 export class WxPopupDialog extends PopupDialog_Abstract {
-   static readonly CLASS_NAME:string = 'WxPopupDialog';
+   static readonly CLASS_NAME: string = 'WxPopupDialog';
 
    protected constructor() {
       super();
    }
 
-   static async create(args: Args_WxPopupDialog):Promise<WxPopupDialog> {
+   static async create(args: Args_WxPopupDialog): Promise<WxPopupDialog> {
       let instance     = new WxPopupDialog();
       args.popupDialog = instance;
 
       instance._initialize(args);
       return instance;
    } // static create
-
-   protected _initialize(args: Args_WxPopupDialog) {
-      if (args?.disableExcelExport == null)
-         args.disableExcelExport = true; // default to true if not specifically initialized
-
-
-      super.init_PopupDialog_Abstract(args);
-   }
 
    async createWgtPopupDialog_Grid(): Promise<WgtPopupDialog_Grid> {
       let thisX = this;
@@ -89,10 +82,18 @@ export class WxPopupDialog extends PopupDialog_Abstract {
 
    async createDialog() {
       let thisX        = this;
-      let args  = await this.createDialogWindowModel();
-      args.cssClass =  `${WxPopupDialog.CLASS_NAME}`;
+      let args         = await this.createDialogWindowModel();
+      args.cssClass    = `${WxPopupDialog.CLASS_NAME}`;
       thisX._dialogObj = await WxDialogWindow.create(args);
 
    }// createDialog
+
+   protected _initialize(args: Args_WxPopupDialog) {
+      if (args?.disableExcelExport == null)
+         args.disableExcelExport = true; // default to true if not specifically initialized
+
+
+      super.init_PopupDialog_Abstract(args);
+   }
 
 } // WxPopupDialog

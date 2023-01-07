@@ -3,7 +3,7 @@ import {createWx2HTMLStandard} from "./Wx2Utils";
 import {StateWx2Panel}         from "./ej2/panel/Wx2Panel";
 import {Ix2State}              from "./Ix2State";
 
-export interface StateAx2Standard extends Ix2State {
+export interface StateAx2Standard<WIDGET_TYPE extends Ax2Standard = any> extends Ix2State<WIDGET_TYPE> {
 }
 
 export class Ax2Standard extends Ax2Widget  {
@@ -11,23 +11,21 @@ export class Ax2Standard extends Ax2Widget  {
   protected constructor(state:StateAx2Standard) {
     super(state);
   }
-  protected async _initialSetup(state: StateAx2Standard) {
-  }
 
-  localHtmlImplementation(): HTMLElement {
+  onHtml(): HTMLElement {
     return createWx2HTMLStandard<StateWx2Panel>(this);
   }
 
-  async localClearImplementation(){
+  async onClear(){
   }
 
-  async localDestroyImplementation(){
+  async onDestroy(){
   }
 
-  async localLogicImplementation() {
+  async onLogic() {
   }
 
-  async localRefreshImplementation() {
+  async onRefresh() {
   }
 
 }

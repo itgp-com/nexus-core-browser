@@ -19,19 +19,16 @@ export function createWx2HTMLStandard<STATE extends Ix2State>(widget: Ax2Widget<
 
    let decorator: Ix2HtmlDecorator = state.decorator;
 
-   let html_id: string = ''
+   // let html_id: string = ''
    if (!state.noTagIdInHtml) {
       // if id attribute is generated
-      html_id = ` id="${widget.tagId}"`;
+      decorator.otherAttr['id'] = widget.tagId;
+      // html_id = ` id="${widget.tagId}"`;
    }
    let x: string = "";
-   x += `<${decorator.tag} ${html_id} ${IHtmlUtils.all(decorator)}>`;
-
-   // children logic here
-
-   if (!hasNoClosingHtmlTag(decorator.tag)) {
+   x += `<${decorator.tag} ${IHtmlUtils.all(decorator)}>`;
+   if (!hasNoClosingHtmlTag(decorator.tag))
       x += `</${decorator.tag}>`;
-   }
 
    let htmlElement:HTMLElement = htmlToElement(x);
 
@@ -39,8 +36,8 @@ export function createWx2HTMLStandard<STATE extends Ix2State>(widget: Ax2Widget<
 
 
    // Now process the children
-   if (state.children) {
-      let children: Ax2Widget[] = state.children();
+   if (state.gen.children) {
+      let children: Ax2Widget[] = state.gen.children();
       for (let i = 0; i < children.length; i++) {
          let child: Ax2Widget = children[i];
 
@@ -53,3 +50,17 @@ export function createWx2HTMLStandard<STATE extends Ix2State>(widget: Ax2Widget<
 
    return htmlElement;
 } // createHTMLStandard
+
+export function createWx2HtmlStandardForDecorator<DECORATOR extends Ix2HtmlDecorator>(decorator: DECORATOR): HTMLElement {
+   decorator = IHtmlUtils.init(decorator) as DECORATOR;
+
+   let x: string = "";
+   x += `<${decorator.tag} ${IHtmlUtils.all(decorator)}>`;
+
+   if (!hasNoClosingHtmlTag(decorator.tag)) {
+      x += `</${decorator.tag}>`;
+   }
+
+   let htmlElement: HTMLElement = htmlToElement(x);
+   return htmlElement;
+} // createHTMLStandardForDecorator

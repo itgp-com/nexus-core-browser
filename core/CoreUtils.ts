@@ -1,13 +1,13 @@
 /// <reference path="./global.d.ts" />
-import {Component}                                    from "@syncfusion/ej2-base";
-import {getErrorHandler}                              from "./CoreErrorHandling";
-import {DataManager, Query, ReturnOption, UrlAdaptor} from "@syncfusion/ej2-data";
-import {EJList}                                       from "./data/Ej2Comm";
-import {isArray, isString}                            from "lodash";
-import * as CSS                                       from 'csstype';
-import {tModel, urlTableEj2}                          from "./AppPathUtils";
-import {IArgs_HtmlDecoration, IKeyValueString}        from "./BaseUtils";
-import {AbstractWidget, CssStyle}                     from "./gui/AbstractWidget";
+import {Component}                             from "@syncfusion/ej2-base";
+import {DataManager, Query, UrlAdaptor}        from "@syncfusion/ej2-data";
+import * as CSS                                from 'csstype';
+import {isArray, isString}                     from "lodash";
+import {tModel, urlTableEj2}                   from "./AppPathUtils";
+import {IArgs_HtmlDecoration, IKeyValueString} from "./BaseUtils";
+import {getErrorHandler}                       from "./CoreErrorHandling";
+import {EJList}                                from "./data/Ej2Comm";
+import {CssStyle}                              from "./gui/AbstractWidget";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY   = 1000;
@@ -703,7 +703,7 @@ export function cssNestedDeclarationToRuleStrings(rootClassName: string, declara
  * @param cssStyle either a string of css or a CssPropertiesHyphen object
  * @param cssDelimiter - default is '' (no delimiter between css rules)
  */
-export function cssStyleToString(cssStyle: CssStyle, cssDelimiter :string = ''): string {
+export function cssStyleToString(cssStyle: CssStyle, cssDelimiter: string = ''): string {
    const cssProps: CSS.PropertiesHyphen = {};
    let style                            = '';
 
@@ -751,3 +751,35 @@ export function htmlElement_link_clickFunction(elem: HTMLElement, clickFunction:
 export function isPromise(obj: any) {
    return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
 }
+
+
+export function wrapVoidFunction(existingFunction: (...args: any[]) => (void | Promise<void>), newFunction: (...args: any[]) => (void | Promise<void>)): (...args: any[]) => (void | Promise<void>) {
+   if (existingFunction) {
+      let f = (...args: any[]) => {
+         existingFunction(...args);
+         newFunction(...args);
+      };
+      return f;
+   } else {
+      return newFunction;
+   }
+} // wrapVoidFunction
+
+export function wrapFunction<T = void>(
+   existingFunction: (...args: any[]) => (T | Promise<T>),
+   wrapperFunction: (existingFunctionOutput: (T | Promise<T>), ...args: any[]) => (T | Promise<T>)
+): (...args: any[]) => (T | Promise<T>) {
+
+   if (existingFunction) {
+      let f = (...args: any[]) => {
+         let existingFunctionOutput = existingFunction(...args);
+         return wrapperFunction(existingFunctionOutput, ...args);
+      };
+      return f;
+   } else {
+      let f = (...args: any[]) => {
+         return wrapperFunction(undefined, ...args);
+      };
+      return f;
+   }
+} // wrapFunction

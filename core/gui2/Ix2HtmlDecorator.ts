@@ -1,34 +1,35 @@
-import {CssStyle}         from "../gui/AbstractWidget";
+import {isEmpty}          from "lodash";
 import {IKeyValueString}  from "../BaseUtils";
 import {cssStyleToString} from "../CoreUtils";
+import {CssStyle}         from "../gui/AbstractWidget";
 import {Ix2State}         from "./Ix2State";
 
 export interface Ix2HtmlDecorator {
    /**
     * the tag type of the HTMLElement
     */
-   tag ?: string;
+   tag?: string;
    /**
     * the classes assigned to this HTMLElement
     */
-   class ?: string[];
+   class?: string[];
 
    /**
     * the style assigned to this HTMLElement
     */
-   style ?: CssStyle;
+   style?: CssStyle;
 
    /**
     * other attributes assigned to this HTMLElement
     */
-   otherAttr ?: IKeyValueString;
+   otherAttr?: IKeyValueString;
 
 } // end of Ix2HtmlDecorator
 
 
 export class IHtmlUtils {
 
-   static initDecorator(state:Ix2State) {
+   static initDecorator(state: Ix2State) {
       state.decorator = IHtmlUtils.init(state.decorator);
    }
 
@@ -52,26 +53,27 @@ export class IHtmlUtils {
    } //init
 
    static class(decorator: Ix2HtmlDecorator): string {
-      decorator             = IHtmlUtils.init(decorator);
-      let c:string  = '';
+      decorator     = IHtmlUtils.init(decorator);
+      let c: string = '';
       if (decorator.class.length > 0)
          c = ` class="${decorator.class.join(' ')}"`;
       return c;
    }
 
    static style(decorator: Ix2HtmlDecorator): string {
-      decorator             = IHtmlUtils.init(decorator);
+      decorator        = IHtmlUtils.init(decorator);
       let htmlTagStyle = '';
-      if (decorator.style)
+      if (decorator.style && !isEmpty(decorator.style))
          htmlTagStyle = ` style="${cssStyleToString(decorator.style)}"`;
       return htmlTagStyle;
    }
 
    static otherAttr(decorator: Ix2HtmlDecorator): string {
-      decorator          = IHtmlUtils.init(decorator);
-      let htmlAttrs = '';
+      decorator             = IHtmlUtils.init(decorator);
+      let otherAttrArray    = Object.entries(decorator.otherAttr);
+      let htmlAttrs: string = (otherAttrArray.length > 0 ? ' ' : '');
       if (decorator.otherAttr) {
-         Object.entries(decorator.otherAttr).forEach(entry => {
+         otherAttrArray.forEach(entry => {
             let key   = entry[0];
             let value = entry[1];
             //use key and value here
@@ -85,8 +87,8 @@ export class IHtmlUtils {
       return htmlAttrs;
    }
 
-   static all(args: Ix2HtmlDecorator): string {
-      return `${IHtmlUtils.class(args)}${IHtmlUtils.style(args)}${IHtmlUtils.otherAttr(args)}`;
+   static all(decorator: Ix2HtmlDecorator): string {
+      return `${IHtmlUtils.class(decorator)}${IHtmlUtils.style(decorator)}${IHtmlUtils.otherAttr(decorator)}`;
    }
 
 

@@ -1,14 +1,27 @@
-import {TextBoxModel}                   from "@syncfusion/ej2-inputs";
-import {Ix2State}                       from "../../Ix2State";
-import {StateEjStandard, Ax2EjStandard} from "../Ax2EjStandard";
-import {IHtmlUtils}                     from "../../Ix2HtmlDecorator";
-import {StateEjSingleVal}               from "../Ax2EjSingleVal";
+import {TextBoxModel}                                             from "@syncfusion/ej2-inputs";
+import {Args_WxText}                                              from "../../../gui/ej2/ext/WxText";
+import {IHtmlUtils, Ix2HtmlDecorator}                             from "../../Ix2HtmlDecorator";
+import {Ix2StateGenerated}                                        from "../../Ix2State";
+import {createWx2HTMLStandard, createWx2HtmlStandardForDecorator} from "../../Wx2Utils";
+import {StateEjSingleVal}                                         from "../Ax2EjSingleVal";
+import {Ax2EjStandard}                                            from "../Ax2EjStandard";
 
-export interface StateWx2TextField extends StateEjSingleVal<TextBoxModel> {
-   errorTagId ?: string;
+export interface StateWx2TextField extends StateEjSingleVal<Wx2TextField,TextBoxModel> {
 
-   labelTagId ?: string;
+   required?: boolean;
+   includeErrorLine?: boolean;
 
+   wrapperDecorator?: Ix2HtmlDecorator;
+   labelDecorator?: Ix2HtmlDecorator;
+   errorDecorator?: Ix2HtmlDecorator;
+
+   gen?: StateWx2GeneratedTextField; // overwrite the type
+}
+
+export interface StateWx2GeneratedTextField extends Ix2StateGenerated {
+   errorElement?: HTMLElement;
+   labelElement?: HTMLElement;
+   wrapperElement?: HTMLElement;
 }
 
 export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
@@ -17,22 +30,60 @@ export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
       super(state);
    }
 
+   public static async create(state: StateWx2TextField): Promise<Wx2TextField> {
+      return new Wx2TextField(state);
+   }
 
-   protected async _initialSetup(state: StateWx2TextField): Promise<void> {
-      state = state || {};
-      state.labelTagId = `label_${this.tagId}`;
-      state.errorTagId = `error_${this.tagId}`;
+   protected _constructor(state: StateWx2TextField) {
+      super._constructor(state);
+   }
+
+   protected async _initialSetup(state: StateWx2TextField) {
+      this._customizeState(state);
+      super._initialSetup(state);
+   }
 
 
+
+   protected _customizeState(state: StateWx2TextField): void {
+      let wrapperTagId = `wrapper_${this.tagId}`;
 
       IHtmlUtils.initDecorator(state);
-      let d = state.decorator;
-      d.tag = 'input';
-      d.otherAttr['data-msg-containerid'] = state.errorTagId;
-      d.otherAttr['name']                 = state.propertyName;
 
-      await super._initialSetup(state);
+
+      state.onHtml = (widget) => {
+
+         state.wrapperDecorator                 = IHtmlUtils.init(state.wrapperDecorator);
+         state.wrapperDecorator.otherAttr['id'] = wrapperTagId;
+         let wrapperElement: HTMLElement        = createWx2HtmlStandardForDecorator(state.wrapperDecorator);
+
+
+         let errorTagId = `error_${this.tagId}`;
+
+         let widgetDecorator = state.decorator;
+         widgetDecorator.tag = 'input';
+         if (state.includeErrorLine)
+            widgetDecorator.otherAttr['data-msg-containerid'] = errorTagId;
+         if (state.propertyName)
+            widgetDecorator.otherAttr['name'] = state.propertyName;
+         let widgetElement: HTMLElement = createWx2HTMLStandard<StateWx2TextField>(widget);
+         state.gen.htmlElement        = widgetElement;
+
+
+         wrapperElement.appendChild(widgetElement);
+         if (state.includeErrorLine) {
+            state.errorDecorator                 = IHtmlUtils.init(state.errorDecorator);
+            state.errorDecorator.otherAttr['id'] = errorTagId;
+            let errorElement:HTMLElement       = createWx2HtmlStandardForDecorator(state.errorDecorator);
+            state.gen.errorElement             = errorElement;
+            wrapperElement.appendChild(errorElement);
+         }
+
+         return wrapperElement;
+      }
+
    }
+
 
 
 }
