@@ -1,5 +1,4 @@
-import {TextBoxModel}                                             from "@syncfusion/ej2-inputs";
-import {Args_WxText}                                              from "../../../gui/ej2/ext/WxText";
+import {TextBox, TextBoxModel}                                    from "@syncfusion/ej2-inputs";
 import {IHtmlUtils, Ix2HtmlDecorator}                             from "../../Ix2HtmlDecorator";
 import {Ix2StateGenerated}                                        from "../../Ix2State";
 import {createWx2HTMLStandard, createWx2HtmlStandardForDecorator} from "../../Wx2Utils";
@@ -51,7 +50,7 @@ export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
       IHtmlUtils.initDecorator(state);
 
 
-      state.onHtml = (widget) => {
+      state.onHtml = () => {
 
          state.wrapperDecorator                 = IHtmlUtils.init(state.wrapperDecorator);
          state.wrapperDecorator.otherAttr['id'] = wrapperTagId;
@@ -66,7 +65,7 @@ export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
             widgetDecorator.otherAttr['data-msg-containerid'] = errorTagId;
          if (state.propertyName)
             widgetDecorator.otherAttr['name'] = state.propertyName;
-         let widgetElement: HTMLElement = createWx2HTMLStandard<StateWx2TextField>(widget);
+         let widgetElement: HTMLElement = createWx2HTMLStandard<StateWx2TextField>(state);
          state.gen.htmlElement        = widgetElement;
 
 
@@ -80,9 +79,15 @@ export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
          }
 
          return wrapperElement;
+      } // onHtml
+
+      state.onLogic = () => {
+         let obj:TextBox= new TextBox(state.ej);
+         state.gen.widget.obj = obj;
+         obj.appendTo(state.gen.htmlElement);
       }
 
-   }
+   } // _customizeState
 
 
 

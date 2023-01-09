@@ -1,9 +1,8 @@
-import {Ax2Widget}                    from "./Ax2Widget";
-import {Ix2State}                     from "./Ix2State";
-import {Ix2HtmlDecorator, IHtmlUtils} from "./Ix2HtmlDecorator";
+import * as knockout_lib              from "knockout";
 import {htmlToElement}                from "../BaseUtils";
-
-import * as knockout_lib from "knockout";
+import {Ax2Widget}                    from "./Ax2Widget";
+import {IHtmlUtils, Ix2HtmlDecorator} from "./Ix2HtmlDecorator";
+import {Ix2State}                     from "./Ix2State";
 
 export const ko = knockout_lib;
 export const tags_no_closing_tag = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
@@ -13,16 +12,16 @@ function hasNoClosingHtmlTag(tag: string): boolean {
    return tags_no_closing_tag.indexOf(tag.toLowerCase()) >= 0;
 }
 
-export function createWx2HTMLStandard<STATE extends Ix2State>(widget: Ax2Widget<STATE>): HTMLElement {
-   let state: STATE = widget.state || {} as STATE;
+export function createWx2HTMLStandard<STATE extends Ix2State>(state: STATE): HTMLElement {
+   state = state || {} as STATE;
    state.decorator  = IHtmlUtils.init(state.decorator);
 
    let decorator: Ix2HtmlDecorator = state.decorator;
 
    // let html_id: string = ''
-   if (!state.noTagIdInHtml) {
+   if (!state.noTagIdInHtml && state?.tagId) {
       // if id attribute is generated
-      decorator.otherAttr['id'] = widget.tagId;
+      decorator.otherAttr['id'] = state.tagId;
       // html_id = ` id="${widget.tagId}"`;
    }
    let x: string = "";
@@ -32,8 +31,8 @@ export function createWx2HTMLStandard<STATE extends Ix2State>(widget: Ax2Widget<
 
    let htmlElement:HTMLElement = htmlToElement(x);
 
-   widget.htmlElement = htmlElement;   // tag the widget with the htmlElement (the set method also tags the htmlElement with the widget)
-
+   // widget.htmlElement = htmlElement;   // tag the widget with the htmlElement (the set method also tags the htmlElement with the widget)
+   //
 
    // Now process the children
    if (state.gen.children) {

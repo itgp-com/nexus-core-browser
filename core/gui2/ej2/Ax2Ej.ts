@@ -4,7 +4,7 @@ import {Ix2State}  from "../Ix2State";
 
 
 export interface StateEj<WIDGET_TYPE extends Ax2Ej = any, WIDGET_LIBRARY_MODEL=any> extends Ix2State<WIDGET_TYPE> {
-   ej ?: WIDGET_TYPE;
+   ej ?: WIDGET_LIBRARY_MODEL;
 }
 
 export abstract class Ax2Ej<

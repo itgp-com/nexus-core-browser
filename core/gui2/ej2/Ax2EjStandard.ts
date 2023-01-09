@@ -14,7 +14,8 @@ export abstract class Ax2EjStandard<STATE extends Ix2State = any> extends Ax2Ej<
 
 
    public onHtml(): HTMLElement {
-      return createWx2HTMLStandard<STATE>(this);
+      this.htmlElement = createWx2HTMLStandard<STATE>(this.state);
+      return this.htmlElement;
    }
 
 

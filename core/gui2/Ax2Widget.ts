@@ -50,6 +50,7 @@ export abstract class Ax2Widget<
    protected _constructor(state: STATE): void {
       state           = state || {} as STATE;
       state.gen       = state.gen || {};
+      state.gen.widget = this;
       this._state     = state;
       this._className = this.constructor.name; // the name of the class
       if (!state.tagId) this.tagId = getRandomString(this._className);
@@ -84,7 +85,7 @@ export abstract class Ax2Widget<
       if (this.state?.gen?.htmlElement) return;
 
       if ( this.state.onHtml) {
-         this.htmlElement = this.state.onHtml(this);
+         this.htmlElement = this.state.onHtml();
       } else {
          this.htmlElement = this.onHtml();
       }
@@ -124,7 +125,7 @@ export abstract class Ax2Widget<
          // run this component's logic BEFORE the children
 
          if (this.state.onLogic) {
-            await this.state.onLogic(this); // state widgetLogic second
+            await this.state.onLogic(); // state widgetLogic second
          } else {
             await this.onLogic(); // widget localLogicImplementation third
          }
@@ -226,7 +227,7 @@ export abstract class Ax2Widget<
       }
 
       if ( this.state.onRefresh) {
-         await this.state.onRefresh(this);
+         await this.state.onRefresh();
       } else {
          await this.onRefresh();
       }

@@ -13,7 +13,8 @@ export class Ax2Standard extends Ax2Widget  {
   }
 
   onHtml(): HTMLElement {
-    return createWx2HTMLStandard<StateWx2Panel>(this);
+    this.htmlElement =  createWx2HTMLStandard<StateWx2Panel>(this.state);
+    return this.htmlElement;
   }
 
   async onClear(){

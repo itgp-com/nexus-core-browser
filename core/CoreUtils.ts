@@ -767,18 +767,21 @@ export function wrapVoidFunction(existingFunction: (...args: any[]) => (void | P
 
 export function wrapFunction<T = void>(
    existingFunction: (...args: any[]) => (T | Promise<T>),
-   wrapperFunction: (existingFunctionOutput: (T | Promise<T>), ...args: any[]) => (T | Promise<T>)
+   wrapperFunction: ( ...args: any[]) => (T | Promise<T>)
 ): (...args: any[]) => (T | Promise<T>) {
 
    if (existingFunction) {
       let f = (...args: any[]) => {
          let existingFunctionOutput = existingFunction(...args);
-         return wrapperFunction(existingFunctionOutput, ...args);
+         if ( existingFunctionOutput)
+            return existingFunctionOutput;
+
+         return wrapperFunction(...args);
       };
       return f;
    } else {
       let f = (...args: any[]) => {
-         return wrapperFunction(undefined, ...args);
+         return wrapperFunction( ...args);
       };
       return f;
    }

@@ -66,15 +66,15 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = any> {
     */
    tagId?: string;
 
-   onClear?: (widget: WIDGET_TYPE) =>  (void | Promise<void>);
+   onClear?: () =>  (void | Promise<void>);
 
-   onDestroy?: (widget: WIDGET_TYPE) =>  (void | Promise<void>);
+   onDestroy?: () =>  (void | Promise<void>);
 
-   onHtml?: (widget: WIDGET_TYPE) =>HTMLElement;
+   onHtml?: () =>HTMLElement;
 
-   onLogic?: (widget: WIDGET_TYPE) =>  (void | Promise<void>);
+   onLogic?: () =>  (void | Promise<void>);
 
-   onRefresh?: (widget: WIDGET_TYPE) =>  (void | Promise<void>);
+   onRefresh?: () =>  (void | Promise<void>);
 
    widgetErrorHandler?: WidgetErrorHandler;
 }
