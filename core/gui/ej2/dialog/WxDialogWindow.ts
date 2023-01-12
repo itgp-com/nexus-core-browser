@@ -1,12 +1,11 @@
-import {AbstractDialogWindow, Args_AbstractDialogWindow} from "../abstract/AbstractDialogWindow";
-import {WxPanelBase}                                     from "../../ej2/panel/WxPanelBase";
-import {CoreOnly_PopupDialogContent}                     from "../../coreonly/CoreOnly_PopupDialogContent";
 import {BeforeCloseEventArgs}                            from "@syncfusion/ej2-popups";
 import {AbstractWidget}                                  from "../../AbstractWidget";
 import {AnyScreen}                                       from "../../AnyScreen";
+import {CoreOnly_PopupDialogContent}                     from "../../coreonly/CoreOnly_PopupDialogContent";
+import {WxPanelBase}                                     from "../../ej2/panel/WxPanelBase";
+import {AbstractDialogWindow, Args_AbstractDialogWindow} from "../abstract/AbstractDialogWindow";
 
 export class Args_WxDialogWindow extends Args_AbstractDialogWindow {
-   horizontal_button_space ?: number;
 }
 
 export class WxDialogWindow extends AbstractDialogWindow<Args_WxDialogWindow> {
@@ -38,9 +37,6 @@ export class WxDialogWindow extends AbstractDialogWindow<Args_WxDialogWindow> {
       args.htmlClass = args.htmlClass || '';
       args.htmlClass += (args.htmlClass ? ' ' + WxDialogWindow.CLASS_NAME : WxDialogWindow.CLASS_NAME);
       args.htmlClass += ' flex-component-max flex-full-height';
-
-      if (args.horizontal_button_space == null)
-         args.horizontal_button_space = 15;
 
       if (args.showHeaderBackArrow == null)
          args.showHeaderBackArrow = true; // unless otherwise instructed, show the back arrow all the time

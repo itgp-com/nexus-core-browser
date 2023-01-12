@@ -5,7 +5,7 @@ export interface StateWx2Panel extends StateAx2Standard {
 
 export class Wx2Panel extends Ax2Standard {
 
-  protected constructor(state:StateWx2Panel) {
+  constructor(state:StateWx2Panel) {
     super(state);
   }
 

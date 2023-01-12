@@ -25,13 +25,13 @@ export interface StateWx2GeneratedTextField extends Ix2StateGenerated {
 
 export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
 
-   protected constructor(state: StateWx2TextField) {
+   constructor(state: StateWx2TextField) {
       super(state);
    }
 
-   public static async create(state: StateWx2TextField): Promise<Wx2TextField> {
-      return new Wx2TextField(state);
-   }
+   // public static async create(state: StateWx2TextField): Promise<Wx2TextField> {
+   //    return new Wx2TextField(state);
+   // }
 
    protected _constructor(state: StateWx2TextField) {
       super._constructor(state);
