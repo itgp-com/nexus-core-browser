@@ -1,7 +1,13 @@
 import {Dialog, DialogModel}               from "@syncfusion/ej2-popups";
 import {Ax2EjStandard, StateAx2EjStandard} from "../Ax2EjStandard";
+import {StateWx2DialogHeaderOptions}       from "./aux/Wx2DialogAux";
+
 
 export interface StateWx2Dialog extends StateAx2EjStandard<Ax2EjStandard, DialogModel> {
+   /**
+    * Options that would add or replace default header behavior
+    */
+   headerOptions ?: StateWx2DialogHeaderOptions;
 }
 
 
@@ -17,4 +23,4 @@ export class Wx2Dialog {
    }
 
 
-}
+} // wx2Dialog

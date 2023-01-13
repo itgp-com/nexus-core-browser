@@ -24,12 +24,12 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = any> {
    gen ?:Ix2StateGenerated<WIDGET_TYPE>
 
    /**
-    * Initial array of children widgets that is resolved and then turned into the <link>children</link> observableArray property
-    *
-    * This property is ***ONLY*** considered during the initial setup of the widget, and should not be relied on to be up-to-date past that point.
-    * @see children
+    * The current children this widget contains as on ObservableArray.
+    * use <code>obsChildren(...children)</code> to set the children
+    * @see initialChildren
     */
-   initialChildren?: Ax2Widget[]; // (Ax2Widget<any> | Promise<Ax2Widget<any>>)[];
+   children?: ko.ObservableArray<WIDGET_TYPE>
+
 
    /**
     * If this is true, the widget will be rendered without using the <link>tagId</link> value as the id of the HTML element.
@@ -81,12 +81,6 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = any> {
 
 export interface Ix2StateGenerated<WIDGET_TYPE extends Ax2Widget = any>{
 
-   /**
-    * The current children this widget contains as on ObservableArray.
-    * If <link>initialChildren</link> is set, this property will initially be set to the resolved value of <link>initialChildren</link>
-    * @see initialChildren
-    */
-   children?: ko.ObservableArray<WIDGET_TYPE>
 
 
    /**

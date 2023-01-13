@@ -1,7 +1,7 @@
 import {Ax2Widget}             from "./Ax2Widget";
-import {createWx2HTMLStandard} from "./Wx2Utils";
 import {StateWx2Panel}         from "./ej2/panel/Wx2Panel";
 import {Ix2State}              from "./Ix2State";
+import {createWx2HTMLStandard} from "./Wx2Utils";
 
 export interface StateAx2Standard<WIDGET_TYPE extends Ax2Standard = any> extends Ix2State<WIDGET_TYPE> {
 }

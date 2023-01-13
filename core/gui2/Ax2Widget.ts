@@ -50,6 +50,7 @@ export abstract class Ax2Widget<
    protected _constructor(state: STATE): void {
       state           = state || {} as STATE;
       state.gen       = state.gen || {};
+      state.decorator = state.decorator || {} as IHtmlUtils;
       state.gen.widget = this;
       this._state     = state;
       this._className = this.constructor.name; // the name of the class
@@ -61,8 +62,6 @@ export abstract class Ax2Widget<
     * This method assumes that the state is completely initialized and ready to be used.
     *
     * Useful when overriding in order to customize the state object before calling super.
-    *
-    * This method will create the state.get.children() observable array from the initial children array passed in.
     *
     * Overriding code example:
     * <pre>
@@ -78,7 +77,6 @@ export abstract class Ax2Widget<
     * @protected
     */
    protected _initialSetup(state: STATE) {
-      state.gen.children        = ko.observableArray<Ax2Widget>(state.initialChildren || []);
    }
 
    initHtml(): void {
@@ -101,26 +99,19 @@ export abstract class Ax2Widget<
       try {
          this.initLogicInProgress = true;
 
-         // ------------ Before Init Logic Listeners -----------------------
-         let beforeEvt: BeforeInitLogicEvent<Ax2Widget> = {
-            origin: thisX
-         };
+         if (this.state.beforeInitLogic) {
+            // ------------ Before Init Logic Listeners -----------------------
+            let beforeEvt: BeforeInitLogicEvent<Ax2Widget> = {
+               origin: thisX
+            };
 
-         try {
-            await this.state.beforeInitLogic(beforeEvt)
-         } catch (ex) {
-            thisX.handleError(ex);
-         }
+            try {
+               await this.state.beforeInitLogic(beforeEvt)
+            } catch (ex) {
+               thisX.handleError(ex);
+            }
+         } // if this.state.beforeInitLogic
 
-         // if (this.beforeInitLogicListeners.countListeners() > 0) {
-         //    this.beforeInitLogicListeners.fire({
-         //                                          event:            beforeEvt,
-         //                                          exceptionHandler: (event) => {
-         //                                             thisX.handleError(event);
-         //                                          }
-         //                                       }
-         //    );
-         // }
 
          // run this component's logic BEFORE the children
 
@@ -141,7 +132,7 @@ export abstract class Ax2Widget<
          }
 
 
-         let children: Ax2Widget[] = this.state.gen.children();
+         let children: Ax2Widget[] = this.state.children();
          if (children && children.length > 0) {
             await Promise.all(children.map(async (child) => {
                if (child)
@@ -160,27 +151,35 @@ export abstract class Ax2Widget<
             }
          }
 
+         if (this.state.afterInitLogic) {
+            // ------------ After Init Logic Listeners -----------------------
+            let afterEvt: AfterInitLogicEvent = {
+               origin: thisX
+            };
 
-         // ------------ After Init Logic Listeners -----------------------
-         let afterEvt: AfterInitLogicEvent = {
-            origin: thisX
-         };
+            try {
+               await this.state.afterInitLogic(afterEvt)
+            } catch (ex) {
+               thisX.handleError(ex);
+            }
 
-         try {
-            await this.afterInitLogic(afterEvt)
-         } catch (ex) {
-            thisX.handleError(ex);
-         }
+         } // if this.afterInitLogic
 
-         // if (this.afterInitLogicListeners.countListeners() > 0) {
-         //    this.afterInitLogicListeners.fire({
-         //                                         event:            afterEvt,
-         //                                         exceptionHandler: (event) => {
-         //                                            thisX.handleError(event);
-         //                                         }
-         //                                      },
-         //    );
-         // } // if (this.afterInitLogicListeners.count() > 0)
+
+         if (this.afterInitLogic) {
+            // ------------ After Init Logic Listeners -----------------------
+            let afterEvt: AfterInitLogicEvent = {
+               origin: thisX
+            };
+
+            try {
+               await this.afterInitLogic(afterEvt)
+            } catch (ex) {
+               thisX.handleError(ex);
+            }
+
+         } // if this.afterInitLogic
+
       } finally {
          this.initLogicInProgress = false;
       }
@@ -291,7 +290,7 @@ export abstract class Ax2Widget<
             //    return;
 
 
-            let children: Ax2Widget[] = this.state.gen.children();
+            let children: Ax2Widget[] = this.state.children();
             if (children) {
                for (const child of children) {
                   if (child)

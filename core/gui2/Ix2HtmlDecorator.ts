@@ -24,6 +24,15 @@ export interface Ix2HtmlDecorator {
     */
    otherAttr?: IKeyValueString;
 
+   /**
+    * Any string that belongs inside this tab. If this string is actually HTML, it should really be added as <link>Wx2Html</link> children of the widget.
+    */
+   value ?: string;
+   /**
+    * set to true to escape the string value before adding it to the HTML
+    */
+   valuedEscaped ?: boolean;
+
 } // end of Ix2HtmlDecorator
 
 
