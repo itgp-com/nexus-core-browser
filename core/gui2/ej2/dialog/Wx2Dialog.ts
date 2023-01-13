@@ -1,6 +1,6 @@
 import {Dialog, DialogModel}               from "@syncfusion/ej2-popups";
 import {Ax2EjStandard, StateAx2EjStandard} from "../Ax2EjStandard";
-import {StateWx2DialogHeaderOptions}       from "./aux/Wx2DialogAux";
+import {StateWx2DialogHeaderOptions}       from "./util/Wx2DialogUtils";
 
 
 export interface StateWx2Dialog extends StateAx2EjStandard<Ax2EjStandard, DialogModel> {
