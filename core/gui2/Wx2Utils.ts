@@ -1,11 +1,9 @@
-import * as knockout_lib              from "knockout";
 import {escape}                       from "lodash";
 import {htmlToElement}                from "../BaseUtils";
 import {Ax2Widget}                    from "./Ax2Widget";
 import {IHtmlUtils, Ix2HtmlDecorator} from "./Ix2HtmlDecorator";
 import {Ix2State}                     from "./Ix2State";
 
-export const ko                  = knockout_lib;
 export const tags_no_closing_tag = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
 function hasNoClosingHtmlTag(tag: string): boolean {
@@ -14,10 +12,10 @@ function hasNoClosingHtmlTag(tag: string): boolean {
 }
 
 export function createWx2HTMLStandard<STATE extends Ix2State>(state: STATE): HTMLElement {
-   state           = state || {} as STATE;
-   state.decorator = IHtmlUtils.init(state.decorator);
+   state      = state || {} as STATE;
+   state.deco = IHtmlUtils.init(state.deco);
 
-   let decorator: Ix2HtmlDecorator = state.decorator;
+   let decorator: Ix2HtmlDecorator = state.deco;
 
    // let html_id: string = ''
    if (!state.noTagIdInHtml && state?.tagId) {
@@ -27,9 +25,9 @@ export function createWx2HTMLStandard<STATE extends Ix2State>(state: STATE): HTM
    }
    let x: string = "";
    x += `<${decorator.tag} ${IHtmlUtils.all(decorator)}>`;
-   if ( decorator.value ) {
-      let value: string = decorator.value;
-      if ( decorator.valuedEscaped )
+   if ( decorator.text ) {
+      let value: string = decorator.text;
+      if ( decorator.escapeText )
          value = escape(value);
       x += value;
    }
@@ -67,13 +65,3 @@ export function createWx2HtmlStandardForDecorator<DECORATOR extends Ix2HtmlDecor
    let htmlElement: HTMLElement = htmlToElement(x);
    return htmlElement;
 } // createHTMLStandardForDecorator
-
-/**
- * Converts array to ko.ObservableArray (or empty array if not parameters
- * @param children
- */
-export function obsChildren(...children: Ax2Widget[]): ko.ObservableArray<Ax2Widget> {
-   if (children == null) return ko.observableArray([]);
-   let nonNullChildren: Ax2Widget[] = children.filter((child: Ax2Widget) => child != null);
-   return ko.observableArray(nonNullChildren);
-}

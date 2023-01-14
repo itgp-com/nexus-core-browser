@@ -59,7 +59,7 @@ export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
 
          let errorTagId = `error_${this.tagId}`;
 
-         let widgetDecorator = state.decorator;
+         let widgetDecorator = state.deco;
          widgetDecorator.tag = 'input';
          if (state.includeErrorLine)
             widgetDecorator.otherAttr['data-msg-containerid'] = errorTagId;

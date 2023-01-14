@@ -1,10 +1,12 @@
 /**
  * Basic utils that have no 'import' statements from anywhere else in Core
  */
+import base32Encode       from 'base32-encode'
+import * as knockout_lib  from "knockout";
 import {isFunction}       from "lodash";
-import {CssStyle}         from "./gui/AbstractWidget";
 import {cssStyleToString} from "./CoreUtils";
-import base32Encode from 'base32-encode'
+import {CssStyle}         from "./gui/AbstractWidget";
+import {Ax2Widget}        from "./gui2/Ax2Widget";
 
 export type StringFunction = () => string;
 export type StringArg = (string | StringFunction);
@@ -173,14 +175,14 @@ export function cleanUpHtml(lastIdTag: string = 'app__l_a_s_t__') {
  */
 export function nextAll(selector: string, element: HTMLElement): HTMLElement[] {
    let all: HTMLElement[] = [];
-   if ( element) {
+   if (element) {
       while (element.nextElementSibling) {
          element = element.nextElementSibling as HTMLElement;
          if (selector) {
             if (element.matches(selector)) {
                all.push(element);
             }
-         }else {
+         } else {
             // no selector - all elements go in
             all.push(element);
          }
@@ -228,20 +230,21 @@ export class Args_FunctionsTable {
     */
    arguments ?: string;
 }
-export function functionAsTable(param:Args_FunctionsTable): string {
-      if ( !param.arguments){
-         return `${param.functionName}()`; // no arguments
-      } else {
-         // Base32 encode, then add second set of paranthesis to indicate encoding
 
-         let uint8array = new TextEncoder().encode(param.arguments);
-         // https://www.npmjs.com/package/base32-encode
-         let encodedArgs = base32Encode(uint8array, 'RFC4648'); // RFC4648 is the default standard that the application server uses
+export function functionAsTable(param: Args_FunctionsTable): string {
+   if (!param.arguments) {
+      return `${param.functionName}()`; // no arguments
+   } else {
+      // Base32 encode, then add second set of paranthesis to indicate encoding
 
-         // double paranthesis to indicate encoded arguments
-         return `${param.functionName}((${encodedArgs}))`;
+      let uint8array  = new TextEncoder().encode(param.arguments);
+      // https://www.npmjs.com/package/base32-encode
+      let encodedArgs = base32Encode(uint8array, 'RFC4648'); // RFC4648 is the default standard that the application server uses
 
-      } // if arguments
+      // double paranthesis to indicate encoded arguments
+      return `${param.functionName}((${encodedArgs}))`;
+
+   } // if arguments
 } // functionAsTable
 
 
@@ -315,5 +318,44 @@ export class IArgs_HtmlTag_Utils {
       return `${IArgs_HtmlTag_Utils.class(args)}${IArgs_HtmlTag_Utils.style(args)}${IArgs_HtmlTag_Utils.otherAttr(args)}`;
    }
 
-
 }
+
+
+//------------------- Start Observable related -------------------
+
+export const ko = knockout_lib;
+export type Observable<T=any> = ko.Observable<T> | ko.Computed<T>;
+export type ObservableArray<T=any> = ko.ObservableArray<T>;
+export type Computed<T=any> = ko.Computed<T>;
+
+export function obs<T=any>(value: T): Observable<T> {
+   return ko.observable<T>(value);
+}
+
+/**
+ * Converts array to ko.ObservableArray (or empty array if no parameters) using a variable list of parameters
+ * @param children
+ */
+export function obsArray<T extends Ax2Widget = Ax2Widget>(...children: T[]): ObservableArray<T> {
+   return observableArray<T>(...children);
+}
+
+/**
+ * Converts array to ko.ObservableArray (or empty array if no parameters) using a variable list of parameters
+ * @param children
+ */
+export function observableArray<T = any>(...children: T[]): ObservableArray<T> {
+   if (children == null) return ko.observableArray([]);
+   let nonNullChildren: T[] = children.filter((child: T) => child != null);
+   return ko.observableArray<T>(nonNullChildren);
+}
+
+/**
+ * Converts array to ko.ObservableArray (or empty array if not parameters)
+ * @param children
+ */
+export function observableArray2<T extends Ax2Widget = Ax2Widget>(children: T[]): ObservableArray<T> {
+   return obsArray(...children);
+}
+
+//------------------- End Observable related -------------------

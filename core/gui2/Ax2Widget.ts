@@ -1,6 +1,6 @@
-import {AxiosResponse}                                from "axios";
-import {getRandomString}                              from "../BaseUtils";
-import {Err}                                          from "../Core";
+import {AxiosResponse}       from "axios";
+import {getRandomString, ko} from "../BaseUtils";
+import {Err}                 from "../Core";
 import {getErrorHandler}                              from "../CoreErrorHandling";
 import {ExceptionEvent}                               from "../ExceptionEvent";
 import {AfterInitLogicEvent}                          from "../gui/AfterInitLogicListener";
@@ -9,7 +9,6 @@ import {WidgetErrorHandler, WidgetErrorHandlerStatus} from "../gui/WidgetErrorHa
 import {resolveMixedPromiseArray}                     from "../gui/WidgetUtils";
 import {IHtmlUtils}                                   from "./Ix2HtmlDecorator";
 import {Ix2State}                                     from "./Ix2State";
-import {ko}                                           from "./Wx2Utils";
 
 
 export const WX2_HTML_PROPERTY = "_wx2_";
@@ -49,12 +48,16 @@ export abstract class Ax2Widget<
     */
    protected _constructor(state: STATE): void {
       state           = state || {} as STATE;
-      state.gen       = state.gen || {};
-      state.decorator = state.decorator || {} as IHtmlUtils;
+      state.gen        = state.gen || {};
+
+      state.deco       = state.deco || {} as IHtmlUtils;
+      IHtmlUtils.init(state.deco);
+
       state.gen.widget = this;
       this._state     = state;
       this._className = this.constructor.name; // the name of the class
       if (!state.tagId) this.tagId = getRandomString(this._className);
+
       this._initialSetup(state);
    }
 
@@ -122,9 +125,9 @@ export abstract class Ax2Widget<
          }
 
          // assign fully instantiated instance to a variable
-         if (this.state?.onInitialized) {
+         if (this.state?.onInit) {
             try {
-               await this.state.onInitialized(this);
+               await this.state.onInit(this);
             } catch (ex) {
                console.error(ex);
                getErrorHandler().displayExceptionToUser(ex)
@@ -132,7 +135,9 @@ export abstract class Ax2Widget<
          }
 
 
-         let children: Ax2Widget[] = this.state.children();
+         let children: Ax2Widget[];
+         if ( this.state.children)
+            children = this.state.children();
          if (children && children.length > 0) {
             await Promise.all(children.map(async (child) => {
                if (child)
@@ -398,7 +403,7 @@ export abstract class Ax2Widget<
 
    set state(state: STATE) {
       if (state) {
-         state.decorator = IHtmlUtils.init(state.decorator); // the decorator must exist because there must be a tag type for the component HTML
+         state.deco = IHtmlUtils.init(state.deco); // the decorator must exist because there must be a tag type for the component HTML
 
          // Tag the new state with the widget
          if (state.gen.widget && state.gen.widget != this) {

@@ -1,3 +1,4 @@
+import {ObservableArray}      from "../BaseUtils";
 import {Ix2HtmlDecorator}     from "./Ix2HtmlDecorator";
 import {Ax2Widget}            from "./Ax2Widget";
 import * as ko                from "knockout";
@@ -15,7 +16,7 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = any> {
    /**
     * The HTML decoration for the HTML element that of the widget
     */
-   decorator?: Ix2HtmlDecorator;
+   deco?: Ix2HtmlDecorator;
 
 
    /**
@@ -28,7 +29,7 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = any> {
     * use <code>obsChildren(...children)</code> to set the children
     * @see initialChildren
     */
-   children?: ko.ObservableArray<WIDGET_TYPE>
+   children?: ObservableArray<WIDGET_TYPE>
 
 
    /**
@@ -53,7 +54,7 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = any> {
     *  Called after initLogic has been completed for this component but NOT for any child components
     *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
     */
-   onInitialized?: (widget: any) => void;
+   onInit?: (widget: any) => void;
 
    /**
     * Set to true if the widget is completely static and no refresh should take place

@@ -27,11 +27,11 @@ export interface Ix2HtmlDecorator {
    /**
     * Any string that belongs inside this tab. If this string is actually HTML, it should really be added as <link>Wx2Html</link> children of the widget.
     */
-   value ?: string;
+   text ?: string;
    /**
-    * set to true to escape the string value before adding it to the HTML
+    * set to true to escape the text before adding it to the HTML
     */
-   valuedEscaped ?: boolean;
+   escapeText ?: boolean;
 
 } // end of Ix2HtmlDecorator
 
@@ -39,7 +39,7 @@ export interface Ix2HtmlDecorator {
 export class IHtmlUtils {
 
    static initDecorator(state: Ix2State) {
-      state.decorator = IHtmlUtils.init(state.decorator);
+      state.deco = IHtmlUtils.init(state.deco);
    }
 
    /**
