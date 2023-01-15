@@ -12,19 +12,9 @@ export interface StateWx2Html<WIDGET_TYPE extends Wx2Html=any> extends StateAx2S
 
 export class Wx2Html extends Ax2Standard<StateWx2Html> {
 
-   stateObservable:Observable<StateWx2Html>;
 
    constructor(state:StateWx2Html) {
       super(state);
-   }
-
-
-   protected _initialSetup(state: StateWx2Html) {
-      this.stateObservable = observable(state);
-      this.stateObservable.subscribe((value) => {
-         console.log("State changed");
-      });
-      super._initialSetup(state);
    }
 
    onHtml(): HTMLElement {
