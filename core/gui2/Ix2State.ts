@@ -1,4 +1,3 @@
-import {ObservableArray}      from "../BaseUtils";
 import {AfterInitLogicEvent}  from "../gui/AfterInitLogicListener";
 import {BeforeInitLogicEvent} from "../gui/BeforeInitLogicListener";
 import {WidgetErrorHandler}   from "../gui/WidgetErrorHandler";
@@ -24,11 +23,10 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = Ax2Widget> {
    gen ?:Ix2StateGenerated<WIDGET_TYPE>
 
    /**
-    * The current children this widget contains as on ObservableArray.
-    * use <code>obsChildren(...children)</code> to set the children
+    * The current children this widget contains
     * @see initialChildren
     */
-   children?: ObservableArray<WIDGET_TYPE>
+   children?: WIDGET_TYPE[]
 
 
    /**

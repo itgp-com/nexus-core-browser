@@ -12,7 +12,7 @@ export interface Ix2HtmlDecorator {
    /**
     * the classes assigned to this HTMLElement
     */
-   class?: string[];
+   classes?: string[];
 
    /**
     * the style assigned to this HTMLElement
@@ -52,8 +52,8 @@ export class IHtmlUtils {
          decorator = {};
       if (!decorator.tag)
          decorator.tag = 'div';// default to 'div'
-      if (!decorator.class)
-         decorator.class = [];
+      if (!decorator.classes)
+         decorator.classes = [];
       if (!decorator.style)
          decorator.style = {};
       if (!decorator.otherAttr)
@@ -64,8 +64,8 @@ export class IHtmlUtils {
    static class(decorator: Ix2HtmlDecorator): string {
       decorator     = IHtmlUtils.init(decorator);
       let c: string = '';
-      if (decorator.class.length > 0)
-         c = ` class="${decorator.class.join(' ')}"`;
+      if (decorator.classes.length > 0)
+         c = ` class="${decorator.classes.join(' ')}"`;
       return c;
    }
 

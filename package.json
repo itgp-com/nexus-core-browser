@@ -17,7 +17,6 @@
     "csstype": "3.1.1",
     "dateformat": "5.0.3",
     "js-file-download": "0.4.12",
-    "knockout": "3.5.1",
     "lodash": "4.17.21",
     "object-observer": "5.1.6",
     "react-intl": "6.2.5",
@@ -28,7 +27,6 @@
   },
   "repository": {},
   "devDependencies": {
-    "@types/dateformat": "5.0.0",
     "@types/knockout": "3.4.72",
     "@types/lodash": "4.14.191",
     "@types/node": "18.11.18",
@@ -42,7 +40,7 @@
     "@types/fancybox": "3.5.3",
     "browser-sync": "2.27.10",
     "jasmine": "4.5.0",
-    "node-sass": "^4.14.1"
+    "node-sass": "4.14.1"
   },
   "devDependencies-commented-out": {
     "css-loader": "^1.0.1",
