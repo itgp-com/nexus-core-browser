@@ -1,12 +1,11 @@
 import {ObservableArray}      from "../BaseUtils";
-import {Ix2HtmlDecorator}     from "./Ix2HtmlDecorator";
-import {Ax2Widget}            from "./Ax2Widget";
-import * as ko                from "knockout";
-import {BeforeInitLogicEvent} from "../gui/BeforeInitLogicListener";
 import {AfterInitLogicEvent}  from "../gui/AfterInitLogicListener";
+import {BeforeInitLogicEvent} from "../gui/BeforeInitLogicListener";
 import {WidgetErrorHandler}   from "../gui/WidgetErrorHandler";
+import {Ax2Widget}            from "./Ax2Widget";
+import {Ix2HtmlDecorator}     from "./Ix2HtmlDecorator";
 
-export interface Ix2State<WIDGET_TYPE extends Ax2Widget = any> {
+export interface Ix2State<WIDGET_TYPE extends Ax2Widget = Ax2Widget> {
 
 
    afterInitLogic?: (evt: AfterInitLogicEvent) => void;

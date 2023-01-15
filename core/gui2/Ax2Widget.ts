@@ -1,12 +1,11 @@
-import {AxiosResponse}       from "axios";
-import {getRandomString, ko} from "../BaseUtils";
-import {Err}                 from "../Core";
+import {AxiosResponse}                                from "axios";
+import {getRandomString}                              from "../BaseUtils";
+import {Err}                                          from "../Core";
 import {getErrorHandler}                              from "../CoreErrorHandling";
 import {ExceptionEvent}                               from "../ExceptionEvent";
 import {AfterInitLogicEvent}                          from "../gui/AfterInitLogicListener";
 import {BeforeInitLogicEvent}                         from "../gui/BeforeInitLogicListener";
 import {WidgetErrorHandler, WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
-import {resolveMixedPromiseArray}                     from "../gui/WidgetUtils";
 import {IHtmlUtils}                                   from "./Ix2HtmlDecorator";
 import {Ix2State}                                     from "./Ix2State";
 
@@ -15,9 +14,9 @@ export const WX2_HTML_PROPERTY = "_wx2_";
 
 
 export abstract class Ax2Widget<
-   STATE extends Ix2State = any,
-   JS_COMPONENT = any
-> {
+                                       STATE extends Ix2State = any,
+                                       JS_COMPONENT = any>
+{
 
    protected _state: STATE;
    protected _className: string;
@@ -230,12 +229,6 @@ export abstract class Ax2Widget<
          f2.call(this); // execute in context
       }
 
-      if ( this.state.onRefresh) {
-         await this.state.onRefresh();
-      } else {
-         await this.onRefresh();
-      }
-
       if (this.state.repaintOnRefresh) {
          //TODO implement
          console.log("TODO implement refresh for repaintOnRefresh");
@@ -295,7 +288,10 @@ export abstract class Ax2Widget<
             //    return;
 
 
-            let children: Ax2Widget[] = this.state.children();
+
+            let children: Ax2Widget[];
+            if ( this.state.children)
+            children = this.state.children();
             if (children) {
                for (const child of children) {
                   if (child)
@@ -303,7 +299,11 @@ export abstract class Ax2Widget<
                }
             } // if ( this.children)
 
-            await this.onRefresh();
+            if ( this.state.onRefresh) {
+               await this.state.onRefresh();
+            } else {
+               await this.onRefresh();
+            }
 
             // if (this.state?.onAfterRefresh) {
             //    try {

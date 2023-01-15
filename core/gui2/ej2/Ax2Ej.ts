@@ -7,11 +7,8 @@ export interface StateEj<WIDGET_TYPE extends Ax2Ej = any, WIDGET_LIBRARY_MODEL=a
    ej ?: WIDGET_LIBRARY_MODEL;
 }
 
-export abstract class Ax2Ej<
-   STATE extends StateEj = any,
-   EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any,
->
-   extends Ax2Widget<STATE, EJ2COMPONENT> {
+export abstract class Ax2Ej<  STATE extends StateEj = StateEj, EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any>
+              extends Ax2Widget<STATE, EJ2COMPONENT> {
 
 
    protected constructor(state:STATE) {

@@ -6,7 +6,7 @@ export interface StateAx2EjStandard<WIDGET_TYPE extends Ax2EjStandard = any, WID
 }
 
 
-export abstract class Ax2EjStandard<STATE extends Ix2State = any> extends Ax2Ej<STATE> {
+export abstract class Ax2EjStandard<STATE extends Ix2State = Ix2State> extends Ax2Ej<STATE> {
 
    protected constructor(state:STATE) {
       super(state);
@@ -14,8 +14,7 @@ export abstract class Ax2EjStandard<STATE extends Ix2State = any> extends Ax2Ej<
 
 
    public onHtml(): HTMLElement {
-      this.htmlElement = createWx2HTMLStandard<STATE>(this.state);
-      return this.htmlElement;
+      return createWx2HTMLStandard<STATE>(this.state);
    }
 
 

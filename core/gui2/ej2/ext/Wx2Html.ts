@@ -1,6 +1,6 @@
-import {observable}                    from "knockout";
-import {isString}                      from "lodash";
-import {Observable}                    from "../../../BaseUtils";
+import {observable}       from "knockout";
+import {escape, isString} from "lodash";
+import {Observable}       from "../../../BaseUtils";
 import {Ax2Standard, StateAx2Standard} from "../../Ax2Standard";
 import {createWx2HTMLStandard}         from "../../Wx2Utils";
 
@@ -10,24 +10,40 @@ export interface StateWx2Html<WIDGET_TYPE extends Wx2Html=any> extends StateAx2S
 
 }
 
-export class Wx2Html extends Ax2Standard {
+export class Wx2Html extends Ax2Standard<StateWx2Html> {
+
+   stateObservable:Observable<StateWx2Html>;
+
    constructor(state:StateWx2Html) {
       super(state);
+   }
+
+
+   protected _initialSetup(state: StateWx2Html) {
+      this.stateObservable = observable(state);
+      this.stateObservable.subscribe((value) => {
+         console.log("State changed");
+      });
+      super._initialSetup(state);
    }
 
    onHtml(): HTMLElement {
       if ( this.state.value == null )
          this.state.value = observable('');
 
-      if ( isString(this.state.value()) ) {
-         this.state.deco.text = this.state.value();
+      let val: (string|HTMLElement) = this.state.value();
+      if (val == null)
+         return null;
+
+      if ( isString(val) ) {
+         this.state.deco.text = (this.state.deco.escapeText ? escape(val) : val);
       } else {
          let elem:HTMLElement = this.state.value() as HTMLElement;
 
 
          // merge classes
-         if ( this.state.deco.classes != null ) {
-            mergeClasses(elem, this.state.deco.classes);
+         if ( this.state.deco.class != null ) {
+            mergeClasses(elem, this.state.deco.class);
          }
          // merge styles
          if ( this.state.deco.style != null )
@@ -35,15 +51,23 @@ export class Wx2Html extends Ax2Standard {
 
 
          //merge attributes
-         Object.assign(elem.attributes, this.state.deco.attributes);
+         Object.assign(elem.attributes, this.state.deco.otherAttr);
          this.htmlElement = elem as HTMLElement;
       }
 
-      this.htmlElement = createWx2HTMLStandard(this.state);
-      return this.htmlElement;
+      return createWx2HTMLStandard(this.state);
+   } //onHtml
+
+
+   async onRefresh(): Promise<void> {
+      if (this.state.staticWidget)
+         return;
+
+      let newHtmlElement = this.onHtml();
+      let oldHtmlElement = this.htmlElement;
+      this.htmlElement = newHtmlElement;
+      oldHtmlElement.replaceWith(newHtmlElement); // in document model
    }
-
-
 } //Wx2Html
 
 function mergeClasses(element1:HTMLElement, classList2:string[]) {

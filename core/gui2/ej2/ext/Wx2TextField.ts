@@ -66,7 +66,7 @@ export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
          if (state.propertyName)
             widgetDecorator.otherAttr['name'] = state.propertyName;
          let widgetElement: HTMLElement = createWx2HTMLStandard<StateWx2TextField>(state);
-         state.gen.htmlElement        = widgetElement;
+         // state.gen.htmlElement        = widgetElement;
 
 
          wrapperElement.appendChild(widgetElement);
