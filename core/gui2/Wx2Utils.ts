@@ -38,7 +38,7 @@ export function createWx2HTMLStandard<STATE extends Ix2State>(state: STATE): HTM
 
    // Now process the children
    if (state.children) {
-      let children: Ax2Widget[] = state.children();
+      let children: Ax2Widget[] = state.children;
       for (let i = 0; i < children.length; i++) {
          let child: Ax2Widget = children[i];
 

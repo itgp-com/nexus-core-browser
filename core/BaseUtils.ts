@@ -2,11 +2,9 @@
  * Basic utils that have no 'import' statements from anywhere else in Core
  */
 import base32Encode       from 'base32-encode'
-import * as knockout_lib  from "knockout";
 import {isFunction}       from "lodash";
 import {cssStyleToString} from "./CoreUtils";
 import {CssStyle}         from "./gui/AbstractWidget";
-import {Ax2Widget}        from "./gui2/Ax2Widget";
 
 export type StringFunction = () => string;
 export type StringArg = (string | StringFunction);
@@ -319,40 +317,3 @@ export class IArgs_HtmlTag_Utils {
    }
 
 }
-
-
-//------------------- Start Observable related -------------------
-
-//
-//
-// export function obs<T=any>(value: T): Observable<T> {
-//    return ko.observable<T>(value);
-// }
-//
-// /**
-//  * Converts array to ko.ObservableArray (or empty array if no parameters) using a variable list of parameters
-//  * @param children
-//  */
-// export function obsArray<T extends Ax2Widget = Ax2Widget>(...children: T[]): ObservableArray<T> {
-//    return observableArray<T>(...children);
-// }
-//
-// /**
-//  * Converts array to ko.ObservableArray (or empty array if no parameters) using a variable list of parameters
-//  * @param children
-//  */
-// export function observableArray<T = any>(...children: T[]): ObservableArray<T> {
-//    if (children == null) return ko.observableArray([]);
-//    let nonNullChildren: T[] = children.filter((child: T) => child != null);
-//    return ko.observableArray<T>(nonNullChildren);
-// }
-//
-// /**
-//  * Converts array to ko.ObservableArray (or empty array if not parameters)
-//  * @param children
-//  */
-// export function observableArray2<T extends Ax2Widget = Ax2Widget>(children: T[]): ObservableArray<T> {
-//    return obsArray(...children);
-// }
-
-//------------------- End Observable related -------------------

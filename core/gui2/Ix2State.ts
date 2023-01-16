@@ -1,16 +1,26 @@
-import {AfterInitLogicEvent}  from "../gui/AfterInitLogicListener";
-import {BeforeInitLogicEvent} from "../gui/BeforeInitLogicListener";
-import {WidgetErrorHandler}   from "../gui/WidgetErrorHandler";
-import {Ax2Widget}            from "./Ax2Widget";
-import {Ix2HtmlDecorator}     from "./Ix2HtmlDecorator";
+import {WidgetErrorHandler}                    from "../gui/WidgetErrorHandler";
+import {Ax2Widget, Ix2BeforeLogic, Ix2Resized} from "./Ax2Widget";
+import {Ix2HtmlDecorator}                      from "./Ix2HtmlDecorator";
 
 export interface Ix2State<WIDGET_TYPE extends Ax2Widget = Ax2Widget> {
 
 
-   afterInitLogic?: (evt: AfterInitLogicEvent) => void;
+   /**
+    *  Called after initLogic has been completed for this component AND for ALL the child components
+    */
+   afterChildrenInit?: () => void;
+
+   /**
+    *  Called after initLogic has been completed for this component but NOT for any child components
+    *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
+    */
+   afterInit?: (widget: any) => void;
+
+   afterInitLogic ?: () => void;
 
 
-   beforeInitLogic?: (evt: BeforeInitLogicEvent<WIDGET_TYPE>) => void;
+   beforeInitLogic?: (args ?: Ix2BeforeLogic) => (void|Promise<void>);
+
    /**
     * The HTML decoration for the HTML element that of the widget
     */
@@ -38,20 +48,13 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = Ax2Widget> {
    /**
     * Set to true if the existing HTMLElement needs to be destroyed and recreated when refreshing
     */
-   repaintOnRefresh?: boolean
-
-
-   /**
-    *  Called after initLogic has been completed for this component AND for ALL the child components
-    *  Use the <link>onInitialized</link> event if you need the component initialized but not the child components
-    */
-   onChildrenInitialized?: (widget: any) => void;
+   resetUIOnRefresh?: boolean;
 
    /**
-    *  Called after initLogic has been completed for this component but NOT for any child components
-    *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
+    * If true, the resize is tracked for the HTML element of the widget
     */
-   onInit?: (widget: any) => void;
+   resizeTracked?: boolean;
+
 
    /**
     * Set to true if the widget is completely static and no refresh should take place
@@ -73,6 +76,12 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = Ax2Widget> {
    onLogic?: () =>  (void | Promise<void>);
 
    onRefresh?: () =>  (void | Promise<void>);
+
+   /**
+    * Called when the widget is resized (assuming <link>widget.resizeTracked</link> is true)
+    * @param evt
+    */
+   onResized ?: (evt?:Ix2Resized) => void;
 
    widgetErrorHandler?: WidgetErrorHandler;
 }

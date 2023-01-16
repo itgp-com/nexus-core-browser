@@ -14,7 +14,7 @@ export class ErrorHandler {
 
       if (ex instanceof Error) {
          this.displayErrorMessageToUser(ex.message);
-         console.log(ex);
+         console.error(ex);
       } else if (typeof ex === 'string' || typeof ex === 'number') {
          this.displayErrorMessageToUser(ex as string);
          console.log(ex);
