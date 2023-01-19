@@ -1,9 +1,9 @@
 import {AbstractWidget, addWidgetClass} from "../../AbstractWidget";
-import {AnyScreen, Args_AnyScreen}      from "../../AnyScreen";
-import {resolveWidgetArray}             from "../../WidgetUtils";
-import {ResizeSensor}                   from "css-element-queries";
-import {ResizeSensorCallback}           from "css-element-queries/src/ResizeSensor";
-import {debounce}                       from "lodash";
+import {AnyScreen, Args_AnyScreen} from "../../AnyScreen";
+import {resolveWidgetArray} from "../../WidgetUtils";
+import {ResizeSensor} from "css-element-queries";
+import {ResizeSensorCallback} from "css-element-queries/src/ResizeSensor";
+import {debounce} from "lodash";
 
 
 export class Args_WxPanelBase extends Args_AnyScreen {
@@ -80,25 +80,25 @@ export class WxPanelBase<DATA_TYPE, ARGS_TYPE extends Args_WxPanelBase = Args_Wx
       let thisX = this;
       await super.localLogicImplementation();
 
-      // let htmlElement = this.hget;
-      //
-      // let debouncedFunction: ResizeSensorCallback = debounce(
-      //    (_size: { width: number; height: number; }) => {
-      //       if ( thisX && thisX.initialized ) {
-      //          thisX.panelResized({
-      //                                panel: thisX,
-      //                                size:  _size
-      //                             });
-      //       } // if (thisX && thisX.obj && thisX.initialized )
-      //    } // function body of debouncedFunction
-      //    , (thisX.args.resizeDebounceInterval ? thisX.args.resizeDebounceInterval : 500)
-      // );
-      //
-      //
-      // new ResizeSensor(
-      //    htmlElement,
-      //    debouncedFunction,
-      // ); // ResizeSensor
+      let htmlElement = this.hget;
+
+      let debouncedFunction: ResizeSensorCallback = debounce(
+         (_size: { width: number; height: number; }) => {
+            if ( thisX && thisX.initialized ) {
+               thisX.panelResized({
+                                     panel: thisX,
+                                     size:  _size
+                                  });
+            } // if (thisX && thisX.obj && thisX.initialized )
+         } // function body of debouncedFunction
+         , (thisX.args.resizeDebounceInterval ? thisX.args.resizeDebounceInterval : 500)
+      );
+
+
+      new ResizeSensor(
+         htmlElement,
+         debouncedFunction,
+      ); // ResizeSensor
    } // localLogicImplementation
 
    panelResized(evt: Evt_PanelResized<any>) {
