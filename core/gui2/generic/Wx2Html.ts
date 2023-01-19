@@ -1,14 +1,14 @@
 import {escape, isString}              from "lodash";
-import {Ax2Standard, StateAx2Standard} from "../../Ax2Standard";
-import {createWx2HTMLStandard}         from "../../Wx2Utils";
+import {Ax2Standard, StateAx2Standard} from "../Ax2Standard";
+import {createWx2HTMLStandard}         from "../Wx2Utils";
 
 export interface StateWx2Html<WIDGET_TYPE extends Wx2Html=any> extends StateAx2Standard<WIDGET_TYPE> {
-   value: (string|HTMLElement);
+   value ?: (string|HTMLElement);
 } // state
 
-export class Wx2Html extends Ax2Standard<StateWx2Html> {
+export class Wx2Html<STATE extends StateWx2Html = StateWx2Html> extends Ax2Standard<STATE> {
 
-   constructor(state:StateWx2Html) {
+   constructor(state:STATE) {
       super(state);
    }
 

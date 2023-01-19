@@ -36,7 +36,7 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = Ax2Widget> {
     * The current children this widget contains
     * @see initialChildren
     */
-   children?: WIDGET_TYPE[]
+   children?: Ax2Widget[]
 
 
    /**
