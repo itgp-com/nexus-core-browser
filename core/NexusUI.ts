@@ -1,5 +1,6 @@
 import {ScreenRegistry} from "./gui/ScreenRegistry";
 import {MenuRegistry}   from "./gui/MenuRegistry";
+import {HttpRequestEvt, HttpResponseEvt} from "./data/NexusComm";
 
 export abstract class NexusUI {
 
@@ -88,6 +89,22 @@ export abstract class NexusUI {
       this._menuRegistry = value;
    }
 
+   /**
+    * Called when any HTTP request is made by the application.
+    * Look at the type of event to know which parameters are available.
+    *
+    * @param ev
+    */
+   onHttpRequest(ev:HttpRequestEvt): void {
+   }
+
+   /**
+    * Called when any HTTP response is received by the application.
+    * Look at the type of event to know which parameters are available.
+    * @param ev
+    */
+   onHttpResponse(ev:HttpResponseEvt): void {
+   }
 
 
 } // abstract NexusUI

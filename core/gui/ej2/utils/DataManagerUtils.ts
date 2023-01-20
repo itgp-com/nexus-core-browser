@@ -1,6 +1,7 @@
 import {DataManager, UrlAdaptor}                    from "@syncfusion/ej2-data";
 import {urlTableEj2, urlTableEj2Crud, urlTableList} from "../../../AppPathUtils";
 import {EditUrlAdaptor, JsonEventActions}           from "../../../data/EditUrlAdaptor";
+import {NexusAdaptor} from "../../../data/NexusAdaptor";
 
 /**
  * Creates the default DataManager for most App screens. It's equivalent to
@@ -13,10 +14,10 @@ import {EditUrlAdaptor, JsonEventActions}           from "../../../data/EditUrlA
  * </code>
  * @param tablename
  */
-export function dataManager_App(tablename: string, adaptor ?: UrlAdaptor): DataManager {
+export function dataManager_App(tablename: string, adaptor ?: NexusAdaptor): DataManager {
    return new DataManager({
                              url:         urlTableEj2(tablename),
-                             adaptor:     (adaptor ? adaptor : new UrlAdaptor()),
+                             adaptor:     (adaptor ? adaptor : new NexusAdaptor()),
                              crossDomain: true
                           });
 }

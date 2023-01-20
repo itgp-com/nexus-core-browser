@@ -2,7 +2,7 @@ import {DataManager, Query, UrlAdaptor} from "@syncfusion/ej2-data";
 import {getErrorHandler}                from "../CoreErrorHandling";
 import {cast}                           from "../BaseUtils";
 
-
+//TODO Extend NexusAdaptor to support CRUD operations
 export class EditUrlAdaptor extends UrlAdaptor {
 
    private _insertListeners: AdaptorInsertListener[] = [];

@@ -1,6 +1,6 @@
 import { DataManager, Query } from '@syncfusion/ej2-data';
 
-class CustomDataManager extends DataManager {
+class NexusDataManager extends DataManager {
 
     /**
      * Constructor for DataManager class
