@@ -55,6 +55,9 @@ export interface BeforeSendListener {
    beforeSend(evt:EvtBeforeSendListener): URLAdaptorCoreResponse;
 }
 
+/**
+ * @deprecated Replaced by {@link NexusAdaptor}
+ */
 export class UrlAdaptorCore extends UrlAdaptor {
 
    public static readonly EXCEPTION_CODE_handleException = 'handleException';

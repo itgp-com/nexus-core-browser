@@ -1,6 +1,6 @@
 import {CrudOptions, DataManager, DataOptions, Query} from "@syncfusion/ej2-data";
 import {DataResult} from "@syncfusion/ej2-data/src/adaptors";
-import {AxiosRequestConfig, AxiosResponse} from "axios";
+import {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 
 export interface NexusCommEvt {
     type: "adaptor"|"axios";
@@ -38,6 +38,7 @@ export interface HttpResponseEvt extends NexusCommEvt {
 export interface HttpResponseEvtAxios extends HttpResponseEvt {
     axiosResponse: AxiosResponse;
     config?: AxiosRequestConfig;
+    error?: AxiosError|any;
 }
 
 export interface HttpResponseEvtAdaptor extends HttpResponseEvt {

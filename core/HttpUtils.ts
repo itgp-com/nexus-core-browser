@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosRequestConfig, AxiosResponse, isAxiosError} from "axios";
 import {RetVal} from "./Core";
 import {cast, hget} from "./BaseUtils";
 import {createSpinner, hideSpinner, showSpinner} from "@syncfusion/ej2-popups";
@@ -157,13 +157,22 @@ async function commonAxiosRequest<T = any, R = AxiosResponse<T>>(op: (HttpOp | s
             r = axios.request(localConfig);
     }
 
-    let axiosResponse: R = await r;
+    let axiosResponse: R;
+    let error: AxiosError | any;
+    try {
+        axiosResponse = await r;
+    } catch (err) {
+        error = err;
+        if (isAxiosError(err))
+            axiosResponse = err.response as R;
 
+    }
     try {
         nexusMain.ui?.onHttpResponse({
             type: "axios",
             axiosResponse: axiosResponse,
             config: localConfig,
+            error: error,
         } as HttpResponseEvtAxios);
     } catch (e) {
         console.error(e);
