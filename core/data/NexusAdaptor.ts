@@ -62,7 +62,7 @@ export class NexusAdaptor extends UrlAdaptor {
             console.log("beforeSend");
 
         nexusMain.ui?.onHttpRequest({
-            type: "adaptor",
+            type: "ej2Adaptor",
             xhr: request,
             dm: dm,
             cancel: false,
@@ -175,7 +175,7 @@ export class NexusAdaptor extends UrlAdaptor {
 
         try {
             nexusMain.ui?.onHttpResponse({
-                type: "adaptor",
+                type: "ej2Adaptor",
                 data: data,
                 ds: ds,
                 query: query,

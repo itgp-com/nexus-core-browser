@@ -1,9 +1,10 @@
 import {CrudOptions, DataManager, DataOptions, Query} from "@syncfusion/ej2-data";
 import {DataResult} from "@syncfusion/ej2-data/src/adaptors";
 import {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
+import {ExecuteQueryAlwaysEvent} from "./NexusDataManager";
 
 export interface NexusCommEvt {
-    type: "adaptor"|"axios";
+    type: "ej2Adaptor"|"axios"|"ej2DataManager";
 }
 
 export interface HttpRequestEvt extends NexusCommEvt {
@@ -32,6 +33,14 @@ export interface HttpRequestEvtAxios extends NexusCommEvt{
     config?: AxiosRequestConfig
 }
 
+export interface HttpRequestEvtDataManager extends NexusCommEvt{
+    query?: Query;
+    done?: Function;
+    fail?: Function;
+    always?: Function;
+} // HttpRequestEvtDataManager
+
+
 export interface HttpResponseEvt extends NexusCommEvt {
 }
 
@@ -48,4 +57,8 @@ export interface HttpResponseEvtAdaptor extends HttpResponseEvt {
     xhr?: XMLHttpRequest;
     request?: Object;
     changes?: CrudOptions;
+}
+
+export interface HttpResponseEvtDataManager extends HttpResponseEvt{
+    evt: ExecuteQueryAlwaysEvent | any;
 }

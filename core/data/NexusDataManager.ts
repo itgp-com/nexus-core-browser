@@ -1,6 +1,35 @@
-import { DataManager, Query } from '@syncfusion/ej2-data';
+import {DataManager, Query} from '@syncfusion/ej2-data';
+import {Ajax} from "@syncfusion/ej2-base";
+import {AdaptorOptions, DataOptions} from "@syncfusion/ej2-data/src/manager";
+import {nexusMain} from "../NexusMain";
+import {HttpRequestEvtDataManager, HttpResponseEvtDataManager} from "./NexusComm";
 
-class NexusDataManager extends DataManager {
+
+interface ExecuteQueryCommon {
+    query?: Query;
+}
+
+export interface ExecuteQueryFailEvent extends ExecuteQueryCommon {
+    error?: XMLHttpRequest;
+}
+
+export interface ExecuteQueryDoneEvent extends ExecuteQueryCommon {
+    actual: any;
+    aggregates?: any;
+    count: number;
+    request?: string;
+    result?: any | any[];
+    virtualSelectRecords?: any;
+    xhr: XMLHttpRequest;
+}
+
+export interface ExecuteQueryAlwaysEvent extends ExecuteQueryDoneEvent, ExecuteQueryFailEvent {
+}
+
+
+export class NexusDataManager extends DataManager {
+
+    static DEBUG_ON: boolean = false;
 
     /**
      * Constructor for DataManager class
@@ -9,25 +38,18 @@ class NexusDataManager extends DataManager {
      * @param  {AdaptorOptions|string} adaptor?
      * @hidden
      */
-    constructor(dataSource: any, query: Query, adaptor: any) {
+    constructor(dataSource?: DataOptions | JSON[] | Object[], query?: Query, adaptor?: AdaptorOptions | string) {
         super(dataSource, query, adaptor);
     }
-    /**
-     * Overrides DataManager's default query with given query.
-     * @param  {Query} query - Defines the new default query.
-     */
-    setDefaultQuery(query: Query): DataManager {
-        // Custom logic to set default query
-        console.log("Setting custom default query");
-        return super.setDefaultQuery(query);
-    }
+
     /**
      * Executes the given query with local data source.
      * @param  {Query} query - Defines the query to retrieve data.
      */
-    executeLocal(query: Query): any {
+    executeLocal(query?: Query): Object[] {
         // Custom logic to execute local query
-        console.log("Executing custom local query");
+        if (NexusDataManager.DEBUG_ON)
+            console.log("executeLocal");
         return super.executeLocal(query);
     }
 
@@ -39,10 +61,89 @@ class NexusDataManager extends DataManager {
      * @param  {Function} fail - Defines the callback function and triggers when the Promise is rejected.
      * @param  {Function} always - Defines the callback function and triggers when the Promise is resolved or rejected.
      */
-    executeQuery(query: Query): any {
-        // Custom logic to execute query
-        console.log("Executing custom query");
-        return super.executeQuery(query);
+    executeQuery(query: Query | Function, done?: Function, fail?: Function, always?: Function): Promise<Ajax> {
+
+        if (NexusDataManager.DEBUG_ON)
+            console.log("executeQuery");
+
+        let realQuery: Query;
+        let realDoneFunction;
+        let realFailFunction;
+        let realAlwaysFunction;
+
+        if (typeof query === 'function') {
+            realQuery = null;
+            realDoneFunction = query;
+            realFailFunction = done;
+            realAlwaysFunction = fail;
+        } else {
+            realQuery = query as Query;
+            realDoneFunction = done;
+            realFailFunction = fail;
+            realAlwaysFunction = always;
+        }
+
+
+        let evHttpRequest: HttpRequestEvtDataManager = {
+            type: "ej2DataManager",
+            query: realQuery,
+            done: realDoneFunction,
+            fail: realFailFunction,
+            always: realAlwaysFunction,
+        };
+        try {
+            nexusMain.ui.onHttpRequest(evHttpRequest);
+
+            // override the query, done, fail, always functions in case they were changed
+            realQuery = evHttpRequest.query;
+            realDoneFunction = evHttpRequest.done;
+            realFailFunction = evHttpRequest.fail;
+            realAlwaysFunction = evHttpRequest.always;
+        } catch (e) {
+            console.error(e);
+        }
+
+
+        let fnAlwaysParent = realAlwaysFunction;
+        let fnAlways: Function = (evt ?: ExecuteQueryAlwaysEvent | any) => {
+            nexusMain.ui.onHttpResponse({
+                type: "ej2DataManager",
+                evt: evt,
+            } as HttpResponseEvtDataManager)
+
+            if (fnAlwaysParent)
+                fnAlwaysParent(evt);
+        } // fnAlways
+
+        return super.executeQuery(realQuery, realDoneFunction, realFailFunction, fnAlways);
+    }
+
+    /**
+     * Inserts new record in the given table.
+     * @param  {Object} data - Defines the data to insert.
+     * @param  {string|Query} tableName - Defines the table name.
+     * @param  {Query} query - Sets default query for the DataManager.
+     * @param  {number} position - not documented by Syncfusion as of Jan 2023
+     */
+    insert(data: Object, tableName?: string | Query, query?: Query, position?: number): Object | Promise<Object> {
+        // Custom logic to insert data
+        if (NexusDataManager.DEBUG_ON)
+            console.log("insert");
+        return super.insert(data, tableName, query, position);
+    }
+
+    /**
+     * Removes data from the table with the given key.
+     * @param  {string} keyField - Defines the column field.
+     * @param  {Object} value - Defines the value to find the data in the specified column.
+     * @param  {string|Query} tableName - Defines the table name
+     * @param  {Query} query - Sets default query for the DataManager.
+     */
+    remove(keyField: string, value: Object, tableName?: string | Query, query?: Query): Object | Promise<Object> {
+        // Custom logic to remove data
+        if (NexusDataManager.DEBUG_ON)
+            console.log("remove");
+        return super.remove(keyField, value, tableName, query);
     }
 
     /**
@@ -54,46 +155,36 @@ class NexusDataManager extends DataManager {
      * @param  {string|Query} tableName - Defines the table name.
      * @param  {Query} query - Sets default query for the DataManager.
      */
-    saveChanges(options: any, key: any): any {
+    saveChanges(changes: Object, key?: string, tableName?: string | Query, query?: Query, original?: Object): Promise<Object> | Object {
         // Custom logic to save changes
-        console.log("Saving custom changes");
-        return super.saveChanges(options, key);
+        if (NexusDataManager.DEBUG_ON)
+            console.log("saveChanges");
+        return super.saveChanges(changes, key, tableName, query, original);
     }
 
     /**
-     * Inserts new record in the given table.
-     * @param  {Object} data - Defines the data to insert.
-     * @param  {string|Query} tableName - Defines the table name.
-     * @param  {Query} query - Sets default query for the DataManager.
+     * Overrides DataManager's default query with given query.
+     * @param  {Query} query - Defines the new default query.
      */
-    insert(data: any, tableName: any, query: Query): any {
-        // Custom logic to insert data
-        console.log("Inserting custom data");
-        return super.insert(data, tableName, query);
+    setDefaultQuery(query: Query): DataManager {
+        // Custom logic to set default query
+        if (NexusDataManager.DEBUG_ON)
+            console.log("setDefaultQuery");
+        return super.setDefaultQuery(query);
     }
-    /**
-     * Removes data from the table with the given key.
-     * @param  {string} keyField - Defines the column field.
-     * @param  {Object} value - Defines the value to find the data in the specified column.
-     * @param  {string|Query} tableName - Defines the table name
-     * @param  {Query} query - Sets default query for the DataManager.
-     */
-    remove(keyField: any, value: any, tableName: any): any {
-        // Custom logic to remove data
-        console.log("Removing custom data");
-        return super.remove(keyField, value, tableName);
-    }
-    
+
     /**
      * Updates existing record in the given table.
      * @param  {string} keyField - Defines the column field.
      * @param  {Object} value - Defines the value to find the data in the specified column.
      * @param  {string|Query} tableName - Defines the table name
      * @param  {Query} query - Sets default query for the DataManager.
+     * @param  {Object} original - not documented by Syncfusion as of Jan 2023
      */
-    update(keyField: any, value: any, tableName: any, data: any): any {
+    update(keyField: string, value: Object, tableName?: string | Query, query?: Query, original?: Object): Object | Promise<Object> {
         // Custom logic to update data
-        console.log("Updating custom data");
-        return super.update(keyField, value, tableName, data);
+        if (NexusDataManager.DEBUG_ON)
+            console.log("update");
+        return super.update(keyField, value, tableName, query, original);
     }
 }

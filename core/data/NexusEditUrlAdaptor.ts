@@ -3,8 +3,7 @@ import {getErrorHandler} from "../CoreErrorHandling";
 import {cast} from "../BaseUtils";
 import {NexusAdaptor} from "./NexusAdaptor";
 
-//TODO Extend NexusAdaptor to support CRUD operations
-export class EditUrlAdaptor extends NexusAdaptor {
+export class NexusEditUrlAdaptor extends NexusAdaptor {
 
    private _insertListeners: AdaptorInsertListener[] = [];
    private _jsonListeners: AdaptorJsonListener[]     = [];
