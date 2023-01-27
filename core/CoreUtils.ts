@@ -736,18 +736,6 @@ export function cssStyleToString(cssStyle: CssStyle, cssDelimiter: string = ''):
 } //cssStyleToString
 
 
-export function htmlElement_link_clickFunction(elem: HTMLElement, clickFunction: (evt: any) => (void | Promise<void>)) {
-    if (!elem)
-        return;
-
-    let original = elem.innerHTML
-    if (original) {
-// Example of an href the takes no action:<a href="#" onclick="return false;">
-        elem.innerHTML = `<a href="#" onclick="return false;">${original}</a>`;
-        elem.addEventListener('click', clickFunction);
-    }
-}
-
 /**
  *
  * @param value true if the object looks like a Promise (has a then function)

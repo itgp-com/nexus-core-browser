@@ -32,6 +32,45 @@ export let htmlElement_link_clickFunction = (elem: HTMLElement, clickFunction: (
    }
 }
 
+export interface Options_htmlElement_link_clickFunction {
+   /**
+    * Defaults to 'pointer'
+    */
+   cursor?: string,
+   /**
+    * Defaults to '#2174af'
+    */
+   color?: string,
+}
+
+/**
+ * This function is used to add a click function to an html element as well as turn the cursor into a pointer while hovering
+ * and change the color of the text so it's identifiable as a link.
+ *
+ * @param elem
+ * @param clickFunction
+ * @param options change the pointer style and/or the color of the text
+ */
+export function htmlElement_clickFunction(
+    elem: HTMLElement,
+    clickFunction: (evt: any) => (void | Promise<void>),
+    options ?: Options_htmlElement_link_clickFunction
+                                  ) {
+   if (!elem)
+      return;
+
+   options = options || {};
+
+   let original = elem.innerHTML
+   if (original) {
+      Object.assign(elem.style, {
+         cursor: options.cursor || 'pointer' ,
+         color: options.color || '#2174af' // Bootstrap link blue '#0d6efd' / an alt more gray blue '#2174af')
+      });
+      elem.addEventListener('click', clickFunction);
+   }
+}
+
 export let htmlElement_addTooltip = (elem: HTMLElement,tippyProps : Partial<Props>) => {
    if (!elem)
       return;
