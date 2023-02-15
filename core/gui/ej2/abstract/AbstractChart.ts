@@ -102,6 +102,16 @@ export abstract class AbstractChart extends AnyWidgetStandard<Chart, Args_Abstra
          }
       });
 
+      // Horrible hack next to ensure no exception thrown by Syncfusion code on destroy
+      // The keyboard element must exist
+      let hackId = this.obj.element.id + 'Keyboard_chart_focus';
+      let hackElem = document.getElementById(hackId);
+      if (!hackElem) {
+         hackElem = document.createElement('div');
+         hackElem.id = hackId;
+         hackElem.style.display = 'none';
+         this.obj.element.appendChild(hackElem); // add the keyboard element to the chart
+      }
       await super.localDestroyImplementation();
 
    } // localDestroyImplementation

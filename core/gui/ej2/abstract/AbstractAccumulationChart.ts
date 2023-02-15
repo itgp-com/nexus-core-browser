@@ -1,15 +1,22 @@
-import {Args_AnyWidget}                                                                                                                              from "../../AnyWidget";
-import {AnyWidgetStandard}                                                                                                                           from "../../AnyWidgetStandard";
-import {IArgs_HtmlTag_Utils}                                                                                                                         from "../../../BaseUtils";
-import {AccumulationChart, AccumulationChartModel, AccumulationDataLabel, AccumulationLegend, AccumulationSelection, AccumulationTooltip, PieSeries} from '@syncfusion/ej2-charts';
+import {Args_AnyWidget} from "../../AnyWidget";
+import {AnyWidgetStandard} from "../../AnyWidgetStandard";
+import {IArgs_HtmlTag_Utils} from "../../../BaseUtils";
+import {
+    AccumulationChart,
+    AccumulationChartModel,
+    AccumulationDataLabel,
+    AccumulationLegend,
+    AccumulationSelection,
+    AccumulationTooltip,
+    PieSeries
+} from '@syncfusion/ej2-charts';
 
 AccumulationChart.Inject(
-   AccumulationLegend,
-   PieSeries,
-   AccumulationDataLabel,
-   AccumulationTooltip,
-   AccumulationSelection,
-
+    AccumulationLegend,
+    PieSeries,
+    AccumulationDataLabel,
+    AccumulationTooltip,
+    AccumulationSelection,
 );
 
 export abstract class Args_AbstractAccumulationChart extends Args_AnyWidget<AccumulationChartModel> {
@@ -18,52 +25,64 @@ export abstract class Args_AbstractAccumulationChart extends Args_AnyWidget<Accu
 // noinspection JSUnusedGlobalSymbols
 export abstract class AbstractAccumulationChart extends AnyWidgetStandard<AccumulationChart, Args_AbstractAccumulationChart, any> {
 
-   protected constructor() {
-      super();
-   }
+    protected constructor() {
+        super();
+    }
 
-   protected async _initialize(args: Args_AbstractAccumulationChart) {
-      args = IArgs_HtmlTag_Utils.init(args);
+    get value(): any {
+        if (this.obj)
+            return this.obj.dataSource;
+    }
 
-      await this.initialize_AnyWidgetStandard(args);
+    set value(value: any) {
+        if (this.obj) {
+            this.obj.dataSource = value;
+            super.value = value;
+        }
+    }
 
-   } // initialize_WgtAccumulationChart
-   async localLogicImplementation() {
-      let anchor = this.hget;
-      this.obj   = new AccumulationChart(this.initArgs?.ej);
-      this.obj.appendTo(anchor);
-   } // localLogicImplementation
+    protected async _initialize(args: Args_AbstractAccumulationChart) {
+        args = IArgs_HtmlTag_Utils.init(args);
 
+        await this.initialize_AnyWidgetStandard(args);
 
-   async localClearImplementation() {
-      await super.localClearImplementation();
-      if (this.obj) {
-         this.obj.dataSource=[];
-      }
-   } // localClearImplementation
+    } // initialize_WgtAccumulationChart
 
-   async localDestroyImplementation(): Promise<void> {
-      // cleanup any leftover Syncfusion style tags
+    async localLogicImplementation() {
+        let anchor = this.hget;
+        this.obj = new AccumulationChart(this.initArgs?.ej);
+        this.obj.appendTo(anchor);
+    } // localLogicImplementation
 
-      let styleTags = document.querySelectorAll('style');
-      styleTags.forEach((styleTag) => {
-         if( styleTag.id.startsWith(this.tagId)){
-            styleTag.remove();
-         }
-      });
+    async localClearImplementation() {
+        await super.localClearImplementation();
+        if (this.obj) {
+            this.obj.dataSource = [];
+        }
+    } // localClearImplementation
 
-      await super.localDestroyImplementation();
+    async localDestroyImplementation(): Promise<void> {
+        // cleanup any leftover Syncfusion style tags
 
-   } // localDestroyImplementation
-   get value(): any {
-      if (this.obj)
-         return this.obj.dataSource;
-   }
+        let styleTags = document.querySelectorAll('style');
+        styleTags.forEach((styleTag) => {
+            if (styleTag.id.startsWith(this.tagId)) {
+                styleTag.remove();
+            }
+        });
 
-   set value(value: any) {
-      if (this.obj) {
-         this.obj.dataSource = value;
-         super.value = value;
-      }
-   }
+        // Horrible hack next to ensure no exception thrown by Syncfusion code on destroy
+        // The keyboard element must exist
+        let hackId = this.obj.element.id + 'Keyboard_accumulationchart_focus';
+        let hackElem = document.getElementById(hackId);
+        if (!hackElem) {
+            hackElem = document.createElement('div');
+            hackElem.id = hackId;
+            hackElem.style.display = 'none';
+            this.obj.element.appendChild(hackElem); // add the keyboard element to the chart
+        }
+
+        await super.localDestroyImplementation();
+
+    } // localDestroyImplementation
 } // main
