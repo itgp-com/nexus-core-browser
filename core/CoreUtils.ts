@@ -9,6 +9,7 @@ import {getErrorHandler} from "./CoreErrorHandling";
 import {EJList} from "./data/Ej2Comm";
 import {CssStyle} from "./gui/AbstractWidget";
 import {NexusAdaptor} from "./data/NexusAdaptor";
+import tippy, {Props, roundArrow} from "tippy.js";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY = 1000;
@@ -778,3 +779,57 @@ export function wrapFunction<T = void>(
         return f;
     }
 } // wrapFunction
+
+export let htmlElement_addTooltip_CoreOnly = (elem: HTMLElement, tippyProps: Partial<Props>) => {
+    if (!elem)
+        return;
+    if (!tippyProps)
+        return;
+
+    let tippyModel: Partial<Props> = {
+        arrow: roundArrow,
+        // delay:    100,
+        // duration: [275, 0],
+        // interactive: false,
+
+        allowHTML: true,
+        appendTo: document.body,
+
+        //-----------
+        theme: 'nexus-core-001',
+        duration: [275, 0],
+        delay: 100,
+        interactive: false,
+        maxWidth: screen.width * 0.3,
+
+        placement: "auto",
+        popperOptions: {
+            strategy: 'fixed',
+            modifiers: [
+                {
+                    name: 'flip',
+                    options: {
+                        fallbackPlacements: ['left', 'right', 'bottom'],
+                    },
+                },
+                {
+                    name: 'preventOverflow',
+                    options: {
+                        altAxis: true,
+                        tether: false,
+                    },
+                },
+            ],
+        },
+
+        ...tippyProps,
+
+        // hideOnClick: true,
+        // trigger:     'click',
+
+    };
+
+
+    tippy(elem, tippyModel);
+
+}

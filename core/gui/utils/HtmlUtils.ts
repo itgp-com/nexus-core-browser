@@ -1,7 +1,8 @@
-import tippy, {Props, roundArrow}      from "tippy.js";
+import {Props} from "tippy.js";
 import {getRandomString, voidFunction} from "../../BaseUtils";
-import {nexusMain}                     from "../../NexusMain";
-import {escape, isArray}               from "lodash";
+import {nexusMain} from "../../NexusMain";
+import {escape, isArray} from "lodash";
+import {htmlElement_addTooltip_CoreOnly} from "../../CoreUtils";
 
 
 export let htmlElement_html_link = (elem: HTMLElement, cellValue: string, linkValue: string) => {
@@ -69,36 +70,6 @@ export function htmlElement_clickFunction(
       });
       elem.addEventListener('click', clickFunction);
    }
-}
-
-export let htmlElement_addTooltip = (elem: HTMLElement,tippyProps : Partial<Props>) => {
-   if (!elem)
-      return;
-   if (!tippyProps)
-      return;
-
-   let tippyModel: Partial<Props> = {
-      arrow:    roundArrow,
-      delay:    100,
-      duration: [275, 0],
-      interactive: false,
-
-      allowHTML: true,
-      appendTo: document.body,
-
-      ...tippyProps,
-
-      // theme:     'orca1',
-      // theme:     'material',
-
-      // hideOnClick: true,
-      // trigger:     'click',
-
-   };
-
-
-   tippy(elem, tippyModel);
-
 }
 
 export function appendDivToPage(): string {
@@ -272,7 +243,7 @@ export function skinnyHtmlElementTooltip(args: Args_SkinnyTooltip): string {
       if (text.length > maxWidth - 2) {
          let cell = htmlElement as HTMLElement
 
-         htmlElement_addTooltip(cell, {
+         htmlElement_addTooltip_CoreOnly(cell, {
             ...tippyProps,
             content: escape(text),   // overwrite the content no matter what
          });

@@ -122,3 +122,12 @@
 .w_radiobutton_horizontal {
   margin: 0 3px;
 }
+
+//---------- Tippy Tooltip ----------------
+
+.tippy-box[data-theme="nexus-core-001"] {
+  background-color: #FFFFED; // light yellow
+  color: #787878;  // gray text
+  border: 1px solid gray;
+  border-radius: 15px;
+}

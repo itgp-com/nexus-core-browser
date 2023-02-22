@@ -2,13 +2,14 @@ import {ClickEventArgs}                                                         
 import {ExcelExportProperties, GridModel, QueryCellInfoEventArgs}                                                                 from "@syncfusion/ej2-grids";
 import {DialogInfo}                                                                                                               from "../abstract/DialogInfo";
 import {AbstractGrid}                                                                                                             from "../abstract/AbstractGrid";
-import {appendDivToPage, htmlElement_addTooltip, htmlElement_html_link, htmlElement_link_clickFunction, skinnyHtmlElementTooltip} from "../../utils/HtmlUtils";
+import {appendDivToPage, htmlElement_html_link, htmlElement_link_clickFunction, skinnyHtmlElementTooltip} from "../../utils/HtmlUtils";
 import {HeaderCellInfoEventArgs}                                                                                                  from "@syncfusion/ej2-grids/src/grid/base/interface";
 import {TooltipModel}                                                                                                             from "@syncfusion/ej2-popups/src/tooltip/tooltip-model";
 import {Cell}                                                                                                                     from "@syncfusion/ej2-grids/src/grid/models/cell";
 import {Column}                                                                                                                   from "@syncfusion/ej2-grids/src/grid/models/column";
 import {isString}                                                                                                                 from "lodash";
 import {getErrorHandler}                                                                                                          from "../../../CoreErrorHandling";
+import {htmlElement_addTooltip_CoreOnly} from "../../../CoreUtils";
 
 export class Args_EnableExcelToolbar {
    /**
@@ -208,7 +209,7 @@ export function header_AppendLinkButton(params: Args_Header_AppendLinkButton) {
       }
 
       if (params.buttonTooltipModel)
-         htmlElement_addTooltip(buttonNode, {content: params?.buttonTooltipModel?.content});
+         htmlElement_addTooltip_CoreOnly(buttonNode, {content: params?.buttonTooltipModel?.content});
    } catch (error) {
       console.error(error);
       getErrorHandler().displayExceptionToUser(error);
