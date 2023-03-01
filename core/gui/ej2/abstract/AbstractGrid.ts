@@ -244,6 +244,15 @@ export function gridDecoratorsHeight(wgtGrid: AbstractGrid): number {
             gridDecoratorHeightVal += gridPager.clientHeight;
          }
       } // if gridPagerArray
+
+      let gridGroupingArray = gridElem.getElementsByClassName('e-groupdroparea');
+      if ( gridGroupingArray.length > 0 ) {
+         let gridGrouping = gridGroupingArray[0];
+         if ( gridGrouping ) {
+            gridDecoratorHeightVal += gridGrouping.clientHeight;
+         }
+      } // if gridGroupingArray
+
    } // if gridElem
    return gridDecoratorHeightVal;
 } // gridDecoratorsHeight
