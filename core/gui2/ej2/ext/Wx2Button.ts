@@ -1,6 +1,7 @@
 import {Button, ButtonModel}               from "@syncfusion/ej2-buttons";
 import {StringArg, stringArgVal}           from "../../../BaseUtils";
 import {Ax2EjStandard, StateAx2EjStandard} from "../Ax2EjStandard";
+import {Ix2OnHtml} from "../../Ax2Widget";
 
 export interface StateWx2Button<WIDGET_TYPE extends Wx2Button = Wx2Button> extends StateAx2EjStandard<WIDGET_TYPE, ButtonModel> {
 
@@ -20,14 +21,14 @@ export class Wx2Button<STATE extends StateWx2Button = any> extends Ax2EjStandard
       super(state);
    }
 
-   onHtml(): HTMLElement {
+   onHtml(args:Ix2OnHtml): HTMLElement {
       let state                    = this.state;
       state.deco.tag               = 'button';
       state.deco.otherAttr['type'] = 'button';
-      return super.onHtml();
+      return super.onHtml(args);
    }
 
-   async onLogic(): Promise<void> {
+   onLogic(): void {
       let state = this.state;
       if (state.label)
          state.ej.content = stringArgVal(state.label); // Button content label/ html

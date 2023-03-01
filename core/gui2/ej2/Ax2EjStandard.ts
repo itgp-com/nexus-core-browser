@@ -1,34 +1,36 @@
-import {Ix2State}              from "../Ix2State";
+import {Ix2State} from "../Ix2State";
 import {createWx2HTMLStandard} from "../Wx2Utils";
-import {Ax2Ej, StateEj}        from "./Ax2Ej";
+import {Ax2Ej, StateEj} from "./Ax2Ej";
+import {Ix2Destroy, Ix2Refresh, Ix2OnClear, Ix2OnHtml, Ix2OnLogic} from "../Ax2Widget";
+import {StateWx2Panel} from "./panel/Wx2Panel";
 
-export interface StateAx2EjStandard<WIDGET_TYPE extends Ax2EjStandard = any, WIDGET_LIBRARY_MODEL=any> extends StateEj<WIDGET_TYPE, WIDGET_LIBRARY_MODEL> {
+export interface StateAx2EjStandard<WIDGET_TYPE extends Ax2EjStandard = any, WIDGET_LIBRARY_MODEL = any> extends StateEj<WIDGET_TYPE, WIDGET_LIBRARY_MODEL> {
 }
 
 
 export abstract class Ax2EjStandard<STATE extends Ix2State = Ix2State> extends Ax2Ej<STATE> {
 
-   protected constructor(state:STATE) {
-      super(state);
-   }
+    protected constructor(state: STATE) {
+        super(state);
+    }
 
 
-   public onHtml(): HTMLElement {
-      return createWx2HTMLStandard<STATE>(this.state);
-   }
+    onHtml(args: Ix2OnHtml): HTMLElement {
+        return createWx2HTMLStandard<StateWx2Panel>(this.state);
+    }
 
 
-   async onClear(): Promise<void> {
-   }
+    onClear(args:Ix2OnClear): void {
+    }
 
-   async onDestroy(): Promise<void> {
-   }
+    onDestroy(args: Ix2Destroy): void {
+    }
 
-   async onLogic(): Promise<void> {
-   }
+    onLogic(args : Ix2OnLogic): void {
+    }
 
-   async onRefresh(): Promise<void> {
-   }
+    onRefresh(args:Ix2Refresh): void {
+    }
 
 
 }

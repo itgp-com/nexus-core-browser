@@ -9,7 +9,7 @@ export class Wx2Panel extends Ax2Standard {
     super(state);
   }
 
-   protected async _initialSetup(state: StateWx2Panel) {
-      await super._initialSetup(state);
+   protected _initialSetup(state: StateWx2Panel) {
+      super._initialSetup(state);
    }
 } // Wx2Panel

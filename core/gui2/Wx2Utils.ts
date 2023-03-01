@@ -6,6 +6,11 @@ import {Ix2State}                     from "./Ix2State";
 
 export const tags_no_closing_tag = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
+export function isAx2Widget(obj: any): obj is Ax2Widget {
+   // an Ax2Widget is an object with a gen, state and className  property
+   return obj && obj.className && obj.gen && obj.state;
+}
+
 function hasNoClosingHtmlTag(tag: string): boolean {
    if (!tag) return false;
    return tags_no_closing_tag.indexOf(tag.toLowerCase()) >= 0;

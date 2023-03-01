@@ -17,7 +17,7 @@ export abstract class Ax2Ej<  STATE extends StateEj = StateEj, EJ2COMPONENT exte
 
 
    protected _constructor(state: STATE) {
-      super._constructor(state);
       state.ej = state.ej || {};
+      super._constructor(state);
    }
 }

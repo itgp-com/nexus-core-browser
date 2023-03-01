@@ -1,6 +1,7 @@
 import {escape, isString}              from "lodash";
 import {Ax2Standard, StateAx2Standard} from "../Ax2Standard";
 import {createWx2HTMLStandard}         from "../Wx2Utils";
+import {Ix2OnHtml} from "../Ax2Widget";
 
 export interface StateWx2Html<WIDGET_TYPE extends Wx2Html=any> extends StateAx2Standard<WIDGET_TYPE> {
    value ?: (string|HTMLElement);
@@ -12,7 +13,7 @@ export class Wx2Html<STATE extends StateWx2Html = StateWx2Html> extends Ax2Stand
       super(state);
    }
 
-   onHtml(): HTMLElement {
+   onHtml(args:Ix2OnHtml): HTMLElement {
       if ( this.state.value == null )
          this.state.value = '';
 
@@ -44,14 +45,14 @@ export class Wx2Html<STATE extends StateWx2Html = StateWx2Html> extends Ax2Stand
    } //onHtml
 
 
-   async onRefresh(): Promise<void> {
+   onRefresh(): void {
       if (this.state.staticWidget)
          return;
 
-      let newHtmlElement = this.onHtml();
       let oldHtmlElement = this.htmlElement;
-      this.htmlElement = newHtmlElement;
-      oldHtmlElement.replaceWith(newHtmlElement); // in document model
+      this.htmlElement = null; // just in case
+      this.initHtml(); // replaces htmlElement
+      oldHtmlElement.replaceWith(this.htmlElement); // in document model
    }
 } //Wx2Html
 

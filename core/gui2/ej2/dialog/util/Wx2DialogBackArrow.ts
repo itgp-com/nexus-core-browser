@@ -1,6 +1,7 @@
 import {StateWx2Html, Wx2Html} from "../../../generic/Wx2Html";
 import {css_Wx2Dialog_color_header_background, css_Wx2Dialog_color_header_font, Wx2Dialog} from "../Wx2Dialog";
 import {Tooltip} from "@syncfusion/ej2-popups";
+import {Ix2OnHtml} from "../../../Ax2Widget";
 
 export interface StateWx2DialogBackArrow<WIDGET_TYPE extends Wx2DialogBackArrow = Wx2DialogBackArrow> extends StateWx2Html<WIDGET_TYPE> {
     dialog: Wx2Dialog;
@@ -28,7 +29,7 @@ export class Wx2DialogBackArrow<STATE extends StateWx2DialogBackArrow = any> ext
         super._initialSetup(state);
     }
 
-    onHtml(): HTMLElement {
+    onHtml(args:Ix2OnHtml): HTMLElement {
         let state = this.state;
 
         let deco = state.deco;
@@ -37,17 +38,16 @@ export class Wx2DialogBackArrow<STATE extends StateWx2DialogBackArrow = any> ext
             "margin-right": "5px",
         }
 
-        return super.onHtml();
+        return super.onHtml(args);
     }
 
 
-    async onLogic(): Promise<void> {
+    onLogic(): void {
         this.htmlElement.addEventListener('click', (_ev) => {
             this._action.call(this, _ev);
         });
 
-        await this._tooltip();
-
+        this._tooltip();
     }
 
     /**
@@ -57,7 +57,7 @@ export class Wx2DialogBackArrow<STATE extends StateWx2DialogBackArrow = any> ext
      * @param _ev
      * @protected
      */
-    protected async _action(_ev: MouseEvent) {
+    protected _action(_ev: MouseEvent) {
         this.state.dialog.hide(); // close
     } // header_backArrowAction
 

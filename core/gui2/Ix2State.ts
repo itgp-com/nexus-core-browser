@@ -1,5 +1,14 @@
 import {WidgetErrorHandler}                    from "../gui/WidgetErrorHandler";
-import {Ax2Widget, Ix2BeforeLogic, Ix2Resized} from "./Ax2Widget";
+import {
+   Ax2Widget,
+   Ix2BeforeLogic,
+   Ix2Refresh,
+   Ix2Resized,
+   Ix2OnClear,
+   Ix2OnHtml,
+   Ix2OnLogic,
+   Ix2Destroy, Ix2AfterLogic
+} from "./Ax2Widget";
 import {Ix2HtmlDecorator}                      from "./Ix2HtmlDecorator";
 
 export interface Ix2State<WIDGET_TYPE extends Ax2Widget = Ax2Widget> {
@@ -14,11 +23,20 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = Ax2Widget> {
     *  Called after initLogic has been completed for this component but NOT for any child components
     *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
     */
-   afterInit?: (widget: any) => void;
+   afterInitWidgetOnly?: (args:Ix2AfterLogic) => void;
 
-   afterInitLogic ?: () => void;
+   /**
+    * If this is specified, the widget's method (if any) will not be called.
+    * Should you need to call the corresponding widget method, you can call it manually from this method
+    * by using the widget instance in the parameter
+    */
+   afterInitLogic ?: (args : Ix2AfterLogic) => void;
 
-
+   /**
+    * If this is specified, the widget's method (if any) will not be called.
+    * Should you need to call the corresponding widget method, you can call it manually from this method
+    * by using the widget instance in the parameter
+    */
    beforeInitLogic?: (args ?: Ix2BeforeLogic) => (void|Promise<void>);
 
    /**
@@ -67,15 +85,15 @@ export interface Ix2State<WIDGET_TYPE extends Ax2Widget = Ax2Widget> {
     */
    tagId?: string;
 
-   onClear?: () =>  (void | Promise<void>);
+   onClear?: (args:Ix2OnClear) =>  void ;
 
-   onDestroy?: () =>  (void | Promise<void>);
+   onDestroy?: (args: Ix2Destroy) =>  void ;
 
-   onHtml?: () =>HTMLElement;
+   onHtml?: (args:Ix2OnHtml) =>HTMLElement;
 
-   onLogic?: () =>  (void | Promise<void>);
+   onLogic?: (args : Ix2OnLogic) =>  void;
 
-   onRefresh?: () =>  (void | Promise<void>);
+   onRefresh?: (args ?: Ix2Refresh) =>  void;
 
    /**
     * Called when the widget is resized (assuming <link>widget.resizeTracked</link> is true)

@@ -833,3 +833,7 @@ export let htmlElement_addTooltip_CoreOnly = (elem: HTMLElement, tippyProps: Par
     tippy(elem, tippyModel);
 
 }
+
+export function isHTMLElement(obj: any): boolean {
+    return obj instanceof HTMLElement;
+}

@@ -4,6 +4,7 @@ import {Ix2StateGenerated}                                        from "../../Ix
 import {createWx2HTMLStandard, createWx2HtmlStandardForDecorator} from "../../Wx2Utils";
 import {StateEjSingleVal}                                         from "../Ax2EjSingleVal";
 import {Ax2EjStandard}                                            from "../Ax2EjStandard";
+import {Ix2OnHtml, Ix2OnLogic} from "../../Ax2Widget";
 
 export interface StateWx2TextField extends StateEjSingleVal<Wx2TextField, TextBoxModel> {
 
@@ -29,15 +30,11 @@ export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
       super(state);
    }
 
-   // public static async create(state: StateWx2TextField): Promise<Wx2TextField> {
-   //    return new Wx2TextField(state);
-   // }
-
    protected _constructor(state: StateWx2TextField) {
       super._constructor(state);
    }
 
-   protected async _initialSetup(state: StateWx2TextField) {
+   protected _initialSetup(state: StateWx2TextField) {
       this._customizeState(state);
       super._initialSetup(state);
    }
@@ -52,7 +49,7 @@ export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
       state.ej.cssClass = 'e-filled';
 
 
-      state.onHtml = () => {
+      state.onHtml = (args: Ix2OnHtml) => {
 
          state.wrapperDecorator          = IHtmlUtils.init(state.wrapperDecorator);
          let wrapperDeco                 = state.wrapperDecorator;
@@ -96,7 +93,7 @@ export class Wx2TextField extends Ax2EjStandard<StateWx2TextField> {
          return wrapperElement;
       } // onHtml
 
-      state.onLogic = () => {
+      state.onLogic = (args : Ix2OnLogic) => {
          let obj: TextBox      = new TextBox(state.ej);
          state.gen.widget.obj  = obj;
          let opc               = obj.onPropertyChanged
