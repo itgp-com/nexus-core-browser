@@ -2,9 +2,9 @@ import {isArray, isEmpty} from "lodash";
 import {IKeyValueString} from "../BaseUtils";
 import {cssStyleToString} from "../CoreUtils";
 import {CssStyle} from "../gui/AbstractWidget";
-import {Ix2State} from "./Ix2State";
+import {StateNx2} from "./StateNx2";
 
-export interface Ix2HtmlDecorator {
+export interface Nx2HtmlDecorator {
     /**
      * the tag type of the HTMLElement
      */
@@ -25,7 +25,7 @@ export interface Ix2HtmlDecorator {
     otherAttr?: IKeyValueString;
 
     /**
-     * Any string that belongs inside this tab. If this string is actually HTML, it should really be added as <link>Wx2Html</link> children of the widget.
+     * Any string that belongs inside this tab. If this string is actually HTML, it should really be added as <link>Nx2Html</link> children of the widget.
      */
     text?: string;
     /**
@@ -33,12 +33,12 @@ export interface Ix2HtmlDecorator {
      */
     escapeText?: boolean;
 
-} // end of Ix2HtmlDecorator
+} // end of Nx2HtmlDecorator
 
 
 export class IHtmlUtils {
 
-    static initDecorator(state: Ix2State) {
+    static initDecorator(state: StateNx2) {
         state.deco = IHtmlUtils.init(state.deco);
     }
 
@@ -47,7 +47,7 @@ export class IHtmlUtils {
      * If the original decorator is null, a new one is created.
      * @param decorator
      */
-    static init(decorator: Ix2HtmlDecorator): Ix2HtmlDecorator {
+    static init(decorator: Nx2HtmlDecorator): Nx2HtmlDecorator {
         if (!decorator)
             decorator = {};
         if (!decorator.tag)
@@ -61,7 +61,7 @@ export class IHtmlUtils {
         return decorator;
     } //init
 
-    static class(decorator: Ix2HtmlDecorator): string {
+    static class(decorator: Nx2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let c: string = '';
         if (decorator.classes.length > 0)
@@ -69,7 +69,7 @@ export class IHtmlUtils {
         return c;
     }
 
-    static style(decorator: Ix2HtmlDecorator): string {
+    static style(decorator: Nx2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let htmlTagStyle = '';
         if (decorator.style && !isEmpty(decorator.style))
@@ -77,7 +77,7 @@ export class IHtmlUtils {
         return htmlTagStyle;
     }
 
-    static otherAttr(decorator: Ix2HtmlDecorator): string {
+    static otherAttr(decorator: Nx2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let otherAttrArray = Object.entries(decorator.otherAttr);
         let htmlAttrs: string = (otherAttrArray.length > 0 ? ' ' : '');
@@ -96,7 +96,7 @@ export class IHtmlUtils {
         return htmlAttrs;
     }
 
-    static all(decorator: Ix2HtmlDecorator): string {
+    static all(decorator: Nx2HtmlDecorator): string {
         return `${IHtmlUtils.class(decorator)}${IHtmlUtils.style(decorator)}${IHtmlUtils.otherAttr(decorator)}`;
     }
 
@@ -104,13 +104,13 @@ export class IHtmlUtils {
 } // end of IHtmlUtils
 
 /**
- * Append classes to classes in Ix2HtmlDecorator.
+ * Append classes to classes in Nx2HtmlDecorator.
  *
  * Duplicates will not be allowed
  * @param args the arguments passed to the widget
  * @param additionalClasses
  */
-export function addWx2Class(args: Ix2HtmlDecorator, additionalClasses: (string | string[])): Ix2HtmlDecorator {
+export function addNx2Class(args: Nx2HtmlDecorator, additionalClasses: (string | string[])): Nx2HtmlDecorator {
     args = IHtmlUtils.init(args);
 
     if (!additionalClasses)

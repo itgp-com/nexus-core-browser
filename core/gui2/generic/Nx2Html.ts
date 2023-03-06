@@ -1,19 +1,28 @@
-import {escape, isString}              from "lodash";
-import {Ax2Standard, StateAx2Standard} from "../Ax2Standard";
-import {createWx2HTMLStandard}         from "../Wx2Utils";
-import {Ix2OnHtml} from "../Ax2Widget";
+import {escape, isString} from "lodash";
+import {Nx2Basic, StateNx2Basic, StateNx2BasicRef} from "../Nx2Basic";
+import {createNx2HtmlBasic} from "../Nx2Utils";
+import {Nx2Evt_OnHtml} from "../Nx2";
 
-export interface StateWx2Html<WIDGET_TYPE extends Wx2Html=any> extends StateAx2Standard<WIDGET_TYPE> {
+export interface StateNx2HtmlRef extends StateNx2BasicRef{
+   widget ?: Nx2Html;
+}
+
+export interface StateNx2Html extends StateNx2Basic {
    value ?: (string|HTMLElement);
+   /**
+    * Override with specific type used in code completion
+    * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+    */
+   ref ?:StateNx2HtmlRef;
 } // state
 
-export class Wx2Html<STATE extends StateWx2Html = StateWx2Html> extends Ax2Standard<STATE> {
+export class Nx2Html<STATE extends StateNx2Html = StateNx2Html> extends Nx2Basic<STATE> {
 
    constructor(state:STATE) {
       super(state);
    }
 
-   onHtml(args:Ix2OnHtml): HTMLElement {
+   onHtml(args:Nx2Evt_OnHtml): HTMLElement {
       if ( this.state.value == null )
          this.state.value = '';
 
@@ -41,7 +50,7 @@ export class Wx2Html<STATE extends StateWx2Html = StateWx2Html> extends Ax2Stand
          this.htmlElement = elem as HTMLElement;
       }
 
-      return createWx2HTMLStandard(this.state);
+      return createNx2HtmlBasic(this.state);
    } //onHtml
 
 
@@ -54,7 +63,7 @@ export class Wx2Html<STATE extends StateWx2Html = StateWx2Html> extends Ax2Stand
       this.initHtml(); // replaces htmlElement
       oldHtmlElement.replaceWith(this.htmlElement); // in document model
    }
-} //Wx2Html
+} //Nx2Html
 
 function mergeClasses(element1:HTMLElement, classList2:string[]) {
    let classList1 = element1.classList;

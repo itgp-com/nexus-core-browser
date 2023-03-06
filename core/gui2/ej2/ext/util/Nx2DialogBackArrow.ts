@@ -1,13 +1,22 @@
-import {StateWx2Html, Wx2Html} from "../../../generic/Wx2Html";
-import {css_Wx2Dialog_color_header_background, css_Wx2Dialog_color_header_font, Wx2Dialog} from "../Wx2Dialog";
+import {Nx2Html, StateNx2Html, StateNx2HtmlRef} from "../../../generic/Nx2Html";
+import {css_Nx2Dialog_color_header_background, css_Nx2Dialog_color_header_font, Nx2EjDialog} from "../Nx2EjDialog";
 import {Tooltip} from "@syncfusion/ej2-popups";
-import {Ix2OnHtml} from "../../../Ax2Widget";
+import {Nx2Evt_OnHtml} from "../../../Nx2";
 
-export interface StateWx2DialogBackArrow<WIDGET_TYPE extends Wx2DialogBackArrow = Wx2DialogBackArrow> extends StateWx2Html<WIDGET_TYPE> {
-    dialog: Wx2Dialog;
+export interface StateNx2DialogBackArrowRef extends StateNx2HtmlRef{
+    widget ?: Nx2DialogBackArrow;
+}
+export interface StateNx2DialogBackArrow extends StateNx2Html {
+    dialog: Nx2EjDialog;
+
+    /**
+     * Override with specific type used in code completion
+     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+     */
+    ref ?:StateNx2DialogBackArrowRef;
 }
 
-export class Wx2DialogBackArrow<STATE extends StateWx2DialogBackArrow = any> extends Wx2Html<STATE> {
+export class Nx2DialogBackArrow<STATE extends StateNx2DialogBackArrow = any> extends Nx2Html<STATE> {
 
 
     constructor(state: STATE) {
@@ -20,8 +29,8 @@ export class Wx2DialogBackArrow<STATE extends StateWx2DialogBackArrow = any> ext
         if (state.value == null) {
             state.value = `
 <span id="${state.tagId}"  style="margin-right:5px;">
-    <button type="button" style="background-color: ${css_Wx2Dialog_color_header_background}">
-        <i class="fa fa-arrow-circle-left" style="font-weight:900;font-size:20px;color: ${css_Wx2Dialog_color_header_font} !important;"></i>
+    <button type="button" style="background-color: ${css_Nx2Dialog_color_header_background}">
+        <i class="fa fa-arrow-circle-left" style="font-weight:900;font-size:20px;color: ${css_Nx2Dialog_color_header_font} !important;"></i>
     </button>
 </span>`;
         }
@@ -29,7 +38,7 @@ export class Wx2DialogBackArrow<STATE extends StateWx2DialogBackArrow = any> ext
         super._initialSetup(state);
     }
 
-    onHtml(args:Ix2OnHtml): HTMLElement {
+    onHtml(args:Nx2Evt_OnHtml): HTMLElement {
         let state = this.state;
 
         let deco = state.deco;

@@ -1,26 +1,37 @@
 import {AxiosResponse} from "axios";
 import {ResizeSensor} from "css-element-queries";
 import {ResizeSensorCallback} from "css-element-queries/src/ResizeSensor";
-import {throttle} from "lodash";
+import {debounce, throttle} from "lodash";
 import {getRandomString} from "../BaseUtils";
 import {Err} from "../Core";
 import {getErrorHandler} from "../CoreErrorHandling";
 import {ExceptionEvent} from "../ExceptionEvent";
 import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
-import {IHtmlUtils} from "./Ix2HtmlDecorator";
-import {Ix2State} from "./Ix2State";
+import {IHtmlUtils} from "./Nx2HtmlDecorator";
+import {StateNx2} from "./StateNx2";
 
 
-export let WX2_HTML_TAGGING_CLASS = '_wx2_';
+export let NX2_CLASS = '_nx2_';
 
 
-export abstract class Ax2Widget<
-    STATE extends Ix2State = any,
+export abstract class Nx2<
+    STATE extends StateNx2 = any,
     JS_COMPONENT = any> {
 
-    //---------------- abstract methods ----------------
 
-    protected _resizeSensorCallback: ResizeSensorCallback = throttle((_size: { width: number; height: number; }) => {
+    /**
+     *  Called after initLogic has been completed for this component but NOT for any child components
+     *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
+     */
+    afterInitWidgetOnly?: (args: Nx2Evt_AfterLogic) => void;
+    /**
+     * Using {@link debounce} and not {@link throttle} because we want to fire the event only once
+     * AFTER the resize is complete. Throttle would fire the event first, debouncewaits the minimum interval
+     * before firing. With throttle, we get an initial endless loop of resize events.
+     *
+     * @protected
+     */
+    protected _resizeSensorCallback: ResizeSensorCallback = debounce((_size: { width: number; height: number; }) => {
             if (this && this.initialized) {
                 this.onResized({
                     widget: this,
@@ -28,7 +39,7 @@ export abstract class Ax2Widget<
                 });
             } // if (thisX && thisX.obj && thisX.initialized )
         } // function body of debouncedFunction
-        , (this.resizeEventMinInterval ? this.resizeEventMinInterval : 300));
+        , this.resizeEventMinInterval);
 
     protected constructor(state: STATE) {
         this._constructor(state);
@@ -45,21 +56,19 @@ export abstract class Ax2Widget<
             state.deco = IHtmlUtils.init(state.deco); // the decorator must exist because there must be a tag type for the component HTML
 
             // Tag the new state with the widget
-            if (state.gen.widget && state.gen.widget != this) {
-                throw new Error(`The state instance is already set to widget ${state.gen.widget.state.tagId} and is now trying to be assigned to ${state.tagId}!}`);
+            if (state.ref.widget && state.ref.widget != this) {
+                throw new Error(`The state instance is already set to widget ${state.ref.widget.state.tagId} and is now trying to be assigned to ${state.tagId}!}`);
             }
-            state.gen.widget = this; // tag the state with the widget
+            state.ref.widget = this as Nx2; // tag the state with the widget
 
         } else {
             // If being assigned a null state, then remove the reference to this widget from the previous state
             if (this.state) {
-                this.state.gen.widget = null; // remove the reference to this object
+                this.state.ref.widget = null; // remove the reference to this object
             }
         }// if state
         this._state = state;
     }
-
-    //---------- end abstract methods -----------------
 
     private _className: string;
 
@@ -69,6 +78,33 @@ export abstract class Ax2Widget<
 
     set className(value: string) {
         this._className = value;
+    }
+
+    //---------------- abstract methods ----------------
+
+    private _resizeSensor: ResizeSensor;
+
+    get resizeSensor(): ResizeSensor {
+        return this._resizeSensor;
+    }
+
+    set resizeSensor(value: ResizeSensor) {
+        this._resizeSensor = value;
+    }
+
+    private _resizeEventMinInterval: number; // milliseconds
+
+    /**
+     * Defaults to 400 ms if not set
+     */
+    get resizeEventMinInterval(): number {
+        if (this._resizeEventMinInterval == null || this._resizeEventMinInterval <= 0)
+            this._resizeEventMinInterval = 400;
+        return this._resizeEventMinInterval;
+    }
+
+    set resizeEventMinInterval(value: number) {
+        this._resizeEventMinInterval = value;
     }
 
     private _obj: JS_COMPONENT;
@@ -89,31 +125,7 @@ export abstract class Ax2Widget<
         this._obj = value;
     }
 
-    private _resizeEventMinInterval: number = 200; // milliseconds
-
-    get resizeEventMinInterval(): number {
-        return this._resizeEventMinInterval;
-    }
-
-    set resizeEventMinInterval(value: number) {
-        this._resizeEventMinInterval = value;
-    }
-
-    private _resizeSensor: ResizeSensor;
-
-    get resizeSensor(): ResizeSensor {
-        return this._resizeSensor;
-    }
-
-    set resizeSensor(value: ResizeSensor) {
-        this._resizeSensor = value;
-    }
-
-    /**
-     * True if initLogic has been invoked already
-     * @private
-     */
-    private _initialized: boolean = false;
+    private _initialized: boolean = false; // True if initLogic has been invoked already
 
     get initialized(): boolean {
         return this._initialized;
@@ -123,10 +135,6 @@ export abstract class Ax2Widget<
         this._initialized = value;
     }
 
-    /**
-     * initLogic still in process
-     * @private
-     */
     private _initLogicInProgress: boolean;
 
     get initLogicInProgress(): boolean {
@@ -142,13 +150,13 @@ export abstract class Ax2Widget<
         this._initLogicInProgress = value;
     }
 
-    private _parent: Ax2Widget;
+    private _parent: Nx2;
 
-    get parent(): Ax2Widget {
+    get parent(): Nx2 {
         return this._parent;
     }
 
-    set parent(value: Ax2Widget) {
+    set parent(value: Nx2) {
         try {
             this._parent = value;
             // if (this.parentAddedListeners.countListeners() > 0) {
@@ -166,12 +174,12 @@ export abstract class Ax2Widget<
 
     private _refreshInProgress: boolean;
 
+
+    //--------- Getters and Setters ----------------
+
     get refreshInProgress(): boolean {
         return this._refreshInProgress;
     }
-
-
-    //--------- Getters and Setters ----------------
 
     /**
      * Used by system to set the flag.
@@ -183,47 +191,51 @@ export abstract class Ax2Widget<
     }
 
     get htmlElement(): HTMLElement {
-        if (!this.state.gen.htmlElement)
+        if (!this.state.ref.htmlElement)
             this.initHtml();
 
-        return this.state.gen.htmlElement;
+        return this.state.ref.htmlElement;
     }
 
     set htmlElement(value: HTMLElement) {
         let state = this.state;
 
-        let oldElement = state.gen?.htmlElement;
+        let oldElement = state.ref?.htmlElement;
         if (oldElement == value)
             return; // nothing to do
 
         if (oldElement) {
-            oldElement.classList.remove(WX2_HTML_TAGGING_CLASS); // untag the element
-            oldElement[WX2_HTML_TAGGING_CLASS] = null; // remove the reference to this object
+            oldElement.classList.remove(NX2_CLASS); // untag the element
+            oldElement[NX2_CLASS] = null; // remove the reference to this object
             if (this.resizeSensor) {
                 this.resizeSensor.detach();
             }
         }
 
-        state.gen.htmlElement = value;
+        state.ref.htmlElement = value;
 
         if (value) {
             // tag this element with the widget
-            value.classList.remove(WX2_HTML_TAGGING_CLASS); // just in case
-            value.classList.add(WX2_HTML_TAGGING_CLASS); // tag the element
-            value[WX2_HTML_TAGGING_CLASS] = this; // tag the element with the widget itself
+            value.classList.remove(NX2_CLASS); // just in case
+            value.classList.add(NX2_CLASS); // tag the element
+            value[NX2_CLASS] = this; // tag the element with the widget itself
 
             if (state.resizeTracked && oldElement && this.initialized) {
                 // only if the widget has already been initialized (if it has not, then initLogic will apply it the first time
-                this.applyResizeSensor();
+                setTimeout(() => {
+                        this.applyResizeSensor();
+                    },
+                    this.resizeEventMinInterval // wait the minimum interval to avoid an infinite loop when the resize triggers because the panel is not finished its initial sizing
+                );
             }
         }
     }
 
-    abstract onClear(args: Ix2OnClear): void;
+    abstract onClear(args: Nx2Evt_OnClear): void;
 
-    abstract onDestroy(args: Ix2Destroy): void;
+    abstract onDestroy(args: Nx2Evt_Destroy): void;
 
-    abstract onHtml(args: Ix2OnHtml): HTMLElement;
+    abstract onHtml(args: Nx2Evt_OnHtml): HTMLElement;
 
     /**
      * This is the method that gives a component the chance to call any JavaScript and instantiate the widget.
@@ -234,26 +246,25 @@ export abstract class Ax2Widget<
      * Therefore, all children JS objects are available at this point in time.
      *
      */
-    abstract onLogic(args: Ix2OnLogic): void ;
+    abstract onLogic(args: Nx2Evt_OnLogic): void ;
 
-    abstract onRefresh(args ?: Ix2Refresh): void;
+    abstract onRefresh(args ?: Nx2Evt_Refresh): void;
 
     initHtml(): void {
-        if (this.state?.gen?.htmlElement) return;
+        if (this.state?.ref?.htmlElement) return;
 
         if (this.state.onHtml) {
             this.htmlElement = this.state.onHtml({widget: this});
         } else {
             this.htmlElement = this.onHtml({widget: this});
         }
-
     } // initHtml
 
     initLogic(): void {
         if (this.initialized)
             return;
 
-        let args: Ix2BeforeLogic = {
+        let args: Nx2Evt_BeforeLogic = {
             widget: this,
             cancel: false,
         };
@@ -292,7 +303,7 @@ export abstract class Ax2Widget<
 
             try {
                 if (state?.afterInitWidgetOnly) {
-                        state.afterInitWidgetOnly({widget:this});
+                    state.afterInitWidgetOnly({widget: this});
                 }
             } catch (ex) {
                 console.error(ex);
@@ -300,7 +311,7 @@ export abstract class Ax2Widget<
             }
 
             let atLeastOneChildInitialized: boolean = false;
-            let children: Ax2Widget[];
+            let children: Nx2[];
             if (state.children)
                 children = state.children;
             if (children && children.length > 0) {
@@ -339,7 +350,7 @@ export abstract class Ax2Widget<
 
             if (this.afterInitLogic) {
                 // ------------ After Init Logic Listeners -----------------------
-                let args: Ix2AfterLogic = {
+                let args: Nx2Evt_AfterLogic = {
                     widget: thisX
                 };
 
@@ -384,15 +395,9 @@ export abstract class Ax2Widget<
     } // destroy
 
     /**
-     *  Called after initLogic has been completed for this component but NOT for any child components
-     *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
-     */
-    afterInitWidgetOnly?: (args: Ix2AfterLogic) => void;
-
-    /**
      * Called after the widget AND any children's logic have been initialized
      */
-    afterInitLogic(args: Ix2AfterLogic): void {
+    afterInitLogic(args: Nx2Evt_AfterLogic): void {
     }
 
     /**
@@ -400,10 +405,10 @@ export abstract class Ax2Widget<
      * Should you need to call the corresponding widget method, you can call it manually from this method
      * by using the widget instance in the parameter
      */
-    beforeInitLogic(args: Ix2BeforeLogic): void {
+    beforeInitLogic(args: Nx2Evt_BeforeLogic): void {
     }
 
-    refresh(args ?: Ix2Refresh) {
+    refresh(args ?: Nx2Evt_Refresh) {
         if (this.initialized) {
             try {
                 this.refreshInProgress = true;
@@ -412,73 +417,73 @@ export abstract class Ax2Widget<
 
 
                 args = args || {widget: this};
-                args.currentLevelOnly = args.currentLevelOnly || false;
-                args.resetUIOnRefresh = args.resetUIOnRefresh || false;
-                args.gen = args.gen || {};
+                // args.currentLevelOnly = args.currentLevelOnly || false;
+                // args.resetUIOnRefresh = args.resetUIOnRefresh || false;
+                args.ref = args.ref || {};
                 args.extras = args.extras || {};
 
-                let gen = args.gen;
-                gen.topParent = gen.topParent || this; // if empty, then this is the top parent
-                gen.widget = this;
+                let ref = args.ref;
+                ref.topParent = ref.topParent || this; // if empty, then this is the top parent
+                ref.widget = this;
 
-                if (!args.currentLevelOnly) {
-                    let children: Ax2Widget[];
-                    if (state.children)
-                        children = state.children;
-                    if (children) {
-                        for (const child of children) {
+                // if (!args.currentLevelOnly) {
+                //     let children: Nx2[];
+                //     if (state.children)
+                //         children = state.children;
+                //     if (children) {
+                //         for (const child of children) {
+                //
+                //             try {
+                //                 let childArgs: Nx2Evt_Refresh = {
+                //                     widget: child,
+                //                     // currentLevelOnly: false,
+                //                     // resetUIOnRefresh: args.resetUIOnRefresh,
+                //                     ref: {
+                //                         topParent: ref.topParent,
+                //                         widget: child,
+                //                         parent: this,
+                //                         isAlgoCreated: true,
+                //                         parentArgument: args,
+                //                     },
+                //                 }; // childArgs
+                //
+                //                 if (child)
+                //                     child.refresh(childArgs); // this would trigger a reset in the child if state.resetUIOnRefresh does not override it
+                //             } catch (e) {
+                //                 this.handleUIError(e);
+                //             }
+                //
+                //         }
+                //     } // if ( this.children)
+                //
+                // } // if (!refreshParam.currentLevelOnly)
 
-                            try {
-                                let childArgs: Ix2Refresh = {
-                                    widget: child,
-                                    currentLevelOnly: false,
-                                    resetUIOnRefresh: args.resetUIOnRefresh,
-                                    gen: {
-                                        topParent: gen.topParent,
-                                        widget: child,
-                                        parent: this,
-                                        isAlgoCreated: true,
-                                        parentArgument: args,
-                                    },
-                                }; // childArgs
-
-                                if (child)
-                                    child.refresh(childArgs); // this would trigger a reset in the child if state.resetUIOnRefresh does not override it
-                            } catch (e) {
-                                this.handleUIError(e);
-                            }
-
-                        }
-                    } // if ( this.children)
-
-                } // if (!refreshParam.currentLevelOnly)
-
-                // noinspection JSUnusedAssignment
-                let resetUIOnRefresh: boolean = false;
-                if (state.resetUIOnRefresh !== undefined && state.resetUIOnRefresh !== null) {
-                    resetUIOnRefresh = state.resetUIOnRefresh;   // functionality on state ALWAYS trumps functionality on widget (state functionality can call widget functionality inside its implementation if need be)
-                } else {
-                    resetUIOnRefresh = args.resetUIOnRefresh;
-                }
+                // // noinspection JSUnusedAssignment
+                // let resetUIOnRefresh: boolean = false;
+                // if (state.resetUIOnRefresh !== undefined && state.resetUIOnRefresh !== null) {
+                //     resetUIOnRefresh = state.resetUIOnRefresh;   // functionality on state ALWAYS trumps functionality on widget (state functionality can call widget functionality inside its implementation if need be)
+                // } else {
+                //     resetUIOnRefresh = args.resetUIOnRefresh;
+                // }
 
 
-                if (resetUIOnRefresh) {
-
-                    try {
-                        this.reset({
-                            widget: this,
-                            extras: args.extras,
-                            gen: {
-                                topParent: gen.topParent,
-                                widget: this,
-                                parent: args.gen.widget,
-                                parentArgument: null, // no parent argument
-                            }
-                        });
-                    } catch (e) {
-                        this.handleError(e);
-                    }
-                } // if regenerateUI
+                // if (resetUIOnRefresh) {
+                //
+                //     try {
+                //         this.reset({
+                //             widget: this,
+                //             extras: args.extras,
+                //             ref: {
+                //                 topParent: ref.topParent,
+                //                 widget: this,
+                //                 parent: args.ref.widget,
+                //                 parentArgument: null, // no parent argument
+                //             }
+                //         });
+                //     } catch (e) {
+                //         this.handleError(e);
+                //     }
+                // } // if (resetUIOnRefresh)
 
 
                 try {
@@ -509,7 +514,7 @@ export abstract class Ax2Widget<
 
     } // refresh
 
-    reset(args ?: Ix2Destroy): void {
+    reset(args ?: Nx2Evt_Destroy): void {
         /*
          Resets the htmlElement and calls initLogic on this widget only.
 
@@ -526,12 +531,12 @@ export abstract class Ax2Widget<
 
         args = args || {widget: this}
         // args.currentLevelOnly = args.currentLevelOnly || false;
-        args.gen = args.gen || {};
+        args.ref = args.ref || {};
         args.extras = args.extras || {};
 
-        let gen = args.gen;
-        gen.topParent = gen.topParent || this; // if empty, then this is the top parent
-        gen.widget = this;
+        let ref = args.ref;
+        ref.topParent = ref.topParent || this; // if empty, then this is the top parent
+        ref.widget = this;
 
 
         let oldHtmlElement = this.htmlElement;
@@ -592,7 +597,7 @@ export abstract class Ax2Widget<
      *
      * @param evt
      */
-    onResized(evt?: Ix2Resized): void {
+    onResized(evt?: Nx2Evt_Resized): void {
     }
 
     protected applyResizeSensor(): void {
@@ -615,12 +620,12 @@ export abstract class Ax2Widget<
      */
     protected _constructor(state: STATE): void {
         state = state || {} as STATE;
-        state.gen = state.gen || {};
+        state.ref = state.ref || {};
 
         state.deco = state.deco || {} as IHtmlUtils;
         IHtmlUtils.init(state.deco);
 
-        state.gen.widget = this;
+        state.ref.widget = this;
         this.state = state;
         this.className = this.constructor.name; // the name of the class
         if (!state.tagId) state.tagId = getRandomString(this._className);
@@ -639,7 +644,7 @@ export abstract class Ax2Widget<
      *
      * Overriding code example:
      * <pre>
-     *       protected _initialSetup(state: StateWx2TextField) {
+     *       protected _initialSetup(state: STATE) {
      *       this._customizeState(state);
      *       super._initialSetup(state);
      *    }
@@ -652,38 +657,38 @@ export abstract class Ax2Widget<
      */
     protected _initialSetup(state: STATE) {
     }
-} // Ax2Widget
+} // Nx2
 
 
-export interface Ix2Base<WIDGET extends Ax2Widget = Ax2Widget> {
+export interface Nx2Evt<WIDGET extends Nx2 = Nx2> {
     /**
      * The widget that the refresh was triggered on. Autofilled by the refresh method.
      */
     widget: WIDGET;
 }
 
-export interface Ix2OnHtml<WIDGET extends Ax2Widget = Ax2Widget> extends Ix2Base<WIDGET> {
+export interface Nx2Evt_OnHtml<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
 }
 
-export interface Ix2OnLogic<WIDGET extends Ax2Widget = Ax2Widget> extends Ix2Base<WIDGET> {
+export interface Nx2Evt_OnLogic<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
 }
 
-export interface Ix2OnClear<WIDGET extends Ax2Widget = Ax2Widget> extends Ix2Base<WIDGET> {
+export interface Nx2Evt_OnClear<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
 }
 
-export interface Ix2Refresh<WIDGET extends Ax2Widget = Ax2Widget> extends Ix2Base<WIDGET> {
+export interface Nx2Evt_Refresh<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
 
-    /**
-     * True if only the current level should be refreshed (not the children)
-     * False if the entire tree should be refreshed
-     */
-    currentLevelOnly?: boolean;
+    // /**
+    //  * True if only the current level should be refreshed (not the children)
+    //  * False if the entire tree should be refreshed
+    //  */
+    // currentLevelOnly?: boolean;
 
-    /**
-     * True if both the HTML and the logic should be regenerated (as if the widget was just created.). The HTMLElement will then replace the existing one.
-     * False if and internal (JS or HTML) component refresh is sufficient.
-     */
-    resetUIOnRefresh?: boolean;
+    // /**
+    //  * True if both the HTML and the logic should be regenerated (as if the widget was just created.). The HTMLElement will then replace the existing one.
+    //  * False if and internal (JS or HTML) component refresh is sufficient.
+    //  */
+    // resetUIOnRefresh?: boolean;
 
     /**
      * Allows user to add either data or functions to be passed down the refresh chain.
@@ -693,11 +698,11 @@ export interface Ix2Refresh<WIDGET extends Ax2Widget = Ax2Widget> extends Ix2Bas
     /**
      * Properties that are filled in by the refresh method
      */
-    gen?: Ix2Gen<Ix2Refresh, WIDGET>;
+    ref?: Nx2Evt_Ref<Nx2Evt_Refresh, WIDGET>;
 
 }
 
-export interface Ix2Gen<EVENT_TYPE, WIDGET extends Ax2Widget> {
+export interface Nx2Evt_Ref<EVENT_TYPE, WIDGET extends Nx2> {
 
     /**
      * The widget that the refresh was triggered on. Autofilled by the refresh method.
@@ -708,7 +713,7 @@ export interface Ix2Gen<EVENT_TYPE, WIDGET extends Ax2Widget> {
      * The immediate parent widget that the refresh was triggered on
      * Null if the refresh is triggered at this level
      */
-    parent?: Ax2Widget;
+    parent?: Nx2;
 
 
     /**
@@ -716,7 +721,7 @@ export interface Ix2Gen<EVENT_TYPE, WIDGET extends Ax2Widget> {
      * Null if the refresh is triggered at this level
      *
      */
-    topParent?: Ax2Widget;
+    topParent?: Nx2;
 
     /**
      * True if this parameter is created by the algorithm while refreshing the children.
@@ -728,9 +733,9 @@ export interface Ix2Gen<EVENT_TYPE, WIDGET extends Ax2Widget> {
      * The argument for the parent above this child (or null if this is the top level)
      */
     parentArgument?: EVENT_TYPE;
-} // Ix2RefreshGen
+}
 
-export interface Ix2Destroy<WIDGET extends Ax2Widget = Ax2Widget> extends Ix2Base<WIDGET> {
+export interface Nx2Evt_Destroy<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
 
     /**
      * Allows user to add either data or functions to be passed down the refresh chain.
@@ -740,11 +745,11 @@ export interface Ix2Destroy<WIDGET extends Ax2Widget = Ax2Widget> extends Ix2Bas
     /**
      * Properties that are filled in by the refresh method
      */
-    gen?: Ix2Gen<Ix2Destroy, WIDGET>;
+    ref?: Nx2Evt_Ref<Nx2Evt_Destroy, WIDGET>;
 
 }
 
-export interface Ix2BeforeLogic<WIDGET extends Ax2Widget = Ax2Widget> extends Ix2Base<WIDGET> {
+export interface Nx2Evt_BeforeLogic<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
 
     /**
      * If developer sets to true, the initLogic will not be called.
@@ -752,9 +757,9 @@ export interface Ix2BeforeLogic<WIDGET extends Ax2Widget = Ax2Widget> extends Ix
     cancel: boolean;
 }
 
-export interface Ix2AfterLogic extends Ix2Base {
+export interface Nx2Evt_AfterLogic extends Nx2Evt {
 }
 
-export interface Ix2Resized extends Ix2Base {
+export interface Nx2Evt_Resized extends Nx2Evt {
     size?: { width: number; height: number; }
 }
