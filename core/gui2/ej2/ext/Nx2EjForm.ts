@@ -1,6 +1,6 @@
 import {FormValidator, FormValidatorModel} from "@syncfusion/ej2-inputs";
 import {Nx2Evt_OnLogic} from "../../Nx2";
-import {Nx2Form, StateNx2Form, StateNx2FormRef} from "../../generic/Nx2Form";
+import {Nx2FormHtml, StateNx2Form, StateNx2FormRef} from "../../generic/Nx2FormHtml";
 
 
 export interface StateNx2EjFormRef extends StateNx2FormRef{
@@ -14,7 +14,7 @@ export interface StateNx2EjForm extends StateNx2Form {
 }
 
 
-export class Nx2EjForm<STATE extends StateNx2EjForm = StateNx2EjForm> extends Nx2Form<STATE> {
+export class Nx2EjForm<STATE extends StateNx2EjForm = StateNx2EjForm> extends Nx2FormHtml<STATE> {
     constructor(state: STATE) {
         super(state);
     }

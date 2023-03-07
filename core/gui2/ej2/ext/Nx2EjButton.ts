@@ -1,7 +1,7 @@
 import {Button, ButtonModel} from "@syncfusion/ej2-buttons";
 import {StringArg, stringArgVal} from "../../../BaseUtils";
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
-import {Nx2Evt_OnHtml} from "../../Nx2";
+import {Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
 
 
 export interface StateNx2EjButtonRef extends StateNx2EjBasicRef{
@@ -39,7 +39,7 @@ export class Nx2EjButton<STATE extends StateNx2EjButton = StateNx2EjButton> exte
       return super.onHtml(args);
    }
 
-   onLogic(): void {
+   onLogic(args: Nx2Evt_OnLogic) {
       let state = this.state;
       if (state.label)
          state.ej.content = stringArgVal(state.label); // Button content label/ html

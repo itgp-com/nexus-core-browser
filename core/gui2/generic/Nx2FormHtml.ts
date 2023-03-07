@@ -3,7 +3,7 @@ import {Nx2Evt_OnHtml} from "../Nx2";
 import {StateNx2, StateNx2Ref} from "../StateNx2";
 
 export interface StateNx2FormRef extends StateNx2Ref{
-    widget ?: Nx2Form;
+    widget ?: Nx2FormHtml;
 }
 
 export interface StateNx2Form extends StateNx2 {
@@ -14,7 +14,7 @@ export interface StateNx2Form extends StateNx2 {
     ref ?: StateNx2FormRef;
 }
 
-export class Nx2Form<STATE extends StateNx2Form = StateNx2Form> extends Nx2EjBasic<STATE> {
+export class Nx2FormHtml<STATE extends StateNx2Form = StateNx2Form> extends Nx2EjBasic<STATE> {
     constructor(state: STATE) {
         super(state);
     }

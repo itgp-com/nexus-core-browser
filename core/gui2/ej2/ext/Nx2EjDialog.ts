@@ -1,7 +1,7 @@
 import {Dialog, DialogModel} from "@syncfusion/ej2-popups";
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 import {Nx2DialogBackArrow} from "./util/Nx2DialogBackArrow";
-import {Nx2Evt_Destroy, Nx2} from "../../Nx2";
+import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnLogic} from "../../Nx2";
 import {isArray, isString} from "lodash";
 import {Nx2Html} from "../../generic/Nx2Html";
 import {Nx2Row} from "../../generic/Nx2Row";
@@ -10,11 +10,11 @@ import {isNx2} from "../../Nx2Utils";
 import {getRandomString} from "../../../BaseUtils";
 
 
-export interface StateNx2EjDialogRef extends StateNx2EjBasicRef{
-    widget ?: Nx2EjDialog;
+export interface StateNx2EjDialogRef extends StateNx2EjBasicRef {
+    widget?: Nx2EjDialog;
 }
 
-export interface StateNx2EjDialog extends StateNx2EjBasic< DialogModel> {
+export interface StateNx2EjDialog extends StateNx2EjBasic<DialogModel> {
 
     /**
      * Optional header for the dialog. If specified,it will override any setting
@@ -36,7 +36,7 @@ export interface StateNx2EjDialog extends StateNx2EjBasic< DialogModel> {
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
-    ref ?:StateNx2EjDialogRef;
+    ref?: StateNx2EjDialogRef;
 }
 
 /**
@@ -47,8 +47,8 @@ export let css_Nx2Dialog_color_header_background: string = 'black';
 
 
 export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasic<STATE> {
-    private _appendTargetCreatedLocally: boolean = false;
     appendedTo: HTMLElement;
+    private _appendTargetCreatedLocally: boolean;
 
     constructor(state: STATE) {
         super(state);
@@ -56,12 +56,12 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
 
     protected _initialSetup(state: STATE) {
         state.ej = state.ej || {};
-        if ( state.appendTo){
+        if (state.appendTo) {
             this.appendedTo = state.appendTo;
         } else {
-            let localAnchorID:string  = getRandomString('anchor_');
-            let elem:HTMLDivElement     = document.createElement('div')
-            elem.id            = localAnchorID
+            let localAnchorID: string = getRandomString('anchor_');
+            let elem: HTMLDivElement = document.createElement('div')
+            elem.id = localAnchorID
             document.body.appendChild(elem);
             this.appendedTo = elem;
             this._appendTargetCreatedLocally = true;
@@ -102,24 +102,72 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
 
         // Make a header from either state.header or state.ej.header
         let nx2Header: Nx2 = this._headerNx2();
-        nx2Header.initLogic()
-        this.state.ej.header = nx2Header.htmlElement;
+        ej.header = nx2Header.htmlElement;
 
-        if (this.state.content) {
-            this.state.content.initLogic();
-            this.state.ej.content = this.state.content.htmlElement;
-        }
+        ej.content = state.content ? state.content.htmlElement : undefined;
 
-        this.obj = new Dialog(ej);
-        this.obj.appendTo(this.appendedTo);
+        let userOpen = ej.open;
+        // let userBeforeOpen = ej.beforeOpen;
+        let userClose = ej.close;
+        // let userBeforeClose = ej.beforeClose;
+
+        ej.open = (args: any) => {
+            try {
+                nx2Header.initLogic();
+            } catch (e) {
+                this.handleError(e);
+            }
+
+            try {
+                if (this.state.content) {
+                    this.state.content.initLogic();
+                    // this.state.ej.content = this.state.content.htmlElement;
+                }
+            } catch (e) {
+                this.handleError(e);
+            }
+
+            try {
+                if (userOpen)
+                    userOpen.call(this, args);
+            } catch (e) {
+                this.handleError(e);
+            }
+
+
+        } // ej.open
+
+        ej.close = (args: any) => {
+            try {
+                if (userClose)
+                    userClose.call(this, args);
+            } catch (e) {
+                this.handleError(e);
+            }
+
+            try {
+                this.state.content?.destroy();
+                this.destroy();
+            } catch (e) {
+                this.handleError(e);
+            }
+        } // ej.close
+
 
         super._initialSetup(state);
     } // _initialSetup
 
 
+    onLogic(args: Nx2Evt_OnLogic) {
+        super.onLogic(args);
 
+        let ej: DialogModel = this.state.ej;
+        this.obj = new Dialog(ej);
+        this.obj.appendTo(this.appendedTo);
+    }
 
     show() {
+        this.initLogic(); // multiple calls don't have any impact
         this.obj.show();
     }
 
@@ -135,7 +183,7 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         // if (!state.headerOptions.hideBackArrow)
         list.push(this._headerBackArrow());
 
-        if ( state.header == null)
+        if (state.header == null)
             state.header = (state.ej.header ? (isHTMLElement(state.ej.header) ? (state.ej.header as HTMLElement) : state.ej.header.toString()) : ''); // if header is not set, use the ej.header value if possible, else default to ''
 
         if (isString(state.header)) {
@@ -145,13 +193,13 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         } else if (isArray(state.header)) {
             //traverse state.header array and only push if Nx2
             for (const element of state.header) {
-                if ( isNx2(element)){
+                if (isNx2(element)) {
                     list.push(element);
                 } else {
                     console.error('Nx2Dialog._headerNx2: state.header contains an element that is not an Nx2');
                 }
             }
-        } else if (isNx2(state.header)){
+        } else if (isNx2(state.header)) {
             // single Nx2
             list.push(state.header);
         }
@@ -169,14 +217,24 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
 
 
     onDestroy(args: Nx2Evt_Destroy) {
+
         try {
-            if (this._appendTargetCreatedLocally) {
-                if (this.appendedTo)
-                    this.appendedTo.remove();
-            }
+            this.obj.destroy();
         } catch (e) {
             console.error(e);
         }
+
+        try {
+            if (this._appendTargetCreatedLocally) {
+                if (this.appendedTo) {
+                    this.appendedTo.parentElement.removeChild(this.appendedTo);
+                }
+            }
+
+        } catch (e) {
+            console.error(e);
+        }
+
         super.onDestroy(args);
     }
 } // Nx2Dialog
