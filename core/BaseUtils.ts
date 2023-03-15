@@ -24,6 +24,16 @@ export function getRandomString(prefix?: string): string {
    let retVal    = `${p}${getRandomInt(1000)}_${getRandomInt(100000)}`;
    return retVal;
 } // noinspection JSUnusedGlobalSymbols
+
+export function getRandomText(length: number): string {
+   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+   let result = '';
+   for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+   }
+   return result;
+}
+
 export interface noArgsFunction {
    (): any;
 }

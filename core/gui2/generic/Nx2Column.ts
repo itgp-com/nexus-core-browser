@@ -20,8 +20,8 @@ export class Nx2Column<STATE extends StateNx2Column = any> extends Nx2Basic<STAT
         super(state);
     }
 
-    protected _initialSetup(state: STATE) {
+    protected _initialState(state: STATE) {
         addNx2Class(state.deco, CSS_FLEX_COL_DIRECTION);
-        super._initialSetup(state);
+        super._initialState(state);
     }
 }

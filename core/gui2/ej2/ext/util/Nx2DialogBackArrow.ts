@@ -1,7 +1,7 @@
-import {Nx2Html, StateNx2Html, StateNx2HtmlRef} from "../../../generic/Nx2Html";
-import {css_Nx2Dialog_color_header_background, css_Nx2Dialog_color_header_font, Nx2EjDialog} from "../Nx2EjDialog";
 import {Tooltip} from "@syncfusion/ej2-popups";
+import {Nx2Html, StateNx2Html, StateNx2HtmlRef} from "../../../generic/Nx2Html";
 import {Nx2Evt_OnHtml} from "../../../Nx2";
+import {css_Nx2Dialog_color_header_background, css_Nx2Dialog_color_header_font, Nx2EjDialog} from "../Nx2EjDialog";
 
 export interface StateNx2DialogBackArrowRef extends StateNx2HtmlRef{
     widget ?: Nx2DialogBackArrow;
@@ -24,8 +24,8 @@ export class Nx2DialogBackArrow<STATE extends StateNx2DialogBackArrow = any> ext
     }
 
 
-    protected _initialSetup(state: STATE) {
-        state.staticWidget = true;
+    protected _initialState(state: STATE) {
+        // state.staticWidget = true;
         if (state.value == null) {
             state.value = `
 <span id="${state.tagId}"  style="margin-right:5px;">
@@ -35,7 +35,7 @@ export class Nx2DialogBackArrow<STATE extends StateNx2DialogBackArrow = any> ext
 </span>`;
         }
 
-        super._initialSetup(state);
+        super._initialState(state);
     }
 
     onHtml(args:Nx2Evt_OnHtml): HTMLElement {

@@ -1,11 +1,11 @@
 import {FormValidator, FormValidatorModel} from "@syncfusion/ej2-inputs";
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {Nx2FormHtml, StateNx2Form, StateNx2FormRef} from "../../generic/Nx2FormHtml";
+import {Nx2Evt_OnLogic} from "../../Nx2";
 
 
-export interface StateNx2EjFormRef extends StateNx2FormRef{
-    widget ?: Nx2EjForm;
-    validator ?: FormValidator;
+export interface StateNx2EjFormRef extends StateNx2FormRef {
+    widget?: Nx2EjForm;
+    validator?: FormValidator;
 }
 
 export interface StateNx2EjForm extends StateNx2Form {
@@ -36,6 +36,13 @@ export class Nx2EjForm<STATE extends StateNx2EjForm = StateNx2EjForm> extends Nx
                 this.state.ref.validator = new FormValidator(htmlElement, this.state.validatorModel);
             }
         }
+    }
+
+    /**
+     * Create/Recreate the validator based on the current setttings in state.validatorModel
+     */
+    public updateValidator() {
+        this._initializeValidator();
     }
 
 }

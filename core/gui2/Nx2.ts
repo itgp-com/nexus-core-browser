@@ -14,16 +14,62 @@ import {StateNx2} from "./StateNx2";
 export let NX2_CLASS = '_nx2_';
 
 
-export abstract class Nx2<
-    STATE extends StateNx2 = any,
-    JS_COMPONENT = any> {
+export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
+
+    /**
+     * The constructor calls this method as soon as the class is created.
+     * This is the absolute earliest time to initialize any fields in the object by extending/overriding this implementation
+     * Initializes the state object to defaults if properties are null, sets the tagId if necessary and sets the class name for the widget and
+     */
+    protected _constructor(state: STATE): void {
+        state = state || {} as STATE;
+        state.ref = state.ref || {};
+
+        state.deco = state.deco || {} as IHtmlUtils;
+        IHtmlUtils.init(state.deco);
+
+        state.ref.widget = this;
+        this.state = state;
+        this.className = this.constructor.name; // the name of the class
+        if (!state.tagId) state.tagId = getRandomString(this._className);
+
+        try {
+            this._initialState(state);
+        } catch (e) {
+            this.handleError(e);
+        }
+    }
+
+    /**
+     * This method assumes that the state is completely initialized and ready to be used.
+     *
+     * Useful when overriding in order to customize the state object before calling super.
+     *
+     * *** DO NOT CHANGE ANY OF THE FIELDS OF <code>this</code> as they will be wiped/set to default values
+     * AFTER this call by the instance member initialized. If you need to change properties of this, please
+     * call a local initialization function after the constructor
+     * Overriding code example:
+     * <pre>
+     *       protected _initialState(state: STATE) {
+     *       this._customizeState(state);
+     *       super._initialState(state);
+     *    }
+     *</pre>
+     *
+     * where _customizeState is a method that customizes the state object onHTML, etc.
+     *
+     * @param state
+     * @protected
+     */
+    protected _initialState(state: STATE) {
+    }
 
 
     /**
      *  Called after initLogic has been completed for this component but NOT for any child components
      *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
      */
-    afterInitWidgetOnly?: (args: Nx2Evt_AfterLogic) => void;
+    anAfterInitWidgetOnly?: (args: Nx2Evt_AfterLogic) => void;
     /**
      * Using {@link debounce} and not {@link throttle} because we want to fire the event only once
      * AFTER the resize is complete. Throttle would fire the event first, debouncewaits the minimum interval
@@ -172,23 +218,8 @@ export abstract class Nx2<
         }
     }
 
-    private _refreshInProgress: boolean;
-
 
     //--------- Getters and Setters ----------------
-
-    get refreshInProgress(): boolean {
-        return this._refreshInProgress;
-    }
-
-    /**
-     * Used by system to set the flag.
-     * Developers, please do not use this method unless you REALLY, REALLY understand the effects.
-     * @param value
-     */
-    set refreshInProgress(value: boolean) {
-        this._refreshInProgress = value;
-    }
 
     get htmlElement(): HTMLElement {
         if (!this.state.ref.htmlElement)
@@ -205,20 +236,37 @@ export abstract class Nx2<
             return; // nothing to do
 
         if (oldElement) {
-            oldElement.classList.remove(NX2_CLASS); // untag the element
-            oldElement[NX2_CLASS] = null; // remove the reference to this object
             if (this.resizeSensor) {
                 this.resizeSensor.detach();
             }
-        }
 
+            let actualNx2Elem = oldElement;
+            if (oldElement.id != this.state.tagId) {
+                // oldElement is probably the wrapper
+                actualNx2Elem = oldElement.querySelector(`#${this.state.tagId}`);
+            }
+
+            if (actualNx2Elem) {
+                actualNx2Elem.classList.remove(NX2_CLASS); // untag the element
+                actualNx2Elem[NX2_CLASS] = null; // remove the reference to this object
+            }
+
+        }
         state.ref.htmlElement = value;
 
         if (value) {
             // tag this element with the widget
-            value.classList.remove(NX2_CLASS); // just in case
-            value.classList.add(NX2_CLASS); // tag the element
-            value[NX2_CLASS] = this; // tag the element with the widget itself
+
+            let actualNx2Elem = value;
+            if (value.id != this.state.tagId) {
+                // value is probably the wrapper
+                actualNx2Elem = value.querySelector(`#${this.state.tagId}`);
+            }
+            if (actualNx2Elem) {
+                actualNx2Elem.classList.remove(NX2_CLASS); // just in case
+                actualNx2Elem.classList.add(NX2_CLASS); // tag the element
+                actualNx2Elem[NX2_CLASS] = this; // tag the element with the widget itself
+            }
 
             if (state.resizeTracked && oldElement && this.initialized) {
                 // only if the widget has already been initialized (if it has not, then initLogic will apply it the first time
@@ -230,8 +278,6 @@ export abstract class Nx2<
             }
         }
     }
-
-    abstract onClear(args: Nx2Evt_OnClear): void;
 
     abstract onDestroy(args: Nx2Evt_Destroy): void;
 
@@ -248,15 +294,32 @@ export abstract class Nx2<
      */
     abstract onLogic(args: Nx2Evt_OnLogic): void ;
 
-    abstract onRefresh(args ?: Nx2Evt_Refresh): void;
+
+    /**
+     * This is the perfect event in which to initialize any children or settings for 'this' right before
+     * the HTMLElement is created
+     * @param args
+     * @protected
+     */
+    protected onBeforeInitHtml(args: Nx2Evt_OnHtml): void {
+    }
 
     initHtml(): void {
         if (this.state?.ref?.htmlElement) return;
+        try {
+            if (this.state.onBeforeInitHtml) {
+                this.state.onBeforeInitHtml.call(this, {widget: this});
+            } else {
+                this.onBeforeInitHtml.call(this, {widget: this});
+            }
+        } catch (ex) {
+            console.error(ex)
+        }
 
         if (this.state.onHtml) {
-            this.htmlElement = this.state.onHtml({widget: this});
+            this.htmlElement = this.state.onHtml.call(this, {widget: this});
         } else {
-            this.htmlElement = this.onHtml({widget: this});
+            this.htmlElement = this.onHtml.call(this, {widget: this});
         }
     } // initHtml
 
@@ -272,16 +335,16 @@ export abstract class Nx2<
         let state = this.state;
 
         try {
-            if (state.beforeInitLogic) {
-                state.beforeInitLogic(args);
+            if (state.onBeforeInitLogic) {
+                state.onBeforeInitLogic(args);
                 if (args.cancel) return;
 
             } else {
-                if (this.beforeInitLogic) {
-                    this.beforeInitLogic(args);
+                if (this.onBeforeInitLogic) {
+                    this.onBeforeInitLogic(args);
                     if (args.cancel) return;
                 }
-            }// if beforeLogic
+            }// if
 
         } catch (e) {
             this.handleError(e);
@@ -302,8 +365,12 @@ export abstract class Nx2<
             }
 
             try {
-                if (state?.afterInitWidgetOnly) {
-                    state.afterInitWidgetOnly({widget: this});
+                if (state?.onAfterInitWidgetOnly) {
+                    state.onAfterInitWidgetOnly({widget: this});
+                } else {
+                    if (this.onAfterInitWidgetOnly) {
+                        this.onAfterInitWidgetOnly.call(this, {widget: this})
+                    }
                 }
             } catch (ex) {
                 console.error(ex);
@@ -325,9 +392,9 @@ export abstract class Nx2<
 
             // ------------ onChildrenInitialized -----------------------
 
-            if (atLeastOneChildInitialized && state?.afterChildrenInit) {
+            if (atLeastOneChildInitialized && state?.onAfterChildrenInit) {
                 try {
-                    state.afterChildrenInit();
+                    state.onAfterChildrenInit();
                 } catch (ex) {
                     console.error(ex);
                     getErrorHandler().displayExceptionToUser(ex)
@@ -339,28 +406,28 @@ export abstract class Nx2<
         }
 
 
-        if (state.afterInitLogic) {
+        if (state.onAfterInitLogic) {
             // ------------ After Init Logic Listeners -----------------------
             try {
-                state.afterInitLogic({widget: this})
+                state.onAfterInitLogic({widget: this})
             } catch (ex) {
                 thisX.handleError(ex);
             }
         } else {
 
-            if (this.afterInitLogic) {
+            if (this.onAfterInitLogic) {
                 // ------------ After Init Logic Listeners -----------------------
                 let args: Nx2Evt_AfterLogic = {
                     widget: thisX
                 };
 
                 try {
-                    this.afterInitLogic(args)
+                    this.onAfterInitLogic(args)
                 } catch (ex) {
                     thisX.handleUIError(ex);
                 }
 
-            } // if this.afterInitLogic
+            } // if
 
         }
         if (state.resizeTracked) {
@@ -369,14 +436,6 @@ export abstract class Nx2<
 
     } // initLogic
 
-    clear(): void {
-        // there is no default implementation for this method.
-        if (this.state.onClear) {
-            this.state.onClear({widget: this});
-        } else {
-            this.onClear({widget: this});
-        }
-    }
 
     destroy(): void {
         try {
@@ -397,157 +456,23 @@ export abstract class Nx2<
     /**
      * Called after the widget AND any children's logic have been initialized
      */
-    afterInitLogic(args: Nx2Evt_AfterLogic): void {
+    onAfterInitLogic(args: Nx2Evt_AfterLogic): void {
     }
+
 
     /**
      * If this is specified, the widget's method (if any) will not be called.
      * Should you need to call the corresponding widget method, you can call it manually from this method
      * by using the widget instance in the parameter
      */
-    beforeInitLogic(args: Nx2Evt_BeforeLogic): void {
+    onBeforeInitLogic(args: Nx2Evt_BeforeLogic): void {
     }
 
-    refresh(args ?: Nx2Evt_Refresh) {
-        if (this.initialized) {
-            try {
-                this.refreshInProgress = true;
-
-                let state = this.state;
-
-
-                args = args || {widget: this};
-                // args.currentLevelOnly = args.currentLevelOnly || false;
-                // args.resetUIOnRefresh = args.resetUIOnRefresh || false;
-                args.ref = args.ref || {};
-                args.extras = args.extras || {};
-
-                let ref = args.ref;
-                ref.topParent = ref.topParent || this; // if empty, then this is the top parent
-                ref.widget = this;
-
-                // if (!args.currentLevelOnly) {
-                //     let children: Nx2[];
-                //     if (state.children)
-                //         children = state.children;
-                //     if (children) {
-                //         for (const child of children) {
-                //
-                //             try {
-                //                 let childArgs: Nx2Evt_Refresh = {
-                //                     widget: child,
-                //                     // currentLevelOnly: false,
-                //                     // resetUIOnRefresh: args.resetUIOnRefresh,
-                //                     ref: {
-                //                         topParent: ref.topParent,
-                //                         widget: child,
-                //                         parent: this,
-                //                         isAlgoCreated: true,
-                //                         parentArgument: args,
-                //                     },
-                //                 }; // childArgs
-                //
-                //                 if (child)
-                //                     child.refresh(childArgs); // this would trigger a reset in the child if state.resetUIOnRefresh does not override it
-                //             } catch (e) {
-                //                 this.handleUIError(e);
-                //             }
-                //
-                //         }
-                //     } // if ( this.children)
-                //
-                // } // if (!refreshParam.currentLevelOnly)
-
-                // // noinspection JSUnusedAssignment
-                // let resetUIOnRefresh: boolean = false;
-                // if (state.resetUIOnRefresh !== undefined && state.resetUIOnRefresh !== null) {
-                //     resetUIOnRefresh = state.resetUIOnRefresh;   // functionality on state ALWAYS trumps functionality on widget (state functionality can call widget functionality inside its implementation if need be)
-                // } else {
-                //     resetUIOnRefresh = args.resetUIOnRefresh;
-                // }
-
-
-                // if (resetUIOnRefresh) {
-                //
-                //     try {
-                //         this.reset({
-                //             widget: this,
-                //             extras: args.extras,
-                //             ref: {
-                //                 topParent: ref.topParent,
-                //                 widget: this,
-                //                 parent: args.ref.widget,
-                //                 parentArgument: null, // no parent argument
-                //             }
-                //         });
-                //     } catch (e) {
-                //         this.handleError(e);
-                //     }
-                // } // if (resetUIOnRefresh)
-
-
-                try {
-                    if (state.onRefresh) {
-                        state.onRefresh(args); // functionality on state ALWAYS trumps functionality on widget (state functionality can call widget functionality inside its implementation if need be)
-                    } else {
-                        if (this.onRefresh)
-                            this.onRefresh(args);
-                    }
-                } catch (e) {
-                    this.handleError(e);
-                }
-
-                // if (state?.onAfterRefresh) {
-                //    try {
-                //       state.onAfterRefresh({widget: this});
-                //    } catch (ex) {
-                //       console.log(ex);
-                //    }
-                // } // if (this._args_AbstractWidget?.onAfterRefresh)
-
-            } catch (err) {
-                this.handleError(err);
-            } finally {
-                this.refreshInProgress = false;
-            }
-        } // if (this.initialized)
-
-    } // refresh
-
-    reset(args ?: Nx2Evt_Destroy): void {
-        /*
-         Resets the htmlElement and calls initLogic on this widget only.
-
-         This method is called from inside the refresh method, when the resetUIOnRefresh flag is set to true.
-
-         As such, and because the children are processed first in a refresh, by the time the reset happens here
-         the children have already been reset.
-         */
-        let state = this.state;
-
-        if (state.staticWidget) {
-            return;
-        }
-
-        args = args || {widget: this}
-        // args.currentLevelOnly = args.currentLevelOnly || false;
-        args.ref = args.ref || {};
-        args.extras = args.extras || {};
-
-        let ref = args.ref;
-        ref.topParent = ref.topParent || this; // if empty, then this is the top parent
-        ref.widget = this;
-
-
-        let oldHtmlElement = this.htmlElement;
-        this.htmlElement = null;
-        this.initialized = false; // to allow initLogic to work properly
-        let newHtmlElement = this.htmlElement;
-        this.initLogic();
-        oldHtmlElement.replaceWith(newHtmlElement);
-
-
-    } // reset
+    /**
+     *  Called after initLogic has been completed for this component but NOT for any child components
+     *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
+     */
+    onAfterInitWidgetOnly?: (args: Nx2Evt_AfterLogic) => void;
 
     /**
      * Called to handle errors for the visual widget.
@@ -613,57 +538,9 @@ export abstract class Nx2<
         this.resizeSensor = new ResizeSensor(this.htmlElement, this._resizeSensorCallback);
     } // createResizeSensor
 
-    /**
-     * The constructor calls this method as soon as the class is created.
-     * This is the absolute earliest time to initialize any fields in the object by extending/overriding this implementation
-     * Initializes the state object to defaults if properties are null, sets the tagId if necessary and sets the class name for the widget and
-     */
-    protected _constructor(state: STATE): void {
-        state = state || {} as STATE;
-        state.ref = state.ref || {};
-
-        state.deco = state.deco || {} as IHtmlUtils;
-        IHtmlUtils.init(state.deco);
-
-        state.ref.widget = this;
-        this.state = state;
-        this.className = this.constructor.name; // the name of the class
-        if (!state.tagId) state.tagId = getRandomString(this._className);
-
-        try {
-            this._initialSetup(state);
-        } catch (e) {
-            this.handleError(e);
-        }
-    }
-
-    /**
-     * This method assumes that the state is completely initialized and ready to be used.
-     *
-     * Useful when overriding in order to customize the state object before calling super.
-     *
-     * Overriding code example:
-     * <pre>
-     *       protected _initialSetup(state: STATE) {
-     *       this._customizeState(state);
-     *       super._initialSetup(state);
-     *    }
-     *</pre>
-     *
-     * where _customizeState is a method that customizes the state object onHTML, onRefresh, etc.
-     *
-     * @param state
-     * @protected
-     */
-    protected _initialSetup(state: STATE) {
-    }
 } // Nx2
 
-
 export interface Nx2Evt<WIDGET extends Nx2 = Nx2> {
-    /**
-     * The widget that the refresh was triggered on. Autofilled by the refresh method.
-     */
     widget: WIDGET;
 }
 
@@ -673,34 +550,6 @@ export interface Nx2Evt_OnHtml<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> 
 export interface Nx2Evt_OnLogic<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
 }
 
-export interface Nx2Evt_OnClear<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
-}
-
-export interface Nx2Evt_Refresh<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
-
-    // /**
-    //  * True if only the current level should be refreshed (not the children)
-    //  * False if the entire tree should be refreshed
-    //  */
-    // currentLevelOnly?: boolean;
-
-    // /**
-    //  * True if both the HTML and the logic should be regenerated (as if the widget was just created.). The HTMLElement will then replace the existing one.
-    //  * False if and internal (JS or HTML) component refresh is sufficient.
-    //  */
-    // resetUIOnRefresh?: boolean;
-
-    /**
-     * Allows user to add either data or functions to be passed down the refresh chain.
-     */
-    extras?: any;
-
-    /**
-     * Properties that are filled in by the refresh method
-     */
-    ref?: Nx2Evt_Ref<Nx2Evt_Refresh, WIDGET>;
-
-}
 
 export interface Nx2Evt_Ref<EVENT_TYPE, WIDGET extends Nx2> {
 
@@ -763,3 +612,156 @@ export interface Nx2Evt_AfterLogic extends Nx2Evt {
 export interface Nx2Evt_Resized extends Nx2Evt {
     size?: { width: number; height: number; }
 }
+
+
+// private _refreshInProgress: boolean;
+// get refreshInProgress(): boolean {
+//     return this._refreshInProgress;
+// }
+//
+// /**
+//  * Used by system to set the flag.
+//  * Developers, please do not use this method unless you REALLY, REALLY understand the effects.
+//  * @param value
+//  */
+// set refreshInProgress(value: boolean) {
+//     this._refreshInProgress = value;
+// }
+
+// refresh(args ?: Nx2Evt_Refresh) {
+//     if (this.initialized) {
+//         try {
+//             this.refreshInProgress = true;
+//
+//             let state = this.state;
+//
+//
+//             args = args || {widget: this};
+//             // args.currentLevelOnly = args.currentLevelOnly || false;
+//             // args.resetUIOnRefresh = args.resetUIOnRefresh || false;
+//             args.ref = args.ref || {};
+//             args.extras = args.extras || {};
+//
+//             let ref = args.ref;
+//             ref.topParent = ref.topParent || this; // if empty, then this is the top parent
+//             ref.widget = this;
+//
+//             // if (!args.currentLevelOnly) {
+//             //     let children: Nx2[];
+//             //     if (state.children)
+//             //         children = state.children;
+//             //     if (children) {
+//             //         for (const child of children) {
+//             //
+//             //             try {
+//             //                 let childArgs: Nx2Evt_Refresh = {
+//             //                     widget: child,
+//             //                     // currentLevelOnly: false,
+//             //                     // resetUIOnRefresh: args.resetUIOnRefresh,
+//             //                     ref: {
+//             //                         topParent: ref.topParent,
+//             //                         widget: child,
+//             //                         parent: this,
+//             //                         isAlgoCreated: true,
+//             //                         parentArgument: args,
+//             //                     },
+//             //                 }; // childArgs
+//             //
+//             //                 if (child)
+//             //                     child.refresh(childArgs); // this would trigger a reset in the child if state.resetUIOnRefresh does not override it
+//             //             } catch (e) {
+//             //                 this.handleUIError(e);
+//             //             }
+//             //
+//             //         }
+//             //     } // if ( this.children)
+//             //
+//             // } // if (!refreshParam.currentLevelOnly)
+//
+//             // // noinspection JSUnusedAssignment
+//             // let resetUIOnRefresh: boolean = false;
+//             // if (state.resetUIOnRefresh !== undefined && state.resetUIOnRefresh !== null) {
+//             //     resetUIOnRefresh = state.resetUIOnRefresh;   // functionality on state ALWAYS trumps functionality on widget (state functionality can call widget functionality inside its implementation if need be)
+//             // } else {
+//             //     resetUIOnRefresh = args.resetUIOnRefresh;
+//             // }
+//
+//
+//             // if (resetUIOnRefresh) {
+//             //
+//             //     try {
+//             //         this.reset({
+//             //             widget: this,
+//             //             extras: args.extras,
+//             //             ref: {
+//             //                 topParent: ref.topParent,
+//             //                 widget: this,
+//             //                 parent: args.ref.widget,
+//             //                 parentArgument: null, // no parent argument
+//             //             }
+//             //         });
+//             //     } catch (e) {
+//             //         this.handleError(e);
+//             //     }
+//             // } // if (resetUIOnRefresh)
+//
+//
+//             try {
+//                 if (state.onRefresh) {
+//                     state.onRefresh(args); // functionality on state ALWAYS trumps functionality on widget (state functionality can call widget functionality inside its implementation if need be)
+//                 } else {
+//                     if (this.onRefresh)
+//                         this.onRefresh(args);
+//                 }
+//             } catch (e) {
+//                 this.handleError(e);
+//             }
+//
+//             // if (state?.onAfterRefresh) {
+//             //    try {
+//             //       state.onAfterRefresh({widget: this});
+//             //    } catch (ex) {
+//             //       console.log(ex);
+//             //    }
+//             // } // if (this._args_AbstractWidget?.onAfterRefresh)
+//
+//         } catch (err) {
+//             this.handleError(err);
+//         } finally {
+//             this.refreshInProgress = false;
+//         }
+//     } // if (this.initialized)
+//
+// } // refresh
+
+// reset(args ?: Nx2Evt_Destroy): void {
+//     /*
+//      Resets the htmlElement and calls initLogic on this widget only.
+//
+//      This method is called from inside the refresh method, when the resetUIOnRefresh flag is set to true.
+//
+//      As such, and because the children are processed first in a refresh, by the time the reset happens here
+//      the children have already been reset.
+//      */
+//     let state = this.state;
+//
+//
+//     args = args || {widget: this}
+//     // args.currentLevelOnly = args.currentLevelOnly || false;
+//     args.ref = args.ref || {};
+//     args.extras = args.extras || {};
+//
+//     let ref = args.ref;
+//     ref.topParent = ref.topParent || this; // if empty, then this is the top parent
+//     ref.widget = this;
+//
+//
+//     let oldHtmlElement = this.htmlElement;
+//     this.htmlElement = null;
+//     this.initialized = false; // to allow initLogic to work properly
+//     let newHtmlElement = this.htmlElement;
+//     this.initLogic();
+//     oldHtmlElement.replaceWith(newHtmlElement);
+//
+//
+// } // reset

@@ -1,6 +1,7 @@
+import {Component} from '@syncfusion/ej2-base';
+import {Nx2Evt_Destroy, Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../Nx2";
 import {createNx2HtmlBasic} from "../Nx2Utils";
 import {Nx2Ej, StateNx2Ej, StateNx2EjRef} from "./Nx2Ej";
-import {Nx2Evt_Destroy, Nx2Evt_OnClear, Nx2Evt_OnHtml, Nx2Evt_OnLogic, Nx2Evt_Refresh} from "../Nx2";
 
 export interface StateNx2EjBasicRef extends StateNx2EjRef{
     widget ?: Nx2EjBasic;
@@ -15,7 +16,7 @@ export interface StateNx2EjBasic< WIDGET_LIBRARY_MODEL = any> extends StateNx2Ej
 }
 
 
-export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic> extends Nx2Ej<STATE> {
+export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic, EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any> extends Nx2Ej<STATE, EJ2COMPONENT> {
 
     protected constructor(state: STATE) {
         super(state);
@@ -27,17 +28,17 @@ export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic
     }
 
 
-    onClear(args:Nx2Evt_OnClear): void {
-    }
+    // onClear(args:Nx2Evt_OnClear): void {
+    // }
 
     onDestroy(args: Nx2Evt_Destroy): void {
     }
 
     onLogic(args : Nx2Evt_OnLogic): void {
     }
-
-    onRefresh(args:Nx2Evt_Refresh): void {
-    }
+    //
+    // onRefresh(args:Nx2Evt_Refresh): void {
+    // }
 
 
 }

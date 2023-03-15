@@ -2,9 +2,9 @@ import {WidgetErrorHandler}                    from "../gui/WidgetErrorHandler";
 import {
    Nx2,
    Nx2Evt_BeforeLogic,
-   Nx2Evt_Refresh,
+   // Nx2Evt_Refresh,
    Nx2Evt_Resized,
-   Nx2Evt_OnClear,
+   // Nx2Evt_OnClear,
    Nx2Evt_OnHtml,
    Nx2Evt_OnLogic,
    Nx2Evt_Destroy, Nx2Evt_AfterLogic
@@ -17,27 +17,27 @@ export interface StateNx2 {
    /**
     *  Called after initLogic has been completed for this component AND for ALL the child components
     */
-   afterChildrenInit?: () => void;
+   onAfterChildrenInit?: () => void;
 
    /**
     *  Called after initLogic has been completed for this component but NOT for any child components
     *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
     */
-   afterInitWidgetOnly?: (args:Nx2Evt_AfterLogic) => void;
+   onAfterInitWidgetOnly?: (args:Nx2Evt_AfterLogic) => void;
 
    /**
     * If this is specified, the widget's method (if any) will not be called.
     * Should you need to call the corresponding widget method, you can call it manually from this method
     * by using the widget instance in the parameter
     */
-   afterInitLogic ?: (args : Nx2Evt_AfterLogic) => void;
+   onAfterInitLogic ?: (args : Nx2Evt_AfterLogic) => void;
 
    /**
     * If this is specified, the widget's method (if any) will not be called.
     * Should you need to call the corresponding widget method, you can call it manually from this method
     * by using the widget instance in the parameter
     */
-   beforeInitLogic?: (args ?: Nx2Evt_BeforeLogic) => (void|Promise<void>);
+   onBeforeInitLogic?: (args ?: Nx2Evt_BeforeLogic) => (void|Promise<void>);
 
    /**
     * The HTML decoration for the HTML element that of the widget
@@ -74,10 +74,10 @@ export interface StateNx2 {
    resizeTracked?: boolean;
 
 
-   /**
-    * Set to true if the widget is completely static and no refresh should take place
-    */
-   staticWidget?: boolean;
+   // /**
+   //  * Set to true if the widget is completely static and no refresh should take place
+   //  */
+   // staticWidget?: boolean;
 
    /**
     * The unique id of the widget (also used as the id of the HTML element if <link>noTagIdInHtml</link> is false)
@@ -85,7 +85,7 @@ export interface StateNx2 {
     */
    tagId?: string;
 
-   onClear?: (args:Nx2Evt_OnClear) =>  void ;
+   // onClear?: (args:Nx2Evt_OnClear) =>  void ;
 
    onDestroy?: (args: Nx2Evt_Destroy) =>  void ;
 
@@ -93,8 +93,7 @@ export interface StateNx2 {
 
    onLogic?: (args : Nx2Evt_OnLogic) =>  void;
 
-   onRefresh?: (args ?: Nx2Evt_Refresh) =>  void;
-
+   // onRefresh?: (args ?: Nx2Evt_Refresh) =>  void;
    /**
     * Called when the widget is resized (assuming <link>widget.resizeTracked</link> is true)
     * @param evt
@@ -102,6 +101,8 @@ export interface StateNx2 {
    onResized ?: (evt?:Nx2Evt_Resized) => void;
 
    widgetErrorHandler?: WidgetErrorHandler;
+
+   onBeforeInitHtml ?: (args: Nx2Evt_OnHtml) => void;
 }
 
 export interface StateNx2Ref {

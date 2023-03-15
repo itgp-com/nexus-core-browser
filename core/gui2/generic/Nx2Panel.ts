@@ -13,13 +13,14 @@ export interface StateNx2Panel extends StateNx2Basic {
     ref ?:StateNx2PanelRef;
 }
 
-export class Nx2Panel extends Nx2Basic {
+export class Nx2Panel<STATE extends StateNx2Panel = StateNx2Panel> extends Nx2Basic<STATE> {
 
-  constructor(state:StateNx2Panel) {
+  constructor(state:STATE) {
     super(state);
   }
 
-   protected _initialSetup(state: StateNx2Panel) {
-      super._initialSetup(state);
+   protected _initialState(state: STATE) {
+      super._initialState(state);
    }
+
 } // Nx2Panel

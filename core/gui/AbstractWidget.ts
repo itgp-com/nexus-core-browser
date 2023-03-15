@@ -3,7 +3,18 @@
  */
 
 import {BaseListener}                                                                                                                             from "../BaseListener";
-import {getRandomString, hget, htmlToElement, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils, IKeyValueString, StringArg, stringArgVal} from "../BaseUtils";
+import {
+   getRandomString,
+   getRandomText,
+   hget,
+   htmlToElement,
+   IArgs_HtmlDecoration,
+   IArgs_HtmlTag,
+   IArgs_HtmlTag_Utils,
+   IKeyValueString,
+   StringArg,
+   stringArgVal
+} from "../BaseUtils";
 import {Err}                                                                                                                                      from "../Core";
 import {getErrorHandler}                                                                                                                          from "../CoreErrorHandling";
 import {ExceptionEvent}                                                                                                                           from "../ExceptionEvent";
@@ -253,7 +264,8 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
     */
    initialize_from_constructor() {
       this.thisClassName         = this.constructor.name; // the name of the class
-      this.tagId                 = getRandomString(this.thisClassName);
+      let prefix                 = getRandomText(5)
+      this.tagId                 = getRandomString(prefix);
       this.meta.currentClassName = this._thisClassName;
    }
 

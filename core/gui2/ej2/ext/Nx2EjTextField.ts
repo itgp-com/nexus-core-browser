@@ -1,9 +1,9 @@
 import {TextBox, TextBoxModel} from "@syncfusion/ej2-inputs";
+import {Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
 import {IHtmlUtils, Nx2HtmlDecorator} from "../../Nx2HtmlDecorator";
 import {createNx2HtmlBasic, createNx2HtmlBasicFromDecorator} from "../../Nx2Utils";
-import {StateNx2EjSingleVal, StateNx2EjSingleValRef} from "../Nx2EjSingleVal";
-import {Nx2EjBasic} from "../Nx2EjBasic";
-import {Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
+import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {StateNx2PropertyName} from "../../generic/StateNx2PropertyName";
 
 export enum TextFieldType_Ej2_Material {
     regular = '',
@@ -11,14 +11,14 @@ export enum TextFieldType_Ej2_Material {
     outline = 'e-outline',
 }
 
-export interface StateNx2EjTextFieldRef extends StateNx2EjSingleValRef{
+export interface StateNx2EjTextFieldRef extends StateNx2EjBasicRef{
     widget ?: Nx2EjTextField;
     errorElement?: HTMLElement;
     labelElement?: HTMLElement;
     wrapperElement?: HTMLElement;
 }
 
-export interface StateNx2EjTextField extends StateNx2EjSingleVal<TextBoxModel> {
+export interface StateNx2EjTextField extends StateNx2EjBasic<TextBoxModel>, StateNx2PropertyName {
 
     required?: boolean;
 
@@ -40,7 +40,7 @@ export interface StateNx2EjTextField extends StateNx2EjSingleVal<TextBoxModel> {
     ref ?:StateNx2EjTextFieldRef;
 }
 
-export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField> {
+export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
 
    wrapperTagId:string;
    labelTagId:string;
@@ -53,13 +53,13 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField> {
         super._constructor(state);
     }
 
-    protected _initialSetup(state: StateNx2EjTextField) {
+    protected _initialState(state: StateNx2EjTextField) {
        this.wrapperTagId = `wrapper_${this.state.tagId}`;
        this.labelTagId = `label_${this.state.tagId}`;
 
        IHtmlUtils.initDecorator(state);
 
-        super._initialSetup(state);
+        super._initialState(state);
     }
 
 
@@ -117,15 +117,15 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField> {
    onLogic(args: Nx2Evt_OnLogic) {
         let state = this.state;
 
-        let obj: TextBox = new TextBox(state.ej);
-        this.obj = obj;
-        let opc = obj.onPropertyChanged
-        obj.onPropertyChanged = (newProp: any, oldProp: any) => {
-            if (opc)
-                opc(newProp, oldProp);
-        }
+        this.obj = new TextBox(state.ej);
+        //  = obj;
+        // let opc = obj.onPropertyChanged
+        // obj.onPropertyChanged = (newProp: any, oldProp: any) => {
+        //     if (opc)
+        //         opc(newProp, oldProp);
+        // }
         let anchor = this.htmlElement.getElementsByTagName('input')[0];
-        obj.appendTo(anchor);
+        this.obj.appendTo(anchor);
 
         // super.onLogic(args);
     }

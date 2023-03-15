@@ -147,7 +147,7 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
         this._row = value;
     }
 
-    protected _initialSetup(state: STATE) {
+    protected _initialState(state: STATE) {
 
 
         let innerColumn = this.column;
@@ -188,7 +188,7 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
 
         state.children = [outerColumn];
 
-        super._initialSetup(state);
+        super._initialState(state);
 
     }
 

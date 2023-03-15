@@ -54,15 +54,15 @@ export class Nx2Html<STATE extends StateNx2Html = StateNx2Html> extends Nx2Basic
    } //onHtml
 
 
-   onRefresh(): void {
-      if (this.state.staticWidget)
-         return;
-
-      let oldHtmlElement = this.htmlElement;
-      this.htmlElement = null; // just in case
-      this.initHtml(); // replaces htmlElement
-      oldHtmlElement.replaceWith(this.htmlElement); // in document model
-   }
+   // onRefresh(): void {
+   //    if (this.state.staticWidget)
+   //       return;
+   //
+   //    let oldHtmlElement = this.htmlElement;
+   //    this.htmlElement = null; // just in case
+   //    this.initHtml(); // replaces htmlElement
+   //    oldHtmlElement.replaceWith(this.htmlElement); // in document model
+   // }
 } //Nx2Html
 
 function mergeClasses(element1:HTMLElement, classList2:string[]) {

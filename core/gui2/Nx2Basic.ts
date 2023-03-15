@@ -1,7 +1,6 @@
-import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnClear, Nx2Evt_OnHtml, Nx2Evt_OnLogic, Nx2Evt_Refresh} from "./Nx2";
-import {StateNx2Panel} from "./generic/Nx2Panel";
-import {StateNx2, StateNx2Ref} from "./StateNx2";
+import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "./Nx2";
 import {createNx2HtmlBasic} from "./Nx2Utils";
+import {StateNx2, StateNx2Ref} from "./StateNx2";
 
 export interface StateNx2BasicRef extends StateNx2Ref{
     widget ?: Nx2Basic;
@@ -15,7 +14,7 @@ export interface StateNx2Basic extends StateNx2 {
     ref ?: StateNx2BasicRef;
 }
 
-export class Nx2Basic<STATE extends StateNx2 = StateNx2Basic> extends Nx2<STATE> {
+export class Nx2Basic<STATE extends StateNx2Basic = StateNx2Basic> extends Nx2<STATE> {
 
     protected constructor(state: STATE) {
         super(state);
@@ -25,16 +24,11 @@ export class Nx2Basic<STATE extends StateNx2 = StateNx2Basic> extends Nx2<STATE>
         return createNx2HtmlBasic<StateNx2Basic>(this.state);
     }
 
-    onClear(args:Nx2Evt_OnClear): void {
+    onLogic(args : Nx2Evt_OnLogic): void {
     }
 
     onDestroy(args: Nx2Evt_Destroy): void {
     }
 
-    onLogic(args : Nx2Evt_OnLogic): void {
-    }
-
-    onRefresh(args:Nx2Evt_Refresh): void {
-    }
 
 }

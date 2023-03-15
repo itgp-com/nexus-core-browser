@@ -20,8 +20,8 @@ export class Nx2Row<STATE extends StateNx2Row = any> extends Nx2Basic<STATE> {
         super(state);
     }
 
-    protected _initialSetup(state: STATE) {
+    protected _initialState(state: STATE) {
         addNx2Class(state.deco, CSS_FLEX_ROW_DIRECTION);
-        super._initialSetup(state);
+        super._initialState(state);
     }
 }

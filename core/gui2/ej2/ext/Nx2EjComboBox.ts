@@ -15,16 +15,16 @@ export interface StateNx2EjComboBox<WIDGET_LIBRARY_MODEL extends ComboBoxModel =
     ref ?: StateNx2EjComboBoxRef;
 }
 
-export class Nx2EjComboBox<STATE extends StateNx2EjComboBox = StateNx2EjComboBox> extends Nx2EjBasic<STATE> {
+export class Nx2EjComboBox<STATE extends StateNx2EjComboBox = StateNx2EjComboBox> extends Nx2EjBasic<STATE,ComboBox> {
     constructor(state: STATE) {
         super(state);
     }
 
 
-    protected _initialSetup(state: STATE) {
+    protected _initialState(state: STATE) {
         state.deco.tag = 'input';
         state.deco.otherAttr.type = 'text';
-        super._initialSetup(state);
+        super._initialState(state);
     }
 
     onLogic(args: Nx2Evt_OnLogic) {

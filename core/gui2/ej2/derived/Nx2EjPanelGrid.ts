@@ -39,7 +39,7 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
         super(state);
     }
 
-    protected _initialSetup(state: STATE) {
+    protected _initialState(state: STATE) {
         state.deco.classes.push(CSS_FLEX_MAX_XY, this.className)
 
         if (state.resizeTracked == null)
@@ -51,7 +51,7 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
         if (state.gridAutoWidth == null)
             state.gridAutoWidth = true; // enable auto width by default
 
-        super._initialSetup(state);
+        super._initialState(state);
     }
 
 

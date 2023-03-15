@@ -1,13 +1,14 @@
 import {Dialog, DialogModel} from "@syncfusion/ej2-popups";
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
-import {Nx2DialogBackArrow} from "./util/Nx2DialogBackArrow";
-import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnLogic} from "../../Nx2";
 import {isArray, isString} from "lodash";
+import {getRandomString} from "../../../BaseUtils";
+import {isHTMLElement} from "../../../CoreUtils";
+import {isNx2_Interface_Dialog_Close, isNx2_Interface_Dialog_Open} from '../../generic/Nx2Interface_Dialog';
 import {Nx2Html} from "../../generic/Nx2Html";
 import {Nx2Row} from "../../generic/Nx2Row";
-import {isHTMLElement} from "../../../CoreUtils";
+import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnLogic} from "../../Nx2";
 import {isNx2} from "../../Nx2Utils";
-import {getRandomString} from "../../../BaseUtils";
+import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {Nx2DialogBackArrow} from "./util/Nx2DialogBackArrow";
 
 
 export interface StateNx2EjDialogRef extends StateNx2EjBasicRef {
@@ -25,7 +26,7 @@ export interface StateNx2EjDialog extends StateNx2EjBasic<DialogModel> {
     /**
      * The content of the dialog. It will always override ej.content
      */
-    content?: Nx2;
+    content?: Nx2 | HTMLElement;
 
     /**
      * Optional tag to append the Dialog to. If not specified, the dialog will be appended to the body
@@ -37,6 +38,18 @@ export interface StateNx2EjDialog extends StateNx2EjBasic<DialogModel> {
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
     ref?: StateNx2EjDialogRef;
+
+    /**
+     * Defaults to true.
+     * if true the content passed to the Dialog will have any {#link Nx2} component {@link Nx2.destroy} method called when the dialog is closed
+     */
+    destroyNx2ContentOnClose?: boolean;
+
+    /**
+     * Defaults to true.
+     * if true the header passed to the Dialog will have any {#link Nx2} component {@link Nx2.destroy} method called when the dialog is closed
+     */
+    destroyNx2HeaderOnClose?: boolean;
 }
 
 /**
@@ -46,25 +59,30 @@ export let css_Nx2Dialog_color_header_font: string = 'white';
 export let css_Nx2Dialog_color_header_background: string = 'black';
 
 
-export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasic<STATE> {
-    appendedTo: HTMLElement;
+export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasic<STATE, Dialog> {
+    private _appendedTo: HTMLElement;
     private _appendTargetCreatedLocally: boolean;
 
-    constructor(state: STATE) {
-        super(state);
-    }
+    constructor(state: STATE) {        super(state);    }
 
-    protected _initialSetup(state: STATE) {
+    protected _initialState(state: STATE) {
         state.ej = state.ej || {};
+
+        //if not set to anything, default to true
+        state.destroyNx2HeaderOnClose = state.destroyNx2HeaderOnClose == null ? true : state.destroyNx2HeaderOnClose;
+
+        //if not set to anything, default to true
+        state.destroyNx2ContentOnClose = state.destroyNx2ContentOnClose == null ? true : state.destroyNx2ContentOnClose;
+
         if (state.appendTo) {
-            this.appendedTo = state.appendTo;
+            this._appendedTo = state.appendTo;
         } else {
             let localAnchorID: string = getRandomString('anchor_');
             let elem: HTMLDivElement = document.createElement('div')
             elem.id = localAnchorID
             document.body.appendChild(elem);
-            this.appendedTo = elem;
-            this._appendTargetCreatedLocally = true;
+            this._appendedTo = elem;
+            this._appendTargetCreatedLocally = true; // so it can be removed on destroy
         }
 
         let ej: DialogModel = state.ej;
@@ -104,24 +122,37 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         let nx2Header: Nx2 = this._headerNx2();
         ej.header = nx2Header.htmlElement;
 
-        ej.content = state.content ? state.content.htmlElement : undefined;
+        ej.content = state.content ? (state.content instanceof HTMLElement ? state.content : state.content.htmlElement) : undefined;
 
         let userOpen = ej.open;
-        // let userBeforeOpen = ej.beforeOpen;
+        let userBeforeOpen = ej.beforeOpen;
         let userClose = ej.close;
         // let userBeforeClose = ej.beforeClose;
 
+
+        // ej.beforeOpen = (beforeOpenEventArgs: BeforeOpenEventArgs) => {
+        //     try {
+        //         if (userBeforeOpen)
+        //             userBeforeOpen.call(this, beforeOpenEventArgs);
+        //     } catch (e) {
+        //         this.handleError(e);
+        //     }
+        // }
+
         ej.open = (args: any) => {
             try {
-                nx2Header.initLogic();
+                nx2Header.initLogic(); // initialize header
             } catch (e) {
                 this.handleError(e);
             }
 
             try {
                 if (this.state.content) {
-                    this.state.content.initLogic();
-                    // this.state.ej.content = this.state.content.htmlElement;
+                    if (this.state.content instanceof HTMLElement) {
+                    } else {
+                        // if Nx2, init logic
+                        this.state.content.initLogic(); // initialize content
+                    }
                 }
             } catch (e) {
                 this.handleError(e);
@@ -129,15 +160,32 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
 
             try {
                 if (userOpen)
-                    userOpen.call(this, args);
+                    userOpen.call(this, args); // any user open code
             } catch (e) {
                 this.handleError(e);
+            }
+
+            if ( isNx2_Interface_Dialog_Open(this.state.content)) {
+                try {
+                    this.state.content.onDialogOpen({dialog: this, widget: this.state.content});
+                } catch (e) {
+                    console.error('Nx2Dialog._headerNx2: error calling onDialogOpen on content', e);
+                }
             }
 
 
         } // ej.open
 
         ej.close = (args: any) => {
+
+            if ( isNx2_Interface_Dialog_Close(this.state.content)) {
+                try {
+                    this.state.content.onDialogClose({dialog: this, widget: this.state.content});
+                } catch (e) {
+                    console.error('Nx2Dialog._headerNx2: error calling onDialogClose on content', e);
+                }
+            }
+
             try {
                 if (userClose)
                     userClose.call(this, args);
@@ -146,24 +194,82 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
             }
 
             try {
-                this.state.content?.destroy();
                 this.destroy();
             } catch (e) {
-                this.handleError(e);
+                console.error('Nx2Dialog._headerNx2: error destroying Nx2Dialog', e);
             }
         } // ej.close
 
 
-        super._initialSetup(state);
-    } // _initialSetup
+        super._initialState(state); // will trigger onDestroy
+    } // _initialState
 
+    onDestroy(args: Nx2Evt_Destroy) {
+        let state: STATE = this.state;
+
+        try {
+            if ( this.state.destroyNx2HeaderOnClose) {
+                if (isArray(state.header)) {
+                    //traverse state.header array and only push if Nx2
+                    for (const element of state.header) {
+                        if (isNx2(element)) {
+                            try {
+                                element.destroy();
+                            } catch (e) {
+                                console.error('Nx2Dialog._headerNx2: error destroying Nx2 in state.header array', e);
+                            }
+                        }
+                    }
+                } else if (isNx2(state.header)) {
+                    // single Nx2
+                    try {
+                        state.header.destroy();
+                    } catch (e) {
+                        console.error('Nx2Dialog._headerNx2: error destroying Nx2 in state.header', e);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Nx2Dialog._headerNx2: error destroying Nx2 in state.header', e);
+        }
+
+
+        try {
+            if ( this.state.destroyNx2ContentOnClose) {
+                if (isNx2(this.state.content)) {
+                    this.state.content?.destroy();
+                }
+            }
+        } catch (e) {
+            console.error('Nx2Dialog._headerNx2: error destroying Nx2 in state.content', e);
+        }
+
+        try {
+            this.obj.destroy();
+        } catch (e) {
+            console.error(e);
+        }
+
+        try {
+            if (this.appendTargetCreatedLocally) {
+                if (this.appendedTo) {
+                    this.appendedTo.parentElement.removeChild(this._appendedTo);
+                }
+            }
+
+        } catch (e) {
+            console.error(e);
+        }
+
+        super.onDestroy(args);
+    }
 
     onLogic(args: Nx2Evt_OnLogic) {
         super.onLogic(args);
 
         let ej: DialogModel = this.state.ej;
         this.obj = new Dialog(ej);
-        this.obj.appendTo(this.appendedTo);
+        this.obj.appendTo(this._appendedTo);
     }
 
     show() {
@@ -174,7 +280,6 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
     hide() {
         this.obj.hide();
     }
-
 
     protected _headerNx2(): Nx2 {
         let state = this.state;
@@ -215,26 +320,19 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         });
     }
 
+    public get appendTargetCreatedLocally(): boolean {
+        return this._appendTargetCreatedLocally;
+    }
 
-    onDestroy(args: Nx2Evt_Destroy) {
+    public set appendTargetCreatedLocally(value: boolean) {
+        this._appendTargetCreatedLocally = value;
+    }
 
-        try {
-            this.obj.destroy();
-        } catch (e) {
-            console.error(e);
-        }
+    public get appendedTo(): HTMLElement {
+        return this._appendedTo;
+    }
 
-        try {
-            if (this._appendTargetCreatedLocally) {
-                if (this.appendedTo) {
-                    this.appendedTo.parentElement.removeChild(this.appendedTo);
-                }
-            }
-
-        } catch (e) {
-            console.error(e);
-        }
-
-        super.onDestroy(args);
+    public set appendedTo(value: HTMLElement) {
+        this._appendedTo = value;
     }
 } // Nx2Dialog
