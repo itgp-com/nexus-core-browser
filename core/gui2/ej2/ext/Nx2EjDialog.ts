@@ -122,22 +122,12 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         let nx2Header: Nx2 = this._headerNx2();
         ej.header = nx2Header.htmlElement;
 
-        ej.content = state.content ? (state.content instanceof HTMLElement ? state.content : state.content.htmlElement) : undefined;
+        if ( state.content ) {
+            ej.content = (state.content instanceof HTMLElement ? state.content : state.content.htmlElement);
+        }
 
         let userOpen = ej.open;
-        let userBeforeOpen = ej.beforeOpen;
         let userClose = ej.close;
-        // let userBeforeClose = ej.beforeClose;
-
-
-        // ej.beforeOpen = (beforeOpenEventArgs: BeforeOpenEventArgs) => {
-        //     try {
-        //         if (userBeforeOpen)
-        //             userBeforeOpen.call(this, beforeOpenEventArgs);
-        //     } catch (e) {
-        //         this.handleError(e);
-        //     }
-        // }
 
         ej.open = (args: any) => {
             try {

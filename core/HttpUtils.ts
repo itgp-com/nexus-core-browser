@@ -1,5 +1,5 @@
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse, isAxiosError} from "axios";
-import {RetVal} from "./Core";
+import {Err, getRetValErr, RetVal} from "./Core";
 import {cast, hget} from "./BaseUtils";
 import {createSpinner, hideSpinner, showSpinner} from "@syncfusion/ej2-popups";
 import {nexusMain} from "./NexusMain";
@@ -161,11 +161,15 @@ async function commonAxiosRequest<T = any, R = AxiosResponse<T>>(op: (HttpOp | s
     let error: AxiosError | any;
     try {
         axiosResponse = await r;
-    } catch (err) {
-        error = err;
-        if (isAxiosError(err))
-            axiosResponse = err.response as R;
-
+    } catch (axErr) {
+        error = axErr;
+        if (isAxiosError(axErr)) {
+            axiosResponse = axErr.response as R;
+            if ( isAxiosError(axErr) && getRetValErr(axErr?.response?.data)) {
+                let err:Err = getRetValErr(axErr?.response?.data);
+                err.axiosError = axErr;
+            }
+        }
     }
     try {
         nexusMain.ui?.onHttpResponse({
@@ -235,7 +239,12 @@ export async function asyncPost<T = any>(argsPost: ArgsPost<T>): Promise<T> {
             throw response.statusText;
         }
     } catch (error) {
-        throw error;
+        let err:Err = getRetValErr(error); // contains AxiosError in axiosError property
+        if ( err == null) {
+            throw error
+        } else {
+            throw err;
+        }
     }
 
 }
