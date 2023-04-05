@@ -51,6 +51,7 @@ export class Nx2EjButton<STATE extends StateNx2EjButton = StateNx2EjButton> exte
 
       if (this.state.onclick)
          this.htmlElement.onclick = this.state.onclick;
+      this.htmlElement.classList.add('Nx2EjButton');
 
    }
 

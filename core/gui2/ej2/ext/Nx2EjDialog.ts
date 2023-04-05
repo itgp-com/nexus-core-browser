@@ -260,6 +260,8 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         let ej: DialogModel = this.state.ej;
         this.obj = new Dialog(ej);
         this.obj.appendTo(this._appendedTo);
+
+        this.htmlElement.classList.add('Nx2EjDialog');
     }
 
     show() {

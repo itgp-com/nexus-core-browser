@@ -32,5 +32,6 @@ export class Nx2EjComboBox<STATE extends StateNx2EjComboBox = StateNx2EjComboBox
 
         this.obj = new ComboBox(this.state.ej);
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
+        this.htmlElement.classList.add( 'Nx2EjComboBox');
     }
 }

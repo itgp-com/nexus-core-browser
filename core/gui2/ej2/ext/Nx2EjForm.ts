@@ -27,6 +27,7 @@ export class Nx2EjForm<STATE extends StateNx2EjForm = StateNx2EjForm> extends Nx
         } catch (e) {
             console.error(e); // not a user error
         }
+        this.htmlElement.classList.add('Nx2EjForm');
     } // onLogic
 
     protected _initializeValidator() {

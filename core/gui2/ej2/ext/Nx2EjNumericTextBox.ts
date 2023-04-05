@@ -121,6 +121,6 @@ export class Nx2EjNumericTextBox extends Nx2EjBasic<StateNx2EjNumericTextBox, Nu
         let anchor = this.htmlElement.getElementsByTagName('input')[0];
         this.obj.appendTo(anchor);
 
-        // super.onLogic(args);
+        this.htmlElement.classList.add('Nx2EjNumericTextBox');
     }
 }

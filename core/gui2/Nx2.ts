@@ -156,7 +156,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     private _obj: JS_COMPONENT;
 
     /**
-     * Get the JS instance underlying this AbstractWidget
+     * Get the JS instance underlying this widget
      * Base method that is overwritten by typed method in AnyWidget
      */
     get obj(): JS_COMPONENT {
@@ -164,7 +164,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     }
 
     /**
-     * Set the JS instance underlying this AbstractWidget
+     * Set the JS instance underlying this Widget
      * Base method that is overwritten by typed method in AnyWidget
      */
     set obj(value: JS_COMPONENT) {
@@ -288,7 +288,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      *
      * At this point all the HTML for the component has been created (from calls to {@link localContentBegin} and {@link localContentEnd} )
      *
-     * The method is called from {@link AbstractWidget}'s {@link initLogic} method, after all the children's {@link initLogic} methods have been called.
+     * The method is called by {@link initLogic} method, after all the children's {@link initLogic} methods have been called.
      * Therefore, all children JS objects are available at this point in time.
      *
      */
