@@ -20,9 +20,9 @@ export class Nx2EjAutoComplete<STATE extends StateNx2EjAutoComplete = StateNx2Ej
         super(state);
     }
 
-    protected _initialState(state: STATE) {
+    protected onStateInitialized(state: STATE) {
         state.deco.tag = 'input'; // AutoComplete requires a header tag
-        super._initialState(state);
+        super.onStateInitialized(state);
     }
 
     onLogic(args: Nx2Evt_OnLogic) {

@@ -20,9 +20,9 @@ export class Nx2EjBreadcrumb<STATE extends StateNx2EjBreadcrumb = StateNx2EjBrea
         super(state);
     }
 
-    protected _initialState(state: STATE) {
+    protected onStateInitialized(state: STATE) {
         state.deco.tag = 'ul'; // Breadcrumb requires a ul tag
-        super._initialState(state);
+        super.onStateInitialized(state);
     }
 
     onLogic(args: Nx2Evt_OnLogic) {

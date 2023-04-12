@@ -53,13 +53,13 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
         super._constructor(state);
     }
 
-    protected _initialState(state: StateNx2EjTextField) {
+    protected onStateInitialized(state: StateNx2EjTextField) {
         this.wrapperTagId = `wrapper_${this.state.tagId}`;
         this.labelTagId = `label_${this.state.tagId}`;
 
         IHtmlUtils.initDecorator(state);
 
-        super._initialState(state);
+        super.onStateInitialized(state);
     }
 
 

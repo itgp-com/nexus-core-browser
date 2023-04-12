@@ -20,9 +20,9 @@ export class Nx2EjAppBar<STATE extends StateNx2EjAppBar = StateNx2EjAppBar> exte
         super(state);
     }
 
-    protected _initialState(state: STATE) {
+    protected onStateInitialized(state: STATE) {
         state.deco.tag = 'header'; // AppBar requires a header tag
-        super._initialState(state);
+        super.onStateInitialized(state);
     }
 
     onLogic(args: Nx2Evt_OnLogic) {

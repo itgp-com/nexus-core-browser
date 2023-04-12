@@ -53,13 +53,13 @@ export class Nx2EjNumericTextBox extends Nx2EjBasic<StateNx2EjNumericTextBox, Nu
         super._constructor(state);
     }
 
-    protected _initialState(state: StateNx2EjNumericTextBox) {
+    protected onStateInitialized(state: StateNx2EjNumericTextBox) {
        this.wrapperTagId = `wrapper_${this.state.tagId}`;
        this.labelTagId = `label_${this.state.tagId}`;
 
        IHtmlUtils.initDecorator(state);
 
-        super._initialState(state);
+        super.onStateInitialized(state);
     }
 
 

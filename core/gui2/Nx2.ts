@@ -34,7 +34,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         if (!state.tagId) state.tagId = getRandomString(this._className);
 
         // try {
-        //     this._initialState(state);
+        //     this.onStateInitialized(state);
         // } catch (e) {
         //     this.handleError(e);
         // }
@@ -50,9 +50,9 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * call a local initialization function after the constructor
      * Overriding code example:
      * <pre>
-     *       protected _initialState(state: STATE) {
+     *       protected onStateInitialized(state: STATE) {
      *       this._customizeState(state);
-     *       super._initialState(state);
+     *       super.onStateInitialized(state);
      *    }
      *</pre>
      *
@@ -61,15 +61,10 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * @param state
      * @protected
      */
-    protected _initialState(state: STATE) {
+    protected onStateInitialized(state: STATE) {
     }
 
 
-    /**
-     *  Called after initLogic has been completed for this component but NOT for any child components
-     *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
-     */
-    anAfterInitWidgetOnly?: (args: Nx2Evt_AfterLogic) => void;
     /**
      * Using {@link debounce} and not {@link throttle} because we want to fire the event only once
      * AFTER the resize is complete. Throttle would fire the event first, debouncewaits the minimum interval
@@ -219,21 +214,12 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     }
 
 
-    private _initStateCalled: boolean = false;
+
     //--------- Getters and Setters ----------------
 
     get htmlElement(): HTMLElement {
 
-        if (! this._initStateCalled) {
-            try {
-                this._initialState(this.state);
-            } catch (e) {
-                this.handleError(e);
-            } finally {
-                this._initStateCalled = true;
-            }
-        }
-
+        this._triggerOnStateInitialized(); // trigger onStateInitialzed if not already called
 
         if (!this.state.ref.htmlElement)
             this.initHtml();
@@ -342,16 +328,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             return;
 
 
-        if (! this._initStateCalled) {
-            try {
-                this._initialState(this.state);
-            } catch (e) {
-                this.handleError(e);
-            } finally {
-                this._initStateCalled = true;
-            }
-        }
-
+        this._triggerOnStateInitialized(); // trigger onStateInitialzed if not already called
 
 
         let args: Nx2Evt_BeforeLogic = {
@@ -566,6 +543,23 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         this.resizeSensor = null;
         this.resizeSensor = new ResizeSensor(this.htmlElement, this._resizeSensorCallback);
     } // createResizeSensor
+
+    //---------------------------------------------
+    private _initStateCalled: boolean = false;
+
+    protected _triggerOnStateInitialized():void  {
+
+        if (! this._initStateCalled) {
+            try {
+                this.onStateInitialized(this.state);
+            } catch (e) {
+                this.handleError(e);
+            } finally {
+                this._initStateCalled = true;
+            }
+        }
+    } // _triggerOnStateInitialized
+    //--------------------------------------------
 
 } // Nx2
 

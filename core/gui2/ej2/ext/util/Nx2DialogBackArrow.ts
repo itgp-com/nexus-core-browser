@@ -24,7 +24,7 @@ export class Nx2DialogBackArrow<STATE extends StateNx2DialogBackArrow = any> ext
     }
 
 
-    protected _initialState(state: STATE) {
+    protected onStateInitialized(state: STATE) {
         // state.staticWidget = true;
         if (state.value == null) {
             state.value = `
@@ -35,7 +35,7 @@ export class Nx2DialogBackArrow<STATE extends StateNx2DialogBackArrow = any> ext
 </span>`;
         }
 
-        super._initialState(state);
+        super.onStateInitialized(state);
     }
 
     onHtml(args:Nx2Evt_OnHtml): HTMLElement {

@@ -21,10 +21,10 @@ export class Nx2EjComboBox<STATE extends StateNx2EjComboBox = StateNx2EjComboBox
     }
 
 
-    protected _initialState(state: STATE) {
+    protected onStateInitialized(state: STATE) {
         state.deco.tag = 'input';
         state.deco.otherAttr.type = 'text';
-        super._initialState(state);
+        super.onStateInitialized(state);
     }
 
     onLogic(args: Nx2Evt_OnLogic) {

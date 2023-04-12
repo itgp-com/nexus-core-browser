@@ -19,8 +19,8 @@ export class Nx2Panel<STATE extends StateNx2Panel = StateNx2Panel> extends Nx2Ba
     super(state);
   }
 
-   protected _initialState(state: STATE) {
-      super._initialState(state);
+   protected onStateInitialized(state: STATE) {
+      super.onStateInitialized(state);
    }
 
 } // Nx2Panel

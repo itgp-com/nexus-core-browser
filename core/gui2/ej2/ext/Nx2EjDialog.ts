@@ -65,7 +65,7 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
 
     constructor(state: STATE) {        super(state);    }
 
-    protected _initialState(state: STATE) {
+    protected onStateInitialized(state: STATE) {
         state.ej = state.ej || {};
 
         //if not set to anything, default to true
@@ -191,8 +191,8 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         } // ej.close
 
 
-        super._initialState(state); // will trigger onDestroy
-    } // _initialState
+        super.onStateInitialized(state); // will trigger onDestroy
+    } // onStateInitialized
 
     onDestroy(args: Nx2Evt_Destroy) {
         let state: STATE = this.state;
