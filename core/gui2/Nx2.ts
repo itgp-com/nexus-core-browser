@@ -33,11 +33,11 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         this.className = this.constructor.name; // the name of the class
         if (!state.tagId) state.tagId = getRandomString(this._className);
 
-        try {
-            this._initialState(state);
-        } catch (e) {
-            this.handleError(e);
-        }
+        // try {
+        //     this._initialState(state);
+        // } catch (e) {
+        //     this.handleError(e);
+        // }
     }
 
     /**
@@ -219,9 +219,22 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     }
 
 
+    private _initStateCalled: boolean = false;
     //--------- Getters and Setters ----------------
 
     get htmlElement(): HTMLElement {
+
+        if (! this._initStateCalled) {
+            try {
+                this._initialState(this.state);
+            } catch (e) {
+                this.handleError(e);
+            } finally {
+                this._initStateCalled = true;
+            }
+        }
+
+
         if (!this.state.ref.htmlElement)
             this.initHtml();
 
@@ -229,6 +242,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     }
 
     set htmlElement(value: HTMLElement) {
+
         let state = this.state;
 
         let oldElement = state.ref?.htmlElement;
@@ -327,6 +341,19 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         if (this.initialized)
             return;
 
+
+        if (! this._initStateCalled) {
+            try {
+                this._initialState(this.state);
+            } catch (e) {
+                this.handleError(e);
+            } finally {
+                this._initStateCalled = true;
+            }
+        }
+
+
+
         let args: Nx2Evt_BeforeLogic = {
             widget: this,
             cancel: false,
@@ -352,6 +379,8 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
         this.initialized = true;
         let thisX = this;
+
+        thisX.initHtml(); // initialize the htmlElement at this point
 
         try {
             this.initLogicInProgress = true;
