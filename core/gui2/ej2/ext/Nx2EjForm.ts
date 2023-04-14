@@ -15,7 +15,7 @@ export interface StateNx2EjForm extends StateNx2Form {
 
 
 export class Nx2EjForm<STATE extends StateNx2EjForm = StateNx2EjForm> extends Nx2FormHtml<STATE> {
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 

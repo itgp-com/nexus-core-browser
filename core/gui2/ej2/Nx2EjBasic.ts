@@ -18,7 +18,7 @@ export interface StateNx2EjBasic< WIDGET_LIBRARY_MODEL = any> extends StateNx2Ej
 
 export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic, EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any> extends Nx2Ej<STATE, EJ2COMPONENT> {
 
-    protected constructor(state: STATE) {
+    protected constructor(state?: STATE) {
         super(state);
     }
 

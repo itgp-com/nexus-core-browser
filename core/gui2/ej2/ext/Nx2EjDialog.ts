@@ -63,7 +63,7 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
     private _appendedTo: HTMLElement;
     private _appendTargetCreatedLocally: boolean;
 
-    constructor(state: STATE) {        super(state);    }
+    constructor(state ?: STATE) {        super(state);    }
 
     protected onStateInitialized(state: STATE) {
         state.ej = state.ej || {};

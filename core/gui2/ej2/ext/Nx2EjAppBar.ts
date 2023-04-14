@@ -16,7 +16,7 @@ export interface StateNx2EjAppBar<WIDGET_LIBRARY_MODEL extends AppBarModel = App
 }
 
 export class Nx2EjAppBar<STATE extends StateNx2EjAppBar = StateNx2EjAppBar> extends Nx2EjBasic<STATE, AppBar> {
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 

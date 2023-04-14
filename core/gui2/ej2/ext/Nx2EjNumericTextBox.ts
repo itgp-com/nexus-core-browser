@@ -45,11 +45,11 @@ export class Nx2EjNumericTextBox extends Nx2EjBasic<StateNx2EjNumericTextBox, Nu
    wrapperTagId:string;
    labelTagId:string;
 
-    constructor(state: StateNx2EjNumericTextBox) {
+    constructor(state ?: StateNx2EjNumericTextBox) {
         super(state);
     }
 
-    protected _constructor(state: StateNx2EjNumericTextBox) {
+    protected _constructor(state ?: StateNx2EjNumericTextBox) {
         super._constructor(state);
     }
 

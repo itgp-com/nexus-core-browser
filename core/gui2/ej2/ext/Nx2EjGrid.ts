@@ -16,7 +16,7 @@ export interface StateNx2EjGrid<WIDGET_LIBRARY_MODEL extends GridModel = GridMod
 }
 
 export class Nx2EjGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends Nx2EjBasic<STATE,Grid> {
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 

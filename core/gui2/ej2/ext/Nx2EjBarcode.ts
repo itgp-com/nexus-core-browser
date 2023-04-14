@@ -16,7 +16,7 @@ export interface StateNx2EjBarcode<WIDGET_LIBRARY_MODEL extends BarcodeGenerator
 }
 
 export class Nx2EjBarcode<STATE extends StateNx2EjBarcode = StateNx2EjBarcode> extends Nx2EjBasic<STATE, BarcodeGenerator> {
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 

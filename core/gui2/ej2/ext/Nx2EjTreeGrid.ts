@@ -16,7 +16,7 @@ export interface StateNx2EjTreeGrid<WIDGET_LIBRARY_MODEL extends TreeGridModel =
 }
 
 export class Nx2EjTreeGrid<STATE extends StateNx2EjTreeGrid = StateNx2EjTreeGrid> extends Nx2EjBasic<STATE,TreeGrid> {
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 

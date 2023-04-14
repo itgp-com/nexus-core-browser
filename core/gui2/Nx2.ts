@@ -1,3 +1,4 @@
+import {DialogUtility} from '@syncfusion/ej2-popups';
 import {AxiosResponse} from "axios";
 import {ResizeSensor} from "css-element-queries";
 import {ResizeSensorCallback} from "css-element-queries/src/ResizeSensor";
@@ -5,6 +6,7 @@ import {debounce, throttle} from "lodash";
 import {getRandomString} from "../BaseUtils";
 import {Err} from "../Core";
 import {getErrorHandler} from "../CoreErrorHandling";
+import {isDev} from '../CoreUtils';
 import {ExceptionEvent} from "../ExceptionEvent";
 import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
 import {IHtmlUtils} from "./Nx2HtmlDecorator";
@@ -21,7 +23,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * This is the absolute earliest time to initialize any fields in the object by extending/overriding this implementation
      * Initializes the state object to defaults if properties are null, sets the tagId if necessary and sets the class name for the widget and
      */
-    protected _constructor(state: STATE): void {
+    protected _constructor(state ?: STATE): void {
         state = state || {} as STATE;
         state.ref = state.ref || {};
 
@@ -32,13 +34,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         this.state = state;
         this.className = this.constructor.name; // the name of the class
         if (!state.tagId) state.tagId = getRandomString(this._className);
-
-        // try {
-        //     this.onStateInitialized(state);
-        // } catch (e) {
-        //     this.handleError(e);
-        // }
-    }
+    } // _constructor
 
     /**
      * This method assumes that the state is completely initialized and ready to be used.
@@ -62,7 +58,28 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * @protected
      */
     protected onStateInitialized(state: STATE) {
-    }
+
+        /**
+         * At development time detect that the state has changed
+         */
+        if (isDev()) {
+            if (state && this.state) {
+                if (state !== this.state) {
+                    console.error('State mismatch. Old State is', this.state, 'New state is', state);
+                    setTimeout(() => {
+                            DialogUtility.alert({
+                                title: 'Nx2 component state problem',
+                                content: '<p>State used is a completely new variable instead of the original. <p>This new state will be ignored, so you won\'t see its contents in the UI and wonder why that is!!!<p>See console for details.<p>',
+                                width: 'min(80%, 500px)',
+                                height: 'min(80%, 300px)',
+                                isModal: true,
+                            });
+                        },
+                        500);
+                } // if (state !== this.state)
+            } // if (state && this.state)
+        } // if (isDev())
+    } // onStateInitialized
 
 
     /**
@@ -82,7 +99,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         } // function body of debouncedFunction
         , this.resizeEventMinInterval);
 
-    protected constructor(state: STATE) {
+    protected constructor(state ?: STATE) {
         this._constructor(state);
     } //  constructor
 
@@ -214,7 +231,6 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     }
 
 
-
     //--------- Getters and Setters ----------------
 
     get htmlElement(): HTMLElement {
@@ -286,14 +302,12 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     /**
      * This is the method that gives a component the chance to call any JavaScript and instantiate the widget.
      *
-     * At this point all the HTML for the component has been created (from calls to {@link this.localContentBegin} and {@link localContentEnd} )
      *
-     * The method is called by {@link this.initLogic} method, after all the children's {@link this.initLogic} methods have been called.
+     * The method is called by {@link initLogic} method, after all the children's {@link initLogic} methods have been called.
      * Therefore, all children JS objects are available at this point in time.
      *
      */
     abstract onLogic(args: Nx2Evt_OnLogic): void ;
-
 
     /**
      * This is the perfect event in which to initialize any children or settings for 'this' right before
@@ -480,6 +494,43 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      */
     onAfterInitWidgetOnly?: (args: Nx2Evt_AfterLogic) => void;
 
+
+    addNx2Child(nx2: Nx2): void {
+        if (!nx2) return;
+        try {
+            if (!nx2.initialized)
+                nx2.initLogic();
+        } catch (ex) {
+            this.handleError(ex);
+        }
+
+
+        let parentHtmlElement = this.htmlElement;
+        if (parentHtmlElement) {
+            parentHtmlElement.appendChild(nx2.htmlElement);
+        }
+    } // addNx2Child
+
+    removeNx2Child(nx2: Nx2): boolean {
+        if (!nx2) return false;
+        try {
+            let parentHtmlElement = this.htmlElement;
+            let childHtmlElementV1 = nx2.htmlElement;
+            if (childHtmlElementV1 && parentHtmlElement) {
+                const childElement: HTMLElement | null = parentHtmlElement.querySelector(`#${childHtmlElementV1.id}`);
+
+                if (childElement !== null) {
+                    childElement.parentNode?.removeChild(childElement);
+                    return true;
+                }
+            }
+        } catch (ex) {
+            console.error(ex, this, nx2);
+        }
+        return false;
+    } // removeNx2Child
+
+
     /**
      * Called to handle errors for the visual widget.
      * @param err
@@ -521,6 +572,9 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      */
     handleError(err: (AxiosResponse | Err | Error | ExceptionEvent | any)): boolean {
         console.error(err);
+        if (isDev()) {
+            getErrorHandler().displayExceptionToUser(err);
+        }
         return true;
     }
 
@@ -547,9 +601,9 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     //---------------------------------------------
     private _initStateCalled: boolean = false;
 
-    protected _triggerOnStateInitialized():void  {
+    protected _triggerOnStateInitialized(): void {
 
-        if (! this._initStateCalled) {
+        if (!this._initStateCalled) {
             try {
                 this.onStateInitialized(this.state);
             } catch (e) {

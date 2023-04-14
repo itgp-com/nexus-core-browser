@@ -1,18 +1,18 @@
-import {EnumPanelLayout, Nx2PanelLayout, StateNx2PanelLayout} from "../../generic/Nx2PanelLayout";
-import {Elem_or_Nx2_or_StateNx2} from "../../Nx2Utils";
-import {Nx2EjGrid, StateNx2EjGrid} from "../ext/Nx2EjGrid";
-import {CSS_FLEX_MAX_XY} from "../../../CoreCSS";
-import {Nx2Evt_Resized} from "../../Nx2";
 import {Grid} from "@syncfusion/ej2-grids";
+import {CSS_FLEX_MAX_XY} from "../../../CoreCSS";
+import {EnumPanelLayout, Nx2PanelLayout, StateNx2PanelLayout} from "../../generic/Nx2PanelLayout";
+import {Nx2Evt_Resized} from "../../Nx2";
 import {getGridDecoratorsHeight} from "../Ej2Utils";
+import {Nx2EjGrid, StateNx2EjGrid} from "../ext/Nx2EjGrid";
 
+export type Elem_or_Nx2EjGrid<STATE extends StateNx2EjGrid = any> = HTMLElement | Nx2EjGrid<STATE>; // compatible with  Elem_or_Nx2
 
 export interface StateNx2EjPanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateNx2PanelLayout {
 
     /**
      * This is where the Grid component or wrapper.
      */
-    center?: Elem_or_Nx2_or_StateNx2<STATE>;
+    center?: Elem_or_Nx2EjGrid
 
     /**
      * Defaults to true if not specified.
@@ -35,7 +35,7 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
 
     nx2Grid: GRID_TYPE;
 
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 
@@ -69,24 +69,16 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
                 if (state.center instanceof HTMLElement) {
                     elem = state.center as HTMLElement;
                 } else {
-                    let gridState: StateNx2EjGrid = state.center; // has to be StateNx2EjGrid because of the STATE generic
-                    let grid = this.createGrid(gridState);
-                    grid.initLogic();
-                    elem = grid.htmlElement;
+                    let center = state.center;
+                    if ( center instanceof HTMLElement) {
+                        elem = center;
+                    } else {
+                        elem = center.htmlElement;
+                    }
                 }
                 break
         }
         return elem;
-    }
-
-    /**
-     * Override this method to create a different type of grid.
-     * @param gridState
-     */
-    createGrid(gridState: StateNx2EjGrid): GRID_TYPE {
-        if (!this.nx2Grid)
-            this.nx2Grid = new Nx2EjGrid(gridState) as GRID_TYPE;
-        return this.nx2Grid;
     }
 
 
@@ -131,13 +123,21 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
 
         let totalHeight = this.htmlElement.clientHeight;
 
-        let outerTopHeight = (this.outerTopElem ? this.outerTopElem.offsetHeight : 0);
-        let outerBottomHeight = (this.outerBottomElem ? this.outerBottomElem.offsetHeight : 0);
-        let topHeight = (this.topElem ? this.topElem.offsetHeight : 0);
-        let bottomHeight = (this.bottomElem ? this.bottomElem.offsetHeight : 0);
+        let _outerTopHtml :HTMLElement = (this.outerTop ? (this.outerTop instanceof HTMLElement ? this.outerTop : this.outerTop.htmlElement) : null);
+        let outerTopHeight = (_outerTopHtml ? _outerTopHtml.offsetHeight : 0);
+
+        let _outerBottomHtml :HTMLElement = (this.outerBottom ? (this.outerBottom instanceof HTMLElement ? this.outerBottom : this.outerBottom.htmlElement) : null);
+        let outerBottomHeight = (_outerBottomHtml? _outerBottomHtml.offsetHeight : 0);
+
+
+        let _topHtml :HTMLElement = (this.top ? (this.top instanceof HTMLElement ? this.top : this.top.htmlElement) : null);
+        let topHeight = (_topHtml? _topHtml.offsetHeight : 0);
+
+
+        let _bottomHtml :HTMLElement = (this.bottom ? (this.bottom instanceof HTMLElement ? this.bottom : this.bottom.htmlElement) : null);
+        let bottomHeight = (_bottomHtml ? _bottomHtml.offsetHeight : 0);
 
         let surroundingTopBottomHeight = outerTopHeight + outerBottomHeight + topHeight + bottomHeight;
-
 
 
         // the grid has this extra height that we need to subtract between offset and client somewhere
@@ -158,8 +158,8 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
         if (!grid)
             return 0;
 
-        let leftHeight = (this.leftElem ? this.leftElem.offsetWidth : 0);
-        let rightHeight = (this.rightElem ? this.rightElem.offsetWidth : 0);
+        let leftHeight = (this._leftElem ? this._leftElem.offsetWidth : 0);
+        let rightHeight = (this._rightElem ? this._rightElem.offsetWidth : 0);
         let surroundingLeftRightHeight = leftHeight + rightHeight;
 
         let totalWidth: number = this.htmlElement.clientWidth;

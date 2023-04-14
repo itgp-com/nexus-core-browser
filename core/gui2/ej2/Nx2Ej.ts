@@ -19,12 +19,12 @@ export abstract class Nx2Ej<  STATE extends StateNx2Ej = StateNx2Ej, EJ2COMPONEN
               extends Nx2<STATE, EJ2COMPONENT> {
 
 
-   protected constructor(state:STATE) {
+   protected constructor(state ?:STATE) {
       super(state);
    }
 
 
-   protected _constructor(state: STATE) {
+   protected _constructor(state ?: STATE) {
       state.ej = state.ej || {};
       super._constructor(state);
    }

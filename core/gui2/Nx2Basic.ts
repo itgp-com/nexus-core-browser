@@ -16,7 +16,7 @@ export interface StateNx2Basic extends StateNx2 {
 
 export class Nx2Basic<STATE extends StateNx2Basic = StateNx2Basic> extends Nx2<STATE> {
 
-    protected constructor(state: STATE) {
+    protected constructor(state?: STATE) {
         super(state);
     }
 

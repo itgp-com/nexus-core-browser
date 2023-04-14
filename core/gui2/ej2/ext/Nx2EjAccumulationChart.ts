@@ -16,7 +16,7 @@ export interface StateNx2EjAccumulationChart<WIDGET_LIBRARY_MODEL extends Accumu
 }
 
 export class Nx2EjAccumulationChart<STATE extends StateNx2EjAccumulationChart = StateNx2EjAccumulationChart> extends Nx2EjBasic<STATE, AccumulationChart> {
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 

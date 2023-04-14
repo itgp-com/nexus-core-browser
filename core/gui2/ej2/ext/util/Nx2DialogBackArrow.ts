@@ -19,7 +19,7 @@ export interface StateNx2DialogBackArrow extends StateNx2Html {
 export class Nx2DialogBackArrow<STATE extends StateNx2DialogBackArrow = any> extends Nx2Html<STATE> {
 
 
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 

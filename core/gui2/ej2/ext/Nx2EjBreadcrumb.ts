@@ -16,7 +16,7 @@ export interface StateNx2EjBreadcrumb<WIDGET_LIBRARY_MODEL extends BreadcrumbMod
 }
 
 export class Nx2EjBreadcrumb<STATE extends StateNx2EjBreadcrumb = StateNx2EjBreadcrumb> extends Nx2EjBasic<STATE, Breadcrumb> {
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 

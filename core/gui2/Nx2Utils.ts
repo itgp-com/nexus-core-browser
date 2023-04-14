@@ -1,10 +1,13 @@
 import {escape} from "lodash";
 import {htmlToElement} from "../BaseUtils";
+import {getErrorHandler} from '../CoreErrorHandling';
 import {Nx2, NX2_CLASS} from "./Nx2";
 import {IHtmlUtils, Nx2HtmlDecorator} from "./Nx2HtmlDecorator";
 import {StateNx2} from "./StateNx2";
 
 export const tags_no_closing_tag = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
+
+export type Elem_or_Nx2<STATE extends StateNx2 = any> = HTMLElement | Nx2<STATE>;
 
 export type Elem_or_Nx2_or_StateNx2<NX2_TYPE extends (Nx2 | StateNx2) = any> = HTMLElement | NX2_TYPE;
 
@@ -208,3 +211,46 @@ export function findNx2ChildrenAllLevels(parent: HTMLElement | Nx2): Nx2[] {
     } // for nx2ElementsHtml
     return nx2Elements;
 } // findNx2ChildrenAllLevels
+
+
+export function addNx2Child(child: Nx2, parent: Elem_or_Nx2): boolean {
+    if (!child) return false;
+    if (!parent) return false;
+
+
+    try {
+        if (!child.initialized)
+            child.initLogic();
+
+
+        let parentHtmlElement = (parent instanceof HTMLElement ? parent : parent.htmlElement);
+        if (parentHtmlElement) {
+            parentHtmlElement.appendChild(child.htmlElement);
+            return true;
+        }
+    } catch (ex) {
+        getErrorHandler().displayExceptionToUser(ex);
+    }
+
+    return false;
+} // addNx2Child
+
+export function removeNx2Child(child: Nx2, parent: Elem_or_Nx2): boolean {
+    if (!child) return false;
+    if (!parent) return false;
+    try {
+        let parentHtmlElement = (parent instanceof HTMLElement ? parent : parent.htmlElement);
+        let childHtmlElementV1 = child.htmlElement;
+        if (childHtmlElementV1 && parentHtmlElement) {
+            const childElement: HTMLElement | null = parentHtmlElement.querySelector(`#${childHtmlElementV1.id}`);
+
+            if (childElement !== null) {
+                childElement.parentNode?.removeChild(childElement);
+                return true;
+            }
+        }
+    } catch (ex) {
+        console.error(ex, parent, child);
+    }
+    return false;
+} // removeNx2Child

@@ -16,7 +16,7 @@ export interface StateNx2EjAccordion<WIDGET_LIBRARY_MODEL extends AccordionModel
 }
 
 export class Nx2EjAccordion<STATE extends StateNx2EjAccordion = StateNx2EjAccordion> extends Nx2EjBasic<STATE, Accordion> {
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 

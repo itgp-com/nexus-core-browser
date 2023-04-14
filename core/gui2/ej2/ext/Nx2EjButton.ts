@@ -28,7 +28,7 @@ export interface StateNx2EjButton extends StateNx2EjBasic< ButtonModel> {
 }
 
 export class Nx2EjButton<STATE extends StateNx2EjButton = StateNx2EjButton> extends Nx2EjBasic<STATE, Button> {
-   constructor(state: STATE) {
+   constructor(state ?: STATE) {
       super(state);
    }
 

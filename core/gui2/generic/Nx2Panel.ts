@@ -15,7 +15,7 @@ export interface StateNx2Panel extends StateNx2Basic {
 
 export class Nx2Panel<STATE extends StateNx2Panel = StateNx2Panel> extends Nx2Basic<STATE> {
 
-  constructor(state:STATE) {
+  constructor(state?:STATE) {
     super(state);
   }
 

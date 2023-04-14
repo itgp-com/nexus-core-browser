@@ -16,7 +16,7 @@ export interface StateNx2EjAutoComplete<WIDGET_LIBRARY_MODEL extends AutoComplet
 }
 
 export class Nx2EjAutoComplete<STATE extends StateNx2EjAutoComplete = StateNx2EjAutoComplete> extends Nx2EjBasic<STATE, AutoComplete> {
-    constructor(state: STATE) {
+    constructor(state ?: STATE) {
         super(state);
     }
 
