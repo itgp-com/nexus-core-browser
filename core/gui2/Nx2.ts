@@ -9,6 +9,7 @@ import {getErrorHandler} from "../CoreErrorHandling";
 import {isDev} from '../CoreUtils';
 import {ExceptionEvent} from "../ExceptionEvent";
 import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
+import {addNx2Child, removeNx2Child} from './ej2/Ej2Utils';
 import {IHtmlUtils} from "./Nx2HtmlDecorator";
 import {StateNx2} from "./StateNx2";
 
@@ -287,7 +288,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             if (state.resizeTracked && oldElement && this.initialized) {
                 // only if the widget has already been initialized (if it has not, then initLogic will apply it the first time
                 setTimeout(() => {
-                        this.applyResizeSensor();
+                        this._applyResizeSensor();
                     },
                     this.resizeEventMinInterval // wait the minimum interval to avoid an infinite loop when the resize triggers because the panel is not finished its initial sizing
                 );
@@ -451,7 +452,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
         }
         if (state.resizeTracked) {
-            thisX.applyResizeSensor();
+            thisX._applyResizeSensor();
         } // if (this.resizeTracked)
 
     } // initLogic
@@ -492,42 +493,32 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      *  Called after initLogic has been completed for this component but NOT for any child components
      *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
      */
-    onAfterInitWidgetOnly?: (args: Nx2Evt_AfterLogic) => void;
+    onAfterInitWidgetOnly(args: Nx2Evt_AfterLogic): void {}
 
 
-    addNx2Child(nx2: Nx2): void {
-        if (!nx2) return;
+    /**
+     * Returns the HTMLElement for this widget that makes sure that the Nx2 widget's logic has been initialized
+     * @return {HTMLElement}
+     */
+    get htmlElementInitialized(): HTMLElement {
+        let htmlElement = this.htmlElement;
+
         try {
-            if (!nx2.initialized)
-                nx2.initLogic();
+            if (!this.initialized)
+                this.initLogic();
         } catch (ex) {
             this.handleError(ex);
         }
 
+        return htmlElement;
+    } //htmlElementInitialized
 
-        let parentHtmlElement = this.htmlElement;
-        if (parentHtmlElement) {
-            parentHtmlElement.appendChild(nx2.htmlElement);
-        }
+    addNx2Child(nx2: Nx2): void {
+        addNx2Child(this, nx2);
     } // addNx2Child
 
     removeNx2Child(nx2: Nx2): boolean {
-        if (!nx2) return false;
-        try {
-            let parentHtmlElement = this.htmlElement;
-            let childHtmlElementV1 = nx2.htmlElement;
-            if (childHtmlElementV1 && parentHtmlElement) {
-                const childElement: HTMLElement | null = parentHtmlElement.querySelector(`#${childHtmlElementV1.id}`);
-
-                if (childElement !== null) {
-                    childElement.parentNode?.removeChild(childElement);
-                    return true;
-                }
-            }
-        } catch (ex) {
-            console.error(ex, this, nx2);
-        }
-        return false;
+        return removeNx2Child(this, nx2);
     } // removeNx2Child
 
 
@@ -585,7 +576,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     onResized(evt?: Nx2Evt_Resized): void {
     }
 
-    protected applyResizeSensor(): void {
+    protected _applyResizeSensor(): void {
 
         try {
             if (this.resizeSensor)
