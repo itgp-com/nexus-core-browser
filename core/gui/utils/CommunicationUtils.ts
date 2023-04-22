@@ -1,4 +1,4 @@
-import axios from "axios/index";
+import axios from "axios";
 
 /**
  * Tests if the resource at this location exists or not
