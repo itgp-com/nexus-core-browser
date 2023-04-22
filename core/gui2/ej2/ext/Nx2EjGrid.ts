@@ -1,6 +1,8 @@
+import {Query} from '@syncfusion/ej2-data';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {Grid, GridModel} from "@syncfusion/ej2-grids";
+import {Data} from '@syncfusion/ej2-grids/src/grid/actions/data';
 
 
 export interface StateNx2EjGridRef extends StateNx2EjBasicRef {
@@ -28,4 +30,17 @@ export class Nx2EjGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends Nx
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
         this.htmlElement.classList.add( 'Nx2EjGrid');
     }
+
+    /**
+     * The function is used to generate updated Query from Grid model.
+     *
+     * @param {boolean} skipPage - specifies the boolean to skip the page
+     * @param {boolean} isAutoCompleteCall - specifies for auto complete call
+     * @returns {Query} returns the Query or null if not initialized
+     */
+    generateQuery(skipPage?: boolean, isAutoCompleteCall?: boolean): Query {
+        if ( !this.obj)
+            return null;
+        return new Data(this.obj).generateQuery(skipPage, isAutoCompleteCall);
+    } // generateQuery
 }
