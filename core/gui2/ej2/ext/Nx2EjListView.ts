@@ -1,5 +1,6 @@
 import {ListView, ListViewModel} from "@syncfusion/ej2-lists";
 import {Nx2Evt_OnLogic} from "../../Nx2";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
 
@@ -18,6 +19,7 @@ export interface StateNx2EjListView<WIDGET_LIBRARY_MODEL extends ListViewModel =
 export class Nx2EjListView<STATE extends StateNx2EjListView = StateNx2EjListView> extends Nx2EjBasic<STATE, ListView> {
     constructor(state: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjListView');
     }
 
 
@@ -26,6 +28,6 @@ export class Nx2EjListView<STATE extends StateNx2EjListView = StateNx2EjListView
 
         this.obj = new ListView(this.state.ej);
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        this.htmlElement.classList.add('Nx2EjListView');
+        // this.htmlElement.classList.add('Nx2EjListView');
     }
 }

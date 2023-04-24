@@ -11,10 +11,27 @@ export type Elem_or_Nx2<STATE extends StateNx2 = any> = HTMLElement | Nx2<STATE>
 
 export type Elem_or_Nx2_or_StateNx2<NX2_TYPE extends (Nx2 | StateNx2) = any> = HTMLElement | NX2_TYPE;
 
+/**
+ * Checks if the given object is of type Nx2
+ * @param obj
+ * @return {obj is Nx2}
+ */
 export function isNx2(obj: any): obj is Nx2 {
-    // an Nx2 is an object with a ref, state and className  property
-    return obj && obj.className && obj.htmlElement?.classList.contains(NX2_CLASS) && obj.state;
-}
+    return (
+        obj !== null &&
+        obj !== undefined &&
+        obj.className !== null &&
+        obj.className !== undefined &&
+        obj.isNx2 !== null &&
+        obj.isNx2 !== undefined &&
+        typeof obj.isNx2 === 'boolean' &&
+        obj.isNx2 === true &&
+        obj.state !== null &&
+        obj.state !== undefined &&
+        obj.state.ref !== null &&
+        obj.state.ref !== undefined
+    );
+} // isNx2
 
 function hasNoClosingHtmlTag(tag: string): boolean {
     if (!tag) return false;
@@ -53,11 +70,18 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
 
     // Now process the children
     if (state.children) {
-        let children: Nx2[] = state.children;
+        let children: Elem_or_Nx2[] = state.children;
         for (let i = 0; i < children.length; i++) {
-            let child: Nx2 = children[i];
+            let child: Elem_or_Nx2 = children[i];
+            let childHtmlElement: HTMLElement;
+            if ( child) {
+                if ( isNx2(child)) {
+                    childHtmlElement = child.htmlElement;
+                } else {
+                    childHtmlElement = child as HTMLElement;
+                }
+            } // if child
 
-            let childHtmlElement: HTMLElement = child.htmlElement;
             if (childHtmlElement) {
                 htmlElement.appendChild(childHtmlElement);
             }
@@ -80,9 +104,7 @@ export function createNx2HtmlBasicFromDecorator<DECORATOR extends Nx2HtmlDecorat
     if (!hasNoClosingHtmlTag(decorator.tag)) {
         x += `</${decorator.tag}>`;
     }
-
-    let htmlElement: HTMLElement = htmlToElement(x);
-    return htmlElement;
+    return htmlToElement(x);
 } // createHTMLStandardForDecorator
 
 

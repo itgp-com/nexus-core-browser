@@ -1,3 +1,4 @@
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {Uploader, UploaderModel} from "@syncfusion/ej2-inputs";
@@ -18,6 +19,7 @@ export interface StateNx2EjUploader<WIDGET_LIBRARY_MODEL extends UploaderModel =
 export class Nx2EjUploader<STATE extends StateNx2EjUploader = StateNx2EjUploader> extends Nx2EjBasic<STATE,Uploader> {
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjUploader');
     }
 
 
@@ -33,6 +35,6 @@ export class Nx2EjUploader<STATE extends StateNx2EjUploader = StateNx2EjUploader
 
         this.obj = new Uploader(this.state.ej);
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        this.htmlElement.classList.add( 'Nx2EjUploader');
+        // this.htmlElement.classList.add( 'Nx2EjUploader');
     }
 }

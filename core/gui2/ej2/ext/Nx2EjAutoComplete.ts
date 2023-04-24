@@ -1,5 +1,6 @@
 import {AutoComplete, AutoCompleteModel} from "@syncfusion/ej2-dropdowns";
 import {Nx2Evt_OnLogic} from "../../Nx2";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
 
@@ -18,6 +19,7 @@ export interface StateNx2EjAutoComplete<WIDGET_LIBRARY_MODEL extends AutoComplet
 export class Nx2EjAutoComplete<STATE extends StateNx2EjAutoComplete = StateNx2EjAutoComplete> extends Nx2EjBasic<STATE, AutoComplete> {
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjAutoComplete');
     }
 
     protected onStateInitialized(state: STATE) {
@@ -31,6 +33,6 @@ export class Nx2EjAutoComplete<STATE extends StateNx2EjAutoComplete = StateNx2Ej
 
         this.obj = new AutoComplete(this.state.ej);
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        this.htmlElement.classList.add('Nx2EjAutoComplete');
+        // this.htmlElement.classList.add('Nx2EjAutoComplete');
     }
 }

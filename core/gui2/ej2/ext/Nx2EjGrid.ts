@@ -1,4 +1,5 @@
 import {Query} from '@syncfusion/ej2-data';
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {Grid, GridModel} from "@syncfusion/ej2-grids";
@@ -20,6 +21,7 @@ export interface StateNx2EjGrid<WIDGET_LIBRARY_MODEL extends GridModel = GridMod
 export class Nx2EjGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends Nx2EjBasic<STATE,Grid> {
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjGrid');
     }
 
 
@@ -28,7 +30,7 @@ export class Nx2EjGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends Nx
 
         this.obj = new Grid(this.state.ej);
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        this.htmlElement.classList.add( 'Nx2EjGrid');
+        // this.htmlElement.classList.add( 'Nx2EjGrid');
     }
 
     /**

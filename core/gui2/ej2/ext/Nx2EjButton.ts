@@ -1,5 +1,6 @@
 import {Button, ButtonModel} from "@syncfusion/ej2-buttons";
 import {StringArg, stringArgVal} from "../../../BaseUtils";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 import {Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
 
@@ -30,6 +31,7 @@ export interface StateNx2EjButton extends StateNx2EjBasic< ButtonModel> {
 export class Nx2EjButton<STATE extends StateNx2EjButton = StateNx2EjButton> extends Nx2EjBasic<STATE, Button> {
    constructor(state ?: STATE) {
       super(state);
+      addNx2Class(this.state.deco, 'Nx2EjButton');
    }
 
    onHtml(args:Nx2Evt_OnHtml): HTMLElement {
@@ -51,7 +53,7 @@ export class Nx2EjButton<STATE extends StateNx2EjButton = StateNx2EjButton> exte
 
       if (this.state.onclick)
          this.htmlElement.onclick = this.state.onclick;
-      this.htmlElement.classList.add('Nx2EjButton');
+      // this.htmlElement.classList.add('Nx2EjButton');
 
    }
 

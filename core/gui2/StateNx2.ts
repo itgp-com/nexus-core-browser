@@ -10,6 +10,7 @@ import {
    Nx2Evt_Destroy, Nx2Evt_AfterLogic
 } from "./Nx2";
 import {Nx2HtmlDecorator}                      from "./Nx2HtmlDecorator";
+import {Elem_or_Nx2} from './Nx2Utils';
 
 export interface StateNx2 {
 
@@ -54,7 +55,7 @@ export interface StateNx2 {
     * The current children this widget contains
     * @see initialChildren
     */
-   children?: Nx2[]
+   children?: Elem_or_Nx2[]
 
 
    /**

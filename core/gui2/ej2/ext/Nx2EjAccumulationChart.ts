@@ -1,5 +1,6 @@
 import {AccumulationChart, AccumulationChartModel} from "@syncfusion/ej2-charts";
 import {Nx2Evt_OnLogic} from "../../Nx2";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
 
@@ -18,6 +19,7 @@ export interface StateNx2EjAccumulationChart<WIDGET_LIBRARY_MODEL extends Accumu
 export class Nx2EjAccumulationChart<STATE extends StateNx2EjAccumulationChart = StateNx2EjAccumulationChart> extends Nx2EjBasic<STATE, AccumulationChart> {
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjAccumulationChart');
     }
 
 
@@ -26,6 +28,6 @@ export class Nx2EjAccumulationChart<STATE extends StateNx2EjAccumulationChart = 
 
         this.obj = new AccumulationChart(this.state.ej);
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        this.htmlElement.classList.add('Nx2EjAccumulationChart');
+        // this.htmlElement.classList.add('Nx2EjAccumulationChart');
     }
 }

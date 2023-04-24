@@ -1,6 +1,7 @@
 import {FormValidator, FormValidatorModel} from "@syncfusion/ej2-inputs";
 import {Nx2FormHtml, StateNx2Form, StateNx2FormRef} from "../../generic/Nx2FormHtml";
 import {Nx2Evt_OnLogic} from "../../Nx2";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 
 
 export interface StateNx2EjFormRef extends StateNx2FormRef {
@@ -17,6 +18,7 @@ export interface StateNx2EjForm extends StateNx2Form {
 export class Nx2EjForm<STATE extends StateNx2EjForm = StateNx2EjForm> extends Nx2FormHtml<STATE> {
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjForm');
     }
 
 
@@ -27,7 +29,7 @@ export class Nx2EjForm<STATE extends StateNx2EjForm = StateNx2EjForm> extends Nx
         } catch (e) {
             console.error(e); // not a user error
         }
-        this.htmlElement.classList.add('Nx2EjForm');
+        // this.htmlElement.classList.add('Nx2EjForm');
     } // onLogic
 
     protected _initializeValidator() {

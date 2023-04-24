@@ -1,5 +1,6 @@
 import {Accordion, AccordionModel} from "@syncfusion/ej2-navigations";
 import {Nx2Evt_OnLogic} from "../../Nx2";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
 
@@ -18,6 +19,7 @@ export interface StateNx2EjAccordion<WIDGET_LIBRARY_MODEL extends AccordionModel
 export class Nx2EjAccordion<STATE extends StateNx2EjAccordion = StateNx2EjAccordion> extends Nx2EjBasic<STATE, Accordion> {
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjAccordion');
     }
 
 
@@ -26,6 +28,6 @@ export class Nx2EjAccordion<STATE extends StateNx2EjAccordion = StateNx2EjAccord
 
         this.obj = new Accordion(this.state.ej);
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        this.htmlElement.classList.add('Nx2EjAccordion');
+        // this.htmlElement.classList.add('Nx2EjAccordion');
     }
 }

@@ -6,6 +6,7 @@ import {isNx2_Interface_Dialog_Close, isNx2_Interface_Dialog_Open} from '../../g
 import {Nx2Html} from "../../generic/Nx2Html";
 import {Nx2Row} from "../../generic/Nx2Row";
 import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnLogic} from "../../Nx2";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {isNx2} from "../../Nx2Utils";
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 import {Nx2DialogBackArrow} from "./util/Nx2DialogBackArrow";
@@ -63,7 +64,10 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
     private _appendedTo: HTMLElement;
     private _appendTargetCreatedLocally: boolean;
 
-    constructor(state ?: STATE) {        super(state);    }
+    constructor(state ?: STATE) {
+        super(state);
+        addNx2Class(this.state.deco, 'Nx2EjDialog');
+    }
 
     protected onStateInitialized(state: STATE) {
         state.ej = state.ej || {};
@@ -261,7 +265,7 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         this.obj = new Dialog(ej);
         this.obj.appendTo(this._appendedTo);
 
-        this.htmlElement.classList.add('Nx2EjDialog');
+        // this.htmlElement.classList.add('Nx2EjDialog');
     }
 
     show() {

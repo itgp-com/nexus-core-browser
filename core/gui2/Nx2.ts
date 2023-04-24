@@ -10,7 +10,8 @@ import {isDev} from '../CoreUtils';
 import {ExceptionEvent} from "../ExceptionEvent";
 import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
 import {addNx2Child, removeNx2Child} from './ej2/Ej2Utils';
-import {IHtmlUtils} from "./Nx2HtmlDecorator";
+import {addNx2Class, IHtmlUtils} from "./Nx2HtmlDecorator";
+import {Elem_or_Nx2, isNx2} from './Nx2Utils';
 import {StateNx2} from "./StateNx2";
 
 
@@ -18,6 +19,10 @@ export let NX2_CLASS = '_nx2_';
 
 
 export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
+    protected constructor(state ?: STATE) {
+        this._constructor(state);
+        addNx2Class(this.state.deco, 'Nx2'); // this might not be the same as the actual _nx2_ HTMLElement
+    } //  constructor
 
     /**
      * The constructor calls this method as soon as the class is created.
@@ -29,7 +34,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         state.ref = state.ref || {};
 
         state.deco = state.deco || {} as IHtmlUtils;
-        IHtmlUtils.init(state.deco);
+        IHtmlUtils.initForNx2(state);
 
         state.ref.widget = this;
         this.state = state;
@@ -100,9 +105,13 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         } // function body of debouncedFunction
         , this.resizeEventMinInterval);
 
-    protected constructor(state ?: STATE) {
-        this._constructor(state);
-    } //  constructor
+
+    /**
+     * A boolean indicating this instance is an Nx2.
+     * @type {boolean}
+     * @readonly
+     */
+    readonly  isNx2:boolean = true;
 
     private _state: STATE;
 
@@ -285,12 +294,12 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
                 actualNx2Elem[NX2_CLASS] = this; // tag the element with the widget itself
             }
 
-            if (state.resizeTracked && oldElement && this.initialized) {
+            if (state.resizeTracked ) {
                 // only if the widget has already been initialized (if it has not, then initLogic will apply it the first time
                 setTimeout(() => {
                         this._applyResizeSensor();
                     },
-                    this.resizeEventMinInterval // wait the minimum interval to avoid an infinite loop when the resize triggers because the panel is not finished its initial sizing
+                    // this.resizeEventMinInterval // wait the minimum interval to avoid an infinite loop when the resize triggers because the panel is not finished its initial sizing
                 );
             }
         }
@@ -399,15 +408,19 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             }
 
             let atLeastOneChildInitialized: boolean = false;
-            let children: Nx2[];
+            let children: Elem_or_Nx2[];
             if (state.children)
                 children = state.children;
             if (children && children.length > 0) {
                 children.map((child) => {
-                    if (child && !child.initialized) {
-                        atLeastOneChildInitialized = true;
-                        return child.initLogic();
-                    }
+                    if ( child) {
+                        if ( isNx2(child)) {
+                            if (!child.initialized) {
+                                atLeastOneChildInitialized = true;
+                                return child.initLogic();
+                            }
+                        } // if ( isNx2(child))
+                    } // if ( child)
                 });
             } // if ( this.children)
 
@@ -577,6 +590,9 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     }
 
     protected _applyResizeSensor(): void {
+
+        // initialize the min interval if not already set
+        this.resizeEventMinInterval
 
         try {
             if (this.resizeSensor)

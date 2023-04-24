@@ -1,5 +1,6 @@
 import {AppBar, AppBarModel} from "@syncfusion/ej2-navigations";
 import {Nx2Evt_OnLogic} from "../../Nx2";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
 
@@ -18,6 +19,7 @@ export interface StateNx2EjAppBar<WIDGET_LIBRARY_MODEL extends AppBarModel = App
 export class Nx2EjAppBar<STATE extends StateNx2EjAppBar = StateNx2EjAppBar> extends Nx2EjBasic<STATE, AppBar> {
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjAppBar');
     }
 
     protected onStateInitialized(state: STATE) {
@@ -31,6 +33,6 @@ export class Nx2EjAppBar<STATE extends StateNx2EjAppBar = StateNx2EjAppBar> exte
 
         this.obj = new AppBar(this.state.ej);
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        this.htmlElement.classList.add('Nx2EjAppBar');
+        // this.htmlElement.classList.add('Nx2EjAppBar');
     }
 }

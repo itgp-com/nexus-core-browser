@@ -1,5 +1,6 @@
 import {escape, isString} from "lodash";
 import {Nx2Basic, StateNx2Basic, StateNx2BasicRef} from "../Nx2Basic";
+import {addNx2Class} from '../Nx2HtmlDecorator';
 import {createNx2HtmlBasic} from "../Nx2Utils";
 import {Nx2Evt_OnHtml} from "../Nx2";
 
@@ -20,6 +21,7 @@ export class Nx2Html<STATE extends StateNx2Html = StateNx2Html> extends Nx2Basic
 
    constructor(state:STATE) {
       super(state);
+      addNx2Class(this.state.deco, 'Nx2Html');
    }
 
    onHtml(args:Nx2Evt_OnHtml): HTMLElement {

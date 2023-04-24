@@ -21,7 +21,7 @@ export class Nx2Column<STATE extends StateNx2Column = any> extends Nx2Basic<STAT
     }
 
     protected onStateInitialized(state: STATE) {
-        addNx2Class(state.deco, CSS_FLEX_COL_DIRECTION);
+        addNx2Class(state.deco, [CSS_FLEX_COL_DIRECTION, 'Nx2Column']);
         super.onStateInitialized(state);
     }
 }

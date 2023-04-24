@@ -529,12 +529,16 @@ let ruleMap: Map<string, number> = new Map<string, number>();
  */
 export function cssAddClass(className: string, rules: string | CssLikeObject) {
 
+    // Remove starting periods and spaces from the class name
     while (className.startsWith('.') || className.startsWith(' ')) {
-        className = className.substr(1); // eliminate starting periods and spaces
+        className = className.substring(1);
     }
 
+    // Prepend a period to the class name
     className = `.${className}`;
-    return cssAddSelector(className, rules);
+
+    // Add the class with the given rules
+    cssAddSelector(className, rules);
 } // cssAddClass
 
 

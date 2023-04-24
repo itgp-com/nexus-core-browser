@@ -1,5 +1,6 @@
 import {Component} from "@syncfusion/ej2-base";
 import {Nx2} from "../Nx2";
+import {addNx2Class} from '../Nx2HtmlDecorator';
 import {StateNx2, StateNx2Ref} from "../StateNx2";
 
 export interface StateNx2EjRef extends StateNx2Ref{
@@ -21,6 +22,7 @@ export abstract class Nx2Ej<  STATE extends StateNx2Ej = StateNx2Ej, EJ2COMPONEN
 
    protected constructor(state ?:STATE) {
       super(state);
+      addNx2Class(this.state.deco, 'Nx2Ej');
    }
 
 

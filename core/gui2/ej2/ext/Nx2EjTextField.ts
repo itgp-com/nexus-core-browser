@@ -1,7 +1,7 @@
 import {TextBox, TextBoxModel} from "@syncfusion/ej2-inputs";
 import {StateNx2PropertyName} from "../../generic/StateNx2PropertyName";
 import {Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
-import {IHtmlUtils, Nx2HtmlDecorator} from "../../Nx2HtmlDecorator";
+import {addNx2Class, IHtmlUtils, Nx2HtmlDecorator} from "../../Nx2HtmlDecorator";
 import {createNx2HtmlBasic, createNx2HtmlBasicFromDecorator} from "../../Nx2Utils";
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -47,6 +47,7 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
 
     constructor(state ?: StateNx2EjTextField) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjTextField');
     }
 
     protected _constructor(state ?: StateNx2EjTextField) {
@@ -57,7 +58,7 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
         this.wrapperTagId = `${this.state.tagId}_wrapper`;
         this.labelTagId = `${this.state.tagId}_label`;
 
-        IHtmlUtils.initDecorator(state);
+        IHtmlUtils.initForNx2(state);
 
         super.onStateInitialized(state);
     }
@@ -119,6 +120,6 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
         this.obj = new TextBox(state.ej);
         let anchor = this.htmlElement.getElementsByTagName('input')[0];
         this.obj.appendTo(anchor);
-        this.htmlElement.classList.add('Nx2EjTextField');
+        // this.htmlElement.classList.add('Nx2EjTextField');
     }
 }

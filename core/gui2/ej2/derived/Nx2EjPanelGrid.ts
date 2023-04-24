@@ -2,6 +2,7 @@ import {Grid} from "@syncfusion/ej2-grids";
 import {CSS_FLEX_MAX_XY} from "../../../CoreCSS";
 import {EnumPanelLayout, Nx2PanelLayout, StateNx2PanelLayout} from "../../generic/Nx2PanelLayout";
 import {Nx2Evt_Resized} from "../../Nx2";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {getGridDecoratorsHeight} from "../Ej2Utils";
 import {Nx2EjGrid, StateNx2EjGrid} from "../ext/Nx2EjGrid";
 
@@ -40,7 +41,7 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
     }
 
     protected onStateInitialized(state: STATE) {
-        state.deco.classes.push(CSS_FLEX_MAX_XY, this.className)
+        addNx2Class(state.deco, [CSS_FLEX_MAX_XY, 'Nx2EjPanelGrid']);
 
         if (state.resizeTracked == null)
             state.resizeTracked = true; // enable resize tracking by default

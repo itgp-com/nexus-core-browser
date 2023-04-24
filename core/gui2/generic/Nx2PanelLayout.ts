@@ -1,8 +1,9 @@
 import {DialogUtility} from '@syncfusion/ej2-popups';
 import {CSS_FLEX_MAX_XY} from "../../CoreCSS";
-import {isDev} from '../../CoreUtils';
+import {cssAddClass, isDev} from '../../CoreUtils';
 import {Nx2} from "../Nx2";
 import {Nx2Basic, StateNx2Basic} from "../Nx2Basic";
+import {addClassesToElement, addNx2Class, removeClassesFromElement, removeNx2Class} from '../Nx2HtmlDecorator';
 import {Elem_or_Nx2, isNx2} from "../Nx2Utils";
 import {Nx2Column} from "./Nx2Column";
 import {Nx2Panel} from './Nx2Panel';
@@ -17,6 +18,27 @@ export enum EnumPanelLayout {
     bottom = 'bottom',
     center = 'center',
 }
+
+const NX2PANELLAYOUT_FLEX_COLUMN_FULL: string = 'nx2PanelLayout_flex_column_full'
+cssAddClass(NX2PANELLAYOUT_FLEX_COLUMN_FULL, {
+    display: 'flex',
+    'flex-direction': 'column',
+    height: '100%',
+});
+
+const NX2PANELLAYOUT_REMAIN_FIXED: string = 'nx2PanelLayout_remain_fixed'
+cssAddClass(NX2PANELLAYOUT_REMAIN_FIXED, {
+    flex: '0 0 auto',
+});
+const NX2PANELLAYOUT_GROW_XY: string = 'nx2PanelLayout_grow_xy'
+cssAddClass(NX2PANELLAYOUT_GROW_XY, {
+    flex: '1 1 auto',
+});
+
+const NX2PANELLAYOUT_OVERFLOW: string = 'nx2PanelLayout_overflow'
+cssAddClass(NX2PANELLAYOUT_GROW_XY, {
+    overflow: 'auto'
+});
 
 
 export interface StateNx2PanelLayout extends StateNx2Basic {
@@ -71,37 +93,44 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
 
     constructor(state: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2PanelLayout');
     }
 
-    private _column: Nx2;
+    private _innerColumn: Nx2;
 
     /**
      * Defaults to an instance of Nx2Column.
+     *
+     * Contains ${top}, ${center} and ${bottom} components
      * Can be overwritten by extending class in its _initialSetup(state) by setting this.column before calling super
      */
-    get column(): Nx2 {
-        if (!this._column)
-            this._column = new Nx2Column({
+    get innerColumn(): Nx2 {
+        if (!this._innerColumn)
+            this._innerColumn = new Nx2Column({
                 deco: {
                     classes: [CSS_FLEX_MAX_XY], // crucial so it can take up the whole panel
                 }
             }) // can be overwritten by extending class in its _initialSetup(state) by setting column before calling super
 
-        return this._column;
+        return this._innerColumn;
     }
 
     /**
-     * Defaults to an instance of Nx2Column.
+     * Be very careful if overwriting this component so you don't loose access to its original children.
+     *
      * Can be overwritten by extending class in its _initialSetup(state) by setting this.column before calling super
      */
-    set column(value: Nx2) {
-        this._column = value;
+    set innerColumn(value: Nx2) {
+        this._innerColumn = value;
     }
 
     private _outerColumn: Nx2;
 
     /**
      * Defaults to an instance of Nx2Column.
+     *
+     * Composed of ${outerTop}, ${outerCenter} and ${outerBottom}
+     *
      * Can be overwritten by extending class in its _initialSetup(state) by setting this.outerColumn before calling super
      */
     get outerColumn(): Nx2 {
@@ -115,7 +144,8 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
     }
 
     /**
-     * Sets the outer column component to use.
+     * Be very careful if overwriting this component so you don't loose access to its original children.
+     *
      * Best set in <code>protected _initialSetup(state: STATE)</code> before calling <code>super._initialSetup(state);</code>
      * If set at any other time, please be careful to transfer the content of the existing component
      * @param value
@@ -128,6 +158,9 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
 
     /**
      * Defaults to an instance of Nx2Row.
+     *
+     * Contains ${left}, ${innerColumn} (composed of ${top}, ${center} and ${bottom}), and ${right} components
+     *
      * Can be overwritten by extending class in its _initialSetup(state) by setting this.innerRow before calling super
      */
     get outerCenter(): Nx2 {
@@ -253,23 +286,23 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
     protected onStateInitialized(state: STATE) {
 
 
-        let innerColumn = this.column;
-        let columnElem: HTMLElement = innerColumn.htmlElement;
+        let innerColumn = this.innerColumn;
+        let innerColumnElem: HTMLElement = innerColumn.htmlElement;
 
 
         if (!state.top)
             state.top = this._checkCreateMissingNx2(this.createPlaceholderPanel(EnumPanelLayout.top));
-        columnElem.appendChild(this.createElement(state.top, EnumPanelLayout.top));
+        innerColumnElem.appendChild(this.createElement(state.top, EnumPanelLayout.top));
 
 
         if (!state.center)
             state.center = this._checkCreateMissingNx2(this.createPlaceholderPanel(EnumPanelLayout.center));
-        columnElem.appendChild(this.createElement(state.center, EnumPanelLayout.center))
+        innerColumnElem.appendChild(this.createElement(state.center, EnumPanelLayout.center))
 
 
         if (!state.bottom)
             state.bottom = this._checkCreateMissingNx2(this.createPlaceholderPanel(EnumPanelLayout.bottom));
-        columnElem.appendChild(this.createElement(state.bottom, EnumPanelLayout.bottom));
+        innerColumnElem.appendChild(this.createElement(state.bottom, EnumPanelLayout.bottom));
 
 
         let outerCenterRow = this.outerCenter;
@@ -279,7 +312,7 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
             state.left = this._checkCreateMissingNx2(this.createPlaceholderPanel(EnumPanelLayout.left));
         outerCenterRowElem.appendChild(this.createElement(state.left, EnumPanelLayout.left))
 
-        outerCenterRowElem.appendChild(columnElem);
+        outerCenterRowElem.appendChild(innerColumnElem);
 
         if (!state.right)
             state.right = this._checkCreateMissingNx2(this.createPlaceholderPanel(EnumPanelLayout.right));
@@ -389,4 +422,104 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
         return true;
     }
 
+
+    //------------------- behavior_centerScrollsAndExpands -------------------
+
+    private _behavior_centerScrollsAndExpands: boolean;
+
+    /**
+     * Gets a boolean value indicating whether the center panel should scroll and expand to fill remaining space.
+     * @returns {boolean} The value indicating whether the center panel should scroll and expand.
+     */
+    public get behavior_centerScrollsAndExpands(): boolean {
+        return this._behavior_centerScrollsAndExpands;
+    }
+
+    /**
+     * Sets a boolean value indicating whether the center panel should scroll and expand to fill remaining space.
+     * If the value is true, the top, bottom, left, and right panels will have a fixed size and the center panel will scroll and expand.
+     * If the value is false, the top, bottom, left, and right panels will be flexible and the center panel will not scroll or expand.
+     * @param {boolean} enable - The value indicating whether the center panel should scroll and expand.
+     * @returns {void}
+     */
+    public set behavior_centerScrollsAndExpands(enable: boolean) {
+
+        if ( enable === this._behavior_centerScrollsAndExpands)
+            return; // nothing to change
+
+        if (enable) {
+            addNx2Class(this.outerCenter.state.deco, NX2PANELLAYOUT_FLEX_COLUMN_FULL);
+
+            if (isNx2(this.top))
+                addNx2Class(this.top.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                addClassesToElement(this.top, NX2PANELLAYOUT_REMAIN_FIXED);
+
+
+            if (isNx2(this.left))
+                addNx2Class(this.left.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                addClassesToElement(this.left, NX2PANELLAYOUT_REMAIN_FIXED);
+
+            if (isNx2(this.right))
+                addNx2Class(this.right.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                addClassesToElement(this.right, NX2PANELLAYOUT_REMAIN_FIXED);
+
+            if (isNx2(this.bottom))
+                addNx2Class(this.bottom.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                addClassesToElement(this.bottom, NX2PANELLAYOUT_REMAIN_FIXED);
+
+            if (isNx2(this.outerTop))
+                addNx2Class(this.outerTop.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                addClassesToElement(this.outerTop, NX2PANELLAYOUT_REMAIN_FIXED);
+
+            if (isNx2(this.outerBottom))
+                addNx2Class(this.outerBottom.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                addClassesToElement(this.outerBottom, NX2PANELLAYOUT_REMAIN_FIXED);
+
+        } else {
+            removeNx2Class(this.outerCenter.state.deco, NX2PANELLAYOUT_FLEX_COLUMN_FULL);
+
+            if (isNx2(this.top))
+                removeNx2Class(this.top.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                removeClassesFromElement(this.top, NX2PANELLAYOUT_REMAIN_FIXED);
+
+            if (isNx2(this.left))
+                removeNx2Class(this.left.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                removeClassesFromElement(this.left, NX2PANELLAYOUT_REMAIN_FIXED);
+
+            if (isNx2(this.right))
+                removeNx2Class(this.right.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                removeClassesFromElement(this.right, NX2PANELLAYOUT_REMAIN_FIXED);
+
+            if (isNx2(this.bottom))
+                removeNx2Class(this.bottom.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                removeClassesFromElement(this.bottom, NX2PANELLAYOUT_REMAIN_FIXED);
+
+            if (isNx2(this.outerTop))
+                removeNx2Class(this.outerTop.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                removeClassesFromElement(this.outerTop, NX2PANELLAYOUT_REMAIN_FIXED);
+
+
+            if (isNx2(this.outerBottom))
+                removeNx2Class(this.outerBottom.state.deco, NX2PANELLAYOUT_REMAIN_FIXED);
+            else
+                removeClassesFromElement(this.outerBottom, NX2PANELLAYOUT_REMAIN_FIXED);
+
+        }
+
+
+        this._behavior_centerScrollsAndExpands = enable;
+
+
+    }
 } // main class

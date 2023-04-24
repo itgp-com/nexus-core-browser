@@ -1,4 +1,5 @@
 import {Nx2Basic, StateNx2Basic, StateNx2BasicRef} from "../Nx2Basic";
+import {addNx2Class} from '../Nx2HtmlDecorator';
 
 
 export interface StateNx2PanelRef extends StateNx2BasicRef{
@@ -17,6 +18,7 @@ export class Nx2Panel<STATE extends StateNx2Panel = StateNx2Panel> extends Nx2Ba
 
   constructor(state?:STATE) {
     super(state);
+      addNx2Class(this.state.deco, 'Nx2Panel');
   }
 
    protected onStateInitialized(state: STATE) {

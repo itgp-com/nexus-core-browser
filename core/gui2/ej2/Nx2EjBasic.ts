@@ -1,6 +1,7 @@
 import {Component} from '@syncfusion/ej2-base';
 import {Nx2Evt_Destroy, Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../Nx2";
-import {createNx2HtmlBasic} from "../Nx2Utils";
+import {addNx2Class} from '../Nx2HtmlDecorator';
+import {createNx2HtmlBasic, isNx2} from "../Nx2Utils";
 import {Nx2Ej, StateNx2Ej, StateNx2EjRef} from "./Nx2Ej";
 
 export interface StateNx2EjBasicRef extends StateNx2EjRef{
@@ -20,6 +21,7 @@ export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic
 
     protected constructor(state?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjBasic');
     }
 
 
@@ -32,7 +34,25 @@ export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic
     // }
 
     onDestroy(args: Nx2Evt_Destroy): void {
-    }
+        if (this.state.children) {
+            this.state.children.forEach(child => {
+                try {
+                    if (child && isNx2(child))
+                        child.destroy();
+                } catch (e) {
+                    console.error('Error destroying child', e);
+                }
+            });
+        }
+
+        if ( this.obj && this.state.ej) {
+            try {
+                if ( (this.obj as any).destroy && typeof (this.obj as any).destroy === 'function')
+                    (this.obj as any).destroy();
+            } catch (_ignore) { }
+        }
+
+    } // onDestroy
 
     onLogic(args : Nx2Evt_OnLogic): void {
     }

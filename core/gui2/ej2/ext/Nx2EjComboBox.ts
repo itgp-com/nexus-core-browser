@@ -1,3 +1,4 @@
+import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {ComboBox, ComboBoxModel} from "@syncfusion/ej2-dropdowns";
@@ -18,6 +19,7 @@ export interface StateNx2EjComboBox<WIDGET_LIBRARY_MODEL extends ComboBoxModel =
 export class Nx2EjComboBox<STATE extends StateNx2EjComboBox = StateNx2EjComboBox> extends Nx2EjBasic<STATE,ComboBox> {
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, 'Nx2EjComboBox');
     }
 
 
@@ -32,6 +34,6 @@ export class Nx2EjComboBox<STATE extends StateNx2EjComboBox = StateNx2EjComboBox
 
         this.obj = new ComboBox(this.state.ej);
         this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        this.htmlElement.classList.add( 'Nx2EjComboBox');
+        // this.htmlElement.classList.add( 'Nx2EjComboBox');
     }
 }
