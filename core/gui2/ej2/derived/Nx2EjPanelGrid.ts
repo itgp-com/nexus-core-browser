@@ -1,6 +1,6 @@
 import {Grid} from "@syncfusion/ej2-grids";
 import {CSS_FLEX_MAX_XY} from "../../../CoreCSS";
-import {EnumPanelLayout, Nx2PanelLayout, StateNx2PanelLayout} from "../../generic/Nx2PanelLayout";
+import {EnumPanelLayout, Nx2PanelLayoutFlex, StateNx2PanelLayoutFlex} from "../../generic/Nx2PanelLayoutFlex";
 import {Nx2Evt_Resized} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {getGridDecoratorsHeight} from "../Ej2Utils";
@@ -8,7 +8,7 @@ import {Nx2EjGrid, StateNx2EjGrid} from "../ext/Nx2EjGrid";
 
 export type Elem_or_Nx2EjGrid<STATE extends StateNx2EjGrid = any> = HTMLElement | Nx2EjGrid<STATE>; // compatible with  Elem_or_Nx2
 
-export interface StateNx2EjPanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateNx2PanelLayout {
+export interface StateNx2EjPanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateNx2PanelLayoutFlex {
 
     /**
      * This is where the Grid component or wrapper.
@@ -30,9 +30,9 @@ export interface StateNx2EjPanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGr
 }
 
 /**
- * Specializes {@link Nx2PanelLayout} to use a Grid component as the center.
+ * Specializes {@link Nx2PanelLayoutFlex} to use a Grid component as the centerContainer.
  */
-export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends StateNx2EjPanelGrid = StateNx2EjPanelGrid> extends Nx2PanelLayout<STATE> {
+export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends StateNx2EjPanelGrid = StateNx2EjPanelGrid> extends Nx2PanelLayoutFlex<STATE> {
 
     nx2Grid: GRID_TYPE;
 
@@ -58,7 +58,7 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
 
     /**
      * Override this method to create a different type of grid.
-     * By default it only handles the grid in the center component type
+     * By default it only handles the grid in the centerContainer component type
      * @param position
      */
     stateToHTMLElement(position: EnumPanelLayout): HTMLElement {

@@ -33,7 +33,7 @@ export class ScreenAttributes {
    destroy_function ?: (screen: (AbstractWidget | Promise<AbstractWidget>)) => (void | Promise<void>);
 
    /**
-    * The dialog header in which the actual screen is being displayed. This is the top band of the Dialog, not the screen title
+    * The dialog header in which the actual screen is being displayed. This is the topContainer band of the Dialog, not the screen title
     * The function receives the freshly instantiated screen result of create_function as a parameter
     */
    header ?: (screenInstance: AnyScreen) => string | Promise<string>;

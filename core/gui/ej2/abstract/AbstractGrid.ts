@@ -87,7 +87,7 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
       x += await super.localContentEnd();
 
       /**
-       * Add all the column header templates right after the end grid div
+       * Add all the column header templates rightContainer after the end grid div
        */
       if (this.initArgs && (this.initArgs as Args_AbstractGrid).columnHeaderTemplates) {
          for (const value of (this.initArgs as Args_AbstractGrid).columnHeaderTemplates) {
@@ -212,7 +212,7 @@ export function gridWidth(columns: ColumnModel[]): number {
 
 
 /**
- * Calculate the total height of all the padding that the heading, filters and bottom paging controls take in a grid
+ * Calculate the total height of all the padding that the heading, filters and bottomContainer paging controls take in a grid
  * @param wgtGrid
  */
 export function gridDecoratorsHeight(wgtGrid: AbstractGrid): number {

@@ -320,7 +320,7 @@ export abstract class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialog
     */
    protected async headerMakeWidgetFromArgsHeaderField(): Promise<AbstractWidget> {
       if (this.initArgs.header == null)
-         this.initArgs.header = ''; // there's always a header so that we always have the top widgets
+         this.initArgs.header = ''; // there's always a header so that we always have the topContainer widgets
 
       let arg_header: String | AbstractWidget = await this.initArgs.header
 
@@ -341,7 +341,7 @@ export abstract class AbstractDialogWindow<ARGS_TYPE extends Args_AbstractDialog
    } //header_makeWidgetFromArgs
 
    /**
-    * Creates the back arrow that is placed in the left-most part of the dialog header and allows an iOS-like "Back" effect
+    * Creates the back arrow that is placed in the leftContainer-most part of the dialog header and allows an iOS-like "Back" effect
     * @protected
     */
    protected async headerBackArrowWidget(): Promise<AbstractWidget> {

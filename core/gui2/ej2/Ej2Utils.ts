@@ -4,7 +4,7 @@ import {isNx2} from '../Nx2Utils';
 
 
 /**
- * Calculate the total height of all the padding that the heading, filters and bottom paging controls take in a grid
+ * Calculate the total height of all the padding that the heading, filters and bottomContainer paging controls take in a grid
  * @param wgtGrid
  */
 export function getGridDecoratorsHeight(grid: Grid): number {

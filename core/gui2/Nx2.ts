@@ -97,10 +97,15 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      */
     protected _resizeSensorCallback: ResizeSensorCallback = debounce((_size: { width: number; height: number; }) => {
             if (this && this.initialized) {
-                this.onResized({
-                    widget: this,
-                    size: _size
-                });
+
+                let param: Nx2Evt_Resized = { widget: this, size: _size }
+
+                if (this.state.onResized) {
+                    this.state.onResized(param);
+                } else {
+                    this.onResized(param);
+                }
+
             } // if (thisX && thisX.obj && thisX.initialized )
         } // function body of debouncedFunction
         , this.resizeEventMinInterval);
@@ -111,7 +116,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * @type {boolean}
      * @readonly
      */
-    readonly  isNx2:boolean = true;
+    readonly isNx2: boolean = true;
 
     private _state: STATE;
 
@@ -294,7 +299,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
                 actualNx2Elem[NX2_CLASS] = this; // tag the element with the widget itself
             }
 
-            if (state.resizeTracked ) {
+            if (state.resizeTracked) {
                 // only if the widget has already been initialized (if it has not, then initLogic will apply it the first time
                 setTimeout(() => {
                         this._applyResizeSensor();
@@ -320,7 +325,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     abstract onLogic(args: Nx2Evt_OnLogic): void ;
 
     /**
-     * This is the perfect event in which to initialize any children or settings for 'this' right before
+     * This is the perfect event in which to initialize any children or settings for 'this' rightContainer before
      * the HTMLElement is created
      * @param args
      * @protected
@@ -413,8 +418,8 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
                 children = state.children;
             if (children && children.length > 0) {
                 children.map((child) => {
-                    if ( child) {
-                        if ( isNx2(child)) {
+                    if (child) {
+                        if (isNx2(child)) {
                             if (!child.initialized) {
                                 atLeastOneChildInitialized = true;
                                 return child.initLogic();
@@ -650,7 +655,7 @@ export interface Nx2Evt_Ref<EVENT_TYPE, WIDGET extends Nx2> {
 
 
     /**
-     * The top level widget that the refresh was triggered on
+     * The topContainer level widget that the refresh was triggered on
      * Null if the refresh is triggered at this level
      *
      */
@@ -663,7 +668,7 @@ export interface Nx2Evt_Ref<EVENT_TYPE, WIDGET extends Nx2> {
     isAlgoCreated?: boolean;
 
     /**
-     * The argument for the parent above this child (or null if this is the top level)
+     * The argument for the parent above this child (or null if this is the topContainer level)
      */
     parentArgument?: EVENT_TYPE;
 }
@@ -727,7 +732,7 @@ export interface Nx2Evt_Resized extends Nx2Evt {
 //             args.extras = args.extras || {};
 //
 //             let ref = args.ref;
-//             ref.topParent = ref.topParent || this; // if empty, then this is the top parent
+//             ref.topParent = ref.topParent || this; // if empty, then this is the topContainer parent
 //             ref.widget = this;
 //
 //             // if (!args.currentLevelOnly) {
@@ -836,7 +841,7 @@ export interface Nx2Evt_Resized extends Nx2Evt {
 //     args.extras = args.extras || {};
 //
 //     let ref = args.ref;
-//     ref.topParent = ref.topParent || this; // if empty, then this is the top parent
+//     ref.topParent = ref.topParent || this; // if empty, then this is the topContainer parent
 //     ref.widget = this;
 //
 //

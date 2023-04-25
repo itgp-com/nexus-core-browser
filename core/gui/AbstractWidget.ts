@@ -161,7 +161,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
 
    /**
     * Direct DialogWindow Container of this component.
-    * Use {@link #findDialogWindowContainer} to search up the tree of parent components and find the top component that has (possibly) a DialogWindow as a container
+    * Use {@link #findDialogWindowContainer} to search up the tree of parent components and find the topContainer component that has (possibly) a DialogWindow as a container
     */
    get dialogWindowContainer(): IDialogWindow {
       return this._dialogWindowContainer;
@@ -799,7 +799,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                this.handleError(err)
             }
          } catch (ex2) {
-            // Ironically, the error handler threw an error - we're really grasping at straws here - no one left to handle this, so just dump it to the console
+            // Ironically, the error handler threw an error - we're really grasping at straws here - no one leftContainer to handle this, so just dump it to the console
             console.log(ex2);
          }
       }
@@ -815,7 +815,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
    } // asyncPostRetVal
 
    /**
-    * Searches the chain of ancestors and returns the DialogWindow (if any) that contains any of the ancestors. (Usually it's the top level ancestor that has the DialogWindow.)
+    * Searches the chain of ancestors and returns the DialogWindow (if any) that contains any of the ancestors. (Usually it's the topContainer level ancestor that has the DialogWindow.)
     */
    findDialogWindowContainer(): IDialogWindow {
 

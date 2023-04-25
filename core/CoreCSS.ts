@@ -6,12 +6,12 @@ export const CSS_FLEX_MAX_WIDTH                 = "flex-full-width";
 export const CSS_FLEX_ROW_DIRECTION             = "flex-container-row";
 export const CSS_FLEX_COL_DIRECTION             = "flex-container-column";
 export const CSS_FLEX_COL_DIRECTION_MAX         = "core-full";
-export const CSS_FLEX_CENTER_MAIN_AXIS          = "flex-mainAxis-center";
-export const CSS_FLEX_CENTER_SELF               = "flex-align-self-center";
+export const CSS_FLEX_CENTER_MAIN_AXIS          = "flex-mainAxis-centerContainer";
+export const CSS_FLEX_CENTER_SELF               = "flex-align-self-centerContainer";
 export const CSS_FLEX_CONTAINER                 = "flex-container-lcr";
 export const CSS_FLEX_CONTAINER_CENTERING       = "flex-lcr-box";
-export const CSS_FLEX_CONTAINER_LEFT_JUSTIFIED  = "flex-lcr-box-left";
-export const CSS_FLEX_CONTAINER_RIGHT_JUSTIFIED = "flex-lcr-box-right";
+export const CSS_FLEX_CONTAINER_LEFT_JUSTIFIED  = "flex-lcr-box-leftContainer";
+export const CSS_FLEX_CONTAINER_RIGHT_JUSTIFIED = "flex-lcr-box-rightContainer";
 export const CSS_MAX_XY                         = "core_height_width_100_percent";
 
 export const css_vertical_spacer      = 'core_vertical_spacer';
@@ -63,7 +63,7 @@ cssAddClass(CSS_CORE_FLEX_FULL_WIDTH, `  display: flex;  flex-direction: row;  h
 
 /**
  * display: flex;
- * justify-content: center;
+ * justify-content: centerContainer;
  */
 export const CSS_CORE_CENTER_SELF = 'css_core_center_self';
 cssAddClass(CSS_CORE_CENTER_SELF, {

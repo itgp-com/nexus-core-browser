@@ -86,7 +86,7 @@ export class WxPanelSingleTextEdit extends WxPanelBase<any> {
                                                                thisX.wgtTxt_value = await WxText.create(textArgs),
                                                                await WxSpacer_Vertical.create({pixels: 25}),
                                                                await WxRow.create({
-                                                                                     htmlTagClass: 'flex-mainAxis-center',
+                                                                                     htmlTagClass: 'flex-mainAxis-centerContainer',
                                                                                      children:     [
                                                                                         await WxButtonPrimary.create({
                                                                                                                         label:   'Ok',

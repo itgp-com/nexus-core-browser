@@ -160,7 +160,7 @@ export function htmlToElement(htmlString: string): HTMLElement {
    const div     = document.createElement('div');
    div.innerHTML = htmlString.trim();
 
-   // Change this to div.childNodes to support multiple top-level nodes
+   // Change this to div.childNodes to support multiple topContainer-level nodes
    return div.firstElementChild as HTMLElement;
 } //---------------------------------------
 /**

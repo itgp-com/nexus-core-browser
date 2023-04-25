@@ -51,9 +51,11 @@ export class IHtmlUtils {
      * @param {StateNx2} state - The StateNx2 object to initialize the Nx2HtmlDecorator for.
      */
     static initForNx2(state: StateNx2) {
+        if (!state)
+            return;
         let deco: Nx2HtmlDecorator = state.deco;
-        IHtmlUtils.init(deco);
-        deco.state = state; // stamp the state in the decorator
+        state.deco = IHtmlUtils.init(deco); // if state.deco was null, it is now initialized
+        state.deco.state = state; // stamp the state in the decorator
     }
 
     /**

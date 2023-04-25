@@ -14,7 +14,7 @@ export class Args_WxPanelBase extends Args_AnyScreen {
    showHeaderRefreshButton ?: boolean;
 
    /**
-    * Determines whether the feedback button is displayed in the WxDialogWindow header for this window (assuming this is the top content window obviously)
+    * Determines whether the feedback button is displayed in the WxDialogWindow header for this window (assuming this is the topContainer content window obviously)
     *  Defaults to true for this app
     */
    showHeaderFeedbackButton ?: boolean;

@@ -684,7 +684,7 @@ export function cssNestedDeclarationToRuleStrings(rootClassName: string, declara
         // Collect all generated css rules.
         // lines.push(`${selector} {`);
         for (let prop in cssProps) {
-            // collect the top level css rules
+            // collect the topContainer level css rules
             lines.push(`${prop}:${(<any>cssProps)[prop]};`);
         }
         // lines.push("}");
@@ -730,7 +730,7 @@ export function cssStyleToString(cssStyle: CssStyle, cssDelimiter: string = ''):
             } // for
             const lines: string[] = [];
             for (let prop in cssProps) {
-                // collect the top level css rules
+                // collect the topContainer level css rules
                 lines.push(`${prop}:${(<any>cssProps)[prop]};`);
             }
             style = lines.join(cssDelimiter); // no spaces needed

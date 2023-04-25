@@ -7,7 +7,7 @@ import {cssStyleToString}                   from "../../../CoreUtils";
 
 export abstract class Args_WgtCheckBox_Label {
    position ?: "Top" | "Leading" | "Trailing";
-   /// Number of pixels for the margin (bottom or side depending on label position)
+   /// Number of pixels for the margin (bottomContainer or side depending on label position)
    margin?: number;
    wrapper           ?: IArgs_HtmlTag; // duplicates Args_AnyWidget field
 }

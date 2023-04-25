@@ -12,7 +12,7 @@ export abstract class DefaultMainUI extends NexusUI {
 
    // ----------------------- Start MainUI abstract method implementation -------------------------------
    /**
-    * Gets called right after init() to allow for all the initial URL-based processing to happen
+    * Gets called rightContainer after init() to allow for all the initial URL-based processing to happen
     * One should do their await based calls here at the beginning of the app, and only then
     * instantiate the UI
     */

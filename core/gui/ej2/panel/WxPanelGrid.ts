@@ -13,23 +13,23 @@ Grid.Inject(Toolbar, ExcelExport, Page, Resize, ColumnMenu, Aggregate, Sort);
 export class Args_WxPanelGrid<GRID_DATA = any> extends Args_WxPanelBase {
 
    /**
-    * Widgets that will render on top of the Grid
+    * Widgets that will render on topContainer of the Grid
     */
    topWidgets?: AbstractWidget | AbstractWidget[] | Promise<AbstractWidget> | Promise<AbstractWidget[]>;
 
    /**
-    * Custom style for <link>WgtPanel_RowFlex</link> that contains the grid and any left panel
+    * Custom style for <link>WgtPanel_RowFlex</link> that contains the grid and any leftContainer panel
     */
    gridContainerStyle ?: CssStyle;
 
    /**
-    * Custom classes for <link>WgtPanel_RowFlex</link> that contains the grid and any left panel
+    * Custom classes for <link>WgtPanel_RowFlex</link> that contains the grid and any leftContainer panel
     */
    gridContainerClasses ?: string;
 
 
    /**
-    * The component to be inserted to the left of the grid. Obviously, this component can be a panel containing many other components
+    * The component to be inserted to the leftContainer of the grid. Obviously, this component can be a panel containing many other components
     */
    leftGridPanel ?: AbstractWidget;
    /**
@@ -40,7 +40,7 @@ export class Args_WxPanelGrid<GRID_DATA = any> extends Args_WxPanelBase {
    leftGridPanelClasses ?: string;
 
    /**
-    * Additional styles to the default "flex-grow:0;margin-right:${leftGridPanelSpacing}px;"
+    * Additional styles to the default "flex-grow:0;margin-rightContainer:${leftGridPanelSpacing}px;"
     */
    leftGridPanelStyle ?: CssStyle;
 
@@ -104,7 +104,7 @@ export class WxPanelGrid<GRID_DATA = any, ARGS_TYPE extends Args_WxPanelGrid = A
          thisX.topWidgetsResolved = await args.topWidgets;
       }
 
-      // ------ Add left side panel to the grid if necessary -------------
+      // ------ Add leftContainer side panel to the grid if necessary -------------
       let gridContainerChildren: AbstractWidget[] = []
       if (args.leftGridPanel) {
 

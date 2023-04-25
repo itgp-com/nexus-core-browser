@@ -75,7 +75,7 @@ export abstract class AbstractDropDownDB<ARG_CLASS extends Args_AbstractDropDown
 
    }
    /**
-    * Allows extending classes to execute code right after the call to <pre>super.initialize_DropDown(args);</pre> in  {@link #_initialize} method has run
+    * Allows extending classes to execute code rightContainer after the call to <pre>super.initialize_DropDown(args);</pre> in  {@link #_initialize} method has run
     * @param args
     */
    protected async post_initialize_DropDownDB(args: ARG_CLASS){

@@ -437,7 +437,7 @@ export class WxPanelEdit<DATA_TYPE, ARGS_TYPE extends Args_WxPanelEdit<DATA_TYPE
    } // _doSave
 
    /**
-    * Called right before the save is instantiated
+    * Called rightContainer before the save is instantiated
     * @param record
     */
    async beforeSave(record: DATA_TYPE) {
