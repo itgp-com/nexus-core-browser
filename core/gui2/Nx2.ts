@@ -318,7 +318,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * This is the method that gives a component the chance to call any JavaScript and instantiate the widget.
      *
      *
-     * The method is called by {@link initLogic} method, after all the children's {@link initLogic} methods have been called.
+     * The method is called by initLogic method, after all the children's initLogic methods have been called.
      * Therefore, all children JS objects are available at this point in time.
      *
      */
