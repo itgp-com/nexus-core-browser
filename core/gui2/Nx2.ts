@@ -11,7 +11,7 @@ import {ExceptionEvent} from "../ExceptionEvent";
 import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
 import {addNx2Child, removeNx2Child} from './ej2/Ej2Utils';
 import {addNx2Class, IHtmlUtils} from "./Nx2HtmlDecorator";
-import {Elem_or_Nx2, isNx2} from './Nx2Utils';
+import {Elem_or_Nx2, getFirstHTMLElementChild, isNx2} from './Nx2Utils';
 import {StateNx2} from "./StateNx2";
 
 
@@ -47,23 +47,17 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      *
      * Useful when overriding in order to customize the state object before calling super.
      *
-     * *** DO NOT CHANGE ANY OF THE FIELDS OF <code>this</code> as they will be wiped/set to default values
-     * AFTER this call by the instance member initialized. If you need to change properties of this, please
-     * call a local initialization function after the constructor
-     * Overriding code example:
-     * <pre>
-     *       protected onStateInitialized(state: STATE) {
-     *       this._customizeState(state);
-     *       super.onStateInitialized(state);
-     *    }
-     *</pre>
-     *
-     * where _customizeState is a method that customizes the state object onHTML, etc.
-     *
      * @param state
      * @protected
      */
     protected onStateInitialized(state: STATE) {
+
+        if (state.wrapper && !state.wrapperTagId)
+            if (state.tagId)
+                state.wrapperTagId = state.tagId + '_wrapper';
+            else
+                state.wrapperTagId = getRandomString(this._className + '_wrapper');
+
 
         /**
          * At development time detect that the state has changed
@@ -98,7 +92,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     protected _resizeSensorCallback: ResizeSensorCallback = debounce((_size: { width: number; height: number; }) => {
             if (this && this.initialized) {
 
-                let param: Nx2Evt_Resized = { widget: this, size: _size }
+                let param: Nx2Evt_Resized = {widget: this, size: _size}
 
                 if (this.state.onResized) {
                     this.state.onResized(param);
@@ -248,6 +242,16 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
     //--------- Getters and Setters ----------------
 
+    /**
+     * Retrieves the HTMLElement associated with the widget. If the HTMLElement
+     * reference is not yet initialized, it triggers the 'onStateInitialized' event
+     * (if not already called) and initializes the HTMLElement.
+     *
+     * If there is a wrapper element, this instance will be the wrapper element.
+     * If you need the element to which the JS component is anchored, user the htmlElementAnchor property.
+     *
+     * @return {HTMLElement} The HTMLElement associated with the widget.
+     */
     get htmlElement(): HTMLElement {
 
         this._triggerOnStateInitialized(); // trigger onStateInitialzed if not already called
@@ -308,6 +312,62 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
                 );
             }
         }
+    }
+
+
+    /**
+     * Retrieves the actual HTMLElement representing the widget, taking into account
+     * the presence of a wrapper and tagId.
+     *
+     * If a wrapper is present and has a tagId, the element with the specified tagId is returned.
+     *
+     * If a wrapper is present but doesn't have a tagId, the first HTMLElement child or the wrapper itself is
+     * returned, depending on whether it has child nodes or not.
+     *
+     * If no wrapper is present, the HTMLElement itself is returned.
+     *
+     * @return {HTMLElement} The actual HTMLElement representing the widget. Could be null in fringe cases where the wrapper somehow has no children.
+     */
+    get htmlElementAnchor(): HTMLElement {
+        let htmlElement = this.htmlElement;
+        if (htmlElement == null)
+            return null;
+
+        let state = this.state;
+        let hasWrapper = state.wrapper != null;
+        let hasTagId = this.hasTagId;
+        if (hasWrapper) {
+            if (hasTagId) {
+                // has wrapper and has tagId: the tagId is the element
+                return htmlElement.querySelector(`#${state.tagId}`);
+            } else {
+                if (htmlElement.hasChildNodes()) {
+                    // wrapper but no tagId, and has children: the first child is it
+                    return getFirstHTMLElementChild(htmlElement);
+                } else {
+                    // wrapper but no tagId, and no children: the wrapper is it
+                    return htmlElement;
+                }
+            }
+        } else {
+            // no wrapper: the htmlElement itself is it
+            return htmlElement;
+        }
+    } // htmlElementAnchor
+
+    /**
+     * Determines if the widget has a tagId. It checks the state for the presence of
+     * a tagId and ensures that the 'noTagIdInHtml' property is false.
+     *
+     * @return {boolean} True if the widget has a tagId, otherwise false.
+     */
+    get hasTagId(): boolean {
+        let state = this.state;
+        if (!state)
+            return false;
+        if (state.noTagIdInHtml)
+            return false;
+        return state.tagId != null;
     }
 
     abstract onDestroy(args: Nx2Evt_Destroy): void;

@@ -27,6 +27,9 @@ export class Nx2EjUploader<STATE extends StateNx2EjUploader = StateNx2EjUploader
         // Tag looks like this: <input type="file" id='xyz_123' />
         state.deco.tag = 'input';
         state.deco.otherAttr.type = 'file';
+        if ( state.wrapper == null ) {
+            state.wrapper = {}; // must have a wrapper or else EJ2 will not work
+        }
         super.onStateInitialized(state);
     }
 
@@ -34,7 +37,6 @@ export class Nx2EjUploader<STATE extends StateNx2EjUploader = StateNx2EjUploader
         super.onLogic(args);
 
         this.obj = new Uploader(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add( 'Nx2EjUploader');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

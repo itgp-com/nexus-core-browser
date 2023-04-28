@@ -27,7 +27,6 @@ export class Nx2EjCalendar<STATE extends StateNx2EjCalendar = StateNx2EjCalendar
         super.onLogic(args);
 
         this.obj = new Calendar(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add('Nx2EjCalendar');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

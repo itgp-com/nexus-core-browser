@@ -32,7 +32,6 @@ export class Nx2EjBreadcrumb<STATE extends StateNx2EjBreadcrumb = StateNx2EjBrea
         super.onLogic(args);
 
         this.obj = new Breadcrumb(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add('Nx2EjBreadcrumb');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

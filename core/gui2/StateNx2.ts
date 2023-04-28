@@ -45,6 +45,10 @@ export interface StateNx2 {
     */
    deco?: Nx2HtmlDecorator;
 
+   /**
+    * A wrapper element around the HTML element of the widget
+    */
+   wrapper ?: Nx2HtmlDecorator;
 
    /**
     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -85,6 +89,12 @@ export interface StateNx2 {
     * @see noTagIdInHtml
     */
    tagId?: string;
+
+   /**
+    * The id of the wrapper element around the HTML element of the widget
+    * Defined as `${tagId}_wrapper` by default
+    */
+   wrapperTagId ?: string;
 
    // onClear?: (args:Nx2Evt_OnClear) =>  void ;
 

@@ -32,7 +32,6 @@ export class Nx2EjAutoComplete<STATE extends StateNx2EjAutoComplete = StateNx2Ej
         super.onLogic(args);
 
         this.obj = new AutoComplete(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add('Nx2EjAutoComplete');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

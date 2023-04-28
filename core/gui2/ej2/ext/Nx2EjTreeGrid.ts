@@ -27,7 +27,6 @@ export class Nx2EjTreeGrid<STATE extends StateNx2EjTreeGrid = StateNx2EjTreeGrid
         super.onLogic(args);
 
         this.obj = new TreeGrid(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add( 'Nx2EjTreeGrid');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

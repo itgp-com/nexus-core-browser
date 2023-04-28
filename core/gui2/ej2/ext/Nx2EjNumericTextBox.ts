@@ -1,9 +1,9 @@
 import {NumericTextBox, NumericTextBoxModel} from "@syncfusion/ej2-inputs";
+import {StateNx2PropertyName} from "../../generic/StateNx2PropertyName";
 import {Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class, IHtmlUtils, Nx2HtmlDecorator} from "../../Nx2HtmlDecorator";
 import {createNx2HtmlBasic, createNx2HtmlBasicFromDecorator} from "../../Nx2Utils";
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
-import {StateNx2PropertyName} from "../../generic/StateNx2PropertyName";
 
 export enum NumericTextBoxType_Ej2_Material {
     regular = '',
@@ -29,7 +29,6 @@ export interface StateNx2EjNumericTextBox extends StateNx2EjBasic<NumericTextBox
      */
     noErrorLine?: boolean;
 
-    wrapperDecorator?: Nx2HtmlDecorator;
     labelDecorator?: Nx2HtmlDecorator;
     errorDecorator?: Nx2HtmlDecorator;
 
@@ -42,7 +41,6 @@ export interface StateNx2EjNumericTextBox extends StateNx2EjBasic<NumericTextBox
 
 export class Nx2EjNumericTextBox extends Nx2EjBasic<StateNx2EjNumericTextBox, NumericTextBox> {
 
-   wrapperTagId:string;
    labelTagId:string;
 
     constructor(state ?: StateNx2EjNumericTextBox) {
@@ -55,8 +53,11 @@ export class Nx2EjNumericTextBox extends Nx2EjBasic<StateNx2EjNumericTextBox, Nu
     }
 
     protected onStateInitialized(state: StateNx2EjNumericTextBox) {
-       this.wrapperTagId = `wrapper_${this.state.tagId}`;
        this.labelTagId = `label_${this.state.tagId}`;
+       if ( !state.wrapper){
+            state.wrapper = {};
+
+       }
 
        IHtmlUtils.initForNx2(state);
 
@@ -69,10 +70,9 @@ export class Nx2EjNumericTextBox extends Nx2EjBasic<StateNx2EjNumericTextBox, Nu
        let state = this.state;
         let hasErrorLine = !state.noErrorLine;
 
-      state.wrapperDecorator = IHtmlUtils.init(state.wrapperDecorator);
-      let wrapperDeco = state.wrapperDecorator;
-      // wrapperDeco.classes = ['e-input-group', 'e-float-input']
-      wrapperDeco.otherAttr['id'] = this.wrapperTagId;
+      state.wrapper = IHtmlUtils.init(state.wrapper);
+      let wrapperDeco = state.wrapper;
+      wrapperDeco.otherAttr['id'] = state.wrapperTagId;
       let wrapperElement: HTMLElement = createNx2HtmlBasicFromDecorator(wrapperDeco);
 
 
@@ -116,12 +116,11 @@ export class Nx2EjNumericTextBox extends Nx2EjBasic<StateNx2EjNumericTextBox, Nu
    }
 
    onLogic(args: Nx2Evt_OnLogic) {
-        let state = this.state;
 
-        this.obj = new NumericTextBox(state.ej);
-        let anchor = this.htmlElement.getElementsByTagName('input')[0];
-        this.obj.appendTo(anchor);
+        this.obj = new NumericTextBox(this.state.ej);
+        this.obj.appendTo(this.htmlElementAnchor);
+        // let anchor = this.htmlElement.getElementsByTagName('input')[0];
+        // this.obj.appendTo(anchor);
 
-        // this.htmlElement.classList.add('Nx2EjNumericTextBox');
     }
 }

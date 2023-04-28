@@ -29,8 +29,7 @@ export class Nx2EjGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends Nx
         super.onLogic(args);
 
         this.obj = new Grid(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add( 'Nx2EjGrid');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 
     /**

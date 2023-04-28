@@ -27,6 +27,17 @@ export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2Ej
         super.onLogic(args);
 
         this.obj = new Tab(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+
+        let fAddTo = this.obj.addTab; // addTab(items: TabItemModel[], index?: number): void;
+
+        this.obj.addTab = (items: any, index?: number) => {
+            fAddTo.apply(this.obj, [items, index]);
+            this.htmlElement.querySelectorAll('.e-tab-text').forEach(el => el.classList.add('app-tab-no-text-transform'));
+        }
+
+
+        // Remove forced uppercasing from Tab
+        this.htmlElement.querySelectorAll('.e-tab-text').forEach(el => el.classList.add('app-tab-no-text-transform'));
     }
 }

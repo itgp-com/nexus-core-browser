@@ -27,7 +27,6 @@ export class Nx2EjAccordion<STATE extends StateNx2EjAccordion = StateNx2EjAccord
         super.onLogic(args);
 
         this.obj = new Accordion(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add('Nx2EjAccordion');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

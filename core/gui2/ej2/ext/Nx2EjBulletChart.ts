@@ -27,7 +27,6 @@ export class Nx2EjBulletChart<STATE extends StateNx2EjBulletChart = StateNx2EjBu
         super.onLogic(args);
 
         this.obj = new BulletChart(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add('Nx2EjBulletChart');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

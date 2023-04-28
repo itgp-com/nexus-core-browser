@@ -27,7 +27,6 @@ export class Nx2EjAccumulationChart<STATE extends StateNx2EjAccumulationChart = 
         super.onLogic(args);
 
         this.obj = new AccumulationChart(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add('Nx2EjAccumulationChart');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

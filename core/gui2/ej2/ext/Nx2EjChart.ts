@@ -59,6 +59,6 @@ export class Nx2EjChart<STATE extends StateNx2EjChart = StateNx2EjChart> extends
         super.onLogic(args);
 
         this.obj = new Chart(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

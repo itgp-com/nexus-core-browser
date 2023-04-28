@@ -27,7 +27,6 @@ export class Nx2EjBarcode<STATE extends StateNx2EjBarcode = StateNx2EjBarcode> e
         super.onLogic(args);
 
         this.obj = new BarcodeGenerator(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add('Nx2EjBarcode');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

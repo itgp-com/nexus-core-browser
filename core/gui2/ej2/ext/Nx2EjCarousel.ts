@@ -27,7 +27,6 @@ export class Nx2EjCarousel<STATE extends StateNx2EjCarousel = StateNx2EjCarousel
         super.onLogic(args);
 
         this.obj = new Carousel(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add('Nx2EjCarousel');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

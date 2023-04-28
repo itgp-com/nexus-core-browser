@@ -27,7 +27,6 @@ export class Nx2EjListView<STATE extends StateNx2EjListView = StateNx2EjListView
         super.onLogic(args);
 
         this.obj = new ListView(this.state.ej);
-        this.obj.appendTo(this.htmlElement); // this will initialize the htmlElement if needed
-        // this.htmlElement.classList.add('Nx2EjListView');
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 }

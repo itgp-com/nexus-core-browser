@@ -29,7 +29,6 @@ export interface StateNx2EjTextField extends StateNx2EjBasic<TextBoxModel>, Stat
      */
     noErrorLine?: boolean;
 
-    wrapperDecorator?: Nx2HtmlDecorator;
     labelDecorator?: Nx2HtmlDecorator;
     errorDecorator?: Nx2HtmlDecorator;
 
@@ -68,10 +67,9 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
         let state = this.state;
         let hasErrorLine = !state.noErrorLine;
 
-        state.wrapperDecorator = IHtmlUtils.init(state.wrapperDecorator);
-        let wrapperDeco = state.wrapperDecorator;
-        // wrapperDeco.classes = ['e-input-group', 'e-float-input']
-        wrapperDeco.otherAttr['id'] = this.wrapperTagId;
+        state.wrapper = IHtmlUtils.init(state.wrapper);
+        let wrapperDeco = state.wrapper;
+        wrapperDeco.otherAttr['id'] = state.wrapperTagId;
         let wrapperElement: HTMLElement = createNx2HtmlBasicFromDecorator(wrapperDeco);
 
 
@@ -115,11 +113,10 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
     }
 
     onLogic(args: Nx2Evt_OnLogic) {
-        let state = this.state;
 
-        this.obj = new TextBox(state.ej);
-        let anchor = this.htmlElement.getElementsByTagName('input')[0];
-        this.obj.appendTo(anchor);
-        // this.htmlElement.classList.add('Nx2EjTextField');
+        this.obj = new TextBox(this.state.ej);;
+        this.obj.appendTo(this.htmlElementAnchor);
+        // let anchor = this.htmlElement.getElementsByTagName('input')[0];
+        // this.obj.appendTo(anchor);
     }
 }

@@ -1,5 +1,5 @@
 import {escape} from "lodash";
-import {htmlToElement} from "../BaseUtils";
+import {getRandomString, htmlToElement} from "../BaseUtils";
 import {getErrorHandler} from '../CoreErrorHandling';
 import {Nx2, NX2_CLASS} from "./Nx2";
 import {IHtmlUtils, Nx2HtmlDecorator} from "./Nx2HtmlDecorator";
@@ -46,25 +46,46 @@ function hasNoClosingHtmlTag(tag: string): boolean {
 export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLElement {
     state = state || {} as STATE;
     state.deco = IHtmlUtils.init(state.deco);
+    let deco: Nx2HtmlDecorator = state.deco;
 
-    let decorator: Nx2HtmlDecorator = state.deco;
+    let hasWrapper: boolean = state.wrapper != null;
+    let wrapper_deco: Nx2HtmlDecorator = null;
+    let wrapperId: string = null;
+    if (hasWrapper)
+        wrapper_deco = IHtmlUtils.init(state.wrapper);
 
-    // let html_id: string = ''
     if (!state.noTagIdInHtml && state?.tagId) {
         // if id attribute is generated
-        decorator.otherAttr['id'] = state.tagId;
-        // html_id = ` id="${widget.tagId}"`;
-    }
+        deco.otherAttr['id'] = state.tagId;
+
+        if (hasWrapper) {
+            if ( state.wrapperTagId){
+                wrapperId = state.wrapperTagId;
+            } else {
+
+                if ( state.tagId)
+                    state.wrapperTagId = state.tagId + '_wrapper';
+                 else
+                    state.wrapperTagId = getRandomString(this._className + '_wrapper');
+
+
+                 state.wrapperTagId = wrapperId;
+            }
+            wrapper_deco.otherAttr['id'] = wrapperId;
+        }
+    } // if tagId
+
+
     let x: string = "";
-    x += `<${decorator.tag} ${IHtmlUtils.all(decorator)}>`;
-    if (decorator.text) {
-        let value: string = decorator.text;
-        if (decorator.escapeText)
+    x += `<${deco.tag} ${IHtmlUtils.all(deco)}>`;
+    if (deco.text) {
+        let value: string = deco.text;
+        if (deco.escapeText)
             value = escape(value);
         x += value;
     }
-    if (!hasNoClosingHtmlTag(decorator.tag))
-        x += `</${decorator.tag}>`;
+    if (!hasNoClosingHtmlTag(deco.tag))
+        x += `</${deco.tag}>`;
 
     let htmlElement: HTMLElement = htmlToElement(x);
 
@@ -74,8 +95,8 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
         for (let i = 0; i < children.length; i++) {
             let child: Elem_or_Nx2 = children[i];
             let childHtmlElement: HTMLElement;
-            if ( child) {
-                if ( isNx2(child)) {
+            if (child) {
+                if (isNx2(child)) {
                     childHtmlElement = child.htmlElement;
                 } else {
                     childHtmlElement = child as HTMLElement;
@@ -87,6 +108,25 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
             }
         } // for children
     } // if (state.children)
+
+
+    if (hasWrapper) {
+        let innerHtmlElement: HTMLElement = htmlElement;
+
+        let wrap_x: string = "";
+        wrap_x += `<${wrapper_deco.tag} ${IHtmlUtils.all(wrapper_deco)}>`;
+        if (wrapper_deco.text) {
+            let value: string = wrapper_deco.text;
+            if (wrapper_deco.escapeText)
+                value = escape(value);
+            wrap_x += value;
+        }
+        if (!hasNoClosingHtmlTag(wrapper_deco.tag))
+            wrap_x += `</${wrapper_deco.tag}>`;
+
+        htmlElement = htmlToElement(wrap_x); // replace the htmlElement with the wrapper
+        htmlElement.appendChild(innerHtmlElement); // place the real anchor inside the wrapper
+    } // if hasWrapper
 
     return htmlElement;
 } // createHTMLStandard
@@ -276,3 +316,25 @@ export function removeNx2Child(child: Nx2, parent: Elem_or_Nx2): boolean {
     }
     return false;
 } // removeNx2Child
+
+/**
+ * Safely retrieves the first HTMLElement child of a given parent HTMLElement instance.
+ * Returns null if the parent is null or no HTMLElement child is found.
+ *
+ * @param {HTMLElement | null} parent - The parent HTMLElement instance or null.
+ * @returns {HTMLElement | null} The first HTMLElement child, or null if not found.
+ */
+export function getFirstHTMLElementChild(parent: HTMLElement | null): HTMLElement | null {
+    if (!parent) {
+        return null;
+    }
+
+    for (let i = 0; i < parent.children.length; i++) {
+        const child = parent.children.item(i);
+        if (child instanceof HTMLElement) {
+            return child;
+        }
+    }
+
+    return null;
+}
