@@ -83,29 +83,6 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
 
     /**
-     * Using {@link debounce} and not {@link throttle} because we want to fire the event only once
-     * AFTER the resize is complete. Throttle would fire the event first, debouncewaits the minimum interval
-     * before firing. With throttle, we get an initial endless loop of resize events.
-     *
-     * @protected
-     */
-    protected _resizeSensorCallback: ResizeSensorCallback = debounce((_size: { width: number; height: number; }) => {
-            if (this && this.initialized) {
-
-                let param: Nx2Evt_Resized = {widget: this, size: _size}
-
-                if (this.state.onResized) {
-                    this.state.onResized(param);
-                } else {
-                    this.onResized(param);
-                }
-
-            } // if (thisX && thisX.obj && thisX.initialized )
-        } // function body of debouncedFunction
-        , this.resizeEventMinInterval);
-
-
-    /**
      * A boolean indicating this instance is an Nx2.
      * @type {boolean}
      * @readonly
@@ -147,15 +124,33 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         this._className = value;
     }
 
-    //---------------- abstract methods ----------------
+    //---------------- resize section ----------------
+
+
+    /**
+     *
+     * @param evt Nx2Evt_Resized
+     */
+    onResized(evt?: Nx2Evt_Resized): void {
+    }
+
 
     private _resizeSensor: ResizeSensor;
+    private _resizeAllowed: boolean = true;
 
-    get resizeSensor(): ResizeSensor {
+    public get resizeAllowed(): boolean {
+        return this._resizeAllowed;
+    }
+
+    public set resizeAllowed(value: boolean) {
+        this._resizeAllowed = value;
+    }
+
+    protected get resizeSensor(): ResizeSensor {
         return this._resizeSensor;
     }
 
-    set resizeSensor(value: ResizeSensor) {
+    protected set resizeSensor(value: ResizeSensor) {
         this._resizeSensor = value;
     }
 
@@ -173,6 +168,56 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     set resizeEventMinInterval(value: number) {
         this._resizeEventMinInterval = value;
     }
+
+    protected _applyResizeSensor(): void {
+
+        if ( !this.resizeAllowed)
+            return;
+
+        // initialize the min interval if not already set
+        this.resizeEventMinInterval
+
+        try {
+            if (this.resizeSensor)
+                this.resizeSensor.detach();
+        } catch (e) {
+            this.handleError(e);
+        }
+
+        this.resizeSensor = null;
+        this.resizeSensor = new ResizeSensor(this.htmlElement, this._resizeSensorCallback);
+        this.resizeAllowed = true; // allow resize events to fire
+
+    } // createResizeSensor
+
+
+    /**
+     * Using {@link debounce} and not {@link throttle} because we want to fire the event only once
+     * AFTER the resize is complete. Throttle would fire the event first, debouncewaits the minimum interval
+     * before firing. With throttle, we get an initial endless loop of resize events.
+     *
+     * @protected
+     */
+    protected _resizeSensorCallback: ResizeSensorCallback = debounce((_size: { width: number; height: number; }) => {
+            if (this.resizeAllowed) {
+                if (this && this.initialized) {
+
+                    let param: Nx2Evt_Resized = {widget: this, size: _size}
+
+                    if (this.state.onResized) {
+                        this.state.onResized(param);
+                    } else {
+                        this.onResized(param);
+                    }
+
+                } // if (thisX && thisX.obj && thisX.initialized )
+            } // if resizeAllowed
+        } // function body of debouncedFunction
+        , this.resizeEventMinInterval);
+
+
+    //---------------- end resize methods ----------------
+
 
     private _obj: JS_COMPONENT;
 
@@ -646,29 +691,6 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         }
         return true;
     }
-
-    /**
-     *
-     * @param evt
-     */
-    onResized(evt?: Nx2Evt_Resized): void {
-    }
-
-    protected _applyResizeSensor(): void {
-
-        // initialize the min interval if not already set
-        this.resizeEventMinInterval
-
-        try {
-            if (this.resizeSensor)
-                this.resizeSensor.detach();
-        } catch (e) {
-            this.handleError(e);
-        }
-
-        this.resizeSensor = null;
-        this.resizeSensor = new ResizeSensor(this.htmlElement, this._resizeSensorCallback);
-    } // createResizeSensor
 
     //---------------------------------------------
     private _initStateCalled: boolean = false;

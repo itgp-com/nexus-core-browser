@@ -1,7 +1,6 @@
 import {Grid} from "@syncfusion/ej2-grids";
 import {CSS_FLEX_MAX_XY} from "../../../CoreCSS";
-import {Nx2PanelLayout, StateNx2PanelLayout} from '../../generic/Nx2PanelLayout';
-import {EnumPanelLayout} from "../../generic/Nx2PanelLayoutFlex";
+import {EnumPanelLayout, Nx2PanelLayoutFlex, StateNx2PanelLayoutFlex} from "../../generic/Nx2PanelLayoutFlex";
 import {Nx2Evt_Resized} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {getGridDecoratorsHeight} from "../Ej2Utils";
@@ -9,7 +8,7 @@ import {Nx2EjGrid, StateNx2EjGrid} from "../ext/Nx2EjGrid";
 
 export type Elem_or_Nx2EjGrid<STATE extends StateNx2EjGrid = any> = HTMLElement | Nx2EjGrid<STATE>; // compatible with  Elem_or_Nx2
 
-export interface StateNx2EjPanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateNx2PanelLayout{
+export interface StateNx2EjPanelGridFlex<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateNx2PanelLayoutFlex {
 
     /**
      * This is where the Grid component or wrapper.
@@ -33,7 +32,7 @@ export interface StateNx2EjPanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGr
 /**
  * Specializes {@link Nx2PanelLayoutFlex} to use a Grid component as the centerContainer.
  */
-export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends StateNx2EjPanelGrid = StateNx2EjPanelGrid> extends Nx2PanelLayout<STATE> {
+export class Nx2EjPanelGridFlex<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends StateNx2EjPanelGridFlex = StateNx2EjPanelGridFlex> extends Nx2PanelLayoutFlex<STATE> {
 
     nx2Grid: GRID_TYPE;
 
@@ -42,7 +41,7 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
     }
 
     protected onStateInitialized(state: STATE) {
-        addNx2Class(state.deco, [CSS_FLEX_MAX_XY, 'Nx2EjPanelGrid']);
+        addNx2Class(state.deco, [CSS_FLEX_MAX_XY, 'Nx2EjPanelGridFlex']);
 
         if (state.resizeTracked == null)
             state.resizeTracked = true; // enable resize tracking by default
@@ -91,33 +90,26 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
     onResized(evt?: Nx2Evt_Resized): void {
         super.onResized(evt);
 
-        try {
-            this.resizeAllowed = false; // disable resize events while we are resizing the grid
-            if (this.nx2Grid) {
-                let state = this.state;
-                let grid: Grid = this.nx2Grid.obj;
+        if (this.nx2Grid) {
+            let state = this.state;
+            let grid: Grid = this.nx2Grid.obj;
 
-                if (state.gridAutoHeight) {
+            if (state.gridAutoHeight) {
 
-                    let previousGridHeight = grid.height;
-                    let newGridHeight = this.calculateGridHeight();
-                    if (newGridHeight > 0 && newGridHeight != previousGridHeight) {
-                        grid.height = newGridHeight;
-                    }
-                } // if (state.gridAutoHeight)
-
-                if (state.gridAutoWidth) {
-                    let newWidth = this.calculateGridWidth();
-                    if (newWidth > 0 && newWidth != grid.width) {
-                        grid.width = newWidth;
-                    }
+                let previousGridHeight = grid.height;
+                let newGridHeight = this.calculateGridHeight();
+                if (newGridHeight > 0 && newGridHeight != previousGridHeight) {
+                    grid.height = newGridHeight;
                 }
-            } // if (this.nx2Grid)
-        }finally {
-            setTimeout(() => {
-                this.resizeAllowed = true;
-            }, this.resizeEventMinInterval+50); // restore this after the last debounce could have fired
-        }
+            } // if (state.gridAutoHeight)
+
+            if (state.gridAutoWidth) {
+                let newWidth = this.calculateGridWidth();
+                if (newWidth > 0 && newWidth != grid.width) {
+                    grid.width = newWidth;
+                }
+            }
+        } // if (this.nx2Grid)
     }
 
     protected calculateGridHeight(): number {
@@ -132,15 +124,21 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
 
         let totalHeight = this.htmlElement.clientHeight;
 
+        let _outerTopHtml :HTMLElement = (this.outerTop ? (this.outerTop instanceof HTMLElement ? this.outerTop : this.outerTop.htmlElement) : null);
+        let outerTopHeight = (_outerTopHtml ? _outerTopHtml.offsetHeight : 0);
 
-        let _topHtml :HTMLElement = (this.topContainer ? this.topContainer.htmlElement : null);
+        let _outerBottomHtml :HTMLElement = (this.outerBottom ? (this.outerBottom instanceof HTMLElement ? this.outerBottom : this.outerBottom.htmlElement) : null);
+        let outerBottomHeight = (_outerBottomHtml? _outerBottomHtml.offsetHeight : 0);
+
+
+        let _topHtml :HTMLElement = (this.top ? (this.top instanceof HTMLElement ? this.top : this.top.htmlElement) : null);
         let topHeight = (_topHtml? _topHtml.offsetHeight : 0);
 
 
-        let _bottomHtml :HTMLElement = (this.bottomContainer ? this.bottomContainer.htmlElement : null);
+        let _bottomHtml :HTMLElement = (this.bottom ? (this.bottom instanceof HTMLElement ? this.bottom : this.bottom.htmlElement) : null);
         let bottomHeight = (_bottomHtml ? _bottomHtml.offsetHeight : 0);
 
-        let surroundingTopBottomHeight = topHeight + bottomHeight;
+        let surroundingTopBottomHeight = outerTopHeight + outerBottomHeight + topHeight + bottomHeight;
 
 
         // the grid has this extra height that we need to subtract between offset and client somewhere
@@ -161,8 +159,8 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
         if (!grid)
             return 0;
 
-        let leftHeight = (this.leftContainer ? this.leftContainer.htmlElement.offsetWidth : 0);
-        let rightHeight = (this.rightContainer ? this.rightContainer.htmlElement.offsetWidth : 0);
+        let leftHeight = (this._leftElem ? this._leftElem.offsetWidth : 0);
+        let rightHeight = (this._rightElem ? this._rightElem.offsetWidth : 0);
         let surroundingLeftRightHeight = leftHeight + rightHeight;
 
         let totalWidth: number = this.htmlElement.clientWidth;

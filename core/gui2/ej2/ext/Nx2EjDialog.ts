@@ -112,8 +112,8 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         if (ej.visible == null)
             ej.visible = false; // visible only when show() is called
 
-        ej.width = ej.width || '99%'; // crucial to be set for Nx2EjPanelGrid to size correctly (get an initial resize event)
-        ej.height = ej.height || '99%'; // crucial to be set for Nx2EjPanelGrid to size correctly (get an initial resize event)
+        ej.width = ej.width || '99%'; // crucial to be set for Nx2EjPanelGridFlex to size correctly (get an initial resize event)
+        ej.height = ej.height || '99%'; // crucial to be set for Nx2EjPanelGridFlex to size correctly (get an initial resize event)
         ej.enableResize = ej.enableResize || true;
 
         ej.cssClass = ej.cssClass || '';

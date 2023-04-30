@@ -200,22 +200,6 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
         super.onStateInitialized(state);
     }
 
-    //   public onHtml(args: Nx2Evt_OnHtml): HTMLElement {
-    //       let state = this.state;
-    //
-    //       let x = `
-    // <div class="${state.tagId}" class="${CLASS_NX2_PANEL_LAYOUT}">
-    //   <div class="${state.tagId}_topContainer" class="${CLASS_NX2_PANEL_LAYOUT_TOP}"></div>
-    //   <div class="${state.tagId}_leftContainer" class="${CLASS_NX2_PANEL_LAYOUT_LEFT}"></div>
-    //   <div class="${state.tagId}_centerContainer" class="${CLASS_NX2_PANEL_LAYOUT_CENTER}"></div>
-    //   <div class="${state.tagId}_rightContainer" class="${CLASS_NX2_PANEL_LAYOUT_RIGHT}"></div>
-    //   <div class="${state.tagId}_bottomContainer" class="${CLASS_NX2_PANEL_LAYOUT_BOTTOM}"></div>
-    // </div>
-    // `;
-    //       return htmlToElement(x);
-    //   }
-
-
     public get topContainer(): Nx2Panel {
         return this._topContainer;
     }
