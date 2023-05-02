@@ -12,9 +12,15 @@ export type Elem_or_Nx2<STATE extends StateNx2 = any> = HTMLElement | Nx2<STATE>
 export type Elem_or_Nx2_or_StateNx2<NX2_TYPE extends (Nx2 | StateNx2) = any> = HTMLElement | NX2_TYPE;
 
 /**
- * Checks if the given object is of type Nx2
- * @param obj
- * @return {obj is Nx2}
+ * Checks if the given object is an Nx2 object.
+ *
+ * An Nx2 object is defined as an object that has the following properties:
+ * - className: a non-null, non-undefined string
+ * - isNx2: a boolean value that is true
+ * - state: an object with a ref property that is non-null and non-undefined
+ *
+ * @param {*} obj - The object to check.
+ * @returns {obj is Nx2} - True if the object is an Nx2 object, false otherwise.
  */
 export function isNx2(obj: any): obj is Nx2 {
     return (
@@ -32,6 +38,49 @@ export function isNx2(obj: any): obj is Nx2 {
         obj.state.ref !== undefined
     );
 } // isNx2
+
+/**
+ * Checks if the given HTML element is an Nx2 element.
+ * An Nx2 element is defined as an element with a class of 'nx2'
+ * and a corresponding Nx2 object attached to it.
+ *
+ * @param {HTMLElement} elem - The HTML element to check.
+ * @returns {boolean} - True if the element is an Nx2 element, false otherwise.
+ */
+export function isNx2HtmlElement(elem: HTMLElement): boolean {
+    if (elem) {
+        if (elem.classList.contains(NX2_CLASS)) {
+            let obj: any = elem[NX2_CLASS]
+            if (obj && isNx2(obj)) {
+                return true;
+            }  // if obj is Nx2
+        } // if classList contains NX2_CLASS
+    } // if elem exists
+    return false;
+}
+
+/**
+ * Retrieves the Nx2 object attached to the given HTML element, if it exists.
+ *
+ * An Nx2 object is defined as an object that has the following properties:
+ * - className: a non-null, non-undefined string
+ * - isNx2: a boolean value that is true
+ * - state: an object with a ref property that is non-null and non-undefined
+ *
+ * @param {HTMLElement} elem - The HTML element to retrieve the Nx2 object from.
+ * @returns {Nx2|null} - The Nx2 object attached to the element, or null if none exists.
+ */
+export function getNx2FromHtmlElement(elem: HTMLElement): Nx2 {
+    if (elem) {
+        if (elem.classList.contains(NX2_CLASS)) {
+            let obj: any = elem[NX2_CLASS]
+            if (obj && isNx2(obj)) {
+                return obj;
+            }  // if obj is Nx2
+        } // if classList contains NX2_CLASS
+    } // if elem exists
+    return null;
+}
 
 function hasNoClosingHtmlTag(tag: string): boolean {
     if (!tag) return false;
@@ -59,17 +108,17 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
         deco.otherAttr['id'] = state.tagId;
 
         if (hasWrapper) {
-            if ( state.wrapperTagId){
+            if (state.wrapperTagId) {
                 wrapperId = state.wrapperTagId;
             } else {
 
-                if ( state.tagId)
+                if (state.tagId)
                     state.wrapperTagId = state.tagId + '_wrapper';
-                 else
+                else
                     state.wrapperTagId = getRandomString(this._className + '_wrapper');
 
 
-                 state.wrapperTagId = wrapperId;
+                state.wrapperTagId = wrapperId;
             }
             wrapper_deco.otherAttr['id'] = wrapperId;
         }
@@ -171,7 +220,7 @@ export function findNx2ChildrenElementsFirstLevel(parent: HTMLElement | Nx2): HT
                 nx2Elements.push(firstLevelChild as HTMLElement);
             } else {
                 // search for _nx2_ within the child's descendants
-                const nx2DescendantElement = firstLevelChild.querySelector('.class1, .class2 > .class3._nx2_');
+                const nx2DescendantElement = firstLevelChild.querySelector(`.class1, .class2 > .class3.${NX2_CLASS}`);
                 if (nx2DescendantElement && nx2DescendantElement instanceof HTMLElement) {
                     nx2Elements.push(nx2DescendantElement);
                 } // if (nx2DescendantElement && nx2DescendantElement instanceof HTMLElement)
@@ -199,7 +248,7 @@ export function findNx2ChildrenFirstLevel(parent: HTMLElement | Nx2): Nx2[] {
     //traverse and extract the NX2_CLASS elements
     for (let i = 0; i < nx2ElementsHtml.length; i++) {
         let nx2ElementHtml = nx2ElementsHtml[i];
-        let nx2Element = nx2ElementHtml[NX2_CLASS];
+        let nx2Element: any = nx2ElementHtml[NX2_CLASS];
         if (nx2Element) {
             nx2Elements.push(nx2Element);
         } // if (nx2Element)

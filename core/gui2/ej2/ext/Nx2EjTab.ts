@@ -16,6 +16,9 @@ export interface StateNx2EjTab<WIDGET_LIBRARY_MODEL extends TabModel = TabModel>
     ref?: StateNx2EjTabRef;
 }
 
+/**
+ *  Please see all the add-on TabOption_XXXXXXX constants that have predefined settings for the Tab state in state.ej
+ */
 export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2EjBasic<STATE, Tab> {
     constructor(state ?: STATE) {
         super(state);
@@ -40,4 +43,14 @@ export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2Ej
         // Remove forced uppercasing from Tab
         this.htmlElement.querySelectorAll('.e-tab-text').forEach(el => el.classList.add('app-tab-no-text-transform'));
     }
+}
+
+/**
+ * Sets the 'heightAdjustMode' to 'Fill' in order to make the tab content fill the parent empty space
+ *
+ * Use this if you want a N2PanelLayout to automatically resize the tab content to fill the available space. If you don't, the parent will resize every time the child does
+ * @type TabModel Prefilled TabModel Settings to be concatenated to the state.ej
+ */
+export const TabOption_FillContent: TabModel = {
+    heightAdjustMode: 'Fill', // this is the setting that makes the tab content fill the tab and allows grid resizing to make sens (since the surrounding div is not fixed size)
 }
