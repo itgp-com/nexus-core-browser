@@ -97,6 +97,10 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
     state.deco = IHtmlUtils.init(state.deco);
     let deco: Nx2HtmlDecorator = state.deco;
 
+    if ( state.siblings || state.prefixSiblings){
+        state.wrapper = state.wrapper || {} // there needs to be a wrapper if there are any siblings
+    }
+
     let hasWrapper: boolean = state.wrapper != null;
     let wrapper_deco: Nx2HtmlDecorator = null;
     let wrapperId: string = null;
@@ -138,6 +142,54 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
 
     let htmlElement: HTMLElement = htmlToElement(x);
 
+
+    let prefixSiblingElems: HTMLElement[] = [];
+    if (state.prefixSiblings) {
+        let siblings: Elem_or_Nx2[] = state.prefixSiblings;
+        for (let i = 0; i < siblings.length; i++) {
+            try {
+                let e_or_n: Elem_or_Nx2 = siblings[i];
+                let localElem: HTMLElement;
+                if (e_or_n) {
+                    if (isNx2(e_or_n)) {
+                        localElem = e_or_n.htmlElement;
+                    } else {
+                        localElem = e_or_n as HTMLElement;
+                    }
+                } // if child
+                if (localElem) {
+                    prefixSiblingElems.push(localElem);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        } //for
+    } // if prefixSiblings
+
+
+    let siblingElems: HTMLElement[] = [];
+    if (state.siblings) {
+        let siblings: Elem_or_Nx2[] = state.siblings;
+        for (let i = 0; i < siblings.length; i++) {
+            try {
+                let e_or_n: Elem_or_Nx2 = siblings[i];
+                let localElem: HTMLElement;
+                if (e_or_n) {
+                    if (isNx2(e_or_n)) {
+                        localElem = e_or_n.htmlElement;
+                    } else {
+                        localElem = e_or_n as HTMLElement;
+                    }
+                } // if child
+                if (localElem) {
+                    siblingElems.push(localElem);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        } //for
+    } // if prefixSiblings
+
     // Now process the children
     if (state.children) {
         let children: Elem_or_Nx2[] = state.children;
@@ -174,7 +226,22 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
             wrap_x += `</${wrapper_deco.tag}>`;
 
         htmlElement = htmlToElement(wrap_x); // replace the htmlElement with the wrapper
+
+
+        if ( prefixSiblingElems.length > 0) {
+            for (let i = 0; i < prefixSiblingElems.length; i++) {
+                htmlElement.appendChild(prefixSiblingElems[i]);
+            } // for
+        } // if prefixSiblingElems
+
         htmlElement.appendChild(innerHtmlElement); // place the real anchor inside the wrapper
+
+        if ( siblingElems.length > 0) {
+            for (let i = 0; i < siblingElems.length; i++) {
+                htmlElement.appendChild(siblingElems[i]);
+            } // for
+        } // if siblingElems
+
     } // if hasWrapper
 
     return htmlElement;

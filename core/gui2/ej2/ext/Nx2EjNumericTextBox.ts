@@ -80,6 +80,7 @@ export class Nx2EjNumericTextBox extends Nx2EjBasic<StateNx2EjNumericTextBox, Nu
 
       let deco = state.deco;
       deco.tag = 'input';
+      deco.otherAttr.type = 'text';
       if (hasErrorLine)
          deco.otherAttr['data-msg-containerid'] = errorTagId;
 

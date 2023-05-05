@@ -53,13 +53,22 @@ export interface StateNx2 {
    /**
     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
     */
-   ref ?:StateNx2Ref
+   ref ?:StateNx2Ref;
+
+   /**
+    * Sibling(s) of the main anchor that will be rendered before the main anchor
+    */
+   prefixSiblings?:Elem_or_Nx2[];
+
+   /**
+    * Sibling(s) of the main anchor that will be rendered after the main anchor
+    */
+   siblings ?:Elem_or_Nx2[];
 
    /**
     * The current children this widget contains
-    * @see initialChildren
     */
-   children?: Elem_or_Nx2[]
+   children?: Elem_or_Nx2[];
 
 
    /**

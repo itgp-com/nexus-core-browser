@@ -77,6 +77,7 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
 
         let deco = state.deco;
         deco.tag = 'input';
+        deco.otherAttr.type = 'text';
         if (hasErrorLine)
             deco.otherAttr['data-msg-containerid'] = errorTagId;
 
