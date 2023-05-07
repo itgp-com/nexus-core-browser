@@ -34,20 +34,24 @@ export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2Ej
         //---------
         let fCreated = this?.state?.ej?.created;
         this.state.ej.created = (args) => {
-            let index: number = this.state.ej.selectedItem || 0;
-            try {
-                tabSelected(index, this);
-            } catch (e) {
-                console.error(e, 'index=', index, 'Nx2EjTab=', this)
-            }
-
             if (fCreated)
                 fCreated.apply(this, args);
+
+            let index: number = this.state.ej.selectedItem || 0;
+            // give the tab container a chance to be added to the DOM
+            setTimeout(() => {
+                try {
+                    tabSelected(index, this);
+                } catch (e) {
+                    console.error(e, 'index=', index, 'Nx2EjTab=', this)
+                }
+            }); // setTimeout
+
         }  // created
 
         //--------------
         let fSelected = this?.state?.ej?.selected;
-        this.state.ej.selected = (ev:SelectEventArgs) => {
+        this.state.ej.selected = (ev: SelectEventArgs) => {
             // At this point, the tab container is finally added to the DOM
             let index = ev.selectedIndex;
 
