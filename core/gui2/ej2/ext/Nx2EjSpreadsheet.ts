@@ -1,9 +1,16 @@
 import {Spreadsheet, SpreadsheetModel} from "@syncfusion/ej2-spreadsheet";
+import {AutoFill, Scroll, Selection} from '@syncfusion/ej2-spreadsheet/src/spreadsheet/actions';
+import {Open} from '@syncfusion/ej2-spreadsheet/src/spreadsheet/integrations';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
+Spreadsheet.Inject(
+    AutoFill,
+    Open,
+    Scroll,
+    Selection,
+);
 export interface StateNx2EjSpreadsheetRef extends StateNx2EjBasicRef {
     widget?: Nx2EjSpreadsheet;
 }

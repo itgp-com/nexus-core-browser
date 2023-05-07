@@ -1,7 +1,26 @@
 import {Ribbon, RibbonModel} from "@syncfusion/ej2-ribbon";
+import {
+    RibbonButton,
+    RibbonCheckBox,
+    RibbonColorPicker,
+    RibbonComboBox,
+    RibbonDropDown,
+    RibbonSplitButton
+} from '@syncfusion/ej2-ribbon/src/ribbon/items';
+import {RibbonFileMenu} from '@syncfusion/ej2-ribbon/src/ribbon/modules';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+
+Ribbon.Inject(
+    RibbonButton,
+    RibbonCheckBox,
+    RibbonColorPicker,
+    RibbonComboBox,
+    RibbonDropDown,
+    RibbonFileMenu,
+    RibbonSplitButton,
+)
 
 
 export interface StateNx2EjRibbonRef extends StateNx2EjBasicRef {

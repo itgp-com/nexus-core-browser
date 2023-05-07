@@ -1,9 +1,30 @@
 import {Diagram, DiagramModel} from "@syncfusion/ej2-diagrams";
+import {BlazorTooltip} from '@syncfusion/ej2-diagrams/src/diagram/blazor-tooltip/blazor-Tooltip';
+import {DataBinding} from '@syncfusion/ej2-diagrams/src/diagram/data-binding/data-binding';
+import {ConnectorEditing} from '@syncfusion/ej2-diagrams/src/diagram/interaction/connector-editing';
+import {LineDistribution} from '@syncfusion/ej2-diagrams/src/diagram/interaction/line-distribution';
+import {LineRouting} from '@syncfusion/ej2-diagrams/src/diagram/interaction/line-routing';
+import {ComplexHierarchicalTree} from '@syncfusion/ej2-diagrams/src/diagram/layout/complex-hierarchical-tree';
+import {HierarchicalTree} from '@syncfusion/ej2-diagrams/src/diagram/layout/hierarchical-tree';
+import {MindMap} from '@syncfusion/ej2-diagrams/src/diagram/layout/mind-map';
+import {RadialTree} from '@syncfusion/ej2-diagrams/src/diagram/layout/radial-tree';
+import {SymmetricLayout} from '@syncfusion/ej2-diagrams/src/diagram/layout/symmetrical-layout';
+import {BpmnDiagrams} from '@syncfusion/ej2-diagrams/src/diagram/objects/bpmn';
+import {ConnectorBridging} from '@syncfusion/ej2-diagrams/src/diagram/objects/connector-bridging';
+import {DiagramContextMenu} from '@syncfusion/ej2-diagrams/src/diagram/objects/context-menu';
+import {LayoutAnimation} from '@syncfusion/ej2-diagrams/src/diagram/objects/layout-animation';
+import {Snapping} from '@syncfusion/ej2-diagrams/src/diagram/objects/snapping';
+import {UndoRedo} from '@syncfusion/ej2-diagrams/src/diagram/objects/undo-redo';
+import {PrintAndExport} from '@syncfusion/ej2-diagrams/src/diagram/print-settings';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
+Diagram.Inject(
+    HierarchicalTree, MindMap, RadialTree, ComplexHierarchicalTree, DataBinding, Snapping, PrintAndExport, BlazorTooltip,
+    BpmnDiagrams, SymmetricLayout, ConnectorBridging, UndoRedo, LayoutAnimation, DiagramContextMenu, ConnectorEditing,
+    LineRouting, LineDistribution
+);
 export interface StateNx2EjDiagramRef extends StateNx2EjBasicRef {
     widget?: Nx2EjDiagram;
 }

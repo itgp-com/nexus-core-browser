@@ -1,9 +1,10 @@
 import {ListView, ListViewModel} from "@syncfusion/ej2-lists";
+import {Virtualization} from '@syncfusion/ej2-lists/src/list-view/virtualization';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
+ListView.Inject(Virtualization)
 export interface StateNx2EjListViewRef extends StateNx2EjBasicRef {
     widget?: Nx2EjListView;
 }

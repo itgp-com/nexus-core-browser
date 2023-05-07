@@ -14,11 +14,14 @@ import {
     ThumbnailView,
     Toolbar
 } from '@syncfusion/ej2-pdfviewer';
+import {AccessibilityTags} from '@syncfusion/ej2-pdfviewer/src/pdfviewer';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-PdfViewer.Inject(Annotation,
+PdfViewer.Inject(
+    AccessibilityTags,
+    Annotation,
     BookmarkView,
     FormDesigner,
     FormFields,
@@ -29,7 +32,9 @@ PdfViewer.Inject(Annotation,
     TextSearch,
     TextSelection,
     ThumbnailView,
-    Toolbar);
+    Toolbar
+
+);
 
 export interface StateNx2EjPdfViewerRef extends StateNx2EjBasicRef {
     widget?: Nx2EjPdfViewer;

@@ -1,8 +1,16 @@
 import {CircularGauge, CircularGaugeModel} from "@syncfusion/ej2-circulargauge";
+import {Annotations} from '@syncfusion/ej2-circulargauge/src/circular-gauge/annotations/annotations';
+import {Gradient} from '@syncfusion/ej2-circulargauge/src/circular-gauge/axes/gradient';
+import {Legend} from '@syncfusion/ej2-circulargauge/src/circular-gauge/legend/legend';
+import {ImageExport} from '@syncfusion/ej2-circulargauge/src/circular-gauge/model/image-export';
+import {PdfExport} from '@syncfusion/ej2-circulargauge/src/circular-gauge/model/pdf-export';
+import {Print} from '@syncfusion/ej2-circulargauge/src/circular-gauge/model/print';
+import {GaugeTooltip} from '@syncfusion/ej2-circulargauge/src/circular-gauge/user-interaction/tooltip';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
+CircularGauge.Inject(Annotations, Print, ImageExport, PdfExport,GaugeTooltip,Legend,Gradient);
 
 export interface StateNx2EjCircularGaugeRef extends StateNx2EjBasicRef {
     widget?: Nx2EjCircularGauge;

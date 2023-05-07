@@ -52,12 +52,12 @@ export function getGridDecoratorsHeight(grid: Grid): number {
 /**
  * Add a child Nx2 or HTMLElement to a anchor Nx2 or HTMLElement
  * @param {Nx2 | HTMLElement} anchor
- * @param {Nx2 | HTMLElement} child
+ * @param {Nx2 | HTMLElement | Nx2[] | HTMLElement[]} child
  * @return {boolean} true if successful, false if error
  */
-export function addNx2Child(anchor: Nx2 | HTMLElement, child: Nx2 | HTMLElement): boolean {
+export function addNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2 | HTMLElement>): boolean {
     if (!anchor) return false;
-    if (!child) return false;
+    if (!children || children.length === 0) return false;
 
     try {
 
@@ -71,23 +71,25 @@ export function addNx2Child(anchor: Nx2 | HTMLElement, child: Nx2 | HTMLElement)
         }// if(isNx2(anchor))
         if (!anchorHtmlElement) return false;
 
-        let childHtmlElement: HTMLElement = null;
-        if (isNx2(child)) {
-            // Nx2
-            childHtmlElement = child.htmlElementInitialized;
-        } else {
-            // HTMLElement
-            childHtmlElement = child as HTMLElement;
-        }// if(isNx2(child))
-        if (!childHtmlElement) return false;
+        for (const child of children) {
+            let childHtmlElement: HTMLElement = null;
+            if (isNx2(child)) {
+                // Nx2
+                childHtmlElement = child.htmlElementInitialized;
+            } else {
+                // HTMLElement
+                childHtmlElement = child as HTMLElement;
+            }// if(isNx2(child))
 
-        anchorHtmlElement.appendChild(childHtmlElement);
+            if (childHtmlElement !== null)
+                anchorHtmlElement.appendChild(childHtmlElement);
+        }
         return true;
 
     } catch (ex) {
-        console.error(ex, this, child);
+        console.error(ex, this, children);
+        return false;
     }
-    return false;
 
 } // addNx2Child
 
@@ -96,12 +98,12 @@ export function addNx2Child(anchor: Nx2 | HTMLElement, child: Nx2 | HTMLElement)
  *
  * Remove child Nx2 or HTMLElement from a anchor Nx2 or HTMLElement
  * @param {Nx2 | HTMLElement} anchor
- * @param {Nx2 | HTMLElement} child
+ * @param {Array<Nx2 | HTMLElement>} children
  * @return {boolean} true if successful, false if error
  */
-export function removeNx2Child(anchor: Nx2 | HTMLElement, child: Nx2 | HTMLElement): boolean {
+export function removeNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2 | HTMLElement>): boolean {
     if (!anchor) return false;
-    if (!child) return false;
+    if (!children || children.length === 0) return false;
     try {
         let anchorHtmlElement: HTMLElement = null;
         if (isNx2(anchor)) {
@@ -110,25 +112,28 @@ export function removeNx2Child(anchor: Nx2 | HTMLElement, child: Nx2 | HTMLEleme
             anchorHtmlElement = anchor as HTMLElement;
         }
 
-        let childHtmlElement: HTMLElement = null;
-        if (isNx2(child)) {
-            childHtmlElement = child.htmlElementInitialized;
-        } else {
-            childHtmlElement = child as HTMLElement;
-        }
-
-        if (childHtmlElement && anchorHtmlElement) {
-            const childElement: HTMLElement | null = anchorHtmlElement.querySelector(`#${childHtmlElement.id}`);
-
-            if (childElement !== null) {
-                childElement.parentNode?.removeChild(childElement);
-                return true;
+        for (const child of children) {
+            let childHtmlElement: HTMLElement = null;
+            if (isNx2(child)) {
+                childHtmlElement = child.htmlElementInitialized;
+            } else {
+                childHtmlElement = child as HTMLElement;
             }
-        }
+
+            if (childHtmlElement && anchorHtmlElement) {
+                const childElement: HTMLElement | null = anchorHtmlElement.querySelector(`#${childHtmlElement.id}`);
+
+                if (childElement !== null)
+                    childElement.parentNode?.removeChild(childElement);
+
+            }
+        } // for
+        return true;
+
     } catch (ex) {
-        console.error(ex, this, child);
+        console.error(ex, this, children);
+        return false;
     }
-    return false;
 } // removeNx2Child
 
 /**
@@ -206,3 +211,32 @@ export function addNx2AfterAnchor(anchor: Nx2 | HTMLElement, newSibling: Nx2 | H
 
     return false;
 } // addNx2BeforeAnchor
+
+// export type EventHandlerFunction = (...args: any[]) => void;
+//
+// export interface WrapEventOptions {
+//     target: any;
+//     originalHandler: EventHandlerFunction | null;
+//     customCode: EventHandlerFunction;
+//     position?: 'prefix' | 'suffix';
+// }
+//
+// export function wrapEvent(options: WrapEventOptions):EventHandlerFunction {
+//     const { target, originalHandler, customCode, position = 'prefix' } = options;
+//
+//     const wrappedHandler = (...args: any[]) => {
+//         if (position === 'prefix') {
+//             customCode.apply(target, args);
+//         }
+//
+//         if (typeof originalHandler === 'function') {
+//             originalHandler.apply(target, args);
+//         }
+//
+//         if (position === 'suffix') {
+//             customCode.apply(target, args);
+//         }
+//     };
+//
+//     return wrappedHandler;
+// }

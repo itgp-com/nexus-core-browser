@@ -1,9 +1,45 @@
 import {PivotView, PivotViewModel} from "@syncfusion/ej2-pivotview";
+import {PivotEngine} from '@syncfusion/ej2-pivotview/src/base/engine';
+import {OlapEngine} from '@syncfusion/ej2-pivotview/src/base/olap/engine';
+import {Common} from '@syncfusion/ej2-pivotview/src/common/actions/common';
+import {PivotButton} from '@syncfusion/ej2-pivotview/src/common/actions/pivot-button';
+import {PivotCommon} from '@syncfusion/ej2-pivotview/src/common/base/pivot-common';
+import {CalculatedField} from '@syncfusion/ej2-pivotview/src/common/calculatedfield/calculated-field';
+import {ConditionalFormatting} from '@syncfusion/ej2-pivotview/src/common/conditionalformatting/conditional-formatting';
+import {GroupingBar} from '@syncfusion/ej2-pivotview/src/common/grouping-bar/grouping-bar';
+import {PivotContextMenu} from '@syncfusion/ej2-pivotview/src/common/popups/context-menu';
+import {NumberFormatting} from '@syncfusion/ej2-pivotview/src/common/popups/formatting-dialog';
+import {Grouping} from '@syncfusion/ej2-pivotview/src/common/popups/grouping';
+import {Toolbar} from '@syncfusion/ej2-pivotview/src/common/popups/toolbar';
+import {PivotChart} from '@syncfusion/ej2-pivotview/src/pivotchart';
+import {ChartExport} from '@syncfusion/ej2-pivotview/src/pivotchart/actions/chart-export';
+import {PivotFieldList} from '@syncfusion/ej2-pivotview/src/pivotfieldlist/base/field-list';
+import {DrillThrough} from '@syncfusion/ej2-pivotview/src/pivotview/actions/drill-through';
+import {ExcelExport} from '@syncfusion/ej2-pivotview/src/pivotview/actions/excel-export';
+import {Pager} from '@syncfusion/ej2-pivotview/src/pivotview/actions/pager';
+import {PDFExport} from '@syncfusion/ej2-pivotview/src/pivotview/actions/pdf-export';
+import {VirtualScroll} from '@syncfusion/ej2-pivotview/src/pivotview/actions/virtualscroll';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
+PivotView.Inject(
+    CalculatedField,
+    ChartExport,
+    Common,
+    ConditionalFormatting,
+    DrillThrough,
+    ExcelExport,
+    Grouping,
+    GroupingBar,
+    NumberFormatting,
+    Pager,
+    PDFExport,
+    PivotChart,
+    PivotFieldList,
+    Toolbar,
+    VirtualScroll,
+);
 export interface StateNx2EjPivotViewRef extends StateNx2EjBasicRef {
     widget?: Nx2EjPivotView;
 }

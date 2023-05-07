@@ -1,9 +1,41 @@
 import {Agenda, Day, Month, Schedule, ScheduleModel, Week, WorkWeek} from "@syncfusion/ej2-schedule";
+import {Resize} from '@syncfusion/ej2-schedule/src/schedule/actions/resize';
+import {Scroll} from '@syncfusion/ej2-schedule/src/schedule/actions/scroll';
+import {InlineEdit} from '@syncfusion/ej2-schedule/src/schedule/event-renderer/inline-edit';
+import {ICalendarExport} from '@syncfusion/ej2-schedule/src/schedule/exports/calendar-export';
+import {ICalendarImport} from '@syncfusion/ej2-schedule/src/schedule/exports/calendar-import';
+import {ExcelExport} from '@syncfusion/ej2-schedule/src/schedule/exports/excel-export';
+import {Print} from '@syncfusion/ej2-schedule/src/schedule/exports/print';
+import {HeaderRenderer} from '@syncfusion/ej2-schedule/src/schedule/renderer/header-renderer';
+import {MonthAgenda} from '@syncfusion/ej2-schedule/src/schedule/renderer/month-agenda';
+import {TimelineMonth} from '@syncfusion/ej2-schedule/src/schedule/renderer/timeline-month';
+import {TimelineViews} from '@syncfusion/ej2-schedule/src/schedule/renderer/timeline-view';
+import {TimelineYear} from '@syncfusion/ej2-schedule/src/schedule/renderer/timeline-year';
+import {Year} from '@syncfusion/ej2-schedule/src/schedule/renderer/year';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-Schedule.Inject(Agenda, Day, Month, Week, WorkWeek);
+Schedule.Inject(
+    Agenda,
+    Day,
+    ExcelExport,
+    HeaderRenderer,
+    ICalendarExport,
+    ICalendarImport,
+    InlineEdit,
+    Month,
+    MonthAgenda,
+    Print,
+    Resize,
+    Scroll,
+    TimelineMonth,
+    TimelineViews,
+    TimelineYear,
+    Week,
+    WorkWeek,
+    Year,
+);
 
 export interface StateNx2EjScheduleRef extends StateNx2EjBasicRef {
     widget?: Nx2EjSchedule;

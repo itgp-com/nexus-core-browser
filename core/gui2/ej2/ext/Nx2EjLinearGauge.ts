@@ -1,9 +1,24 @@
 import {LinearGauge, LinearGaugeModel} from "@syncfusion/ej2-lineargauge";
+import {Annotations} from '@syncfusion/ej2-lineargauge/src/linear-gauge/annotations/annotations';
+import {Gradient} from '@syncfusion/ej2-lineargauge/src/linear-gauge/axes/gradient';
+import {ImageExport} from '@syncfusion/ej2-lineargauge/src/linear-gauge/model/image-export';
+import {PdfExport} from '@syncfusion/ej2-lineargauge/src/linear-gauge/model/pdf-export';
+import {Print} from '@syncfusion/ej2-lineargauge/src/linear-gauge/model/print';
+import {GaugeTooltip} from '@syncfusion/ej2-lineargauge/src/linear-gauge/user-interaction/tooltip';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
 
+LinearGauge.Inject(
+    Annotations,
+    GaugeTooltip,
+    Print,
+    PdfExport,
+    ImageExport,
+    Gradient,
+
+);
 export interface StateNx2EjLinearGaugeRef extends StateNx2EjBasicRef {
     widget?: Nx2EjLinearGauge;
 }

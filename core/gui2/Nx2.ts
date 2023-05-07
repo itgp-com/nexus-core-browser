@@ -83,7 +83,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
 
     /**
-     * A boolean indicating this instance is an Nx2.
+     * A boolean indicating this instance is a Nx2.
      * @type {boolean}
      * @readonly
      */
@@ -193,7 +193,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
     /**
      * Using {@link debounce} and not {@link throttle} because we want to fire the event only once
-     * AFTER the resize is complete. Throttle would fire the event first, debouncewaits the minimum interval
+     * AFTER the resize is complete. Throttle would fire the event first, debounce waits the minimum interval
      * before firing. With throttle, we get an initial endless loop of resize events.
      *
      * @protected
@@ -299,7 +299,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      */
     get htmlElement(): HTMLElement {
 
-        this._triggerOnStateInitialized(); // trigger onStateInitialzed if not already called
+        this._triggerOnStateInitialized(); // trigger onStateInitialized if not already called
 
         if (!this.state.ref.htmlElement)
             this.initHtml();
@@ -432,10 +432,10 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     /**
      * This is the perfect event in which to initialize any children or settings for 'this' rightContainer before
      * the HTMLElement is created
-     * @param args
      * @protected
+     * @param _args
      */
-    protected onBeforeInitHtml(args: Nx2Evt_OnHtml): void {
+    protected onBeforeInitHtml(_args: Nx2Evt_OnHtml): void {
     }
 
     initHtml(): void {
@@ -462,7 +462,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             return;
 
 
-        this._triggerOnStateInitialized(); // trigger onStateInitialzed if not already called
+        this._triggerOnStateInitialized(); // trigger onStateInitialized if not already called
 
 
         let args: Nx2Evt_BeforeLogic = {
@@ -600,7 +600,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     /**
      * Called after the widget AND any children's logic have been initialized
      */
-    onAfterInitLogic(args: Nx2Evt_AfterLogic): void {
+    onAfterInitLogic(_args: Nx2Evt_AfterLogic): void {
     }
 
 
@@ -609,14 +609,14 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * Should you need to call the corresponding widget method, you can call it manually from this method
      * by using the widget instance in the parameter
      */
-    onBeforeInitLogic(args: Nx2Evt_BeforeLogic): void {
+    onBeforeInitLogic(_args: Nx2Evt_BeforeLogic): void {
     }
 
     /**
      *  Called after initLogic has been completed for this component but NOT for any child components
      *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
      */
-    onAfterInitWidgetOnly(args: Nx2Evt_AfterLogic): void {}
+    onAfterInitWidgetOnly(_args: Nx2Evt_AfterLogic): void {}
 
 
     /**
@@ -636,12 +636,24 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         return htmlElement;
     } //htmlElementInitialized
 
-    addNx2Child(nx2: Nx2): void {
-        addNx2Child(this, nx2);
+    /**
+     * Add child(ren) Nx2 or HTMLElement to this Nx2 instance
+     * @return {boolean} true if successful, false if error
+     * @param nx2
+     */
+    addNx2Child(...nx2: Array<Nx2>): void {
+        addNx2Child(this, ...nx2);
     } // addNx2Child
 
-    removeNx2Child(nx2: Nx2): boolean {
-        return removeNx2Child(this, nx2);
+
+    /**
+     *
+     * Remove child(ren) Nx2 or HTMLElement from this Nx2 instance
+     * @return {boolean} true if successful, false if error
+     * @param nx2
+     */
+    removeNx2Child(... nx2: Array<Nx2>): boolean {
+        return removeNx2Child(this, ...nx2);
     } // removeNx2Child
 
 

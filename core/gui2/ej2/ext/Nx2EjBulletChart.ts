@@ -1,9 +1,11 @@
 import {BulletChart, BulletChartModel} from "@syncfusion/ej2-charts";
+import {BulletChartLegend} from '@syncfusion/ej2-charts/src/bullet-chart/legend/legend';
+import {BulletTooltip} from '@syncfusion/ej2-charts/src/bullet-chart/user-interaction/tooltip';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
+BulletChart.Inject( BulletTooltip, BulletChartLegend);
 export interface StateNx2EjBulletChartRef extends StateNx2EjBasicRef {
     widget?: Nx2EjBulletChart;
 }

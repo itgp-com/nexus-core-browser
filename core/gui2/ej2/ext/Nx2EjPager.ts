@@ -1,9 +1,18 @@
 import {Pager, PagerModel} from "@syncfusion/ej2-grids";
+import {ExternalMessage} from '@syncfusion/ej2-grids/src/pager/external-message';
+import {NumericContainer} from '@syncfusion/ej2-grids/src/pager/numeric-container';
+import {PagerDropDown} from '@syncfusion/ej2-grids/src/pager/pager-dropdown';
+import {PagerMessage} from '@syncfusion/ej2-grids/src/pager/pager-message';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
+Pager.Inject(
+    ExternalMessage,
+    NumericContainer,
+    PagerDropDown,
+    PagerMessage,
+);
 export interface StateNx2EjPagerRef extends StateNx2EjBasicRef {
     widget?: Nx2EjPager;
 }

@@ -1,9 +1,10 @@
 import {StockChart, StockChartModel} from "@syncfusion/ej2-charts";
+import {StockLegend} from '@syncfusion/ej2-charts/src/stock-chart/legend/legend';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
+StockChart.Inject(StockLegend);
 export interface StateNx2EjStockChartRef extends StateNx2EjBasicRef {
     widget?: Nx2EjStockChart;
 }

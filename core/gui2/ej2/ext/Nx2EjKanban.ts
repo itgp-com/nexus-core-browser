@@ -3,7 +3,6 @@ import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
 export interface StateNx2EjKanbanRef extends StateNx2EjBasicRef {
     widget?: Nx2EjKanban;
 }

@@ -1,9 +1,36 @@
 import {Maps, MapsModel} from "@syncfusion/ej2-maps";
+import {DataLabel} from '@syncfusion/ej2-maps/src/maps';
+import {Bubble} from '@syncfusion/ej2-maps/src/maps/layers/bubble';
+import {Legend} from '@syncfusion/ej2-maps/src/maps/layers/legend';
+import {Marker} from '@syncfusion/ej2-maps/src/maps/layers/marker';
+import {NavigationLine} from '@syncfusion/ej2-maps/src/maps/layers/navigation-selected-line';
+import {ImageExport} from '@syncfusion/ej2-maps/src/maps/model/export-image';
+import {PdfExport} from '@syncfusion/ej2-maps/src/maps/model/export-pdf';
+import {Print} from '@syncfusion/ej2-maps/src/maps/model/print';
+import {Annotations} from '@syncfusion/ej2-maps/src/maps/user-interaction/annotation';
+import {Highlight} from '@syncfusion/ej2-maps/src/maps/user-interaction/highlight';
+import {Selection} from '@syncfusion/ej2-maps/src/maps/user-interaction/selection';
+import {MapsTooltip} from '@syncfusion/ej2-maps/src/maps/user-interaction/tooltip';
+import {Zoom} from '@syncfusion/ej2-maps/src/maps/user-interaction/zoom';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
+Maps.Inject(
+    Annotations,
+    Bubble,
+    DataLabel,
+    Highlight,
+    ImageExport,
+    Legend,
+    MapsTooltip,
+    Marker,
+    NavigationLine,
+    PdfExport,
+    Print,
+    Selection,
+    Zoom,
+    );
 export interface StateNx2EjMapsRef extends StateNx2EjBasicRef {
     widget?: Nx2EjMaps;
 }

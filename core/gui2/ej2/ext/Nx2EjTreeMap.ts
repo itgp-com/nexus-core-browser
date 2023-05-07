@@ -1,8 +1,26 @@
 import {TreeMap, TreeMapModel} from "@syncfusion/ej2-treemap";
+import {TreeMapLegend} from '@syncfusion/ej2-treemap/src/treemap/layout/legend';
+import {ImageExport} from '@syncfusion/ej2-treemap/src/treemap/model/image-export';
+import {PdfExport} from '@syncfusion/ej2-treemap/src/treemap/model/pdf-export';
+import {Print} from '@syncfusion/ej2-treemap/src/treemap/model/print';
+import {
+    TreeMapHighlight,
+    TreeMapSelection
+} from '@syncfusion/ej2-treemap/src/treemap/user-interaction/highlight-selection';
+import {TreeMapTooltip} from '@syncfusion/ej2-treemap/src/treemap/user-interaction/tooltip';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
+TreeMap.Inject(
+    ImageExport,
+    PdfExport,
+    Print,
+    TreeMapHighlight,
+    TreeMapLegend,
+    TreeMapSelection,
+    TreeMapTooltip,
+);
 
 export interface StateNx2EjTreeMapRef extends StateNx2EjBasicRef {
     widget?: Nx2EjTreeMap;

@@ -1,9 +1,12 @@
 import {DetailsView, FileManager, FileManagerModel, NavigationPane, Toolbar} from "@syncfusion/ej2-filemanager";
+import {BreadCrumbBar} from '@syncfusion/ej2-filemanager/src/file-manager/actions/breadcrumb-bar';
+import {Virtualization} from '@syncfusion/ej2-filemanager/src/file-manager/actions/virtualization';
+import {LargeIconsView} from '@syncfusion/ej2-filemanager/src/file-manager/layout/large-icons-view';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-FileManager.Inject(DetailsView, NavigationPane, Toolbar)
+FileManager.Inject(DetailsView, BreadCrumbBar, LargeIconsView, NavigationPane, Toolbar, Virtualization)
 
 export interface StateNx2EjFileManagerRef extends StateNx2EjBasicRef {
     widget?: Nx2EjFileManager;

@@ -1,9 +1,10 @@
 import {ProgressBar, ProgressBarModel} from "@syncfusion/ej2-progressbar";
+import {ProgressAnnotation, ProgressTooltip} from '@syncfusion/ej2-progressbar/src/progressbar/model';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
-
+ProgressBar.Inject(ProgressAnnotation,ProgressTooltip );
 export interface StateNx2EjProgressBarRef extends StateNx2EjBasicRef {
     widget?: Nx2EjProgressBar;
 }
