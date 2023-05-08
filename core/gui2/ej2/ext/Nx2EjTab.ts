@@ -6,7 +6,7 @@ import {getNx2FromHtmlElement} from '../../Nx2Utils';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
 
-export interface Nx2Tab_PreCreated_Event {
+export interface Nx2Tab_PostCreated_Event {
     nx2 : Nx2EjTab;
     args: Event;
 }
@@ -29,7 +29,7 @@ export interface StateNx2EjTab<WIDGET_LIBRARY_MODEL extends TabModel = TabModel>
 
     /**
      * Called before the Nx2EjTab is selected code is run.
-     * The regular state.ej.selected is called AFTER the Nx2EjTab is selected code is run, so this gives the
+     * The regular state.ej.selected is called AFTER the Nx2EjTab internal 'selected' code is run, so this gives the
      * developer a chance to execute code before also.
      * @param {Nx2Tab_PreSelected_Event} ev
      */
@@ -37,11 +37,11 @@ export interface StateNx2EjTab<WIDGET_LIBRARY_MODEL extends TabModel = TabModel>
 
     /**
      * Called after the Nx2EjTab is created code is run.
-     * The regular state.ej.created is called BEFORE the Nx2EjTab is created code is run, so this gives the
+     * The regular state.ej.created is called BEFORE the Nx2EjTab internal 'created' code is run, so this gives the
      * developer a chance to execute code after also.
-     * @param {Nx2Tab_PreCreated_Event} ev
+     * @param {Nx2Tab_PostCreated_Event} ev
      */
-    postCreated ?:(ev:Nx2Tab_PreCreated_Event)=>void;
+    postCreated ?:(ev:Nx2Tab_PostCreated_Event)=>void;
 }
 
 /**
