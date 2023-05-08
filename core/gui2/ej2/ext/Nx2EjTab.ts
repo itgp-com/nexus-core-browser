@@ -6,6 +6,16 @@ import {getNx2FromHtmlElement} from '../../Nx2Utils';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
 
+export interface Nx2Tab_PreCreated_Event {
+    nx2 : Nx2EjTab;
+    args: Event;
+}
+
+export interface Nx2Tab_PreSelected_Event {
+    nx2 : Nx2EjTab;
+    ev: SelectEventArgs
+}
+
 export interface StateNx2EjTabRef extends StateNx2EjBasicRef {
     widget?: Nx2EjTab;
 }
@@ -16,6 +26,22 @@ export interface StateNx2EjTab<WIDGET_LIBRARY_MODEL extends TabModel = TabModel>
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
     ref?: StateNx2EjTabRef;
+
+    /**
+     * Called before the Nx2EjTab is selected code is run.
+     * The regular state.ej.selected is called AFTER the Nx2EjTab is selected code is run, so this gives the
+     * developer a chance to execute code before also.
+     * @param {Nx2Tab_PreSelected_Event} ev
+     */
+    preSelected ?:(ev:Nx2Tab_PreSelected_Event)=>void;
+
+    /**
+     * Called after the Nx2EjTab is created code is run.
+     * The regular state.ej.created is called BEFORE the Nx2EjTab is created code is run, so this gives the
+     * developer a chance to execute code after also.
+     * @param {Nx2Tab_PreCreated_Event} ev
+     */
+    postCreated ?:(ev:Nx2Tab_PreCreated_Event)=>void;
 }
 
 /**
@@ -32,6 +58,7 @@ export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2Ej
         super.onLogic(args);
 
         //---------
+        let fPostCreated = this?.state?.postCreated;
         let fCreated = this?.state?.ej?.created;
         this.state.ej.created = (args) => {
             if (fCreated)
@@ -47,19 +74,36 @@ export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2Ej
                 }
             }); // setTimeout
 
+            if (fPostCreated) {
+                try {
+                    fPostCreated.apply(this, [{nx2: this, args}]);
+                } catch (e) {
+                    console.error(e, ' fPostCreated ', 'index=', index, 'Nx2EjTab=', this)
+                }
+            } // if fPostCreated
+
         }  // created
 
         //--------------
+        let fPreSelected = this?.state?.preSelected;
         let fSelected = this?.state?.ej?.selected;
         this.state.ej.selected = (ev: SelectEventArgs) => {
             // At this point, the tab container is finally added to the DOM
             let index = ev.selectedIndex;
 
+            if (fPreSelected) {
+                try {
+                    fPreSelected.apply(this, [{nx2: this, ev}]);
+                } catch (e) {
+                    console.error(e, ' preSelected ', 'index=', index, 'Nx2EjTab=', this)
+                }
+            } // if fPreSelected
+
             try {
                 tabSelected(index, this);
             } catch (e) {
                 console.error(e, 'index=', index, 'Nx2EjTab=', this)
-            }
+            } // try
 
             if (fSelected)
                 fSelected.apply(this, ev);
