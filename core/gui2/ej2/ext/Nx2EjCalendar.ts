@@ -1,9 +1,12 @@
+import {KeyboardEvents} from '@syncfusion/ej2-base';
 import {Calendar, CalendarModel} from "@syncfusion/ej2-calendars";
+import {Islamic} from '@syncfusion/ej2-calendars/src/calendar';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
 
+Calendar.Inject(Islamic, KeyboardEvents)
 export interface StateNx2EjCalendarRef extends StateNx2EjBasicRef {
     widget?: Nx2EjCalendar;
 }
