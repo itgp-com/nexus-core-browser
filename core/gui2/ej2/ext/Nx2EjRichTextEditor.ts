@@ -1,9 +1,7 @@
 import {HtmlEditor, Image, Link, RichTextEditor, RichTextEditorModel, Toolbar} from '@syncfusion/ej2-richtexteditor';
 import {Count} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/actions/count';
-import {EnterKeyAction} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/actions/enter-key';
 import {FileManager} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/actions/file-manager';
 import {FormatPainter} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/actions/format-painter';
-import {FullScreen} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/actions/full-screen';
 import {MarkdownEditor} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/actions/markdown-editor';
 import {PasteCleanup} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/actions/paste-clean-up';
 import {QuickToolbar} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/actions/quick-toolbar';
@@ -11,8 +9,7 @@ import {Resize} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/action
 import {Audio} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/audio-module';
 import {Table} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/table-module';
 import {Video} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/video-module';
-import {ViewSource} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/view-source';
-import {ServiceLocator} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/services/service-locator';
+import {StateNx2PropertyName} from '../../generic/StateNx2PropertyName';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
@@ -20,10 +17,8 @@ import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 RichTextEditor.Inject(
     Audio,
     Count,
-    EnterKeyAction,
     FileManager,
     FormatPainter,
-    FullScreen,
     HtmlEditor,
     Image,
     Link,
@@ -31,18 +26,16 @@ RichTextEditor.Inject(
     PasteCleanup,
     QuickToolbar,
     Resize,
-    ServiceLocator,
     Table,
     Toolbar,
     Video,
-    ViewSource,
 );
 
 export interface StateNx2EjRichTextEditorRef extends StateNx2EjBasicRef {
     widget?: Nx2EjRichTextEditor;
 }
 
-export interface StateNx2EjRichTextEditor extends StateNx2EjBasic<RichTextEditorModel> {
+export interface StateNx2EjRichTextEditor extends StateNx2EjBasic<RichTextEditorModel>, StateNx2PropertyName  {
 
     /**
      * Override with specific type used in code completion
@@ -58,6 +51,8 @@ export class Nx2EjRichTextEditor<STATE extends StateNx2EjRichTextEditor = StateN
     }
 
     onStateInitialized(state: STATE) {
+        if(state.name)
+            state.deco.otherAttr['name'] = state.name; // if there's a name defined, use it for any parent form
         super.onStateInitialized(state);
     }
 
