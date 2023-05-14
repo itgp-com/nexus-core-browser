@@ -171,7 +171,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
     protected _applyResizeSensor(): void {
 
-        if ( !this.resizeAllowed)
+        if (!this.resizeAllowed)
             return;
 
         // initialize the min interval if not already set
@@ -323,7 +323,11 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             let actualNx2Elem = oldElement;
             if (oldElement.id != this.state.tagId) {
                 // oldElement is probably the wrapper
-                actualNx2Elem = oldElement.querySelector(`#${this.state.tagId}`);
+                try {
+                    actualNx2Elem = oldElement.querySelector(`#${this.state.tagId}`);
+                } catch (e) {
+                    actualNx2Elem = document.getElementById(this.state.tagId);
+                }
             }
 
             if (actualNx2Elem) {
@@ -340,7 +344,11 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             let actualNx2Elem = value;
             if (value.id != this.state.tagId) {
                 // value is probably the wrapper
-                actualNx2Elem = value.querySelector(`#${this.state.tagId}`);
+                try {
+                    actualNx2Elem = value.querySelector(`#${this.state.tagId}`);
+                } catch (e) {
+                    actualNx2Elem = document.getElementById(this.state.tagId);
+                }
             }
             if (actualNx2Elem) {
                 actualNx2Elem.classList.remove(NX2_CLASS); // just in case
@@ -384,7 +392,11 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         if (hasWrapper) {
             if (hasTagId) {
                 // has wrapper and has tagId: the tagId is the element
-                return htmlElement.querySelector(`#${state.tagId}`);
+                try {
+                    return htmlElement.querySelector(`#${state.tagId}`);
+                } catch (e) {
+                    return document.getElementById(this.state.tagId);
+                }
             } else {
                 if (htmlElement.hasChildNodes()) {
                     // wrapper but no tagId, and has children: the first child is it
@@ -652,7 +664,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * @return {boolean} true if successful, false if error
      * @param nx2
      */
-    removeNx2Child(... nx2: Array<Nx2>): boolean {
+    removeNx2Child(...nx2: Array<Nx2>): boolean {
         return removeNx2Child(this, ...nx2);
     } // removeNx2Child
 
