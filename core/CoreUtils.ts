@@ -3,13 +3,13 @@ import {Component} from "@syncfusion/ej2-base";
 import {DataManager, Query} from "@syncfusion/ej2-data";
 import * as CSS from 'csstype';
 import {isArray, isString} from "lodash";
+import tippy, {Props, roundArrow} from "tippy.js";
 import {tModel, urlTableEj2} from "./AppPathUtils";
 import {IArgs_HtmlDecoration, IKeyValueString} from "./BaseUtils";
 import {getErrorHandler} from "./CoreErrorHandling";
 import {EJList} from "./data/Ej2Comm";
-import {CssStyle} from "./gui/AbstractWidget";
 import {NexusAdaptor} from "./data/NexusAdaptor";
-import tippy, {Props, roundArrow} from "tippy.js";
+import {CssStyle} from "./gui/AbstractWidget";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY = 1000;
@@ -371,7 +371,7 @@ export async function ej2Query(tablename: string, query: Query, options?: Ej2Que
         crossDomain: true
     });
 
-    return  new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
             dataManager.executeQuery(query, (e: any) => {
                     let ejListFound: boolean = false;
                     let result: any = e.result as EJList;
@@ -842,8 +842,34 @@ export function isHTMLElement(obj: any): boolean {
     return obj instanceof HTMLElement;
 }
 
-export function htmlToText(html: string): string {
+/**
+ *  * This function replaces `<p>`, `</p>`, `<br>`, `<br />`, and new line characters in the input HTML string
+ *  * with a specified separator string. It then trims the leading and trailing separators if specified.
+ *  * Finally, it converts the resulting HTML string to plain text by creating a temporary DOM element and
+ *  * returning its text content.
+ *
+ *  Usage:
+ *  <code>
+ *      let html = `<p><strong>Test <em>001</em></strong></p><p><strong><em>Line2</em></strong></p>`;
+ *      console.log(htmlToTextWithReplacement(html, ' / ', true));  // Outputs: "Test 001 / Line2"
+ * </code>
+ *
+ * @param {string} html - The input HTML string.
+ * @param {string} [separator=' / '] - The string to use as a replacement for `<p>`, `</p>`, `<br>`, `<br />`, and new lines. Defaults to ' / '.
+ * @param {boolean} [removeLeadingTrailingSeparators=true] - Whether to remove leading and trailing separators. Defaults to true.
+ * @return {string} The resulting plain text string.
+ */
+export function htmlToText(html: string, separator: string = ' / ', removeLeadingTrailingSeparators: boolean = true): string {
+    // Replace <p>, </p>, <br>, <br />, and new lines with separator
+    let sanitizedHtml = html.replace(/(<\/?p>|<br\s*\/?>|\n)/gi, separator);
+
+    // If removeLeadingTrailingSeparators is true, trim leading and trailing separators
+    if (removeLeadingTrailingSeparators) {
+        let separatorPattern = new RegExp(`^\\s*${separator}|${separator}\\s*$`, 'gi');
+        sanitizedHtml = sanitizedHtml.replace(separatorPattern, '');
+    }
+
     let tempDiv = document.createElement("div");
-    tempDiv.innerHTML = html;
+    tempDiv.innerHTML = sanitizedHtml;
     return tempDiv.textContent || tempDiv.innerText || "";
 }
