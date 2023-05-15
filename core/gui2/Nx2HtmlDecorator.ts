@@ -122,7 +122,7 @@ export class IHtmlUtils {
      */
     static otherAttr(decorator: Nx2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
-        let otherAttrArray = Object.entries(decorator.otherAttr);
+        let otherAttrArray = Object.entries(decorator.otherAttr as any);
         let htmlAttrs: string = (otherAttrArray.length > 0 ? ' ' : '');
         if (decorator.otherAttr) {
             otherAttrArray.forEach(entry => {

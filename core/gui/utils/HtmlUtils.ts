@@ -229,6 +229,11 @@ export class Args_SkinnyTooltip {
    text: string;
    maxWidth: number;
    tippyProps ?: Partial<Props>;
+   /**
+    * Superseedes the 'text' when opening the dialog
+    * @type {string | HTMLElement}
+    */
+   htmlForDialog ?: string;
 }
 
 export function skinnyHtmlElementTooltip(args: Args_SkinnyTooltip): string {

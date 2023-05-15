@@ -860,16 +860,27 @@ export function isHTMLElement(obj: any): boolean {
  * @return {string} The resulting plain text string.
  */
 export function htmlToText(html: string, separator: string = ' / ', removeLeadingTrailingSeparators: boolean = true): string {
+
+
+    let inner1 = ((html || '') + '').toString().trim();
+
     // Replace <p>, </p>, <br>, <br />, and new lines with separator
-    let sanitizedHtml = html.replace(/(<\/?p>|<br\s*\/?>|\n)/gi, separator);
+    inner1 = inner1.replace(/(<\/?p>|<br\s*\/?>|\n)/gi, separator);
+
 
     // If removeLeadingTrailingSeparators is true, trim leading and trailing separators
     if (removeLeadingTrailingSeparators) {
         let separatorPattern = new RegExp(`^\\s*${separator}|${separator}\\s*$`, 'gi');
-        sanitizedHtml = sanitizedHtml.replace(separatorPattern, '');
+        inner1 = inner1.replace(separatorPattern, '');
     }
 
+    /*
+     NOTE: Observed that using the string coming out of replace DIRECTLY makes the queryCellInfo string not register at all - no rows show up
+     in the grid any more.  So we create a new string and use that instead.
+     */
+    let inner2 = inner1 + '';
+
     let tempDiv = document.createElement("div");
-    tempDiv.innerHTML = sanitizedHtml;
+    tempDiv.innerHTML = inner2;
     return tempDiv.textContent || tempDiv.innerText || "";
 }
