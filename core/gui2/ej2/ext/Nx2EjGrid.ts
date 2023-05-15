@@ -1,6 +1,6 @@
 import {KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
-import {Grid, GridModel} from "@syncfusion/ej2-grids";
+import {Grid, GridModel, Sort} from "@syncfusion/ej2-grids";
 import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
 import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
 import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
@@ -45,6 +45,7 @@ Grid.Inject(
     Resize,
     RowDD,
     Scroll,
+    Sort,
     Search,
     Selection,
     Toolbar,
