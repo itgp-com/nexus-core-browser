@@ -841,3 +841,9 @@ export let htmlElement_addTooltip_CoreOnly = (elem: HTMLElement, tippyProps: Par
 export function isHTMLElement(obj: any): boolean {
     return obj instanceof HTMLElement;
 }
+
+export function htmlToText(html: string): string {
+    let tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || "";
+}
