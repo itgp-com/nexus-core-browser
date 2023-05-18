@@ -291,3 +291,35 @@ export function removeClassesFromElement(htmlElement: HTMLElement | null | undef
         }
     });
 }
+
+/**
+ * Transfers classes, style, and other attributes from the source Nx2HtmlDecorator to the target HTMLElement.
+ * Optionally, changes the tag type of the target HTMLElement.
+ *
+ * @param {Nx2HtmlDecorator} source - The source Nx2HtmlDecorator instance from which to transfer the attributes.
+ * @param {HTMLElement} target - The target HTMLElement to which the attributes will be transferred.
+ * @param {string=} changeTagType - The new tag type to change the target HTMLElement. If specified and different from the source tag type, the function will replace the target element with a new element of the specified tag type.
+ * @returns {void}
+ */
+export function decoToHtmlElement(source: Nx2HtmlDecorator, target: HTMLElement, changeTagType?: string): void {
+    if (!source || !target) {
+        return;
+    }
+
+    // Transfer classes
+    if (source.classes && source.classes.length > 0) {
+        target.classList.add(...source.classes);
+    }
+
+    // Transfer style
+    if (source.style) {
+        Object.assign(target.style, source.style);
+    }
+
+    // Transfer other attributes as attributes
+    if (source.otherAttr) {
+        for (const [attrName, attrValue] of Object.entries(source.otherAttr)) {
+            target.setAttribute(attrName, attrValue);
+        }
+    }
+} // transferNx2HtmlDecorator

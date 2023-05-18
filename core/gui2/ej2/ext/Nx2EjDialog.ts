@@ -5,8 +5,8 @@ import {isHTMLElement} from "../../../CoreUtils";
 import {isNx2_Interface_Dialog_Close, isNx2_Interface_Dialog_Open} from '../../generic/Nx2Interface_Dialog';
 import {Nx2Html} from "../../generic/Nx2Html";
 import {Nx2Row} from "../../generic/Nx2Row";
-import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnLogic} from "../../Nx2";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
+import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
+import {addClassesToElement, addNx2Class, decoToHtmlElement} from '../../Nx2HtmlDecorator';
 import {isNx2} from "../../Nx2Utils";
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 import {Nx2DialogBackArrow} from "./util/Nx2DialogBackArrow";
@@ -69,6 +69,7 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
         addNx2Class(this.state.deco, 'Nx2EjDialog');
     }
 
+
     protected onStateInitialized(state: STATE) {
         state.ej = state.ej || {};
 
@@ -80,14 +81,29 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
 
         if (state.appendTo) {
             this._appendedTo = state.appendTo;
+            // sync id
+            if ( state.appendTo.id == null) {
+                state.appendTo.id = state.tagId;
+            } else {
+                state.tagId = state.appendTo.id;
+            }
+
+            decoToHtmlElement(this.state.deco, this._appendedTo); // transfer deco to the anchor element
+            if ( this.state?.deco?.tag ) {
+                if (this._appendedTo?.tagName != this.state?.deco?.tag) {
+                    console.error('Tag of deco cannot be set to the anchor element. deco value is', this.state.deco, 'and anchor element is', this._appendedTo);
+                }
+            }
+
         } else {
-            let localAnchorID: string = getRandomString('anchor_');
-            let elem: HTMLDivElement = document.createElement('div')
-            elem.id = localAnchorID
-            document.body.appendChild(elem);
-            this._appendedTo = elem;
+            // let localAnchorID: string = this.state.tagId; // getRandomString('anchor_');
+            // let elem: HTMLDivElement = document.createElement('div')
+            // elem.id = localAnchorID
+            this._appendedTo = this.htmlElement; // we can call it here because we have recursion prevention in place
+            document.body.appendChild(this.htmlElement);
             this._appendTargetCreatedLocally = true; // so it can be removed on destroy
         }
+
 
         let ej: DialogModel = state.ej;
 
@@ -259,13 +275,17 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
     }
 
     onLogic(args: Nx2Evt_OnLogic) {
+
+        if (!this._appendTargetCreatedLocally) {
+            this.htmlElement = this._appendedTo; // this is the true html element that will be used by the widget
+        }
+
         super.onLogic(args);
 
         let ej: DialogModel = this.state.ej;
         this.obj = new Dialog(ej);
         this.obj.appendTo(this._appendedTo);
 
-        // this.htmlElement.classList.add('Nx2EjDialog');
     }
 
     show() {

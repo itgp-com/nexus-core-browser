@@ -718,15 +718,19 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
     //---------------------------------------------
     private _initStateCalled: boolean = false;
+    private _alreadyInOnStateInitialized: boolean = false; // flag to prevent infinite recursion
 
     protected _triggerOnStateInitialized(): void {
-
+        if (this._alreadyInOnStateInitialized)
+            return;
         if (!this._initStateCalled) {
             try {
+                this._alreadyInOnStateInitialized = true;
                 this.onStateInitialized(this.state);
             } catch (e) {
                 this.handleError(e);
             } finally {
+                this._alreadyInOnStateInitialized = false;
                 this._initStateCalled = true;
             }
         }
