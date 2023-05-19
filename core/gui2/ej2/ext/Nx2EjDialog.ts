@@ -63,6 +63,7 @@ export let css_Nx2Dialog_color_header_background: string = 'black';
 export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasic<STATE, Dialog> {
     private _appendedTo: HTMLElement;
     private _appendTargetCreatedLocally: boolean;
+    private _customValue: any;
 
     constructor(state ?: STATE) {
         super(state);
@@ -350,5 +351,14 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
 
     public set appendedTo(value: HTMLElement) {
         this._appendedTo = value;
+    }
+
+
+    public get customValue(): any {
+        return this._customValue;
+    }
+
+    public set customValue(value: any) {
+        this._customValue = value;
     }
 } // Nx2Dialog
