@@ -11,6 +11,10 @@ export interface StateNx2EjFormRef extends StateNx2FormRef {
 
 export interface StateNx2EjForm extends StateNx2Form {
     validatorModel?: FormValidatorModel;
+    /**
+     * By default, submit on enter is disabled
+     */
+    submitOnEnter?: boolean;
     ref?: StateNx2EjFormRef;
 }
 
@@ -25,11 +29,23 @@ export class Nx2EjForm<STATE extends StateNx2EjForm = StateNx2EjForm> extends Nx
     onLogic(args: Nx2Evt_OnLogic) {
         super.onLogic(args);
         try {
+
+            if (this?.state?.submitOnEnter) {
+                // allow submit on enter
+            } else {
+                // no submit on enter
+                this.htmlElement.addEventListener('keydown', (evt: KeyboardEvent) => {
+                    if (evt.key === 'Enter') {
+                        evt.preventDefault();
+                        // Handle the Enter key press here if needed
+                    } // if
+                }) // addEventListener
+            } // if
+
             this._initializeValidator()
         } catch (e) {
             console.error(e); // not a user error
         }
-        // this.htmlElement.classList.add('Nx2EjForm');
     } // onLogic
 
     protected _initializeValidator() {
