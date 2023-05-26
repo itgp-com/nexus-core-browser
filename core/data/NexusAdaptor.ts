@@ -28,14 +28,33 @@ export class NexusAdaptor extends UrlAdaptor {
         dm: DataManager;
         query: Query;
         params: ParamOption[];
-        reqParams: {
-            [key: string]: Object;
-        };
+        reqParams: { [key: string]: Object; };
     }): void {
         if (NexusAdaptor.showDebug)
             console.log("addParams");
-        super.addParams(options);
-    }
+
+        // super.addParams(options);
+
+        // The code below is copied DIRECTLY from the base class, with the overwriting of parameters allowed (commented out exception for [if (req[tmp.key]) ])
+        //----------
+        let req = options.reqParams;
+        if (options.params.length) {
+            req.params = {};
+        }
+        for (let _i = 0, _a = options.params; _i < _a.length; _i++) {
+            let tmp = _a[_i];
+            // if (req[tmp.key]) {
+            //     throw new Error('Query() - addParams: Custom Param is conflicting other request arguments');
+            // }
+            req[tmp.key] = tmp.value;
+            if (tmp.fn) {
+                req[tmp.key] = tmp.fn.call(options.query, tmp.key, options.query, options.dm);
+            }
+            req.params[tmp.key] = req[tmp.key];
+        } // for
+        //----------------
+
+    } // addParams
 
     /**
      * Prepare the request body based on the newly added, removed and updated records.
