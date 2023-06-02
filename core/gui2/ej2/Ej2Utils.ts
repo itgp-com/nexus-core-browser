@@ -45,6 +45,14 @@ export function getGridDecoratorsHeight(grid: Grid): number {
             }
         } // if gridGroupingArray
 
+        let gridfooterArray = gridElem.getElementsByClassName('e-gridfooter');
+        if (gridfooterArray.length > 0) {
+            let gridfooter: HTMLElement = gridfooterArray[0] as any;
+            if (gridfooter) {
+                gridDecoratorHeightVal += gridfooter.offsetHeight;
+            }
+        } //  if gridfooterArray
+
     } // if gridElem
     return gridDecoratorHeightVal;
 } // gridDecoratorsHeight
