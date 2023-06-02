@@ -1,6 +1,10 @@
 {
   "name": "nexus-core-browser",
+<<<<<<< HEAD
   "version": "3.2.22",
+=======
+  "version": "3.2.21",
+>>>>>>> master
   "private": true,
   "description": "nexus-core-browser",
   "author": "InsiTech",
