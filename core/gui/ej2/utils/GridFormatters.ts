@@ -15,7 +15,14 @@ export const DATE_FORMATTER_LOCALE = (column: Column, rec: Object) => {
       date = data as Date;
    } else {
       try {
-         date = new Date(Date.parse(data));
+         if (data.indexOf('T') > 0) {
+            data = data.substring(0, data.indexOf('T')); // extract date part
+         }
+         let parts = data.split('-');
+         if (parts.length === 3) {
+            const [year, month, day] = parts.map(Number);
+            date = new Date(year, month - 1, day);
+         }
       } catch (e) {
          console.error('DATE_FORMATTER_US', e);
       }
