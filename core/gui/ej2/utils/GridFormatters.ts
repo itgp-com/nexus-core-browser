@@ -10,10 +10,21 @@ export const DATE_WITH_WEEKDAY:string = "yyyy-MM-dd' 'E";
 export const DATE_FORMATTER_LOCALE = (column: Column, rec: Object) => {
    let data = rec[column.field];
    if ( !data ) return '';
+   let date:Date = null;
    if ( isDate(data)){
-      return data.toLocaleDateString();
+      date = data as Date;
+   } else {
+      try {
+         date = new Date(Date.parse(data));
+      } catch (e) {
+         console.error('DATE_FORMATTER_US', e);
+      }
    }
-   return data;
+    if ( date ) {
+      return date.toLocaleDateString();
+   } else {
+       return data;
+    }
 }
 
 export const NUMBER_FORMAT_DECIMAL3 = (column: Column, rec: Object) => {
