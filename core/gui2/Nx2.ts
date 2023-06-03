@@ -393,7 +393,9 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             if (hasTagId) {
                 // has wrapper and has tagId: the tagId is the element
                 try {
-                    return htmlElement.querySelector(`#${state.tagId}`);
+                    let elem = htmlElement.querySelector(`#${state.tagId}`) as HTMLElement;
+                    return (elem ? elem : document.getElementById(this.state.tagId));
+
                 } catch (e) {
                     return document.getElementById(this.state.tagId);
                 }
