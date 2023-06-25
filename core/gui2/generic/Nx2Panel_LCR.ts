@@ -69,11 +69,15 @@ export class Nx2Panel_LCR<STATE extends StateNx2Panel_LCR = StateNx2Panel_LCR> e
 
 
     protected onStateInitialized(state: STATE): void {
-        state.deco.style = {
+
+        let style = state.deco.style || {};
+        style = {
             display: 'flex',
             'flex-direction': 'row',
             'justify-content': 'space-between',
+            ...style
         }
+        state.deco.style = style;
 
 
         let leftState: StateNx2Panel = state.stateLeftContainer || {};
