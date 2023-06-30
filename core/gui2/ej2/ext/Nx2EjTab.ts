@@ -57,7 +57,6 @@ export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2Ej
 
 
     onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
 
         //---------
         let fPostCreated = this?.state?.postCreated;
