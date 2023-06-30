@@ -1,5 +1,4 @@
 import {DataMatrixGenerator, DataMatrixGeneratorModel} from "@syncfusion/ej2-barcode-generator";
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -22,11 +21,12 @@ export class Nx2EjDataMatrix<STATE extends StateNx2EjDataMatrix = StateNx2EjData
         addNx2Class(this.state.deco, 'Nx2EjDataMatrix');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new DataMatrixGenerator(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

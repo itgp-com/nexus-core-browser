@@ -1,5 +1,4 @@
 import {Signature, SignatureModel} from "@syncfusion/ej2-inputs";
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -27,10 +26,12 @@ export class Nx2EjSignature<STATE extends StateNx2EjSignature = StateNx2EjSignat
         super.onStateInitialized(state);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new Signature(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

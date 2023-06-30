@@ -8,7 +8,6 @@ import {
     TreeMapSelection
 } from '@syncfusion/ej2-treemap/src/treemap/user-interaction/highlight-selection';
 import {TreeMapTooltip} from '@syncfusion/ej2-treemap/src/treemap/user-interaction/tooltip';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -40,11 +39,12 @@ export class Nx2EjTreeMap<STATE extends StateNx2EjTreeMap = StateNx2EjTreeMap> e
         addNx2Class(this.state.deco, 'Nx2EjTreeMap');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new TreeMap(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

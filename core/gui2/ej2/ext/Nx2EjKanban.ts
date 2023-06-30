@@ -1,5 +1,4 @@
 import {Kanban, KanbanModel} from "@syncfusion/ej2-kanban";
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -21,11 +20,12 @@ export class Nx2EjKanban<STATE extends StateNx2EjKanban = StateNx2EjKanban> exte
         addNx2Class(this.state.deco, 'Nx2EjKanban');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new Kanban(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

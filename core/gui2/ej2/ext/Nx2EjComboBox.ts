@@ -1,7 +1,6 @@
+import {ComboBox, ComboBoxModel} from "@syncfusion/ej2-dropdowns";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
-import {Nx2Evt_OnLogic} from "../../Nx2";
-import {ComboBox, ComboBoxModel} from "@syncfusion/ej2-dropdowns";
 
 
 export interface StateNx2EjComboBoxRef extends StateNx2EjBasicRef {
@@ -29,10 +28,12 @@ export class Nx2EjComboBox<STATE extends StateNx2EjComboBox = StateNx2EjComboBox
         super.onStateInitialized(state);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new ComboBox(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

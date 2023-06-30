@@ -1,13 +1,8 @@
 import {PivotView, PivotViewModel} from "@syncfusion/ej2-pivotview";
-import {PivotEngine} from '@syncfusion/ej2-pivotview/src/base/engine';
-import {OlapEngine} from '@syncfusion/ej2-pivotview/src/base/olap/engine';
 import {Common} from '@syncfusion/ej2-pivotview/src/common/actions/common';
-import {PivotButton} from '@syncfusion/ej2-pivotview/src/common/actions/pivot-button';
-import {PivotCommon} from '@syncfusion/ej2-pivotview/src/common/base/pivot-common';
 import {CalculatedField} from '@syncfusion/ej2-pivotview/src/common/calculatedfield/calculated-field';
 import {ConditionalFormatting} from '@syncfusion/ej2-pivotview/src/common/conditionalformatting/conditional-formatting';
 import {GroupingBar} from '@syncfusion/ej2-pivotview/src/common/grouping-bar/grouping-bar';
-import {PivotContextMenu} from '@syncfusion/ej2-pivotview/src/common/popups/context-menu';
 import {NumberFormatting} from '@syncfusion/ej2-pivotview/src/common/popups/formatting-dialog';
 import {Grouping} from '@syncfusion/ej2-pivotview/src/common/popups/grouping';
 import {Toolbar} from '@syncfusion/ej2-pivotview/src/common/popups/toolbar';
@@ -19,7 +14,6 @@ import {ExcelExport} from '@syncfusion/ej2-pivotview/src/pivotview/actions/excel
 import {Pager} from '@syncfusion/ej2-pivotview/src/pivotview/actions/pager';
 import {PDFExport} from '@syncfusion/ej2-pivotview/src/pivotview/actions/pdf-export';
 import {VirtualScroll} from '@syncfusion/ej2-pivotview/src/pivotview/actions/virtualscroll';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -59,11 +53,12 @@ export class Nx2EjPivotView<STATE extends StateNx2EjPivotView = StateNx2EjPivotV
         addNx2Class(this.state.deco, 'Nx2EjPivotView');
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new PivotView(this.state.ej);
-        this.obj.appendTo(this.htmlElementAnchor);
-
     }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+    }
+
 } // main class

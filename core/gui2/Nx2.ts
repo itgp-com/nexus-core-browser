@@ -42,6 +42,9 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         if (!state.tagId) state.tagId = getRandomString(this._className);
     } // _constructor
 
+
+    private __onStateInitializedInProgress = false;
+
     /**
      * This method assumes that the state is completely initialized and ready to be used.
      *
@@ -52,33 +55,49 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      */
     protected onStateInitialized(state: STATE) {
 
-        if (state.wrapper && !state.wrapperTagId)
-            if (state.tagId)
-                state.wrapperTagId = state.tagId + '_wrapper';
-            else
-                state.wrapperTagId = getRandomString(this._className + '_wrapper');
+        if (!this.__onStateInitializedInProgress && state.onStateInitialized) {
+            // if state contains the method, that overrides this one
+            try {
+                this.__onStateInitializedInProgress = true; // eliminates infinite recursion if the state.onStateInitialized calls this method
+
+                state.onStateInitialized({widget: this})
+            } catch (ex) {
+                this.handleError(ex);
+            } finally {
+                this.__onStateInitializedInProgress = false;
+            }
+
+        } else { // if (state.onStateInitialized)
+
+            if (state.wrapper && !state.wrapperTagId)
+                if (state.tagId)
+                    state.wrapperTagId = state.tagId + '_wrapper';
+                else
+                    state.wrapperTagId = getRandomString(this._className + '_wrapper');
 
 
-        /**
-         * At development time detect that the state has changed
-         */
-        if (isDev()) {
-            if (state && this.state) {
-                if (state !== this.state) {
-                    console.error('State mismatch. Old State is', this.state, 'New state is', state);
-                    setTimeout(() => {
-                            DialogUtility.alert({
-                                title: 'Nx2 component state problem',
-                                content: '<p>State used is a completely new variable instead of the original. <p>This new state will be ignored, so you won\'t see its contents in the UI and wonder why that is!!!<p>See console for details.<p>',
-                                width: 'min(80%, 500px)',
-                                height: 'min(80%, 300px)',
-                                isModal: true,
-                            });
-                        },
-                        500);
-                } // if (state !== this.state)
-            } // if (state && this.state)
-        } // if (isDev())
+            /**
+             * At development time detect that the state has changed
+             */
+            if (isDev()) {
+                if (state && this.state) {
+                    if (state !== this.state) {
+                        console.error('State mismatch. Old State is', this.state, 'New state is', state);
+                        setTimeout(() => {
+                                DialogUtility.alert({
+                                    title: 'Nx2 component state problem',
+                                    content: '<p>State used is a completely new variable instead of the original. <p>This new state will be ignored, so you won\'t see its contents in the UI and wonder why that is!!!<p>See console for details.<p>',
+                                    width: 'min(80%, 500px)',
+                                    height: 'min(80%, 300px)',
+                                    isModal: true,
+                                });
+                            },
+                            500);
+                    } // if (state !== this.state)
+                } // if (state && this.state)
+            } // if (isDev())
+        } // if (state.onStateInitialized)
+
     } // onStateInitialized
 
 
@@ -236,6 +255,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     set obj(value: JS_COMPONENT) {
         this._obj = value;
     }
+
 
     private _initialized: boolean = false; // True if initLogic has been invoked already
 

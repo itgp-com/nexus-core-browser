@@ -1,5 +1,4 @@
 import {ImageEditor, ImageEditorModel} from "@syncfusion/ej2-image-editor";
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -22,11 +21,12 @@ export class Nx2EjImageEditor<STATE extends StateNx2EjImageEditor = StateNx2EjIm
         addNx2Class(this.state.deco, 'Nx2EjImageEditor');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new ImageEditor(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

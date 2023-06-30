@@ -41,18 +41,26 @@ export class Nx2EjButton<STATE extends StateNx2EjButton = StateNx2EjButton> exte
         super.onStateInitialized(state);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
+    onLogic(ev: Nx2Evt_OnLogic) {
         let state = this.state;
         if (state.label)
             state.ej.content = stringArgVal(state.label); // Button content label/ html
 
-        this.obj = new Button(this.state.ej);
-        this.obj.appendTo(this.htmlElementAnchor);
+        super.onLogic(ev);
 
         // attach the onclick event to the htmlElementAnchor
         if (this.state.onclick)
             this.htmlElementAnchor.onclick = this.state.onclick;
 
     }
+
+    protected createEjObj(): void {
+        this.obj = new Button(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+    }
+
 
 }

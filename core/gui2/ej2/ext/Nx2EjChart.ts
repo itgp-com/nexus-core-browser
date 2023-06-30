@@ -53,7 +53,6 @@ import {Selection} from '@syncfusion/ej2-charts/src/chart/user-interaction/selec
 import {Tooltip} from '@syncfusion/ej2-charts/src/chart/user-interaction/tooltip';
 import {Zoom} from '@syncfusion/ej2-charts/src/chart/user-interaction/zooming';
 import {ScrollBar} from '@syncfusion/ej2-charts/src/common/scrollbar/scrollbar';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -90,10 +89,11 @@ export class Nx2EjChart<STATE extends StateNx2EjChart = StateNx2EjChart> extends
     }
 
 
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new Chart(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 

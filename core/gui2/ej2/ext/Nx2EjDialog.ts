@@ -1,12 +1,11 @@
 import {Dialog, DialogModel} from "@syncfusion/ej2-popups";
 import {isArray, isString} from "lodash";
-import {getRandomString} from "../../../BaseUtils";
 import {isHTMLElement} from "../../../CoreUtils";
-import {isNx2_Interface_Dialog_Close, isNx2_Interface_Dialog_Open} from '../../generic/Nx2Interface_Dialog';
 import {Nx2Html} from "../../generic/Nx2Html";
+import {isNx2_Interface_Dialog_Close, isNx2_Interface_Dialog_Open} from '../../generic/Nx2Interface_Dialog';
 import {Nx2Row} from "../../generic/Nx2Row";
-import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
-import {addClassesToElement, addNx2Class, decoToHtmlElement} from '../../Nx2HtmlDecorator';
+import {Nx2, Nx2Evt_Destroy, Nx2Evt_OnLogic} from "../../Nx2";
+import {addNx2Class, decoToHtmlElement} from '../../Nx2HtmlDecorator';
 import {isNx2} from "../../Nx2Utils";
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 import {Nx2DialogBackArrow} from "./util/Nx2DialogBackArrow";
@@ -276,18 +275,21 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
     }
 
     onLogic(args: Nx2Evt_OnLogic) {
-
         if (!this._appendTargetCreatedLocally) {
             this.htmlElement = this._appendedTo; // this is the true html element that will be used by the widget
         }
-
         super.onLogic(args);
-
-        let ej: DialogModel = this.state.ej;
-        this.obj = new Dialog(ej);
-        this.obj.appendTo(this._appendedTo);
-
     }
+
+
+    protected createEjObj(): void {
+        this.obj = new Dialog(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this._appendedTo);
+    }
+
 
     show() {
         this.initLogic(); // multiple calls don't have any impact

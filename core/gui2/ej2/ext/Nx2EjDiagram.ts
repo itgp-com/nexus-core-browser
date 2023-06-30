@@ -16,7 +16,6 @@ import {LayoutAnimation} from '@syncfusion/ej2-diagrams/src/diagram/objects/layo
 import {Snapping} from '@syncfusion/ej2-diagrams/src/diagram/objects/snapping';
 import {UndoRedo} from '@syncfusion/ej2-diagrams/src/diagram/objects/undo-redo';
 import {PrintAndExport} from '@syncfusion/ej2-diagrams/src/diagram/print-settings';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -43,11 +42,12 @@ export class Nx2EjDiagram<STATE extends StateNx2EjDiagram = StateNx2EjDiagram> e
         addNx2Class(this.state.deco, 'Nx2EjDiagram');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new Diagram(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

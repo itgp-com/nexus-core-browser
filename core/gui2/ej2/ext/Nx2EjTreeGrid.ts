@@ -19,7 +19,6 @@ import {Selection as TreeGridSelection} from '@syncfusion/ej2-treegrid/src/treeg
 import {Sort} from '@syncfusion/ej2-treegrid/src/treegrid/actions/sort';
 import {Aggregate} from '@syncfusion/ej2-treegrid/src/treegrid/actions/summary';
 import {Toolbar} from '@syncfusion/ej2-treegrid/src/treegrid/actions/toolbar';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -66,11 +65,12 @@ export class Nx2EjTreeGrid<STATE extends StateNx2EjTreeGrid = StateNx2EjTreeGrid
         addNx2Class(this.state.deco, 'Nx2EjTreeGrid');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new TreeGrid(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

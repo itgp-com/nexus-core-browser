@@ -35,15 +35,22 @@ export class Nx2EjSplitButton<STATE extends StateNx2EjSplitButton = StateNx2EjSp
         super.onStateInitialized(state);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
+    onLogic(ev: Nx2Evt_OnLogic) {
         let state = this.state;
         if (state.label)
             state.ej.content = stringArgVal(state.label); // SplitButton content label/ html
 
-        this.obj = new SplitButton(this.state.ej);
-        this.obj.appendTo(this.htmlElementAnchor);
+        super.onLogic(ev);
 
 
     }
+    protected createEjObj(): void {
+        this.obj = new SplitButton(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+    }
+
 
 }

@@ -1,3 +1,4 @@
+import {Splitter} from '@syncfusion/ej2-layouts';
 import {Tab, TabModel} from "@syncfusion/ej2-navigations";
 import {SelectEventArgs} from '@syncfusion/ej2-navigations/src/tab/tab';
 import {Nx2, Nx2Evt_OnLogic} from "../../Nx2";
@@ -131,8 +132,7 @@ export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2Ej
         }  // selected
 
 
-        this.obj = new Tab(this.state.ej);
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+        super.onLogic(args); // will call createEjObj and appendEjToHtmlElement
 
         let fAddTo = this.obj.addTab; // addTab(items: TabItemModel[], index?: number): void;
         this.obj.addTab = (items: any, index?: number) => {
@@ -145,6 +145,15 @@ export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2Ej
 
 
     } // onLogic
+
+    protected createEjObj(): void {
+        this.obj = new Tab(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+    }
+
 
 
     private _deselectListeners: Nx2Tab_Deselected_Listener[] = [];

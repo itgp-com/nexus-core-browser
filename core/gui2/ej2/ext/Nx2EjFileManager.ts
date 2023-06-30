@@ -2,6 +2,7 @@ import {DetailsView, FileManager, FileManagerModel, NavigationPane, Toolbar} fro
 import {BreadCrumbBar} from '@syncfusion/ej2-filemanager/src/file-manager/actions/breadcrumb-bar';
 import {Virtualization} from '@syncfusion/ej2-filemanager/src/file-manager/actions/virtualization';
 import {LargeIconsView} from '@syncfusion/ej2-filemanager/src/file-manager/layout/large-icons-view';
+import {Accordion} from '@syncfusion/ej2-navigations';
 import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
@@ -26,11 +27,12 @@ export class Nx2EjFileManager<STATE extends StateNx2EjFileManager = StateNx2EjFi
         addNx2Class(this.state.deco, 'Nx2EjFileManager');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new FileManager(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

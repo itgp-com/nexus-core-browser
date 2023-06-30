@@ -1,5 +1,4 @@
 import {QueryBuilder, QueryBuilderModel} from "@syncfusion/ej2-querybuilder";
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -22,11 +21,12 @@ export class Nx2EjQueryBuilder<STATE extends StateNx2EjQueryBuilder = StateNx2Ej
         addNx2Class(this.state.deco, 'Nx2EjQueryBuilder');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new QueryBuilder(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

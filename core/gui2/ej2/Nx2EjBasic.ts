@@ -55,10 +55,17 @@ export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic
     } // onDestroy
 
     onLogic(args : Nx2Evt_OnLogic): void {
+        this.createEjObj();
+        this.appendEjToHtmlElement();
     }
-    //
-    // onRefresh(args:Nx2Evt_Refresh): void {
-    // }
 
+
+    protected createEjObj(): void {
+        // throw new Error('Must override createEjObj');
+    }
+
+    protected appendEjToHtmlElement(): void {
+        // throw new Error('Must override appendToHtmlElement');
+    }
 
 }

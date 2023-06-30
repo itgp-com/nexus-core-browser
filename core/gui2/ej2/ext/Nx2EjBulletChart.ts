@@ -1,7 +1,6 @@
 import {BulletChart, BulletChartModel} from "@syncfusion/ej2-charts";
 import {BulletChartLegend} from '@syncfusion/ej2-charts/src/bullet-chart/legend/legend';
 import {BulletTooltip} from '@syncfusion/ej2-charts/src/bullet-chart/user-interaction/tooltip';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -25,10 +24,12 @@ export class Nx2EjBulletChart<STATE extends StateNx2EjBulletChart = StateNx2EjBu
     }
 
 
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new BulletChart(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

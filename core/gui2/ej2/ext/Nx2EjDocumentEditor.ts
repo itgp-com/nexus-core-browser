@@ -1,5 +1,16 @@
-import {DocumentEditorContainer, DocumentEditorContainerModel,Editor,EditorHistory,Print,Search,Selection,SfdtExport,TextExport,Toolbar,WordExport} from "@syncfusion/ej2-documenteditor";
-import {Nx2Evt_OnLogic} from "../../Nx2";
+import {
+    DocumentEditorContainer,
+    DocumentEditorContainerModel,
+    Editor,
+    EditorHistory,
+    Print,
+    Search,
+    Selection,
+    SfdtExport,
+    TextExport,
+    Toolbar,
+    WordExport
+} from "@syncfusion/ej2-documenteditor";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -24,11 +35,12 @@ export class Nx2EjDocumentEditorContainer<STATE extends StateNx2EjDocumentEditor
         addNx2Class(this.state.deco, 'Nx2EjDocumentEditorContainer');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new DocumentEditorContainer(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

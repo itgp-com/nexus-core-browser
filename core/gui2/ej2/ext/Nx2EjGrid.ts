@@ -22,7 +22,6 @@ import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -68,13 +67,14 @@ export class Nx2EjGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends Nx
         addNx2Class(this.state.deco, 'Nx2EjGrid');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new Grid(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 
     /**
      * The function is used to generate updated Query from Grid model.

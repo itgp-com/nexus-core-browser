@@ -1,6 +1,5 @@
 import {AccumulationChart, AccumulationChartModel} from "@syncfusion/ej2-charts";
 import {AccumulationAnnotation} from '@syncfusion/ej2-charts/src/accumulation-chart/annotation/annotation';
-import {AccumulationBase} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/accumulation-base';
 import {AccumulationDataLabel} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/dataLabel';
 import {FunnelSeries} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/funnel-series';
 import {AccumulationLegend} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/legend';
@@ -10,7 +9,6 @@ import {AccumulationHighlight} from '@syncfusion/ej2-charts/src/accumulation-cha
 import {AccumulationSelection} from '@syncfusion/ej2-charts/src/accumulation-chart/user-interaction/selection';
 import {AccumulationTooltip} from '@syncfusion/ej2-charts/src/accumulation-chart/user-interaction/tooltip';
 import {Export} from '@syncfusion/ej2-charts/src/chart/print-export/export';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -36,11 +34,12 @@ export class Nx2EjAccumulationChart<STATE extends StateNx2EjAccumulationChart = 
         addNx2Class(this.state.deco, 'Nx2EjAccumulationChart');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new AccumulationChart(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

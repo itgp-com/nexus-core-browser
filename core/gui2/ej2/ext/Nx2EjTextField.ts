@@ -1,6 +1,6 @@
 import {TextBox, TextBoxModel} from "@syncfusion/ej2-inputs";
 import {StateNx2PropertyName} from "../../generic/StateNx2PropertyName";
-import {Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
+import {Nx2Evt_OnHtml} from "../../Nx2";
 import {addNx2Class, IHtmlUtils, Nx2HtmlDecorator} from "../../Nx2HtmlDecorator";
 import {createNx2HtmlBasic, createNx2HtmlBasicFromDecorator} from "../../Nx2Utils";
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
@@ -113,11 +113,12 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
         // return super.onHtml(args);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
-
-        this.obj = new TextBox(this.state.ej);;
-        this.obj.appendTo(this.htmlElementAnchor);
-        // let anchor = this.htmlElement.getElementsByTagName('input')[0];
-        // this.obj.appendTo(anchor);
+    protected createEjObj(): void {
+        this.obj = new TextBox(this.state.ej);
     }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+    }
+
 }

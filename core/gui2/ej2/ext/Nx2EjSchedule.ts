@@ -12,7 +12,6 @@ import {TimelineMonth} from '@syncfusion/ej2-schedule/src/schedule/renderer/time
 import {TimelineViews} from '@syncfusion/ej2-schedule/src/schedule/renderer/timeline-view';
 import {TimelineYear} from '@syncfusion/ej2-schedule/src/schedule/renderer/timeline-year';
 import {Year} from '@syncfusion/ej2-schedule/src/schedule/renderer/year';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -55,11 +54,12 @@ export class Nx2EjSchedule<STATE extends StateNx2EjSchedule = StateNx2EjSchedule
         addNx2Class(this.state.deco, 'Nx2EjSchedule');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new Schedule(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

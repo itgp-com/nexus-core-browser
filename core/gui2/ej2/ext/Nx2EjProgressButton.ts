@@ -40,19 +40,26 @@ export class Nx2EjProgressButton<STATE extends StateNx2EjProgressButton = StateN
         super.onStateInitialized(state);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
+    onLogic(ev: Nx2Evt_OnLogic) {
         let state = this.state;
         if (state.label)
             state.ej.content = stringArgVal(state.label); // ProgressButton content label/ html
 
-        this.obj = new ProgressButton(this.state.ej);
-        this.obj.appendTo(this.htmlElementAnchor);
+        super.onLogic(ev);
 
         // attach the onclick event to the htmlElementAnchor
         if (this.state.onclick)
             this.htmlElementAnchor.onclick = this.state.onclick;
 
-
     }
+
+    protected createEjObj(): void {
+        this.obj = new ProgressButton(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+    }
+
 
 }

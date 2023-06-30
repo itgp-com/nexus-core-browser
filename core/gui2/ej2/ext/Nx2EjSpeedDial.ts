@@ -35,15 +35,22 @@ export class Nx2EjSpeedDial<STATE extends StateNx2EjSpeedDial = StateNx2EjSpeedD
         super.onStateInitialized(state);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
+    onLogic(ev: Nx2Evt_OnLogic) {
         let state = this.state;
         if (state.label)
             state.ej.content = stringArgVal(state.label); // SpeedDial content label/ html
 
-        this.obj = new SpeedDial(this.state.ej);
-        this.obj.appendTo(this.htmlElementAnchor);
+        super.onLogic(ev);
 
 
     }
+    protected createEjObj(): void {
+        this.obj = new SpeedDial(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+    }
+
 
 }

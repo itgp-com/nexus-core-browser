@@ -1,5 +1,4 @@
 import {Breadcrumb, BreadcrumbModel} from "@syncfusion/ej2-navigations";
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -27,11 +26,12 @@ export class Nx2EjBreadcrumb<STATE extends StateNx2EjBreadcrumb = StateNx2EjBrea
         super.onStateInitialized(state);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
-
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new Breadcrumb(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

@@ -10,7 +10,6 @@ import {Audio} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/rendere
 import {Table} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/table-module';
 import {Video} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/video-module';
 import {StateNx2PropertyName} from '../../generic/StateNx2PropertyName';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -56,11 +55,12 @@ export class Nx2EjRichTextEditor<STATE extends StateNx2EjRichTextEditor = StateN
         super.onStateInitialized(state);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new RichTextEditor(this.state.ej);
-        this.obj.appendTo(this.htmlElementAnchor);
-
     }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+    }
+
 } // main class

@@ -1,7 +1,6 @@
 import {DashboardLayout, DashboardLayoutModel} from "@syncfusion/ej2-layouts";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
-import {Nx2Evt_OnLogic} from "../../Nx2";
 
 
 export interface StateNx2EjDashboardLayoutRef extends StateNx2EjBasicRef {
@@ -30,10 +29,12 @@ export class Nx2EjDashboardLayout<STATE extends StateNx2EjDashboardLayout = Stat
         super.onStateInitialized(state);
     }
 
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new DashboardLayout(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }

@@ -7,13 +7,26 @@ import {
    // Nx2Evt_OnClear,
    Nx2Evt_OnHtml,
    Nx2Evt_OnLogic,
-   Nx2Evt_Destroy, Nx2Evt_AfterLogic
+   Nx2Evt_Destroy, Nx2Evt_AfterLogic, Nx2Evt
 } from "./Nx2";
 import {Nx2HtmlDecorator}                      from "./Nx2HtmlDecorator";
 import {Elem_or_Nx2} from './Nx2Utils';
 
 export interface StateNx2 {
 
+
+   /**
+    * This method assumes that the state is completely initialized and ready to be used.
+    *
+    * Useful when overriding in order to customize the state object before calling super.
+    *
+    * If this is specified, the widget's method (if any) will not be called.
+    * Should you need to call the corresponding widget method, you can call it manually from this method
+    * by using the widget instance in the parameter.
+    *
+    *
+    */
+   onStateInitialized?:(ev:Nx2Evt) => void;
 
    /**
     *  Called after initLogic has been completed for this component AND for ALL the child components
@@ -24,21 +37,21 @@ export interface StateNx2 {
     *  Called after initLogic has been completed for this component but NOT for any child components
     *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
     */
-   onAfterInitWidgetOnly?: (args:Nx2Evt_AfterLogic) => void;
+   onAfterInitWidgetOnly?: (ev:Nx2Evt_AfterLogic) => void;
 
    /**
     * If this is specified, the widget's method (if any) will not be called.
     * Should you need to call the corresponding widget method, you can call it manually from this method
     * by using the widget instance in the parameter
     */
-   onAfterInitLogic ?: (args : Nx2Evt_AfterLogic) => void;
+   onAfterInitLogic ?: (ev : Nx2Evt_AfterLogic) => void;
 
    /**
     * If this is specified, the widget's method (if any) will not be called.
     * Should you need to call the corresponding widget method, you can call it manually from this method
     * by using the widget instance in the parameter
     */
-   onBeforeInitLogic?: (args ?: Nx2Evt_BeforeLogic) => (void|Promise<void>);
+   onBeforeInitLogic?: (ev ?: Nx2Evt_BeforeLogic) => (void|Promise<void>);
 
    /**
     * The HTML decoration for the HTML element that of the widget
@@ -107,22 +120,22 @@ export interface StateNx2 {
 
    // onClear?: (args:Nx2Evt_OnClear) =>  void ;
 
-   onDestroy?: (args: Nx2Evt_Destroy) =>  void ;
+   onDestroy?: (ev: Nx2Evt_Destroy) =>  void ;
 
-   onHtml?: (args:Nx2Evt_OnHtml) =>HTMLElement;
+   onHtml?: (ev:Nx2Evt_OnHtml) =>HTMLElement;
 
-   onLogic?: (args : Nx2Evt_OnLogic) =>  void;
+   onLogic?: (ev : Nx2Evt_OnLogic) =>  void;
 
    // onRefresh?: (args ?: Nx2Evt_Refresh) =>  void;
    /**
     * Called when the widget is resized (assuming <link>widget.resizeTracked</link> is true)
     * @param evt
     */
-   onResized ?: (evt?:Nx2Evt_Resized) => void;
+   onResized ?: (ev?:Nx2Evt_Resized) => void;
 
    widgetErrorHandler?: WidgetErrorHandler;
 
-   onBeforeInitHtml ?: (args: Nx2Evt_OnHtml) => void;
+   onBeforeInitHtml ?: (ev: Nx2Evt_OnHtml) => void;
 }
 
 export interface StateNx2Ref {

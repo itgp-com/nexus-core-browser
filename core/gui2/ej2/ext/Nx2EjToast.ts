@@ -1,5 +1,4 @@
 import {Toast, ToastModel} from "@syncfusion/ej2-notifications";
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class, decoToHtmlElement, Nx2HtmlDecorator} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -36,10 +35,7 @@ export class Nx2EjToast<STATE extends StateNx2EjToast = StateNx2EjToast> extends
         addNx2Class(this.state.deco, 'Nx2EjToast');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new Toast(this.state.ej);
 
         //-----------------------
@@ -74,11 +70,10 @@ export class Nx2EjToast<STATE extends StateNx2EjToast = StateNx2EjToast> extends
             } // if deco_toast_title
         }// this.obj.show
 
-        //------------
-
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-
-
-
     }
+
+    protected appendEjToHtmlElement(): void {
+        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
+    }
+
 }

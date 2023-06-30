@@ -1,6 +1,5 @@
 import {ListView, ListViewModel} from "@syncfusion/ej2-lists";
 import {Virtualization} from '@syncfusion/ej2-lists/src/list-view/virtualization';
-import {Nx2Evt_OnLogic} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
 
@@ -23,11 +22,12 @@ export class Nx2EjListView<STATE extends StateNx2EjListView = StateNx2EjListView
         addNx2Class(this.state.deco, 'Nx2EjListView');
     }
 
-
-    onLogic(args: Nx2Evt_OnLogic) {
-        super.onLogic(args);
-
+    protected createEjObj(): void {
         this.obj = new ListView(this.state.ej);
+    }
+
+    protected appendEjToHtmlElement(): void {
         this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
+
 }
