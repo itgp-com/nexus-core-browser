@@ -209,7 +209,7 @@ export function header_AppendLinkButton(params: Args_Header_AppendLinkButton) {
       }
 
       if (params.buttonTooltipModel)
-         htmlElement_addTooltip_CoreOnly(buttonNode, {content: params?.buttonTooltipModel?.content});
+         htmlElement_addTooltip_CoreOnly(buttonNode, {content: params?.buttonTooltipModel?.content as any});
    } catch (error) {
       console.error(error);
       getErrorHandler().displayExceptionToUser(error);
