@@ -1,4 +1,4 @@
-import {Grid} from "@syncfusion/ej2-grids";
+import {Grid, GridModel} from "@syncfusion/ej2-grids";
 import {CSS_FLEX_MAX_XY} from "../../../CoreCSS";
 import {Nx2PanelLayout, StateNx2PanelLayout} from '../../generic/Nx2PanelLayout';
 import {EnumPanelLayout} from "../../generic/Nx2PanelLayoutFlex";
@@ -9,7 +9,7 @@ import {Nx2EjGrid, StateNx2EjGrid} from "../ext/Nx2EjGrid";
 
 export type Elem_or_Nx2EjGrid<STATE extends StateNx2EjGrid = any> = HTMLElement | Nx2EjGrid<STATE>; // compatible with  Elem_or_Nx2
 
-export interface StateNx2EjPanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateNx2PanelLayout{
+export interface StateNx2EjPanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateNx2PanelLayout {
 
     /**
      * This is where the Grid component or wrapper.
@@ -53,6 +53,27 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
         if (state.gridAutoWidth == null)
             state.gridAutoWidth = true; // enable auto width by default
 
+
+        // Trigger resize event on actionComplete of the grid
+        if (state.center != null && state.center instanceof Nx2EjGrid) {
+            let n2Grid:Nx2EjGrid = state.center as Nx2EjGrid;
+            let gridState:StateNx2EjGrid = n2Grid.state;
+            let gridModel:GridModel = gridState.ej;
+            if(!gridModel)
+                gridModel = gridState.ej = {};
+
+            let userActionComplete = gridModel.actionComplete;
+            gridModel.actionComplete = (args) => {
+                try {
+                    if (userActionComplete)
+                        userActionComplete(args);
+                } finally {
+                    // regardless of the output
+                    this.onResized();
+                }
+            } // gridModel.actionComplete
+        } // if (state.center != null && state.center instanceof Nx2EjGrid)
+
         super.onStateInitialized(state);
     }
 
@@ -65,17 +86,18 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
     stateToHTMLElement(position: EnumPanelLayout): HTMLElement {
         let state = this.state;
         let elem: HTMLElement;
+        // noinspection JSUnreachableSwitchBranches
         switch (position) {
             case EnumPanelLayout.center:
 
                 if (state.center instanceof HTMLElement) {
                     elem = state.center as HTMLElement;
                 } else {
-                    let center = state.center;
-                    if ( center instanceof HTMLElement) {
-                        elem = center;
+                    let grid = state.center;
+                    if (grid instanceof HTMLElement) {
+                        elem = grid;
                     } else {
-                        elem = center.htmlElement;
+                        elem = grid.htmlElement;
                     }
                 }
                 break
@@ -113,10 +135,10 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
                     }
                 }
             } // if (this.nx2Grid)
-        }finally {
+        } finally {
             setTimeout(() => {
                 this.resizeAllowed = true;
-            }, this.resizeEventMinInterval+50); // restore this after the last debounce could have fired
+            }, this.resizeEventMinInterval + 50); // restore this after the last debounce could have fired
         }
     }
 
@@ -126,21 +148,10 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
         let grid: Grid = this.nx2Grid.obj;
         if (!grid)
             return 0;
-        let state = this.state;
 
         let gridDecoratorsHeight: number = getGridDecoratorsHeight(grid);
 
-        let totalHeight = this.htmlElement.clientHeight;
-
-
-        let _topHtml :HTMLElement = (this.topContainer ? this.topContainer.htmlElement : null);
-        let topHeight = (_topHtml? _topHtml.offsetHeight : 0);
-
-
-        let _bottomHtml :HTMLElement = (this.bottomContainer ? this.bottomContainer.htmlElement : null);
-        let bottomHeight = (_bottomHtml ? _bottomHtml.offsetHeight : 0);
-
-        let surroundingTopBottomHeight = topHeight + bottomHeight;
+        let totalHeight = this.centerContainer.htmlElement.offsetHeight;
 
 
         // the grid has this extra height that we need to subtract between offset and client somewhere
@@ -150,7 +161,7 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
         if (gridExtraHeight < 0)
             gridExtraHeight = 0;
 
-        return totalHeight - surroundingTopBottomHeight - gridDecoratorsHeight - gridExtraHeight;
+        return totalHeight -  gridDecoratorsHeight - gridExtraHeight  -5; // 5pixels appear to be added somewhere when the grid is filtered and the filter is shown in the paging bottom
     }
 
     protected calculateGridWidth(): number {
@@ -161,14 +172,10 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
         if (!grid)
             return 0;
 
-        let leftHeight = (this.leftContainer ? this.leftContainer.htmlElement.offsetWidth : 0);
-        let rightHeight = (this.rightContainer ? this.rightContainer.htmlElement.offsetWidth : 0);
-        let surroundingLeftRightHeight = leftHeight + rightHeight;
+        let totalWidth: number = this.centerContainer.htmlElement.offsetWidth;
 
-        let totalWidth: number = this.htmlElement.clientWidth;
-        let gridWidth: number = totalWidth - surroundingLeftRightHeight;
+        let gridWidth: number = totalWidth - 1;
         return gridWidth;
-
     }
 
 }
