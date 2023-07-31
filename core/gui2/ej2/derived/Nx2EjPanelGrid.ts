@@ -35,7 +35,7 @@ export interface StateNx2EjPanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGr
  */
 export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends StateNx2EjPanelGrid = StateNx2EjPanelGrid> extends Nx2PanelLayout<STATE> {
 
-    nx2Grid: GRID_TYPE;
+    private _nx2Grid: GRID_TYPE;
 
     constructor(state ?: STATE) {
         super(state);
@@ -52,27 +52,6 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
 
         if (state.gridAutoWidth == null)
             state.gridAutoWidth = true; // enable auto width by default
-
-
-        // Trigger resize event on actionComplete of the grid
-        if (state.center != null && state.center instanceof Nx2EjGrid) {
-            let n2Grid:Nx2EjGrid = state.center as Nx2EjGrid;
-            let gridState:StateNx2EjGrid = n2Grid.state;
-            let gridModel:GridModel = gridState.ej;
-            if(!gridModel)
-                gridModel = gridState.ej = {};
-
-            let userActionComplete = gridModel.actionComplete;
-            gridModel.actionComplete = (args) => {
-                try {
-                    if (userActionComplete)
-                        userActionComplete(args);
-                } finally {
-                    // regardless of the output
-                    this.onResized();
-                }
-            } // gridModel.actionComplete
-        } // if (state.center != null && state.center instanceof Nx2EjGrid)
 
         super.onStateInitialized(state);
     }
@@ -115,9 +94,9 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
 
         try {
             this.resizeAllowed = false; // disable resize events while we are resizing the grid
-            if (this.nx2Grid) {
+            if (this._nx2Grid) {
                 let state = this.state;
-                let grid: Grid = this.nx2Grid.obj;
+                let grid: Grid = this._nx2Grid.obj;
 
                 if (state.gridAutoHeight) {
 
@@ -143,9 +122,9 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
     }
 
     protected calculateGridHeight(): number {
-        if (!this.nx2Grid)
+        if (!this._nx2Grid)
             return 0;
-        let grid: Grid = this.nx2Grid.obj;
+        let grid: Grid = this._nx2Grid.obj;
         if (!grid)
             return 0;
 
@@ -166,9 +145,9 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
 
     protected calculateGridWidth(): number {
 
-        if (!this.nx2Grid)
+        if (!this._nx2Grid)
             return 0;
-        let grid: Grid = this.nx2Grid.obj;
+        let grid: Grid = this._nx2Grid.obj;
         if (!grid)
             return 0;
 
@@ -178,4 +157,31 @@ export class Nx2EjPanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exten
         return gridWidth;
     }
 
+
+    public get nx2Grid(): GRID_TYPE {
+        return this._nx2Grid;
+    }
+
+    public set nx2Grid(n2Grid: GRID_TYPE) {
+
+
+        // Trigger resize event on actionComplete of the grid
+        let gridState:StateNx2EjGrid = n2Grid.state;
+        let gridModel:GridModel = gridState.ej;
+        if(!gridModel)
+            gridModel = gridState.ej = {};
+
+        let userActionComplete = gridModel.actionComplete;
+        gridModel.actionComplete = (args) => {
+            try {
+                if (userActionComplete)
+                    userActionComplete(args);
+            } finally {
+                // regardless of the output
+                this.onResized();
+            }
+        } // gridModel.actionComplete
+
+        this._nx2Grid = n2Grid;
+    }
 }
