@@ -27,12 +27,10 @@ export class Nx2EjTooltip<STATE extends StateNx2EjTooltip = StateNx2EjTooltip> e
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Tooltip(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 } // main class

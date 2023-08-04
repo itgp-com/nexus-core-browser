@@ -22,12 +22,10 @@ export class Nx2EjMessage<STATE extends StateNx2EjMessage = StateNx2EjMessage> e
     }
 
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Message(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

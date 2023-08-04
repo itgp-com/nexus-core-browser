@@ -27,12 +27,10 @@ export class Nx2EjListBox<STATE extends StateNx2EjListBox = StateNx2EjListBox> e
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new ListBox(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 } // main class

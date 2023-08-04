@@ -20,12 +20,10 @@ export class Nx2EjKanban<STATE extends StateNx2EjKanban = StateNx2EjKanban> exte
         addNx2Class(this.state.deco, 'Nx2EjKanban');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Kanban(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

@@ -54,13 +54,11 @@ export class Nx2EjButton<STATE extends StateNx2EjButton = StateNx2EjButton> exte
 
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Button(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 
 }

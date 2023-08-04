@@ -28,12 +28,10 @@ export class Nx2EjComboBox<STATE extends StateNx2EjComboBox = StateNx2EjComboBox
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new ComboBox(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

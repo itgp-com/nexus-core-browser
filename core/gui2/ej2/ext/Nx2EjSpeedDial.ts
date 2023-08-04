@@ -44,13 +44,11 @@ export class Nx2EjSpeedDial<STATE extends StateNx2EjSpeedDial = StateNx2EjSpeedD
 
 
     }
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new SpeedDial(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 
 }

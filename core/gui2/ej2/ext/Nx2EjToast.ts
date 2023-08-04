@@ -35,7 +35,7 @@ export class Nx2EjToast<STATE extends StateNx2EjToast = StateNx2EjToast> extends
         addNx2Class(this.state.deco, 'Nx2EjToast');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Toast(this.state.ej);
 
         //-----------------------
@@ -72,8 +72,6 @@ export class Nx2EjToast<STATE extends StateNx2EjToast = StateNx2EjToast> extends
 
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

@@ -36,12 +36,10 @@ export class Nx2EjLinearGauge<STATE extends StateNx2EjLinearGauge = StateNx2EjLi
         addNx2Class(this.state.deco, 'Nx2EjLinearGauge');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new LinearGauge(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

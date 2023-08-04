@@ -21,12 +21,10 @@ export class Nx2EjDataMatrix<STATE extends StateNx2EjDataMatrix = StateNx2EjData
         addNx2Class(this.state.deco, 'Nx2EjDataMatrix');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new DataMatrixGenerator(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

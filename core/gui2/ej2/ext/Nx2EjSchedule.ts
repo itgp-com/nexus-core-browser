@@ -54,12 +54,10 @@ export class Nx2EjSchedule<STATE extends StateNx2EjSchedule = StateNx2EjSchedule
         addNx2Class(this.state.deco, 'Nx2EjSchedule');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Schedule(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

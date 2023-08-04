@@ -22,12 +22,10 @@ export class Nx2EjListView<STATE extends StateNx2EjListView = StateNx2EjListView
         addNx2Class(this.state.deco, 'Nx2EjListView');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new ListView(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

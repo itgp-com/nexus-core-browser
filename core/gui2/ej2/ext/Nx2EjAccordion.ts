@@ -22,12 +22,8 @@ export class Nx2EjAccordion<STATE extends StateNx2EjAccordion = StateNx2EjAccord
         addNx2Class(this.state.deco, 'Nx2EjAccordion');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Accordion(this.state.ej);
-    }
-
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
     }
 
 }

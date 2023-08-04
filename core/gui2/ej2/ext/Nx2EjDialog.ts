@@ -282,11 +282,11 @@ export class Nx2EjDialog<STATE extends StateNx2EjDialog = any> extends Nx2EjBasi
     }
 
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Dialog(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
+    appendEjToHtmlElement(): void {
         this.obj.appendTo(this._appendedTo);
     }
 

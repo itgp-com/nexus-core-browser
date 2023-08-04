@@ -40,12 +40,10 @@ export class Nx2EjRibbon<STATE extends StateNx2EjRibbon = StateNx2EjRibbon> exte
         addNx2Class(this.state.deco, 'Nx2EjRibbon');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Ribbon(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

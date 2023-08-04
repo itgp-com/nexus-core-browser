@@ -22,19 +22,22 @@ export class Nx2EjDashboardLayout<STATE extends StateNx2EjDashboardLayout = Stat
     }
 
 
+    /**
+     * If the dashboard widget does not appear, try adding a wrapper around it. That usually fixes it.
+     * @param {STATE} state
+     * @protected
+     */
     protected onStateInitialized(state: STATE) {
-        if ( state.wrapper == null ) {
-            state.wrapper = {}; // must have a wrapper or else EJ2 will not work
-        }
+        // if ( state.wrapper == null ) {
+        //     state.wrapper = {}; // must have a wrapper or else EJ2 will not work
+        // }
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new DashboardLayout(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

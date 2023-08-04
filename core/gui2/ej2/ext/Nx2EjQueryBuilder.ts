@@ -21,12 +21,10 @@ export class Nx2EjQueryBuilder<STATE extends StateNx2EjQueryBuilder = StateNx2Ej
         addNx2Class(this.state.deco, 'Nx2EjQueryBuilder');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new QueryBuilder(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

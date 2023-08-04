@@ -21,12 +21,10 @@ export class Nx2EjToolbar<STATE extends StateNx2EjToolbar = StateNx2EjToolbar> e
         addNx2Class(this.state.deco, 'Nx2EjToolbar');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Toolbar(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

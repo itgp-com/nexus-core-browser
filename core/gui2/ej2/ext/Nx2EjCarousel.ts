@@ -21,12 +21,10 @@ export class Nx2EjCarousel<STATE extends StateNx2EjCarousel = StateNx2EjCarousel
         addNx2Class(this.state.deco, 'Nx2EjCarousel');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Carousel(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

@@ -24,12 +24,10 @@ export class Nx2EjCalendar<STATE extends StateNx2EjCalendar = StateNx2EjCalendar
         addNx2Class(this.state.deco, 'Nx2EjCalendar');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Calendar(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

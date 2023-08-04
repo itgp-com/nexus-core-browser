@@ -21,12 +21,10 @@ export class Nx2EjMention<STATE extends StateNx2EjMention = StateNx2EjMention> e
         addNx2Class(this.state.deco, 'Nx2EjMention');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Mention(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

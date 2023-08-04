@@ -53,13 +53,11 @@ export class Nx2EjFab<STATE extends StateNx2EjFab = StateNx2EjFab> extends Nx2Ej
 
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Fab(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 
 }

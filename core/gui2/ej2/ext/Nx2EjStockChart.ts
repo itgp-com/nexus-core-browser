@@ -22,12 +22,10 @@ export class Nx2EjStockChart<STATE extends StateNx2EjStockChart = StateNx2EjStoc
         addNx2Class(this.state.deco, 'Nx2EjStockChart');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new StockChart(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

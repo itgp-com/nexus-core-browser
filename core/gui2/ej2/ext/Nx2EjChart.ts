@@ -89,12 +89,10 @@ export class Nx2EjChart<STATE extends StateNx2EjChart = StateNx2EjChart> extends
     }
 
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Chart(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

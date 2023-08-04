@@ -67,13 +67,11 @@ export class Nx2EjGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends Nx
         addNx2Class(this.state.deco, 'Nx2EjGrid');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Grid(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 
     /**

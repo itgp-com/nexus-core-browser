@@ -65,12 +65,10 @@ export class Nx2EjTreeGrid<STATE extends StateNx2EjTreeGrid = StateNx2EjTreeGrid
         addNx2Class(this.state.deco, 'Nx2EjTreeGrid');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new TreeGrid(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

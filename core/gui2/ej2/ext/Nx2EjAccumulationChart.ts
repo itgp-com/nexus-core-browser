@@ -34,12 +34,10 @@ export class Nx2EjAccumulationChart<STATE extends StateNx2EjAccumulationChart = 
         addNx2Class(this.state.deco, 'Nx2EjAccumulationChart');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new AccumulationChart(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

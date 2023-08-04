@@ -24,12 +24,10 @@ export class Nx2EjBulletChart<STATE extends StateNx2EjBulletChart = StateNx2EjBu
     }
 
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new BulletChart(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

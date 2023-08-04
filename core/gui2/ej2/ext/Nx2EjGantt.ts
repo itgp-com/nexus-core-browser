@@ -83,12 +83,10 @@ export class Nx2EjGantt<STATE extends StateNx2EjGantt = StateNx2EjGantt> extends
         addNx2Class(this.state.deco, 'Nx2EjGantt');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Gantt(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

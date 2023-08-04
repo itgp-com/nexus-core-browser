@@ -42,12 +42,10 @@ export class Nx2EjDiagram<STATE extends StateNx2EjDiagram = StateNx2EjDiagram> e
         addNx2Class(this.state.deco, 'Nx2EjDiagram');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Diagram(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

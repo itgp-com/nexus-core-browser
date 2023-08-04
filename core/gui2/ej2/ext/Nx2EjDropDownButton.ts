@@ -43,13 +43,11 @@ export class Nx2EjDropDownButton<STATE extends StateNx2EjDropDownButton = StateN
         super.onLogic(ev);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new DropDownButton(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 
 }

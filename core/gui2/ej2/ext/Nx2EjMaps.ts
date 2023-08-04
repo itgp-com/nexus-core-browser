@@ -48,12 +48,10 @@ export class Nx2EjMaps<STATE extends StateNx2EjMaps = StateNx2EjMaps> extends Nx
         addNx2Class(this.state.deco, 'Nx2EjMaps');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Maps(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

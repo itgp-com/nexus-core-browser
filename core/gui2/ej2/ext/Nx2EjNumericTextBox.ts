@@ -116,12 +116,10 @@ export class Nx2EjNumericTextBox extends Nx2EjBasic<StateNx2EjNumericTextBox, Nu
       // return super.onHtml(args);
    }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new NumericTextBox(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

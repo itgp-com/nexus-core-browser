@@ -27,12 +27,10 @@ export class Nx2EjRating<STATE extends StateNx2EjRating = StateNx2EjRating> exte
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Rating(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 } // main class

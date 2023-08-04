@@ -28,12 +28,10 @@ export class Nx2EjMaskedTextBox<STATE extends StateNx2EjMaskedTextBox = StateNx2
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new MaskedTextBox(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

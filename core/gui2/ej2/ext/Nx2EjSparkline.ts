@@ -22,12 +22,10 @@ export class Nx2EjSparkline<STATE extends StateNx2EjSparkline = StateNx2EjSparkl
         addNx2Class(this.state.deco, 'Nx2EjSparkline');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Sparkline(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

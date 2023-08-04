@@ -21,12 +21,10 @@ export class Nx2EjBarcode<STATE extends StateNx2EjBarcode = StateNx2EjBarcode> e
         addNx2Class(this.state.deco, 'Nx2EjBarcode');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new BarcodeGenerator(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

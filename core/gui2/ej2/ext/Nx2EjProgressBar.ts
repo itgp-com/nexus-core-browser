@@ -23,12 +23,10 @@ export class Nx2EjProgressBar<STATE extends StateNx2EjProgressBar = StateNx2EjPr
     }
 
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new ProgressBar(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

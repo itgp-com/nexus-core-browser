@@ -21,12 +21,10 @@ export class Nx2EjImageEditor<STATE extends StateNx2EjImageEditor = StateNx2EjIm
         addNx2Class(this.state.deco, 'Nx2EjImageEditor');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new ImageEditor(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

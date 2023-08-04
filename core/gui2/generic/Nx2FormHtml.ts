@@ -55,4 +55,8 @@ export class Nx2FormHtml<STATE extends StateNx2Form = StateNx2Form> extends Nx2E
         }
         return new FormValidator(form, options);
     } // getFormValidator
+
+    public createEjObj(): void {
+        // there is no Ej2 object for this class
+    }
 } // Nx2FormHtml

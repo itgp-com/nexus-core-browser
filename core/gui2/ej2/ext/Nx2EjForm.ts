@@ -64,4 +64,8 @@ export class Nx2EjForm<STATE extends StateNx2EjForm = StateNx2EjForm> extends Nx
         this._initializeValidator();
     }
 
+    public createEjObj(): void {
+        // there is no Ej2 object for this class
+    }
+
 }

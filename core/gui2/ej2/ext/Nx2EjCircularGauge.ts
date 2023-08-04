@@ -29,12 +29,10 @@ export class Nx2EjCircularGauge<STATE extends StateNx2EjCircularGauge = StateNx2
         addNx2Class(this.state.deco, 'Nx2EjCircularGauge');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new CircularGauge(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

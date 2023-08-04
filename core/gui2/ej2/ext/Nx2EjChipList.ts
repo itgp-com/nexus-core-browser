@@ -21,12 +21,10 @@ export class Nx2EjChipList<STATE extends StateNx2EjChipList = StateNx2EjChipList
         addNx2Class(this.state.deco, 'Nx2EjChipList');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new ChipList(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

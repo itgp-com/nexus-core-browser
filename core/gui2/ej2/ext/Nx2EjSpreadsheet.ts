@@ -28,11 +28,8 @@ export class Nx2EjSpreadsheet<STATE extends StateNx2EjSpreadsheet = StateNx2EjSp
         addNx2Class(this.state.deco, 'Nx2EjSpreadsheet');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Spreadsheet(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor);
-    }
 }

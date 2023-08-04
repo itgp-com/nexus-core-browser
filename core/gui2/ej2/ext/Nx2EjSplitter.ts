@@ -76,11 +76,8 @@ export class Nx2EjSplitter<STATE extends StateNx2EjSplitter = StateNx2EjSplitter
         super.onLogic(args);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Splitter(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor);
-    }
 } // main class

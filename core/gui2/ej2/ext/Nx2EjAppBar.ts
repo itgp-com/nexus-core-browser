@@ -27,12 +27,10 @@ export class Nx2EjAppBar<STATE extends StateNx2EjAppBar = StateNx2EjAppBar> exte
     }
 
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new AppBar(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

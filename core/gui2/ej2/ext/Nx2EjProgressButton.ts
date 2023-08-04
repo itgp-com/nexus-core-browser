@@ -53,13 +53,11 @@ export class Nx2EjProgressButton<STATE extends StateNx2EjProgressButton = StateN
 
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new ProgressButton(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 
 }

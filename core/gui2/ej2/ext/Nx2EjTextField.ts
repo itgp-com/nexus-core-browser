@@ -113,12 +113,10 @@ export class Nx2EjTextField extends Nx2EjBasic<StateNx2EjTextField, TextBox> {
         // return super.onHtml(args);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new TextBox(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

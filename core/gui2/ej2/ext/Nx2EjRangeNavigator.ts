@@ -39,12 +39,10 @@ export class Nx2EjRangeNavigator<STATE extends StateNx2EjRangeNavigator = StateN
         addNx2Class(this.state.deco, 'Nx2EjRangeNavigator');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new RangeNavigator(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

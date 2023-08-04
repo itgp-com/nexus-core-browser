@@ -21,12 +21,10 @@ export class Nx2EjSmithchart<STATE extends StateNx2EjSmithchart = StateNx2EjSmit
         addNx2Class(this.state.deco, 'Nx2EjSmithchart');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Smithchart(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

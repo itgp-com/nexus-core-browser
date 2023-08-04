@@ -21,12 +21,10 @@ export class Nx2EjSkeleton<STATE extends StateNx2EjSkeleton = StateNx2EjSkeleton
         addNx2Class(this.state.deco, 'Nx2EjSkeleton');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Skeleton(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

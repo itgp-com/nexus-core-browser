@@ -27,12 +27,10 @@ export class Nx2EjContextMenu<STATE extends StateNx2EjContextMenu = StateNx2EjCo
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new ContextMenu(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 } // main class

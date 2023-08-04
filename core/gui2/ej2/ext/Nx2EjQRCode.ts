@@ -21,12 +21,10 @@ export class Nx2EjQRCode<STATE extends StateNx2EjQRCode = StateNx2EjQRCode> exte
         addNx2Class(this.state.deco, 'Nx2EjQRCode');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new QRCodeGenerator(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

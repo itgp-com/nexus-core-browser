@@ -27,12 +27,10 @@ export class Nx2EjMenu<STATE extends StateNx2EjMenu = StateNx2EjMenu> extends Nx
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Menu(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 } // main class

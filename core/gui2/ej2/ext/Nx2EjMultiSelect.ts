@@ -28,12 +28,10 @@ export class Nx2EjMultiSelect<STATE extends StateNx2EjMultiSelect = StateNx2EjMu
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new MultiSelect(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

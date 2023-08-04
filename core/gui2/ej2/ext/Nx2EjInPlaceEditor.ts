@@ -40,12 +40,10 @@ export class Nx2EjInPlaceEditor<STATE extends StateNx2EjInPlaceEditor = StateNx2
         addNx2Class(this.state.deco, 'Nx2EjInPlaceEditor');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new InPlaceEditor(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

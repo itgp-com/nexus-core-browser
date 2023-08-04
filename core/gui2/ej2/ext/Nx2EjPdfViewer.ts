@@ -57,12 +57,10 @@ export class Nx2EjPdfViewer<STATE extends StateNx2EjPdfViewer = StateNx2EjPdfVie
         addNx2Class(this.state.deco, 'Nx2EjPdfViewer');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new PdfViewer(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

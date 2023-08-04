@@ -44,13 +44,11 @@ export class Nx2EjSplitButton<STATE extends StateNx2EjSplitButton = StateNx2EjSp
 
 
     }
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new SplitButton(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 
 }

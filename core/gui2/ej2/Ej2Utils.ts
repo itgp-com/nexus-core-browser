@@ -1,4 +1,6 @@
+import {Component} from '@syncfusion/ej2-base';
 import {Grid} from "@syncfusion/ej2-grids";
+import {isArray} from 'lodash';
 import {Nx2} from '../Nx2';
 import {isNx2} from '../Nx2Utils';
 
@@ -219,6 +221,60 @@ export function addNx2AfterAnchor(anchor: Nx2 | HTMLElement, newSibling: Nx2 | H
 
     return false;
 } // addNx2BeforeAnchor
+
+export const EJ2_INSTANCES_FIELD = 'ej2_instances';
+
+/**
+ * Checks if the given HTML element contains at least one EJ2 element.
+ *
+ * @param {HTMLElement} elem - The HTML element to check.
+ * @returns {boolean} - True if the element contains any Ej2 components, false otherwise.
+ */
+export function isEj2HtmlElement(elem: HTMLElement): boolean {
+    if (elem) {
+        let obj: any = elem[EJ2_INSTANCES_FIELD]
+        if (obj && isArray(obj)) {
+            let ej2Aray: any[] = obj as any[];
+            return (ej2Aray.length > 0);
+        }  // if obj is Nx2
+    } // if elem exists
+    return false;
+} // isEj2HtmlElement
+
+/**
+ * Retrieves the first Syncfusion EJ2 instance from a given HTML element.
+ *
+ * @param {HTMLElement} elem - The HTML element to search in.
+ * @returns {(Component<HTMLElement> | HTMLElement | any)} The first EJ2 instance found, or null if no instance was found.
+ */
+export function getFirstEj2FromHtmlElement(elem: HTMLElement): (Component<HTMLElement> | HTMLElement | any) {
+    if (elem) {
+        let obj: any = elem[EJ2_INSTANCES_FIELD]
+        if (obj && isArray(obj)) {
+            let ej2Array: any[] = obj as (Component<HTMLElement> | HTMLElement | any)[];
+            if (ej2Array.length > 0)
+                return ej2Array[0];
+        }  // if obj is Nx2
+    } // if elem exists
+    return null;
+} // getFirstEj2FromHtmlElement
+
+/**
+ * Retrieves an array of all Syncfusion EJ2 instances from a given HTML element.
+ *
+ * @param {HTMLElement} elem - The HTML element to search in.
+ * @returns {(Component<HTMLElement> | HTMLElement | any)[]} An array of all EJ2 instances found, or null if no instances were found.
+ */
+export function getEj2ArrayFromHtmlElement(elem: HTMLElement): (Component<HTMLElement> | HTMLElement | any)[] {
+    if (elem) {
+        let obj: any = elem[EJ2_INSTANCES_FIELD]
+        if (obj && isArray(obj)) {
+            let ej2Array: any[] = obj as (Component<HTMLElement> | HTMLElement | any)[];
+            return ej2Array;
+        }  // if obj is Nx2
+    } // if elem exists
+    return null;
+} // getEj2ArrayFromHtmlElement
 
 // export type EventHandlerFunction = (...args: any[]) => void;
 //

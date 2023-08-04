@@ -30,12 +30,10 @@ export class Nx2EjDropDownList<STATE extends StateNx2EjDropDownList = StateNx2Ej
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new DropDownList(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

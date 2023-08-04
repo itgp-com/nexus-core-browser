@@ -21,12 +21,10 @@ export class Nx2EjTreeView<STATE extends StateNx2EjTreeView = StateNx2EjTreeView
         addNx2Class(this.state.deco, 'Nx2EjTreeView');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new TreeView(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

@@ -27,12 +27,10 @@ export class Nx2EjFileManager<STATE extends StateNx2EjFileManager = StateNx2EjFi
         addNx2Class(this.state.deco, 'Nx2EjFileManager');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new FileManager(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

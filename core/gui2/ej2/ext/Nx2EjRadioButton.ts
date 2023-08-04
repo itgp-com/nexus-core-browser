@@ -28,12 +28,9 @@ export class Nx2EjRadioButton<STATE extends StateNx2EjRadioButton = StateNx2EjRa
         super.onStateInitialized(state);
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new RadioButton(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
 
 } // main class

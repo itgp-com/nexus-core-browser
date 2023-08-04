@@ -145,13 +145,11 @@ export class Nx2EjTab<STATE extends StateNx2EjTab = StateNx2EjTab> extends Nx2Ej
 
     } // onLogic
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Tab(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 
 

@@ -30,12 +30,10 @@ export class Nx2EjPager<STATE extends StateNx2EjPager = StateNx2EjPager> extends
         addNx2Class(this.state.deco, 'Nx2EjPager');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Pager(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }

@@ -21,12 +21,10 @@ export class Nx2EjSlider<STATE extends StateNx2EjSlider = StateNx2EjSlider> exte
         addNx2Class(this.state.deco, 'Nx2EjSlider');
     }
 
-    protected createEjObj(): void {
+    createEjObj(): void {
         this.obj = new Slider(this.state.ej);
     }
 
-    protected appendEjToHtmlElement(): void {
-        this.obj.appendTo(this.htmlElementAnchor); // this will initialize the htmlElement if needed
-    }
+
 
 }
