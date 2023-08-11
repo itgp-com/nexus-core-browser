@@ -653,12 +653,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     onAfterInitWidgetOnly(_args: Nx2Evt_AfterLogic): void {}
 
 
-    /**
-     * Returns the HTMLElement for this widget that makes sure that the Nx2 widget's logic has been initialized
-     * @return {HTMLElement}
-     */
-    get htmlElementInitialized(): HTMLElement {
-        let htmlElement = this.htmlElement;
+    private _initLogicIfNeeded(){
 
         try {
             if (!this.initialized)
@@ -666,10 +661,27 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         } catch (ex) {
             this.handleError(ex);
         }
+    } // _initLogicIfNeeded
+    /**
+     * Returns the HTMLElement for this widget that makes sure that the Nx2 widget's logic has been initialized
+     * @return {HTMLElement}
+     */
+    get htmlElementInitialized(): HTMLElement {
+        let htmlElement = this.htmlElement;
+        this._initLogicIfNeeded.call(this)
 
         return htmlElement;
     } //htmlElementInitialized
 
+    /**
+     * Returns the HTMLElementAnchor for this widget that makes sure that the Nx2 widget's logic has been initialized
+     * @return {HTMLElement}
+     */
+    get htmlElementAnchorInitialized(): HTMLElement {
+        let htmlElement = this.htmlElementAnchor;
+        this._initLogicIfNeeded.call(this)
+        return htmlElement;
+    } //htmlElementInitialized
     /**
      * Add child(ren) Nx2 or HTMLElement to this Nx2 instance
      * @return {boolean} true if successful, false if error

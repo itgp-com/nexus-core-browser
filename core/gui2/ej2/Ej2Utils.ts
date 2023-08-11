@@ -74,7 +74,7 @@ export function addNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2 | 
         let anchorHtmlElement: HTMLElement = null;
         if (isNx2(anchor)) {
             // Nx2
-            anchorHtmlElement = anchor.htmlElementInitialized;
+            anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             // HTMLElement
             anchorHtmlElement = anchor as HTMLElement;
@@ -85,7 +85,7 @@ export function addNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2 | 
             let childHtmlElement: HTMLElement = null;
             if (isNx2(child)) {
                 // Nx2
-                childHtmlElement = child.htmlElementInitialized;
+                childHtmlElement = child.htmlElementInitialized; // add the whole element, not just the anchor
             } else {
                 // HTMLElement
                 childHtmlElement = child as HTMLElement;
@@ -117,7 +117,7 @@ export function removeNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2
     try {
         let anchorHtmlElement: HTMLElement = null;
         if (isNx2(anchor)) {
-            anchorHtmlElement = anchor.htmlElementInitialized;
+            anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             anchorHtmlElement = anchor as HTMLElement;
         }
@@ -125,7 +125,7 @@ export function removeNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2
         for (const child of children) {
             let childHtmlElement: HTMLElement = null;
             if (isNx2(child)) {
-                childHtmlElement = child.htmlElementInitialized;
+                childHtmlElement = child.htmlElementInitialized; // remove the whole element, not just the anchor
             } else {
                 childHtmlElement = child as HTMLElement;
             }
@@ -158,14 +158,14 @@ export function addNx2BeforeAnchor(anchor: Nx2 | HTMLElement, newSibling: Nx2 | 
     try {
         let anchorHtmlElement: HTMLElement = null;
         if (isNx2(anchor)) {
-            anchorHtmlElement = anchor.htmlElementInitialized;
+            anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             anchorHtmlElement = anchor as HTMLElement;
         }
 
         let newSiblingHtmlElement: HTMLElement = null;
         if (isNx2(newSibling)) {
-            newSiblingHtmlElement = newSibling.htmlElementInitialized;
+            newSiblingHtmlElement = newSibling.htmlElementAnchorInitialized;
         } else {
             newSiblingHtmlElement = newSibling as HTMLElement;
         }
@@ -196,14 +196,14 @@ export function addNx2AfterAnchor(anchor: Nx2 | HTMLElement, newSibling: Nx2 | H
     try {
         let anchorHtmlElement: HTMLElement = null;
         if (isNx2(anchor)) {
-            anchorHtmlElement = anchor.htmlElementInitialized;
+            anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             anchorHtmlElement = anchor as HTMLElement;
         }
 
         let newSiblingHtmlElement: HTMLElement = null;
         if (isNx2(newSibling)) {
-            newSiblingHtmlElement = newSibling.htmlElementInitialized;
+            newSiblingHtmlElement = newSibling.htmlElementAnchorInitialized;
         } else {
             newSiblingHtmlElement = newSibling as HTMLElement;
         }
