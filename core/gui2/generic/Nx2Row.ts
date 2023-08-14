@@ -18,10 +18,7 @@ export class Nx2Row<STATE extends StateNx2Row = any> extends Nx2Basic<STATE> {
 
     constructor(state: STATE) {
         super(state);
+        addNx2Class(this.state.deco, CSS_FLEX_ROW_DIRECTION, 'Nx2Row');
     }
 
-    protected onStateInitialized(state: STATE) {
-        addNx2Class(state.deco, [CSS_FLEX_ROW_DIRECTION, 'Nx2Row']);
-        super.onStateInitialized(state);
-    }
 }

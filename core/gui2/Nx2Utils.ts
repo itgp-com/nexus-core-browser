@@ -492,3 +492,62 @@ export function findParentNx2Dialog<T extends Nx2EjDialog = Nx2EjDialog>(current
     }
     return null;
 }
+
+/**
+ * Finds the parent Nx2 element by a specified class name.
+ *
+ * @template T - A type that extends Nx2, representing the expected return type.
+ * @param {HTMLElement | Nx2} current - The current HTML element or Nx2 instance to start the search from.
+ * @param {string} n2ClassName - The class name to search for in the parent elements.
+ * @returns {T | null} The parent Nx2 element matching the specified class name, or null if not found.
+ */
+export function findParentNx2ByClass<T extends Nx2 = Nx2>(current: HTMLElement | Nx2, n2ClassName:string) : T {
+    if (!current) return null;
+    if ( !n2ClassName ) return null;
+    let htmlElement = current instanceof HTMLElement ? current : current.htmlElement;
+    let parentElement = findParentHTMLElement(htmlElement, n2ClassName);
+    if ( parentElement ) {
+        let parent =  getNx2FromHtmlElement(parentElement);
+        if (parent)
+            return parent as T;
+    }
+    return null;
+}
+
+/**
+ * Finds an HTMLInputElement within the given HTMLElement or Nx2 object.
+ *
+ * The function first checks if the provided `current` object is an HTMLInputElement with a matching ID (or `tagId` if `current` is an Nx2 object).
+ * If not, it searches for an element with the specified ID within the `current` object.
+ * If no matching element is found, it returns the first input element within the `current` object.
+ *
+ * @param {HTMLElement | Nx2} current - The current HTML element or Nx2 instance to start the search from.
+ * @returns {HTMLInputElement | null} The HTMLInputElement that matches the specified criteria, or null if no matching element is found.
+ * @export
+ */
+export function findHtmlInputElement(current: HTMLElement | Nx2,): HTMLInputElement {
+    if (!current) return null;
+    let elemInput: HTMLInputElement;
+    let elem:HTMLElement =  current instanceof HTMLElement ? current : current.htmlElement;
+    let tagId:string = current instanceof HTMLElement ? current.id : current.state.tagId;
+    if ( elem.id == tagId && elem instanceof  HTMLInputElement) {
+        // only if it's also an HTMLInputElement, not just if tagId matches
+        elemInput = elem;
+    } else {
+        // search by tagId next
+        if ( tagId) {
+            let possibleInput = elem.querySelector(`#${tagId}`);
+            if (possibleInput instanceof HTMLInputElement) {
+                elemInput = possibleInput;
+            }
+        } // if tagId
+
+        if ( !elemInput ) {
+            // any input will do
+            elem = elem.querySelector('input');
+            if (elem)
+                elemInput = elem as HTMLInputElement;
+        } // if !elemInput
+    } // if elem.id == this.state.tagId && elem instanceof  HTMLInputElement
+    return elemInput;
+} // findHtmlInputElement

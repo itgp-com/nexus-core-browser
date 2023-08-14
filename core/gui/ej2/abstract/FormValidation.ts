@@ -1,5 +1,5 @@
 /**
- * Based on Syncfusion source code at node_modules/@syncfusion/ej2-inputs/src/form-validator/form-validator.js
+ * Based on Syncfusion source code at node_modules/@syncfusion/ej2-inputs/src/form-validationRule/form-validationRule.js
  */
 
 
@@ -21,7 +21,7 @@ export interface ValidFormField_Args {
  */
 export let validFormField:  (args: ValidFormField_Args) => Promise<ValidFormField_RetVal>;
 
-/*  ---- From  form-validator.js ----------
+/*  ---- From  form-validationRule.js ----------
 
  // Check the input element whether it's value satisfy the validation rule or not
  FormValidator.prototype.isValid = function (name, rule) {

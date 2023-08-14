@@ -162,7 +162,7 @@ export class IHtmlUtils {
  * @param {(string | string[])} additionalClasses - The class or classes to add to the class list.
  * @returns {Nx2HtmlDecorator} - The updated Nx2HtmlDecorator object with the specified classes added.
  */
-export function addNx2Class(args: Nx2HtmlDecorator, additionalClasses: (string | string[])): Nx2HtmlDecorator {
+export function addNx2Class(args: Nx2HtmlDecorator, ...additionalClasses: string[]): Nx2HtmlDecorator {
     args = IHtmlUtils.init(args);
 
     if (!additionalClasses)
@@ -187,7 +187,7 @@ export function addNx2Class(args: Nx2HtmlDecorator, additionalClasses: (string |
  * @param {(string | string[])} classesToRemove - The class or classes to remove from the class list.
  * @returns {Nx2HtmlDecorator} - The updated Nx2HtmlDecorator object with the specified classes removed.
  */
-export function removeNx2Class(args:Nx2HtmlDecorator, classesToRemove: (string | string[])): Nx2HtmlDecorator {
+export function removeNx2Class(args:Nx2HtmlDecorator, ...classesToRemove: string[]): Nx2HtmlDecorator {
 
     args = IHtmlUtils.init(args);
 

@@ -1,6 +1,6 @@
 import {Grid} from "@syncfusion/ej2-grids";
 import {CSS_FLEX_MAX_XY} from "../../../CoreCSS";
-import {EnumPanelLayout, Nx2PanelLayoutFlex, StateNx2PanelLayoutFlex} from "../../generic/Nx2PanelLayoutFlex";
+import {EnumPanelLayout, N2PanelLayoutFlex, StateN2PanelLayoutFlex} from "../../generic/N2PanelLayoutFlex";
 import {Nx2Evt_Resized} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {getGridDecoratorsHeight} from "../Ej2Utils";
@@ -8,7 +8,7 @@ import {Nx2EjGrid, StateNx2EjGrid} from "../ext/Nx2EjGrid";
 
 export type Elem_or_Nx2EjGrid<STATE extends StateNx2EjGrid = any> = HTMLElement | Nx2EjGrid<STATE>; // compatible with  Elem_or_Nx2
 
-export interface StateNx2EjPanelGridFlex<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateNx2PanelLayoutFlex {
+export interface StateN2PanelGridFlex<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateN2PanelLayoutFlex {
 
     /**
      * This is where the Grid component or wrapper.
@@ -30,18 +30,18 @@ export interface StateNx2EjPanelGridFlex<STATE extends StateNx2EjGrid = StateNx2
 }
 
 /**
- * Specializes {@link Nx2PanelLayoutFlex} to use a Grid component as the centerContainer.
+ * Specializes {@link N2PanelLayoutFlex} to use a Grid component as the centerContainer.
  */
-export class Nx2EjPanelGridFlex<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends StateNx2EjPanelGridFlex = StateNx2EjPanelGridFlex> extends Nx2PanelLayoutFlex<STATE> {
-
+export class N2PanelGridFlex<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends StateN2PanelGridFlex = StateN2PanelGridFlex> extends N2PanelLayoutFlex<STATE> {
+    static readonly CLASS_IDENTIFIER:string = "N2PanelGridFlex"
     nx2Grid: GRID_TYPE;
 
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, CSS_FLEX_MAX_XY, this.classIdentifier);
     }
 
     protected onStateInitialized(state: STATE) {
-        addNx2Class(state.deco, [CSS_FLEX_MAX_XY, 'Nx2EjPanelGridFlex']);
 
         if (state.resizeTracked == null)
             state.resizeTracked = true; // enable resize tracking by default
@@ -53,6 +53,10 @@ export class Nx2EjPanelGridFlex<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE e
             state.gridAutoWidth = true; // enable auto width by default
 
         super.onStateInitialized(state);
+    }
+
+    get classIdentifier() {
+        return N2PanelGridFlex.CLASS_IDENTIFIER;
     }
 
 

@@ -1,9 +1,9 @@
 import {DialogUtility} from '@syncfusion/ej2-popups';
 import {CSS_FLEX_MAX_XY} from "../../CoreCSS";
-import {cssAddClass, isDev} from '../../CoreUtils';
+import {isDev} from '../../CoreUtils';
 import {Nx2} from "../Nx2";
 import {Nx2Basic, StateNx2Basic} from "../Nx2Basic";
-import {addClassesToElement, addNx2Class, removeClassesFromElement, removeNx2Class} from '../Nx2HtmlDecorator';
+import {addNx2Class} from '../Nx2HtmlDecorator';
 import {Elem_or_Nx2, isNx2} from "../Nx2Utils";
 import {Nx2Column} from "./Nx2Column";
 import {Nx2Panel} from './Nx2Panel';
@@ -18,30 +18,9 @@ export enum EnumPanelLayout {
     bottom = 'bottom',
     center = 'center',
 }
-//
-// const NX2PANELLAYOUT_FLEX_COLUMN_FULL: string = 'nx2PanelLayout_flex_column_full'
-// cssAddClass(NX2PANELLAYOUT_FLEX_COLUMN_FULL, {
-//     display: 'flex',
-//     'flex-direction': 'column',
-//     height: '100%',
-// });
-//
-// const NX2PANELLAYOUT_REMAIN_FIXED: string = 'nx2PanelLayout_remain_fixed'
-// cssAddClass(NX2PANELLAYOUT_REMAIN_FIXED, {
-//     flex: '0 0 auto',
-// });
-// const NX2PANELLAYOUT_GROW_XY: string = 'nx2PanelLayout_grow_xy'
-// cssAddClass(NX2PANELLAYOUT_GROW_XY, {
-//     flex: '1 1 auto',
-// });
-//
-// const NX2PANELLAYOUT_OVERFLOW: string = 'nx2PanelLayout_overflow'
-// cssAddClass(NX2PANELLAYOUT_GROW_XY, {
-//     overflow: 'auto'
-// });
 
 
-export interface StateNx2PanelLayoutFlex extends StateNx2Basic {
+export interface StateN2PanelLayoutFlex extends StateNx2Basic {
 
     outerTop?: Elem_or_Nx2;
     outerBottom?: Elem_or_Nx2;
@@ -79,8 +58,8 @@ export interface StateNx2PanelLayoutFlex extends StateNx2Basic {
 }
 
 
-export class Nx2PanelLayoutFlex<STATE extends StateNx2PanelLayoutFlex = StateNx2PanelLayoutFlex> extends Nx2Basic<STATE> {
-
+export class N2PanelLayoutFlex<STATE extends StateN2PanelLayoutFlex = StateN2PanelLayoutFlex> extends Nx2Basic<STATE> {
+    static readonly CLASS_IDENTIFIER:string = "N2PanelLayoutFlex"
 
     protected _outerTopElem: HTMLElement;
     protected _outerBottomElem: HTMLElement;
@@ -95,7 +74,9 @@ export class Nx2PanelLayoutFlex<STATE extends StateNx2PanelLayoutFlex = StateNx2
         super(state);
         addNx2Class(this.state.deco, 'Nx2PanelLayoutFlex');
     }
-
+    get classIdentifier() {
+        return N2PanelLayoutFlex.CLASS_IDENTIFIER;
+    }
     private _innerColumn: Nx2;
 
     /**

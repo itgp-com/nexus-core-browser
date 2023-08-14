@@ -6,55 +6,8 @@ import {Elem_or_Nx2} from '../Nx2Utils';
 import {Nx2Panel, StateNx2Panel} from './Nx2Panel';
 
 
-export const CLASS_NX2_PANEL_LAYOUT = 'Nx2PanelLayout';
-export const CLASS_NX2_PANEL_LAYOUT_TOP = CLASS_NX2_PANEL_LAYOUT + '_top';
-export const CLASS_NX2_PANEL_LAYOUT_LEFT = CLASS_NX2_PANEL_LAYOUT + '_left';
-export const CLASS_NX2_PANEL_LAYOUT_CENTER = CLASS_NX2_PANEL_LAYOUT + '_center';
-export const CLASS_NX2_PANEL_LAYOUT_RIGHT = CLASS_NX2_PANEL_LAYOUT + '_right';
-export const CLASS_NX2_PANEL_LAYOUT_BOTTOM = CLASS_NX2_PANEL_LAYOUT + '_bottom';
 
-nexusMain.UIStartedListeners.add(async () => {
-    cssAddClass(CLASS_NX2_PANEL_LAYOUT, {
-        display: 'grid',
-        'grid-template-rows': 'auto 1fr auto',
-        'grid-template-columns': 'auto 1fr auto',
-        height: '100%',
-        width: '100%',
-    });
-
-
-    cssAddClass(CLASS_NX2_PANEL_LAYOUT_TOP, {
-        'grid-row': '1',
-        'grid-column': '1 / span 3',
-    });
-
-
-    cssAddClass(CLASS_NX2_PANEL_LAYOUT_LEFT, {
-        'grid-row': 2,
-        'grid-column': 1,
-    });
-
-
-    cssAddClass(CLASS_NX2_PANEL_LAYOUT_CENTER, {
-        'grid-row': 2,
-        'grid-column': 2,
-        // overflow: 'auto',
-    });
-
-
-    cssAddClass(CLASS_NX2_PANEL_LAYOUT_RIGHT, {
-        'grid-row': 2,
-        'grid-column': 3,
-    });
-
-    cssAddClass(CLASS_NX2_PANEL_LAYOUT_BOTTOM, {
-        'grid-row': '3',
-        'grid-column': '1 / span 3',
-    });
-
-});
-
-export interface StateNx2PanelLayout extends StateNx2Basic {
+export interface StateN2PanelLayout extends StateNx2Basic {
 
     /**
      * State of the internal container that is the parent of any topContainer element given by the user
@@ -120,9 +73,13 @@ export interface StateNx2PanelLayout extends StateNx2Basic {
     centerScrollable?: boolean;
 }
 
-export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLayout> extends Nx2Basic<STATE> {
+export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout> extends Nx2Basic<STATE> {
+
+    static readonly CLASS_IDENTIFIER:string = "N2PanelLayout"
+
     constructor(state ?: STATE) {
         super(state);
+        addNx2Class(this.state.deco, this.classIdentifier);
     }
 
 
@@ -132,14 +89,16 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
     private _rightContainer: Nx2Panel;
     private _bottomContainer: Nx2Panel;
 
-
+    get classIdentifier() {
+        return N2PanelLayout.CLASS_IDENTIFIER;
+    }
     protected onStateInitialized(state: STATE): void {
 
         if (state.centerScrollable == null) {
             state.centerScrollable = true;
         }
 
-        addNx2Class(state.deco, CLASS_NX2_PANEL_LAYOUT);
+
 
 
         let topState: StateNx2Panel = state.stateTopContainer || {};
@@ -220,3 +179,51 @@ export class Nx2PanelLayout<STATE extends StateNx2PanelLayout = StateNx2PanelLay
         return this._bottomContainer;
     }
 }
+
+
+export const CLASS_NX2_PANEL_LAYOUT_TOP = N2PanelLayout.CLASS_IDENTIFIER + '_top';
+export const CLASS_NX2_PANEL_LAYOUT_LEFT = N2PanelLayout.CLASS_IDENTIFIER + '_left';
+export const CLASS_NX2_PANEL_LAYOUT_CENTER = N2PanelLayout.CLASS_IDENTIFIER + '_center';
+export const CLASS_NX2_PANEL_LAYOUT_RIGHT = N2PanelLayout.CLASS_IDENTIFIER + '_right';
+export const CLASS_NX2_PANEL_LAYOUT_BOTTOM = N2PanelLayout.CLASS_IDENTIFIER + '_bottom';
+
+nexusMain.UIStartedListeners.add(async () => {
+    cssAddClass(N2PanelLayout.CLASS_IDENTIFIER, {
+        display: 'grid',
+        'grid-template-rows': 'auto 1fr auto',
+        'grid-template-columns': 'auto 1fr auto',
+        height: '100%',
+        width: '100%',
+    });
+
+
+    cssAddClass(CLASS_NX2_PANEL_LAYOUT_TOP, {
+        'grid-row': '1',
+        'grid-column': '1 / span 3',
+    });
+
+
+    cssAddClass(CLASS_NX2_PANEL_LAYOUT_LEFT, {
+        'grid-row': 2,
+        'grid-column': 1,
+    });
+
+
+    cssAddClass(CLASS_NX2_PANEL_LAYOUT_CENTER, {
+        'grid-row': 2,
+        'grid-column': 2,
+        // overflow: 'auto',
+    });
+
+
+    cssAddClass(CLASS_NX2_PANEL_LAYOUT_RIGHT, {
+        'grid-row': 2,
+        'grid-column': 3,
+    });
+
+    cssAddClass(CLASS_NX2_PANEL_LAYOUT_BOTTOM, {
+        'grid-row': '3',
+        'grid-column': '1 / span 3',
+    });
+
+});

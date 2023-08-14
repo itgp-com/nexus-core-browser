@@ -6,7 +6,7 @@ import {
     CLASS_NX2_PANEL_LAYOUT_CENTER,
     CLASS_NX2_PANEL_LAYOUT_LEFT,
     CLASS_NX2_PANEL_LAYOUT_RIGHT
-} from './Nx2PanelLayout';
+} from './N2PanelLayout';
 
 
 export interface StateNx2Panel_LCRRef extends StateNx2BasicRef {
