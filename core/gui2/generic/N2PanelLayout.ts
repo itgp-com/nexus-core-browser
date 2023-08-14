@@ -79,7 +79,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, this.classIdentifier);
+        addNx2Class(this.state.deco, N2PanelLayout.CLASS_IDENTIFIER);
     }
 
 

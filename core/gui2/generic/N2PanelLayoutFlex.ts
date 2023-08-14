@@ -72,7 +72,7 @@ export class N2PanelLayoutFlex<STATE extends StateN2PanelLayoutFlex = StateN2Pan
 
     constructor(state: STATE) {
         super(state);
-        addNx2Class(this.state.deco, 'Nx2PanelLayoutFlex');
+        addNx2Class(this.state.deco, N2PanelLayoutFlex.CLASS_IDENTIFIER);
     }
     get classIdentifier() {
         return N2PanelLayoutFlex.CLASS_IDENTIFIER;

@@ -38,7 +38,7 @@ export class N2PanelGridFlex<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE exte
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, CSS_FLEX_MAX_XY, this.classIdentifier);
+        addNx2Class(this.state.deco, CSS_FLEX_MAX_XY, N2PanelGridFlex.CLASS_IDENTIFIER);
     }
 
     protected onStateInitialized(state: STATE) {
