@@ -136,6 +136,14 @@ export interface StateNx2 {
    widgetErrorHandler?: WidgetErrorHandler;
 
    onBeforeInitHtml ?: (ev: Nx2Evt_OnHtml) => void;
+
+   /**
+    * This optional propery exists to allow the developers to store dynamic data in the state object without
+    * the Typescript compiler complaining about using an unknown property otherwise.
+    *
+    * This property will be initialized to {} in the initialization of widget/state
+    */
+   other ?: any;
 }
 
 export interface StateNx2Ref {
@@ -146,7 +154,5 @@ export interface StateNx2Ref {
    htmlElement ?: HTMLElement;
 
    widget?: Nx2;
-
-
 
 }
