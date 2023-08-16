@@ -4,11 +4,11 @@ import {EnumPanelLayout, N2PanelLayoutFlex, StateN2PanelLayoutFlex} from "../../
 import {Nx2Evt_Resized} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {getGridDecoratorsHeight} from "../Ej2Utils";
-import {Nx2EjGrid, StateNx2EjGrid} from "../ext/Nx2EjGrid";
+import {N2Grid, StateN2Grid} from "../ext/N2Grid";
 
-export type Elem_or_Nx2EjGrid<STATE extends StateNx2EjGrid = any> = HTMLElement | Nx2EjGrid<STATE>; // compatible with  Elem_or_Nx2
+export type Elem_or_Nx2EjGrid<STATE extends StateN2Grid = any> = HTMLElement | N2Grid<STATE>; // compatible with  Elem_or_Nx2
 
-export interface StateN2PanelGridFlex<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateN2PanelLayoutFlex {
+export interface StateN2PanelGridFlex<STATE extends StateN2Grid = StateN2Grid> extends StateN2PanelLayoutFlex {
 
     /**
      * This is where the Grid component or wrapper.
@@ -32,7 +32,7 @@ export interface StateN2PanelGridFlex<STATE extends StateNx2EjGrid = StateNx2EjG
 /**
  * Specializes {@link N2PanelLayoutFlex} to use a Grid component as the centerContainer.
  */
-export class N2PanelGridFlex<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends StateN2PanelGridFlex = StateN2PanelGridFlex> extends N2PanelLayoutFlex<STATE> {
+export class N2PanelGridFlex<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN2PanelGridFlex = StateN2PanelGridFlex> extends N2PanelLayoutFlex<STATE> {
     static readonly CLASS_IDENTIFIER:string = "N2PanelGridFlex"
     nx2Grid: GRID_TYPE;
 

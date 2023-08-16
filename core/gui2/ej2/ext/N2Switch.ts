@@ -1,0 +1,42 @@
+import {Switch, SwitchModel} from "@syncfusion/ej2-buttons";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
+import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+
+
+export interface StateN2SwitchRef extends StateNx2EjBasicRef {
+    widget?: N2Switch;
+}
+
+export interface StateN2Switch extends StateNx2EjBasic<SwitchModel> {
+
+    /**
+     * Override with specific type used in code completion
+     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+     */
+    ref?: StateN2SwitchRef;
+} // state class
+
+export class N2Switch<STATE extends StateN2Switch = StateN2Switch> extends Nx2EjBasic<STATE, Switch> {
+    static readonly CLASS_IDENTIFIER: string = "N2Switch";
+
+    constructor(state ?: STATE) {
+        super(state);
+        addNx2Class(this.state.deco, N2Switch.CLASS_IDENTIFIER);
+    }
+
+    onStateInitialized(state: STATE) {
+        state.deco.tag = 'input';
+        state.deco.otherAttr['type'] = 'checkbox';
+        if (!state.wrapper) {
+            state.wrapper = {}; // must have a wrapper or else EJ2 will not work
+        }
+        super.onStateInitialized(state);
+    }
+
+    createEjObj(): void {
+        this.obj = new Switch(this.state.ej);
+    }
+
+    get classIdentifier(): string { return N2Switch.CLASS_IDENTIFIER; }
+
+} // main class

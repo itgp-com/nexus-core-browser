@@ -1,0 +1,38 @@
+import {TimePicker, TimePickerModel} from "@syncfusion/ej2-calendars";
+import {addNx2Class} from '../../Nx2HtmlDecorator';
+import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+
+
+export interface StateN2TimePickerRef extends StateNx2EjBasicRef {
+    widget?: N2TimePicker;
+}
+
+export interface StateN2TimePicker extends StateNx2EjBasic<TimePickerModel> {
+
+    /**
+     * Override with specific type used in code completion
+     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+     */
+    ref?: StateN2TimePickerRef;
+} // state class
+
+export class N2TimePicker<STATE extends StateN2TimePicker = StateN2TimePicker> extends Nx2EjBasic<STATE, TimePicker> {
+    static readonly CLASS_IDENTIFIER: string = "N2TimePicker";
+
+    constructor(state ?: STATE) {
+        super(state);
+        addNx2Class(this.state.deco, N2TimePicker.CLASS_IDENTIFIER);
+    }
+
+    onStateInitialized(state: STATE) {
+        state.deco.tag = 'input';
+        super.onStateInitialized(state);
+    }
+
+    createEjObj(): void {
+        this.obj = new TimePicker(this.state.ej);
+    }
+
+    get classIdentifier(): string { return N2TimePicker.CLASS_IDENTIFIER; }
+
+} // main class

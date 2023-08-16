@@ -5,16 +5,16 @@ import {EnumPanelLayout} from "../../generic/N2PanelLayoutFlex";
 import {Nx2Evt_Resized} from "../../Nx2";
 import {addNx2Class} from '../../Nx2HtmlDecorator';
 import {getGridDecoratorsHeight} from "../Ej2Utils";
-import {Nx2EjGrid, StateNx2EjGrid} from "../ext/Nx2EjGrid";
+import {N2Grid, StateN2Grid} from "../ext/N2Grid";
 
-export type Elem_or_Nx2EjGrid<STATE extends StateNx2EjGrid = any> = HTMLElement | Nx2EjGrid<STATE>; // compatible with  Elem_or_Nx2
+export type Elem_or_Nx2EjGrid<STATE extends StateN2Grid = any> = HTMLElement | N2Grid<STATE>; // compatible with  Elem_or_Nx2
 
-export interface StateN2PanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid> extends StateN2PanelLayout {
+export interface StateN2PanelGrid<STATE extends StateN2Grid = StateN2Grid> extends StateN2PanelLayout {
 
     /**
      * This is where the Grid component or wrapper.
      */
-    center?: Elem_or_Nx2EjGrid
+    center?: Elem_or_Nx2EjGrid<STATE>
 
     /**
      * Defaults to true if not specified.
@@ -33,7 +33,7 @@ export interface StateN2PanelGrid<STATE extends StateNx2EjGrid = StateNx2EjGrid>
 /**
  * Specializes {@link Nx2PanelLayoutFlex} to use a Grid component as the centerContainer.
  */
-export class N2PanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends StateN2PanelGrid = StateN2PanelGrid> extends N2PanelLayout<STATE> {
+export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN2PanelGrid = StateN2PanelGrid> extends N2PanelLayout<STATE> {
     static readonly CLASS_IDENTIFIER:string = "N2PanelGrid"
     private _nx2Grid: GRID_TYPE;
 
@@ -169,7 +169,7 @@ export class N2PanelGrid<GRID_TYPE extends Nx2EjGrid = Nx2EjGrid, STATE extends 
 
 
         // Trigger resize event on actionComplete of the grid
-        let gridState:StateNx2EjGrid = n2Grid.state;
+        let gridState:StateN2Grid = n2Grid.state;
         let gridModel:GridModel = gridState.ej;
         if(!gridModel)
             gridModel = gridState.ej = {};

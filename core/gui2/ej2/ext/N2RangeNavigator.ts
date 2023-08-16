@@ -1,0 +1,50 @@
+import {RangeNavigator, RangeNavigatorModel} from "@syncfusion/ej2-charts";
+import {DateTime} from '@syncfusion/ej2-charts/src/chart/axis/date-time-axis';
+import {Double} from '@syncfusion/ej2-charts/src/chart/axis/double-axis';
+import {Logarithmic} from '@syncfusion/ej2-charts/src/chart/axis/logarithmic-axis';
+import {AreaSeries} from '@syncfusion/ej2-charts/src/chart/series/area-series';
+import {LineSeries} from '@syncfusion/ej2-charts/src/chart/series/line-series';
+import {StepLineSeries} from '@syncfusion/ej2-charts/src/chart/series/step-line-series';
+import {PeriodSelector} from '@syncfusion/ej2-charts/src/common/period-selector/period-selector';
+import {RangeTooltip} from '@syncfusion/ej2-charts/src/range-navigator/user-interaction/tooltip';
+import {addNx2Class} from '../../Nx2HtmlDecorator';
+import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+
+RangeNavigator.Inject(
+    AreaSeries,
+    DateTime,
+    Double,
+    LineSeries,
+    Logarithmic,
+    PeriodSelector,
+    RangeTooltip,
+    StepLineSeries,
+);
+
+export interface StateN2RangeNavigatorRef extends StateNx2EjBasicRef {
+    widget?: N2RangeNavigator;
+}
+
+export interface StateN2RangeNavigator<WIDGET_LIBRARY_MODEL extends RangeNavigatorModel = RangeNavigatorModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+    /**
+     * Override with specific type used in code completion
+     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+     */
+    ref?: StateN2RangeNavigatorRef;
+}
+
+export class N2RangeNavigator<STATE extends StateN2RangeNavigator = StateN2RangeNavigator> extends Nx2EjBasic<STATE, RangeNavigator> {
+    static readonly CLASS_IDENTIFIER: string = "N2RangeNavigator";
+
+    constructor(state ?: STATE) {
+        super(state);
+        addNx2Class(this.state.deco, N2RangeNavigator.CLASS_IDENTIFIER);
+    }
+
+    createEjObj(): void {
+        this.obj = new RangeNavigator(this.state.ej);
+    }
+
+    get classIdentifier(): string { return N2RangeNavigator.CLASS_IDENTIFIER; }
+
+}

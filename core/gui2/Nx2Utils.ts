@@ -1,7 +1,7 @@
 import {escape} from "lodash";
 import {getRandomString, htmlToElement} from "../BaseUtils";
 import {getErrorHandler} from '../CoreErrorHandling';
-import {Nx2EjDialog} from './ej2/ext/Nx2EjDialog';
+import {N2Dialog} from './ej2/ext/N2Dialog';
 import {Nx2, NX2_CLASS} from "./Nx2";
 import {IHtmlUtils, Nx2HtmlDecorator} from "./Nx2HtmlDecorator";
 import {StateNx2} from "./StateNx2";
@@ -481,7 +481,7 @@ export function findParentHTMLElement(current: HTMLElement, className: string): 
  * @param {HTMLElement | Nx2} current - The current HTMLElement or Nx2 component from which the search will start.
  * @returns {Nx2 | null} The found parent Nx2 dialog or null if not found.
  */
-export function findParentNx2Dialog<T extends Nx2EjDialog = Nx2EjDialog>(current: HTMLElement | Nx2) : T {
+export function findParentNx2Dialog<T extends N2Dialog = N2Dialog>(current: HTMLElement | Nx2) : T {
     if (!current) return null;
     let htmlElement = current instanceof HTMLElement ? current : current.htmlElement;
     let parentElement = findParentHTMLElement(htmlElement, 'Nx2EjDialog');

@@ -1,13 +1,13 @@
 import {Tooltip} from "@syncfusion/ej2-popups";
 import {Nx2Html, StateNx2Html, StateNx2HtmlRef} from "../../../generic/Nx2Html";
 import {Nx2Evt_OnHtml} from "../../../Nx2";
-import {css_Nx2Dialog_color_header_background, css_Nx2Dialog_color_header_font, Nx2EjDialog} from "../Nx2EjDialog";
+import {css_Nx2Dialog_color_header_background, css_Nx2Dialog_color_header_font, N2Dialog} from "../N2Dialog";
 
 export interface StateNx2DialogBackArrowRef extends StateNx2HtmlRef{
     widget ?: Nx2DialogBackArrow;
 }
 export interface StateNx2DialogBackArrow extends StateNx2Html {
-    dialog: Nx2EjDialog;
+    dialog: N2Dialog;
 
     /**
      * Override with specific type used in code completion

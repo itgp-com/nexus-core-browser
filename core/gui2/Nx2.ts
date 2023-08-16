@@ -32,6 +32,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     protected _constructor(state ?: STATE): void {
         state = state || {} as STATE;
         state.ref = state.ref || {};
+        state.other = state.other || {};
 
         state.deco = state.deco || {} as IHtmlUtils;
         IHtmlUtils.initForNx2(state);
