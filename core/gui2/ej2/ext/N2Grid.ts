@@ -1,6 +1,6 @@
 import {KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
-import {Grid, GridModel, Sort} from "@syncfusion/ej2-grids";
+import {Grid, GridModel, Sort} from '@syncfusion/ej2-grids';
 import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
 import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
 import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
@@ -22,8 +22,8 @@ import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 Grid.Inject(
     Clipboard,
@@ -49,11 +49,11 @@ Grid.Inject(
     Selection,
     Toolbar,
 );
-export interface StateN2GridRef<N2_GRID extends N2Grid = N2Grid> extends StateNx2EjBasicRef {
+export interface StateN2GridRef<N2_GRID extends N2Grid = N2Grid> extends StateN2EjBasicRef {
   widget ?: N2_GRID;
 }
 
-export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -61,11 +61,11 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
     ref ?: StateN2GridRef<N2Grid>;
 }
 
-export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends Nx2EjBasic<STATE,Grid> {
+export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE,Grid> {
     static readonly CLASS_IDENTIFIER:string = 'N2Grid';
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Grid.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Grid.CLASS_IDENTIFIER);
     }
 
     createEjObj(): void {

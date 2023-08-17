@@ -1,13 +1,13 @@
-import {ColorPicker, ColorPickerModel} from "@syncfusion/ej2-inputs";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {ColorPicker, ColorPickerModel} from '@syncfusion/ej2-inputs';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2ColorPickerRef extends StateNx2EjBasicRef {
+export interface StateN2ColorPickerRef extends StateN2EjBasicRef {
     widget?: N2ColorPicker;
 }
 
-export interface StateN2ColorPicker extends StateNx2EjBasic<ColorPickerModel> {
+export interface StateN2ColorPicker extends StateN2EjBasic<ColorPickerModel> {
 
     /**
      * Override with specific type used in code completion
@@ -16,11 +16,11 @@ export interface StateN2ColorPicker extends StateNx2EjBasic<ColorPickerModel> {
     ref?: StateN2ColorPickerRef;
 } // state class
 
-export class N2ColorPicker<STATE extends StateN2ColorPicker = StateN2ColorPicker> extends Nx2EjBasic<STATE, ColorPicker> {
-    static readonly CLASS_IDENTIFIER: string = "N2ColorPicker"
+export class N2ColorPicker<STATE extends StateN2ColorPicker = StateN2ColorPicker> extends N2EjBasic<STATE, ColorPicker> {
+    static readonly CLASS_IDENTIFIER: string = 'N2ColorPicker'
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2ColorPicker.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2ColorPicker.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {

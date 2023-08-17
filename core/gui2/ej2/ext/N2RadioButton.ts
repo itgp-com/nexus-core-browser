@@ -1,13 +1,13 @@
-import {RadioButton, RadioButtonModel} from "@syncfusion/ej2-buttons";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {RadioButton, RadioButtonModel} from '@syncfusion/ej2-buttons';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2RadioButtonRef extends StateNx2EjBasicRef {
+export interface StateN2RadioButtonRef extends StateN2EjBasicRef {
     widget?: N2RadioButton;
 }
 
-export interface StateN2RadioButton extends StateNx2EjBasic<RadioButtonModel> {
+export interface StateN2RadioButton extends StateN2EjBasic<RadioButtonModel> {
 
     /**
      * Override with specific type used in code completion
@@ -16,12 +16,12 @@ export interface StateN2RadioButton extends StateNx2EjBasic<RadioButtonModel> {
     ref?: StateN2RadioButtonRef;
 } // state class
 
-export class N2RadioButton<STATE extends StateN2RadioButton = StateN2RadioButton> extends Nx2EjBasic<STATE, RadioButton> {
-    static readonly CLASS_IDENTIFIER: string = "N2RadioButton";
+export class N2RadioButton<STATE extends StateN2RadioButton = StateN2RadioButton> extends N2EjBasic<STATE, RadioButton> {
+    static readonly CLASS_IDENTIFIER: string = 'N2RadioButton';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2RadioButton.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2RadioButton.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {

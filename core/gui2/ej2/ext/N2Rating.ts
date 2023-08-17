@@ -1,13 +1,13 @@
-import {Rating, RatingModel} from "@syncfusion/ej2-inputs";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {Rating, RatingModel} from '@syncfusion/ej2-inputs';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2RatingRef extends StateNx2EjBasicRef {
+export interface StateN2RatingRef extends StateN2EjBasicRef {
     widget?: N2Rating;
 }
 
-export interface StateN2Rating extends StateNx2EjBasic<RatingModel> {
+export interface StateN2Rating extends StateN2EjBasic<RatingModel> {
 
     /**
      * Override with specific type used in code completion
@@ -16,11 +16,11 @@ export interface StateN2Rating extends StateNx2EjBasic<RatingModel> {
     ref?: StateN2RatingRef;
 } // state class
 
-export class N2Rating<STATE extends StateN2Rating = StateN2Rating> extends Nx2EjBasic<STATE, Rating> {
-    static readonly CLASS_IDENTIFIER: string = "N2Rating";
+export class N2Rating<STATE extends StateN2Rating = StateN2Rating> extends N2EjBasic<STATE, Rating> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Rating';
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Rating.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Rating.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {

@@ -1,15 +1,15 @@
-import {ProgressButton, ProgressButtonModel} from "@syncfusion/ej2-splitbuttons";
-import {StringArg, stringArgVal} from "../../../BaseUtils";
-import {Nx2Evt_OnLogic} from "../../Nx2";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {ProgressButton, ProgressButtonModel} from '@syncfusion/ej2-splitbuttons';
+import {StringArg, stringArgVal} from '../../../BaseUtils';
+import {N2Evt_OnLogic} from '../../N2';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2ProgressButtonRef extends StateNx2EjBasicRef {
-    widget?: Nx2EjProgressButton;
+export interface StateN2ProgressButtonRef extends StateN2EjBasicRef {
+    widget?: N2ProgressButton;
 }
 
-export interface StateN2ProgressButton extends StateNx2EjBasic<ProgressButtonModel> {
+export interface StateN2ProgressButton extends StateN2EjBasic<ProgressButtonModel> {
 
     /**
      * function or string yielding the text or HTML that will overwrite the 'content' value of the ProgressButtonModel
@@ -28,12 +28,12 @@ export interface StateN2ProgressButton extends StateNx2EjBasic<ProgressButtonMod
     ref?: StateN2ProgressButtonRef;
 }
 
-export class Nx2EjProgressButton<STATE extends StateN2ProgressButton = StateN2ProgressButton> extends Nx2EjBasic<STATE, ProgressButton> {
-    static readonly CLASS_IDENTIFIER: string = "Nx2EjProgressButton";
+export class N2ProgressButton<STATE extends StateN2ProgressButton = StateN2ProgressButton> extends N2EjBasic<STATE, ProgressButton> {
+    static readonly CLASS_IDENTIFIER: string = 'N2ProgressButton';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, Nx2EjProgressButton.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2ProgressButton.CLASS_IDENTIFIER);
     }
 
 
@@ -42,7 +42,7 @@ export class Nx2EjProgressButton<STATE extends StateN2ProgressButton = StateN2Pr
         super.onStateInitialized(state);
     }
 
-    onLogic(ev: Nx2Evt_OnLogic) {
+    onLogic(ev: N2Evt_OnLogic) {
         let state = this.state;
         if (state.label)
             state.ej.content = stringArgVal(state.label); // ProgressButton content label/ html
@@ -59,6 +59,6 @@ export class Nx2EjProgressButton<STATE extends StateN2ProgressButton = StateN2Pr
         this.obj = new ProgressButton(this.state.ej);
     }
 
-    get classIdentifier(): string { return Nx2EjProgressButton.CLASS_IDENTIFIER; }
+    get classIdentifier(): string { return N2ProgressButton.CLASS_IDENTIFIER; }
 
 }

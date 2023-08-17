@@ -1,9 +1,9 @@
-import {NumericTextBox, NumericTextBoxModel} from "@syncfusion/ej2-inputs";
-import {StateNx2PropertyName} from "../../generic/StateNx2PropertyName";
-import {Nx2Evt_OnHtml} from "../../Nx2";
-import {addNx2Class, IHtmlUtils, Nx2HtmlDecorator} from "../../Nx2HtmlDecorator";
-import {createNx2HtmlBasic, createNx2HtmlBasicFromDecorator} from "../../Nx2Utils";
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {NumericTextBox, NumericTextBoxModel} from '@syncfusion/ej2-inputs';
+import {StateN2PropertyName} from '../../generic/StateN2PropertyName';
+import {N2Evt_OnHtml} from '../../N2';
+import {addN2Class, IHtmlUtils, N2HtmlDecorator} from '../../N2HtmlDecorator';
+import {createN2HtmlBasic, createN2HtmlBasicFromDecorator} from '../../N2Utils';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 export enum NumericTextBoxType_Ej2_Material {
     regular = '',
@@ -11,14 +11,14 @@ export enum NumericTextBoxType_Ej2_Material {
     outline = 'e-outline',
 }
 
-export interface StateN2NumericTextBoxRef extends StateNx2EjBasicRef {
+export interface StateN2NumericTextBoxRef extends StateN2EjBasicRef {
     widget?: N2NumericTextBox;
     errorElement?: HTMLElement;
     labelElement?: HTMLElement;
     wrapperElement?: HTMLElement;
 }
 
-export interface StateN2NumericTextBox extends StateNx2EjBasic<NumericTextBoxModel>, StateNx2PropertyName {
+export interface StateN2NumericTextBox extends StateN2EjBasic<NumericTextBoxModel>, StateN2PropertyName {
 
     required?: boolean;
 
@@ -29,8 +29,8 @@ export interface StateN2NumericTextBox extends StateNx2EjBasic<NumericTextBoxMod
      */
     noErrorLine?: boolean;
 
-    labelDecorator?: Nx2HtmlDecorator;
-    errorDecorator?: Nx2HtmlDecorator;
+    labelDecorator?: N2HtmlDecorator;
+    errorDecorator?: N2HtmlDecorator;
 
     /**
      * Override with specific type used in code completion
@@ -39,14 +39,14 @@ export interface StateN2NumericTextBox extends StateNx2EjBasic<NumericTextBoxMod
     ref?: StateN2NumericTextBoxRef;
 }
 
-export class N2NumericTextBox extends Nx2EjBasic<StateN2NumericTextBox, NumericTextBox> {
-    static readonly CLASS_IDENTIFIER: string = "N2NumericTextBox";
+export class N2NumericTextBox extends N2EjBasic<StateN2NumericTextBox, NumericTextBox> {
+    static readonly CLASS_IDENTIFIER: string = 'N2NumericTextBox';
 
     labelTagId: string;
 
     constructor(state ?: StateN2NumericTextBox) {
         super(state);
-        addNx2Class(this.state.deco, N2NumericTextBox.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2NumericTextBox.CLASS_IDENTIFIER);
     }
 
     protected _constructor(state ?: StateN2NumericTextBox) {
@@ -60,20 +60,20 @@ export class N2NumericTextBox extends Nx2EjBasic<StateN2NumericTextBox, NumericT
 
         }
 
-        IHtmlUtils.initForNx2(state);
+        IHtmlUtils.initForN2(state);
 
         super.onStateInitialized(state);
     }
 
 
-    onHtml(args: Nx2Evt_OnHtml): HTMLElement {
+    onHtml(args: N2Evt_OnHtml): HTMLElement {
         let state = this.state;
         let hasErrorLine = !state.noErrorLine;
 
         state.wrapper = IHtmlUtils.init(state.wrapper);
         let wrapperDeco = state.wrapper;
         wrapperDeco.otherAttr['id'] = state.wrapperTagId;
-        let wrapperElement: HTMLElement = createNx2HtmlBasicFromDecorator(wrapperDeco);
+        let wrapperElement: HTMLElement = createN2HtmlBasicFromDecorator(wrapperDeco);
 
 
         let errorTagId = `error_${this.state.tagId}`;
@@ -86,7 +86,7 @@ export class N2NumericTextBox extends Nx2EjBasic<StateN2NumericTextBox, NumericT
 
         deco.otherAttr['name'] = (state.name ? state.name : state.tagId);
 
-        let inputElement: HTMLElement = createNx2HtmlBasic<StateN2NumericTextBox>(state);
+        let inputElement: HTMLElement = createN2HtmlBasic<StateN2NumericTextBox>(state);
         wrapperElement.appendChild(inputElement);
 
         let lineElement: HTMLSpanElement = document.createElement('span');
@@ -99,13 +99,13 @@ export class N2NumericTextBox extends Nx2EjBasic<StateN2NumericTextBox, NumericT
         labelDeco.classes = ['e-float-text'];
         labelDeco.otherAttr['for'] = state.tagId;
         labelDeco.otherAttr['id'] = this.labelTagId;
-        let labelElement: HTMLElement = createNx2HtmlBasicFromDecorator(labelDeco);
+        let labelElement: HTMLElement = createN2HtmlBasicFromDecorator(labelDeco);
         wrapperElement.appendChild(labelElement);
 
         if (hasErrorLine) {
             state.errorDecorator = IHtmlUtils.init(state.errorDecorator);
             state.errorDecorator.otherAttr['id'] = errorTagId;
-            let errorElement: HTMLElement = createNx2HtmlBasicFromDecorator(state.errorDecorator);
+            let errorElement: HTMLElement = createN2HtmlBasicFromDecorator(state.errorDecorator);
             state.ref.errorElement = errorElement;
             wrapperElement.appendChild(errorElement);
         }

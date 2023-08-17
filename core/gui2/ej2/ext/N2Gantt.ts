@@ -17,7 +17,7 @@ import {
     Sort,
     Toolbar,
     VirtualScroll
-} from "@syncfusion/ej2-gantt";
+} from '@syncfusion/ej2-gantt';
 import {ConnectorLineEdit} from '@syncfusion/ej2-gantt/src/gantt/actions/connector-line-edit';
 import {Dependency} from '@syncfusion/ej2-gantt/src/gantt/actions/dependency';
 import {FocusModule} from '@syncfusion/ej2-gantt/src/gantt/actions/keyboard';
@@ -30,8 +30,8 @@ import {ChartRows} from '@syncfusion/ej2-gantt/src/gantt/renderer/chart-rows';
 import {ConnectorLine} from '@syncfusion/ej2-gantt/src/gantt/renderer/connector-line';
 import {Timeline} from '@syncfusion/ej2-gantt/src/gantt/renderer/timeline';
 import {Tooltip} from '@syncfusion/ej2-gantt/src/gantt/renderer/tooltip';
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
 // From https://ej2.syncfusion.com/documentation/gantt/module/
@@ -65,11 +65,11 @@ Gantt.Inject(
     Tooltip,
     VirtualScroll);
 
-export interface StateN2GanttRef extends StateNx2EjBasicRef {
+export interface StateN2GanttRef extends StateN2EjBasicRef {
     widget?: N2Gantt;
 }
 
-export interface StateN2Gantt<WIDGET_LIBRARY_MODEL extends GanttModel = GanttModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+export interface StateN2Gantt<WIDGET_LIBRARY_MODEL extends GanttModel = GanttModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -77,12 +77,12 @@ export interface StateN2Gantt<WIDGET_LIBRARY_MODEL extends GanttModel = GanttMod
     ref?: StateN2GanttRef;
 }
 
-export class N2Gantt<STATE extends StateN2Gantt = StateN2Gantt> extends Nx2EjBasic<STATE, Gantt> {
-    static readonly CLASS_IDENTIFIER: string = "N2Gantt"
+export class N2Gantt<STATE extends StateN2Gantt = StateN2Gantt> extends N2EjBasic<STATE, Gantt> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Gantt'
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Gantt.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Gantt.CLASS_IDENTIFIER);
     }
 
     createEjObj(): void {

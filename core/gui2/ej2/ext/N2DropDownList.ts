@@ -1,13 +1,13 @@
-import {DropDownList, DropDownListModel} from "@syncfusion/ej2-dropdowns";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {DropDownList, DropDownListModel} from '@syncfusion/ej2-dropdowns';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2DropDownListRef extends StateNx2EjBasicRef {
+export interface StateN2DropDownListRef extends StateN2EjBasicRef {
     widget?: N2DropDownList;
 }
 
-export interface StateN2DropDownList<WIDGET_LIBRARY_MODEL extends DropDownListModel = DropDownListModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+export interface StateN2DropDownList<WIDGET_LIBRARY_MODEL extends DropDownListModel = DropDownListModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -15,12 +15,12 @@ export interface StateN2DropDownList<WIDGET_LIBRARY_MODEL extends DropDownListMo
     ref?: StateN2DropDownListRef;
 }
 
-export class N2DropDownList<STATE extends StateN2DropDownList = StateN2DropDownList> extends Nx2EjBasic<STATE, DropDownList> {
-    static readonly CLASS_IDENTIFIER: string = "N2DropDownList"
+export class N2DropDownList<STATE extends StateN2DropDownList = StateN2DropDownList> extends N2EjBasic<STATE, DropDownList> {
+    static readonly CLASS_IDENTIFIER: string = 'N2DropDownList'
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2DropDownList.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2DropDownList.CLASS_IDENTIFIER);
     }
 
 

@@ -1,13 +1,13 @@
-import {MaskedTextBox, MaskedTextBoxModel} from "@syncfusion/ej2-inputs";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {MaskedTextBox, MaskedTextBoxModel} from '@syncfusion/ej2-inputs';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2MaskedTextBoxRef extends StateNx2EjBasicRef {
+export interface StateN2MaskedTextBoxRef extends StateN2EjBasicRef {
     widget?: N2MaskedTextBox;
 }
 
-export interface StateN2MaskedTextBox<WIDGET_LIBRARY_MODEL extends MaskedTextBoxModel = MaskedTextBoxModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+export interface StateN2MaskedTextBox<WIDGET_LIBRARY_MODEL extends MaskedTextBoxModel = MaskedTextBoxModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -15,12 +15,12 @@ export interface StateN2MaskedTextBox<WIDGET_LIBRARY_MODEL extends MaskedTextBox
     ref?: StateN2MaskedTextBoxRef;
 }
 
-export class N2MaskedTextBox<STATE extends StateN2MaskedTextBox = StateN2MaskedTextBox> extends Nx2EjBasic<STATE, MaskedTextBox> {
+export class N2MaskedTextBox<STATE extends StateN2MaskedTextBox = StateN2MaskedTextBox> extends N2EjBasic<STATE, MaskedTextBox> {
     static readonly CLASS_IDENTIFIER: string = 'N2MaskedTextBox';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2MaskedTextBox.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2MaskedTextBox.CLASS_IDENTIFIER);
     }
 
 

@@ -1,8 +1,8 @@
 import {Component} from '@syncfusion/ej2-base';
 import {Grid} from "@syncfusion/ej2-grids";
 import {isArray} from 'lodash';
-import {Nx2} from '../Nx2';
-import {isNx2} from '../Nx2Utils';
+import {N2} from '../N2';
+import {isN2} from '../N2Utils';
 
 
 /**
@@ -60,36 +60,36 @@ export function getGridDecoratorsHeight(grid: Grid): number {
 } // gridDecoratorsHeight
 
 /**
- * Add a child Nx2 or HTMLElement to a anchor Nx2 or HTMLElement
- * @param {Nx2 | HTMLElement} anchor
- * @param {Nx2 | HTMLElement | Nx2[] | HTMLElement[]} child
+ * Add a child N2 or HTMLElement to a anchor N2 or HTMLElement
+ * @param {N2 | HTMLElement} anchor
+ * @param {N2 | HTMLElement | N2[] | HTMLElement[]} child
  * @return {boolean} true if successful, false if error
  */
-export function addNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2 | HTMLElement>): boolean {
+export function addN2Child(anchor: N2 | HTMLElement, ...children: Array<N2 | HTMLElement>): boolean {
     if (!anchor) return false;
     if (!children || children.length === 0) return false;
 
     try {
 
         let anchorHtmlElement: HTMLElement = null;
-        if (isNx2(anchor)) {
-            // Nx2
+        if (isN2(anchor)) {
+            // N2
             anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             // HTMLElement
             anchorHtmlElement = anchor as HTMLElement;
-        }// if(isNx2(anchor))
+        }// if(isN2(anchor))
         if (!anchorHtmlElement) return false;
 
         for (const child of children) {
             let childHtmlElement: HTMLElement = null;
-            if (isNx2(child)) {
-                // Nx2
+            if (isN2(child)) {
+                // N2
                 childHtmlElement = child.htmlElementInitialized; // add the whole element, not just the anchor
             } else {
                 // HTMLElement
                 childHtmlElement = child as HTMLElement;
-            }// if(isNx2(child))
+            }// if(isN2(child))
 
             if (childHtmlElement !== null)
                 anchorHtmlElement.appendChild(childHtmlElement);
@@ -101,22 +101,22 @@ export function addNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2 | 
         return false;
     }
 
-} // addNx2Child
+} // addN2Child
 
 
 /**
  *
- * Remove child Nx2 or HTMLElement from a anchor Nx2 or HTMLElement
- * @param {Nx2 | HTMLElement} anchor
- * @param {Array<Nx2 | HTMLElement>} children
+ * Remove child N2 or HTMLElement from a anchor N2 or HTMLElement
+ * @param {N2 | HTMLElement} anchor
+ * @param {Array<N2 | HTMLElement>} children
  * @return {boolean} true if successful, false if error
  */
-export function removeNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2 | HTMLElement>): boolean {
+export function removeN2Child(anchor: N2 | HTMLElement, ...children: Array<N2 | HTMLElement>): boolean {
     if (!anchor) return false;
     if (!children || children.length === 0) return false;
     try {
         let anchorHtmlElement: HTMLElement = null;
-        if (isNx2(anchor)) {
+        if (isN2(anchor)) {
             anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             anchorHtmlElement = anchor as HTMLElement;
@@ -124,7 +124,7 @@ export function removeNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2
 
         for (const child of children) {
             let childHtmlElement: HTMLElement = null;
-            if (isNx2(child)) {
+            if (isN2(child)) {
                 childHtmlElement = child.htmlElementInitialized; // remove the whole element, not just the anchor
             } else {
                 childHtmlElement = child as HTMLElement;
@@ -144,27 +144,27 @@ export function removeNx2Child(anchor: Nx2 | HTMLElement, ...children: Array<Nx2
         console.error(ex, this, children);
         return false;
     }
-} // removeNx2Child
+} // removeN2Child
 
 /**
- * Add a new sibling Nx2 or HTMLElement BEFORE an anchor Nx2 or HTMLElement
- * @param {Nx2 | HTMLElement} anchor
- * @param {Nx2 | HTMLElement} newSibling
+ * Add a new sibling N2 or HTMLElement BEFORE an anchor N2 or HTMLElement
+ * @param {N2 | HTMLElement} anchor
+ * @param {N2 | HTMLElement} newSibling
  * @return {boolean} true if successful, false if error
  */
-export function addNx2BeforeAnchor(anchor: Nx2 | HTMLElement, newSibling: Nx2 | HTMLElement): boolean {
+export function addN2BeforeAnchor(anchor: N2 | HTMLElement, newSibling: N2 | HTMLElement): boolean {
     if (!anchor) return false;
     if (!newSibling) return false;
     try {
         let anchorHtmlElement: HTMLElement = null;
-        if (isNx2(anchor)) {
+        if (isN2(anchor)) {
             anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             anchorHtmlElement = anchor as HTMLElement;
         }
 
         let newSiblingHtmlElement: HTMLElement = null;
-        if (isNx2(newSibling)) {
+        if (isN2(newSibling)) {
             newSiblingHtmlElement = newSibling.htmlElementAnchorInitialized;
         } else {
             newSiblingHtmlElement = newSibling as HTMLElement;
@@ -182,27 +182,27 @@ export function addNx2BeforeAnchor(anchor: Nx2 | HTMLElement, newSibling: Nx2 | 
     }
 
     return false;
-} // addNx2BeforeAnchor
+} // addN2BeforeAnchor
 
 /**
- * Add a new sibling Nx2 or HTMLElement AFTER an anchor Nx2 or HTMLElement
- * @param {Nx2 | HTMLElement} anchor
- * @param {Nx2 | HTMLElement} newSibling
+ * Add a new sibling N2 or HTMLElement AFTER an anchor N2 or HTMLElement
+ * @param {N2 | HTMLElement} anchor
+ * @param {N2 | HTMLElement} newSibling
  * @return {boolean} true if successful, false if error
  */
-export function addNx2AfterAnchor(anchor: Nx2 | HTMLElement, newSibling: Nx2 | HTMLElement): boolean {
+export function addN2AfterAnchor(anchor: N2 | HTMLElement, newSibling: N2 | HTMLElement): boolean {
     if (!anchor) return false;
     if (!newSibling) return false;
     try {
         let anchorHtmlElement: HTMLElement = null;
-        if (isNx2(anchor)) {
+        if (isN2(anchor)) {
             anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             anchorHtmlElement = anchor as HTMLElement;
         }
 
         let newSiblingHtmlElement: HTMLElement = null;
-        if (isNx2(newSibling)) {
+        if (isN2(newSibling)) {
             newSiblingHtmlElement = newSibling.htmlElementAnchorInitialized;
         } else {
             newSiblingHtmlElement = newSibling as HTMLElement;
@@ -220,7 +220,7 @@ export function addNx2AfterAnchor(anchor: Nx2 | HTMLElement, newSibling: Nx2 | H
     }
 
     return false;
-} // addNx2BeforeAnchor
+} // addN2BeforeAnchor
 
 export const EJ2_INSTANCES_FIELD = 'ej2_instances';
 
@@ -236,7 +236,7 @@ export function isEj2HtmlElement(elem: HTMLElement): boolean {
         if (obj && isArray(obj)) {
             let ej2Aray: any[] = obj as any[];
             return (ej2Aray.length > 0);
-        }  // if obj is Nx2
+        }  // if obj is N2
     } // if elem exists
     return false;
 } // isEj2HtmlElement
@@ -254,7 +254,7 @@ export function getFirstEj2FromHtmlElement(elem: HTMLElement): (Component<HTMLEl
             let ej2Array: any[] = obj as (Component<HTMLElement> | HTMLElement | any)[];
             if (ej2Array.length > 0)
                 return ej2Array[0];
-        }  // if obj is Nx2
+        }  // if obj is N2
     } // if elem exists
     return null;
 } // getFirstEj2FromHtmlElement
@@ -271,7 +271,7 @@ export function getEj2ArrayFromHtmlElement(elem: HTMLElement): (Component<HTMLEl
         if (obj && isArray(obj)) {
             let ej2Array: any[] = obj as (Component<HTMLElement> | HTMLElement | any)[];
             return ej2Array;
-        }  // if obj is Nx2
+        }  // if obj is N2
     } // if elem exists
     return null;
 } // getEj2ArrayFromHtmlElement

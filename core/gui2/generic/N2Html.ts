@@ -1,30 +1,30 @@
 import {escape, isString} from "lodash";
-import {Nx2Basic, StateNx2Basic, StateNx2BasicRef} from "../Nx2Basic";
-import {addNx2Class} from '../Nx2HtmlDecorator';
-import {createNx2HtmlBasic} from "../Nx2Utils";
-import {Nx2Evt_OnHtml} from "../Nx2";
+import {N2Basic, StateN2Basic, StateN2BasicRef} from "../N2Basic";
+import {addN2Class} from '../N2HtmlDecorator';
+import {createN2HtmlBasic} from "../N2Utils";
+import {N2Evt_OnHtml} from "../N2";
 
-export interface StateNx2HtmlRef extends StateNx2BasicRef{
-   widget ?: Nx2Html;
+export interface StateN2HtmlRef extends StateN2BasicRef{
+   widget ?: N2Html;
 }
 
-export interface StateNx2Html extends StateNx2Basic {
+export interface StateN2Html extends StateN2Basic {
    value ?: (string|HTMLElement);
    /**
     * Override with specific type used in code completion
     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
     */
-   ref ?:StateNx2HtmlRef;
+   ref ?:StateN2HtmlRef;
 } // state
 
-export class Nx2Html<STATE extends StateNx2Html = StateNx2Html> extends Nx2Basic<STATE> {
+export class N2Html<STATE extends StateN2Html = StateN2Html> extends N2Basic<STATE> {
 
    constructor(state:STATE) {
       super(state);
-      addNx2Class(this.state.deco, 'Nx2Html');
+      addN2Class(this.state.deco, 'N2Html');
    }
 
-   onHtml(args:Nx2Evt_OnHtml): HTMLElement {
+   onHtml(args:N2Evt_OnHtml): HTMLElement {
       if ( this.state.value == null )
          this.state.value = '';
 
@@ -52,7 +52,7 @@ export class Nx2Html<STATE extends StateNx2Html = StateNx2Html> extends Nx2Basic
          this.htmlElement = elem as HTMLElement;
       }
 
-      return createNx2HtmlBasic(this.state);
+      return createN2HtmlBasic(this.state);
    } //onHtml
 
 
@@ -65,7 +65,7 @@ export class Nx2Html<STATE extends StateNx2Html = StateNx2Html> extends Nx2Basic
    //    this.initHtml(); // replaces htmlElement
    //    oldHtmlElement.replaceWith(this.htmlElement); // in document model
    // }
-} //Nx2Html
+} //N2Html
 
 function mergeClasses(element1:HTMLElement, classList2:string[]) {
    let classList1 = element1.classList;

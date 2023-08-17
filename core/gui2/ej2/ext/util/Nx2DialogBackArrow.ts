@@ -1,22 +1,22 @@
-import {Tooltip} from "@syncfusion/ej2-popups";
-import {Nx2Html, StateNx2Html, StateNx2HtmlRef} from "../../../generic/Nx2Html";
-import {Nx2Evt_OnHtml} from "../../../Nx2";
-import {css_Nx2Dialog_color_header_background, css_Nx2Dialog_color_header_font, N2Dialog} from "../N2Dialog";
+import {Tooltip} from '@syncfusion/ej2-popups';
+import {N2Html, StateN2Html, StateN2HtmlRef} from '../../../generic/N2Html';
+import {N2Evt_OnHtml} from '../../../N2';
+import {css_N2Dialog_color_header_background, css_N2Dialog_color_header_font, N2Dialog} from '../N2Dialog';
 
-export interface StateNx2DialogBackArrowRef extends StateNx2HtmlRef{
-    widget ?: Nx2DialogBackArrow;
+export interface StateN2DialogBackArrowRef extends StateN2HtmlRef{
+    widget ?: N2DialogBackArrow;
 }
-export interface StateNx2DialogBackArrow extends StateNx2Html {
+export interface StateN2DialogBackArrow extends StateN2Html {
     dialog: N2Dialog;
 
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
-    ref ?:StateNx2DialogBackArrowRef;
+    ref ?:StateN2DialogBackArrowRef;
 }
 
-export class Nx2DialogBackArrow<STATE extends StateNx2DialogBackArrow = any> extends Nx2Html<STATE> {
+export class N2DialogBackArrow<STATE extends StateN2DialogBackArrow = any> extends N2Html<STATE> {
 
 
     constructor(state ?: STATE) {
@@ -28,9 +28,9 @@ export class Nx2DialogBackArrow<STATE extends StateNx2DialogBackArrow = any> ext
         // state.staticWidget = true;
         if (state.value == null) {
             state.value = `
-<span id="${state.tagId}"  style="margin-right:5px;">
-    <button type="button" style="background-color: ${css_Nx2Dialog_color_header_background}">
-        <i class="fa fa-arrow-circle-left" style="font-weight:900;font-size:20px;color: ${css_Nx2Dialog_color_header_font} !important;"></i>
+<span id='${state.tagId}'  style='margin-right:5px;'>
+    <button type='button' style='background-color: ${css_N2Dialog_color_header_background}'>
+        <i class='fa fa-arrow-circle-left' style='font-weight:900;font-size:20px;color: ${css_N2Dialog_color_header_font} !important;'></i>
     </button>
 </span>`;
         }
@@ -38,13 +38,13 @@ export class Nx2DialogBackArrow<STATE extends StateNx2DialogBackArrow = any> ext
         super.onStateInitialized(state);
     }
 
-    onHtml(args:Nx2Evt_OnHtml): HTMLElement {
+    onHtml(args:N2Evt_OnHtml): HTMLElement {
         let state = this.state;
 
         let deco = state.deco;
         deco.tag = 'span';
         deco.style = {
-            "margin-right": "5px",
+            'margin-right': '5px',
         }
 
         return super.onHtml(args);

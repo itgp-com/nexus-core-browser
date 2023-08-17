@@ -1,13 +1,13 @@
-import {ListBox, ListBoxModel} from "@syncfusion/ej2-dropdowns";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {ListBox, ListBoxModel} from '@syncfusion/ej2-dropdowns';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2ListBoxRef extends StateNx2EjBasicRef {
+export interface StateN2ListBoxRef extends StateN2EjBasicRef {
     widget?: N2ListBox;
 }
 
-export interface StateN2ListBox extends StateNx2EjBasic<ListBoxModel> {
+export interface StateN2ListBox extends StateN2EjBasic<ListBoxModel> {
 
     /**
      * Override with specific type used in code completion
@@ -16,12 +16,12 @@ export interface StateN2ListBox extends StateNx2EjBasic<ListBoxModel> {
     ref?: StateN2ListBoxRef;
 } // state class
 
-export class N2ListBox<STATE extends StateN2ListBox = StateN2ListBox> extends Nx2EjBasic<STATE, ListBox> {
+export class N2ListBox<STATE extends StateN2ListBox = StateN2ListBox> extends N2EjBasic<STATE, ListBox> {
     static readonly CLASS_IDENTIFIER: string = 'N2ListBox';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2ListBox.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2ListBox.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {

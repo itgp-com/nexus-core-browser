@@ -1,13 +1,13 @@
-import {DatePicker, DatePickerModel} from "@syncfusion/ej2-calendars";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {DatePicker, DatePickerModel} from '@syncfusion/ej2-calendars';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2DatePickerRef extends StateNx2EjBasicRef {
+export interface StateN2DatePickerRef extends StateN2EjBasicRef {
     widget?: N2DatePicker;
 }
 
-export interface StateN2DatePicker extends StateNx2EjBasic<DatePickerModel> {
+export interface StateN2DatePicker extends StateN2EjBasic<DatePickerModel> {
 
     /**
      * Override with specific type used in code completion
@@ -16,12 +16,12 @@ export interface StateN2DatePicker extends StateNx2EjBasic<DatePickerModel> {
     ref?: StateN2DatePickerRef;
 } // state class
 
-export class N2DatePicker<STATE extends StateN2DatePicker = StateN2DatePicker> extends Nx2EjBasic<STATE, DatePicker> {
-    static readonly CLASS_IDENTIFIER: string = "N2DatePicker"
+export class N2DatePicker<STATE extends StateN2DatePicker = StateN2DatePicker> extends N2EjBasic<STATE, DatePicker> {
+    static readonly CLASS_IDENTIFIER: string = 'N2DatePicker'
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2DatePicker.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2DatePicker.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {

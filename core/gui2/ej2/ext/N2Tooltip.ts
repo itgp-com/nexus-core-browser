@@ -1,13 +1,13 @@
-import {Tooltip, TooltipModel} from "@syncfusion/ej2-popups";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {Tooltip, TooltipModel} from '@syncfusion/ej2-popups';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2TooltipRef extends StateNx2EjBasicRef {
+export interface StateN2TooltipRef extends StateN2EjBasicRef {
     widget?: N2Tooltip;
 }
 
-export interface StateN2Tooltip extends StateNx2EjBasic<TooltipModel> {
+export interface StateN2Tooltip extends StateN2EjBasic<TooltipModel> {
 
     /**
      * Override with specific type used in code completion
@@ -16,12 +16,12 @@ export interface StateN2Tooltip extends StateNx2EjBasic<TooltipModel> {
     ref?: StateN2TooltipRef;
 } // state class
 
-export class N2Tooltip<STATE extends StateN2Tooltip = StateN2Tooltip> extends Nx2EjBasic<STATE, Tooltip> {
-    static readonly CLASS_IDENTIFIER: string = "N2Tooltip";
+export class N2Tooltip<STATE extends StateN2Tooltip = StateN2Tooltip> extends N2EjBasic<STATE, Tooltip> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Tooltip';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Tooltip.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Tooltip.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {

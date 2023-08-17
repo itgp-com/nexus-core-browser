@@ -2,83 +2,83 @@ import {escape} from "lodash";
 import {getRandomString, htmlToElement} from "../BaseUtils";
 import {getErrorHandler} from '../CoreErrorHandling';
 import {N2Dialog} from './ej2/ext/N2Dialog';
-import {Nx2, NX2_CLASS} from "./Nx2";
-import {IHtmlUtils, Nx2HtmlDecorator} from "./Nx2HtmlDecorator";
-import {StateNx2} from "./StateNx2";
+import {N2, N2_CLASS} from "./N2";
+import {IHtmlUtils, N2HtmlDecorator} from "./N2HtmlDecorator";
+import {StateN2} from "./StateN2";
 
 export const tags_no_closing_tag = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
-export type Elem_or_Nx2<STATE extends StateNx2 = any> = HTMLElement | Nx2<STATE>;
+export type Elem_or_N2<STATE extends StateN2 = any> = HTMLElement | N2<STATE>;
 
-export type Elem_or_Nx2_or_StateNx2<NX2_TYPE extends (Nx2 | StateNx2) = any> = HTMLElement | NX2_TYPE;
+export type Elem_or_N2_or_StateN2<N2_TYPE extends (N2 | StateN2) = any> = HTMLElement | N2_TYPE;
 
 /**
- * Checks if the given object is an Nx2 object.
+ * Checks if the given object is an N2 object.
  *
- * An Nx2 object is defined as an object that has the following properties:
+ * An N2 object is defined as an object that has the following properties:
  * - className: a non-null, non-undefined string
- * - isNx2: a boolean value that is true
+ * - isN2: a boolean value that is true
  * - state: an object with a ref property that is non-null and non-undefined
  *
  * @param {*} obj - The object to check.
- * @returns {obj is Nx2} - True if the object is an Nx2 object, false otherwise.
+ * @returns {obj is N2} - True if the object is an N2 object, false otherwise.
  */
-export function isNx2(obj: any): obj is Nx2 {
+export function isN2(obj: any): obj is N2 {
     return (
         obj !== null &&
         obj !== undefined &&
         obj.className !== null &&
         obj.className !== undefined &&
-        obj.isNx2 !== null &&
-        obj.isNx2 !== undefined &&
-        typeof obj.isNx2 === 'boolean' &&
-        obj.isNx2 === true &&
+        obj.isN2 !== null &&
+        obj.isN2 !== undefined &&
+        typeof obj.isN2 === 'boolean' &&
+        obj.isN2 === true &&
         obj.state !== null &&
         obj.state !== undefined &&
         obj.state.ref !== null &&
         obj.state.ref !== undefined
     );
-} // isNx2
+} // isN2
 
 /**
- * Checks if the given HTML element is an Nx2 element.
- * An Nx2 element is defined as an element with a class of 'nx2'
- * and a corresponding Nx2 object attached to it.
+ * Checks if the given HTML element is an N2 element.
+ * An N2 element is defined as an element with a class of 'n2'
+ * and a corresponding N2 object attached to it.
  *
  * @param {HTMLElement} elem - The HTML element to check.
- * @returns {boolean} - True if the element is an Nx2 element, false otherwise.
+ * @returns {boolean} - True if the element is an N2 element, false otherwise.
  */
-export function isNx2HtmlElement(elem: HTMLElement): boolean {
+export function isN2HtmlElement(elem: HTMLElement): boolean {
     if (elem) {
-        if (elem.classList.contains(NX2_CLASS)) {
-            let obj: any = elem[NX2_CLASS]
-            if (obj && isNx2(obj)) {
+        if (elem.classList.contains(N2_CLASS)) {
+            let obj: any = elem[N2_CLASS]
+            if (obj && isN2(obj)) {
                 return true;
-            }  // if obj is Nx2
-        } // if classList contains NX2_CLASS
+            }  // if obj is N2
+        } // if classList contains N2_CLASS
     } // if elem exists
     return false;
 }
 
 /**
- * Retrieves the Nx2 object attached to the given HTML element, if it exists.
+ * Retrieves the N2 object attached to the given HTML element, if it exists.
  *
- * An Nx2 object is defined as an object that has the following properties:
+ * An N2 object is defined as an object that has the following properties:
  * - className: a non-null, non-undefined string
- * - isNx2: a boolean value that is true
+ * - isN2: a boolean value that is true
  * - state: an object with a ref property that is non-null and non-undefined
  *
- * @param {HTMLElement} elem - The HTML element to retrieve the Nx2 object from.
- * @returns {Nx2|null} - The Nx2 object attached to the element, or null if none exists.
+ * @param {HTMLElement} elem - The HTML element to retrieve the N2 object from.
+ * @returns {N2|null} - The N2 object attached to the element, or null if none exists.
  */
-export function getNx2FromHtmlElement(elem: HTMLElement): Nx2 {
+export function getN2FromHtmlElement(elem: HTMLElement): N2 {
     if (elem) {
-        if (elem.classList.contains(NX2_CLASS)) {
-            let obj: any = elem[NX2_CLASS]
-            if (obj && isNx2(obj)) {
+        if (elem.classList.contains(N2_CLASS)) {
+            let obj: any = elem[N2_CLASS]
+            if (obj && isN2(obj)) {
                 return obj;
-            }  // if obj is Nx2
-        } // if classList contains NX2_CLASS
+            }  // if obj is N2
+        } // if classList contains N2_CLASS
     } // if elem exists
     return null;
 }
@@ -93,17 +93,17 @@ function hasNoClosingHtmlTag(tag: string): boolean {
  * It can only create basic decorator based elements, no wrappers since the base deco does not contain that
  * @param state
  */
-export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLElement {
+export function createN2HtmlBasic<STATE extends StateN2>(state: STATE): HTMLElement {
     state = state || {} as STATE;
     state.deco = IHtmlUtils.init(state.deco);
-    let deco: Nx2HtmlDecorator = state.deco;
+    let deco: N2HtmlDecorator = state.deco;
 
     if ( state.siblings || state.prefixSiblings){
         state.wrapper = state.wrapper || {} // there needs to be a wrapper if there are any siblings
     }
 
     let hasWrapper: boolean = state.wrapper != null;
-    let wrapper_deco: Nx2HtmlDecorator = null;
+    let wrapper_deco: N2HtmlDecorator = null;
     let wrapperId: string = null;
     if (hasWrapper)
         wrapper_deco = IHtmlUtils.init(state.wrapper);
@@ -146,13 +146,13 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
 
     let prefixSiblingElems: HTMLElement[] = [];
     if (state.prefixSiblings) {
-        let siblings: Elem_or_Nx2[] = state.prefixSiblings;
+        let siblings: Elem_or_N2[] = state.prefixSiblings;
         for (let i = 0; i < siblings.length; i++) {
             try {
-                let e_or_n: Elem_or_Nx2 = siblings[i];
+                let e_or_n: Elem_or_N2 = siblings[i];
                 let localElem: HTMLElement;
                 if (e_or_n) {
-                    if (isNx2(e_or_n)) {
+                    if (isN2(e_or_n)) {
                         localElem = e_or_n.htmlElement;
                     } else {
                         localElem = e_or_n as HTMLElement;
@@ -170,13 +170,13 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
 
     let siblingElems: HTMLElement[] = [];
     if (state.siblings) {
-        let siblings: Elem_or_Nx2[] = state.siblings;
+        let siblings: Elem_or_N2[] = state.siblings;
         for (let i = 0; i < siblings.length; i++) {
             try {
-                let e_or_n: Elem_or_Nx2 = siblings[i];
+                let e_or_n: Elem_or_N2 = siblings[i];
                 let localElem: HTMLElement;
                 if (e_or_n) {
-                    if (isNx2(e_or_n)) {
+                    if (isN2(e_or_n)) {
                         localElem = e_or_n.htmlElement;
                     } else {
                         localElem = e_or_n as HTMLElement;
@@ -193,12 +193,12 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
 
     // Now process the children
     if (state.children) {
-        let children: Elem_or_Nx2[] = state.children;
+        let children: Elem_or_N2[] = state.children;
         for (let i = 0; i < children.length; i++) {
-            let child: Elem_or_Nx2 = children[i];
+            let child: Elem_or_N2 = children[i];
             let childHtmlElement: HTMLElement;
             if (child) {
-                if (isNx2(child)) {
+                if (isN2(child)) {
                     childHtmlElement = child.htmlElement;
                 } else {
                     childHtmlElement = child as HTMLElement;
@@ -252,7 +252,7 @@ export function createNx2HtmlBasic<STATE extends StateNx2>(state: STATE): HTMLEl
  * Creates an HTML element from the decorator passed in.
  * @param decorator
  */
-export function createNx2HtmlBasicFromDecorator<DECORATOR extends Nx2HtmlDecorator>(decorator: DECORATOR): HTMLElement {
+export function createN2HtmlBasicFromDecorator<DECORATOR extends N2HtmlDecorator>(decorator: DECORATOR): HTMLElement {
     decorator = IHtmlUtils.init(decorator) as DECORATOR;
 
     let x: string = "";
@@ -266,16 +266,16 @@ export function createNx2HtmlBasicFromDecorator<DECORATOR extends Nx2HtmlDecorat
 
 
 /**
- * Finds the first level of Nx2 elements within the children of the parent element passed in (excluding it)
- * The first level of Nx2 elements could be direct children as HTMLElements or be children of the child HTMLElements that are not Nx2 elements.
- * The child tree is traversed until the first Nx2 is found or the end of the tree is reached.
- * @param parent the parent HTMLElement or Nx2 instance whose children to search. It itself is not included in the return list
- * @return the list of HTMLElement containing Nx2 instances
+ * Finds the first level of N2 elements within the children of the parent element passed in (excluding it)
+ * The first level of N2 elements could be direct children as HTMLElements or be children of the child HTMLElements that are not N2 elements.
+ * The child tree is traversed until the first N2 is found or the end of the tree is reached.
+ * @param parent the parent HTMLElement or N2 instance whose children to search. It itself is not included in the return list
+ * @return the list of HTMLElement containing N2 instances
  */
-export function findNx2ChildrenElementsFirstLevel(parent: HTMLElement | Nx2): HTMLElement[] {
-    const nx2Elements: HTMLElement[] = [];
+export function findN2ChildrenElementsFirstLevel(parent: HTMLElement | N2): HTMLElement[] {
+    const n2Elements: HTMLElement[] = [];
     if (!parent)
-        return nx2Elements;
+        return n2Elements;
 
     try {
         const parentElement: HTMLElement = parent instanceof HTMLElement ? parent : parent.htmlElement;
@@ -283,60 +283,60 @@ export function findNx2ChildrenElementsFirstLevel(parent: HTMLElement | Nx2): HT
         const firstLevelChildren: HTMLCollection = parentElement.children;
         for (let i = 0; i < firstLevelChildren.length; i++) {
             const firstLevelChild = firstLevelChildren[i]
-            if ((firstLevelChild instanceof HTMLElement) && firstLevelChild.classList.contains(NX2_CLASS)) {
+            if ((firstLevelChild instanceof HTMLElement) && firstLevelChild.classList.contains(N2_CLASS)) {
                 // use the child element itself
-                nx2Elements.push(firstLevelChild as HTMLElement);
+                n2Elements.push(firstLevelChild as HTMLElement);
             } else {
-                // search for _nx2_ within the child's descendants
-                const nx2DescendantElement = firstLevelChild.querySelector(`.class1, .class2 > .class3.${NX2_CLASS}`);
-                if (nx2DescendantElement && nx2DescendantElement instanceof HTMLElement) {
-                    nx2Elements.push(nx2DescendantElement);
-                } // if (nx2DescendantElement && nx2DescendantElement instanceof HTMLElement)
+                // search for _n2_ within the child's descendants
+                const n2DescendantElement = firstLevelChild.querySelector(`.class1, .class2 > .class3.${N2_CLASS}`);
+                if (n2DescendantElement && n2DescendantElement instanceof HTMLElement) {
+                    n2Elements.push(n2DescendantElement);
+                } // if (n2DescendantElement && n2DescendantElement instanceof HTMLElement)
             } // if (firstLevelChild instanceof  HTMLElement)
         } // for firstLevelChildren
     } catch (e) {
         console.error(e); // no used feedback
     }
 
-    return nx2Elements;
-} // findNx2ChildrenElementsFirstLevel
+    return n2Elements;
+} // findN2ChildrenElementsFirstLevel
 
 /**
- * Finds the first level of Nx2 elements within the children of the parent element passed in (excluding it)
- * The first level of Nx2 elements could be direct children as HTMLElements or be children of the child HTMLElements that are not Nx2 elements.
- * The child tree is traversed until the first Nx2 is found or the end of the tree is reached.
- * @param parent the parent HTMLElement or Nx2 instance whose children to search. It itself is not included in the return list
- * @return the list of Nx2 instances found
+ * Finds the first level of N2 elements within the children of the parent element passed in (excluding it)
+ * The first level of N2 elements could be direct children as HTMLElements or be children of the child HTMLElements that are not N2 elements.
+ * The child tree is traversed until the first N2 is found or the end of the tree is reached.
+ * @param parent the parent HTMLElement or N2 instance whose children to search. It itself is not included in the return list
+ * @return the list of N2 instances found
  */
-export function findNx2ChildrenFirstLevel(parent: HTMLElement | Nx2): Nx2[] {
-    let nx2Elements: Nx2[] = [];
+export function findN2ChildrenFirstLevel(parent: HTMLElement | N2): N2[] {
+    let n2Elements: N2[] = [];
     if (!parent)
-        return nx2Elements;
-    let nx2ElementsHtml: HTMLElement[] = findNx2ChildrenElementsFirstLevel(parent);
-    //traverse and extract the NX2_CLASS elements
-    for (let i = 0; i < nx2ElementsHtml.length; i++) {
-        let nx2ElementHtml = nx2ElementsHtml[i];
-        let nx2Element: any = nx2ElementHtml[NX2_CLASS];
-        if (nx2Element) {
-            nx2Elements.push(nx2Element);
-        } // if (nx2Element)
-    } // for nx2ElementsHtml
-    return nx2Elements;
-} // findNx2ChildrenFirstLevel
+        return n2Elements;
+    let n2ElementsHtml: HTMLElement[] = findN2ChildrenElementsFirstLevel(parent);
+    //traverse and extract the N2_CLASS elements
+    for (let i = 0; i < n2ElementsHtml.length; i++) {
+        let n2ElementHtml = n2ElementsHtml[i];
+        let n2Element: any = n2ElementHtml[N2_CLASS];
+        if (n2Element) {
+            n2Elements.push(n2Element);
+        } // if (n2Element)
+    } // for n2ElementsHtml
+    return n2Elements;
+} // findN2ChildrenFirstLevel
 
 /**
- * Finds Nx2 containing HTMLElements at any levels within the children of the parent element passed in (excluding it),
+ * Finds N2 containing HTMLElements at any levels within the children of the parent element passed in (excluding it),
  * and continues to search the children in the DOM tree until the end of the tree is reached.
  *
- * HTMLElements containing Nx2 elements at any level of the DOM tree under the parent are returned in the list.
+ * HTMLElements containing N2 elements at any level of the DOM tree under the parent are returned in the list.
  *
- * @param parent the parent HTMLElement or Nx2 instance whose children to search. It itself is not included in the return list
- * @return the list of HTMLElement containing Nx2 instances
+ * @param parent the parent HTMLElement or N2 instance whose children to search. It itself is not included in the return list
+ * @return the list of HTMLElement containing N2 instances
  */
-export function findNx2ChildrenElementsAllLevels(parent: HTMLElement | Nx2): HTMLElement[] {
-    const nx2Elements: HTMLElement[] = [];
+export function findN2ChildrenElementsAllLevels(parent: HTMLElement | N2): HTMLElement[] {
+    const n2Elements: HTMLElement[] = [];
     if (!parent)
-        return nx2Elements;
+        return n2Elements;
 
     try {
         const parentElement: HTMLElement = parent instanceof HTMLElement ? parent : parent.htmlElement;
@@ -348,51 +348,51 @@ export function findNx2ChildrenElementsAllLevels(parent: HTMLElement | Nx2): HTM
             const childElement = childElements[i];
 
             if (childElement && childElement instanceof HTMLElement) {
-                if (childElement.classList.contains('_nx2_')) {
-                    // use the current element if it has _nx2_ class
-                    nx2Elements.push(childElement);
+                if (childElement.classList.contains('_n2_')) {
+                    // use the current element if it has _n2_ class
+                    n2Elements.push(childElement);
                 }
 
-                // recursively call findAllNx2Elements for each child element
-                const childNx2Elements = findNx2ChildrenElementsAllLevels(childElement);
-                // add childNx2Elements to nx2Elements
-                nx2Elements.push(...childNx2Elements);
+                // recursively call findAllN2Elements for each child element
+                const childN2Elements = findN2ChildrenElementsAllLevels(childElement);
+                // add childN2Elements to n2Elements
+                n2Elements.push(...childN2Elements);
             } // if ( childElement && childElement instanceof HTMLElement)
         } // for childElements
     } catch (e) {
         console.error(e); // no used feedback
     }
 
-    return nx2Elements;
-} // findNx2ChildrenElementsAllLevels
+    return n2Elements;
+} // findN2ChildrenElementsAllLevels
 
 /**
- * Finds Nx2 instances at any levels within the children of the parent element passed in (excluding it),
+ * Finds N2 instances at any levels within the children of the parent element passed in (excluding it),
  * and continues to search the children in the DOM tree until the end of the tree is reached.
  *
- * Nx2 instances at any level of the DOM tree under the parent are returned in the list.
+ * N2 instances at any level of the DOM tree under the parent are returned in the list.
  *
- * @param parent the parent HTMLElement or Nx2 widget whose children to search. It itself is not included in the return list
- * @return the list of Nx2 instances
+ * @param parent the parent HTMLElement or N2 widget whose children to search. It itself is not included in the return list
+ * @return the list of N2 instances
  */
-export function findNx2ChildrenAllLevels(parent: HTMLElement | Nx2): Nx2[] {
-    let nx2Elements: Nx2[] = [];
+export function findN2ChildrenAllLevels(parent: HTMLElement | N2): N2[] {
+    let n2Elements: N2[] = [];
     if (!parent)
-        return nx2Elements;
-    let nx2ElementsHtml: HTMLElement[] = findNx2ChildrenElementsAllLevels(parent);
-    //traverse and extract the NX2_CLASS elements
-    for (let i = 0; i < nx2ElementsHtml.length; i++) {
-        let nx2ElementHtml = nx2ElementsHtml[i];
-        let nx2Element = nx2ElementHtml[NX2_CLASS];
-        if (nx2Element) {
-            nx2Elements.push(nx2Element);
-        } // if (nx2Element)
-    } // for nx2ElementsHtml
-    return nx2Elements;
-} // findNx2ChildrenAllLevels
+        return n2Elements;
+    let n2ElementsHtml: HTMLElement[] = findN2ChildrenElementsAllLevels(parent);
+    //traverse and extract the N2_CLASS elements
+    for (let i = 0; i < n2ElementsHtml.length; i++) {
+        let n2ElementHtml = n2ElementsHtml[i];
+        let n2Element = n2ElementHtml[N2_CLASS];
+        if (n2Element) {
+            n2Elements.push(n2Element);
+        } // if (n2Element)
+    } // for n2ElementsHtml
+    return n2Elements;
+} // findN2ChildrenAllLevels
 
 
-export function addNx2Child(child: Nx2, parent: Elem_or_Nx2): boolean {
+export function addN2Child(child: N2, parent: Elem_or_N2): boolean {
     if (!child) return false;
     if (!parent) return false;
 
@@ -412,9 +412,9 @@ export function addNx2Child(child: Nx2, parent: Elem_or_Nx2): boolean {
     }
 
     return false;
-} // addNx2Child
+} // addN2Child
 
-export function removeNx2Child(child: Nx2, parent: Elem_or_Nx2): boolean {
+export function removeN2Child(child: N2, parent: Elem_or_N2): boolean {
     if (!child) return false;
     if (!parent) return false;
     try {
@@ -432,7 +432,7 @@ export function removeNx2Child(child: Nx2, parent: Elem_or_Nx2): boolean {
         console.error(ex, parent, child);
     }
     return false;
-} // removeNx2Child
+} // removeN2Child
 
 /**
  * Safely retrieves the first HTMLElement child of a given parent HTMLElement instance.
@@ -477,16 +477,16 @@ export function findParentHTMLElement(current: HTMLElement, className: string): 
 }
 
 /**
- * Finds the first parent Nx2 dialog from the current HTMLElement or Nx2 component.
- * @param {HTMLElement | Nx2} current - The current HTMLElement or Nx2 component from which the search will start.
- * @returns {Nx2 | null} The found parent Nx2 dialog or null if not found.
+ * Finds the first parent N2 dialog from the current HTMLElement or N2 component.
+ * @param {HTMLElement | N2} current - The current HTMLElement or N2 component from which the search will start.
+ * @returns {N2 | null} The found parent N2 dialog or null if not found.
  */
-export function findParentNx2Dialog<T extends N2Dialog = N2Dialog>(current: HTMLElement | Nx2) : T {
+export function findParentN2Dialog<T extends N2Dialog = N2Dialog>(current: HTMLElement | N2) : T {
     if (!current) return null;
     let htmlElement = current instanceof HTMLElement ? current : current.htmlElement;
-    let parentElement = findParentHTMLElement(htmlElement, 'Nx2EjDialog');
+    let parentElement = findParentHTMLElement(htmlElement, 'N2EjDialog');
     if ( parentElement ) {
-        let parent =  getNx2FromHtmlElement(parentElement);
+        let parent =  getN2FromHtmlElement(parentElement);
         if (parent)
             return parent as T;
     }
@@ -494,20 +494,20 @@ export function findParentNx2Dialog<T extends N2Dialog = N2Dialog>(current: HTML
 }
 
 /**
- * Finds the parent Nx2 element by a specified class name.
+ * Finds the parent N2 element by a specified class name.
  *
- * @template T - A type that extends Nx2, representing the expected return type.
- * @param {HTMLElement | Nx2} current - The current HTML element or Nx2 instance to start the search from.
+ * @template T - A type that extends N2, representing the expected return type.
+ * @param {HTMLElement | N2} current - The current HTML element or N2 instance to start the search from.
  * @param {string} n2ClassName - The class name to search for in the parent elements.
- * @returns {T | null} The parent Nx2 element matching the specified class name, or null if not found.
+ * @returns {T | null} The parent N2 element matching the specified class name, or null if not found.
  */
-export function findParentNx2ByClass<T extends Nx2 = Nx2>(current: HTMLElement | Nx2, n2ClassName:string) : T {
+export function findParentN2ByClass<T extends N2 = N2>(current: HTMLElement | N2, n2ClassName:string) : T {
     if (!current) return null;
     if ( !n2ClassName ) return null;
     let htmlElement = current instanceof HTMLElement ? current : current.htmlElement;
     let parentElement = findParentHTMLElement(htmlElement, n2ClassName);
     if ( parentElement ) {
-        let parent =  getNx2FromHtmlElement(parentElement);
+        let parent =  getN2FromHtmlElement(parentElement);
         if (parent)
             return parent as T;
     }
@@ -515,17 +515,17 @@ export function findParentNx2ByClass<T extends Nx2 = Nx2>(current: HTMLElement |
 }
 
 /**
- * Finds an HTMLInputElement within the given HTMLElement or Nx2 object.
+ * Finds an HTMLInputElement within the given HTMLElement or N2 object.
  *
- * The function first checks if the provided `current` object is an HTMLInputElement with a matching ID (or `tagId` if `current` is an Nx2 object).
+ * The function first checks if the provided `current` object is an HTMLInputElement with a matching ID (or `tagId` if `current` is an N2 object).
  * If not, it searches for an element with the specified ID within the `current` object.
  * If no matching element is found, it returns the first input element within the `current` object.
  *
- * @param {HTMLElement | Nx2} current - The current HTML element or Nx2 instance to start the search from.
+ * @param {HTMLElement | N2} current - The current HTML element or N2 instance to start the search from.
  * @returns {HTMLInputElement | null} The HTMLInputElement that matches the specified criteria, or null if no matching element is found.
  * @export
  */
-export function findHtmlInputElement(current: HTMLElement | Nx2,): HTMLInputElement {
+export function findHtmlInputElement(current: HTMLElement | N2,): HTMLInputElement {
     if (!current) return null;
     let elemInput: HTMLInputElement;
     let elem:HTMLElement =  current instanceof HTMLElement ? current : current.htmlElement;

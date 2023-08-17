@@ -1,13 +1,13 @@
-import {Toast, ToastModel} from "@syncfusion/ej2-notifications";
-import {addNx2Class, decoToHtmlElement, Nx2HtmlDecorator} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {Toast, ToastModel} from '@syncfusion/ej2-notifications';
+import {addN2Class, decoToHtmlElement, N2HtmlDecorator} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2ToastRef extends StateNx2EjBasicRef {
+export interface StateN2ToastRef extends StateN2EjBasicRef {
     widget?: N2Toast;
 }
 
-export interface StateN2Toast<WIDGET_LIBRARY_MODEL extends ToastModel = ToastModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+export interface StateN2Toast<WIDGET_LIBRARY_MODEL extends ToastModel = ToastModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -17,24 +17,24 @@ export interface StateN2Toast<WIDGET_LIBRARY_MODEL extends ToastModel = ToastMod
     /**
      * Decorator for the e-toast element (which will be a child of the original anchor element)
      */
-    deco_toast?: Nx2HtmlDecorator;
+    deco_toast?: N2HtmlDecorator;
     /**
      * Decorator for the e-toast-content element (which will be a child of the e-toast element)
      */
-    deco_toast_content?: Nx2HtmlDecorator;
+    deco_toast_content?: N2HtmlDecorator;
     /**
      * Decorator for the e-toast-title element (which will be a child of the e-toast element)
      */
-    deco_toast_title?: Nx2HtmlDecorator;
+    deco_toast_title?: N2HtmlDecorator;
 
 }
 
-export class N2Toast<STATE extends StateN2Toast = StateN2Toast> extends Nx2EjBasic<STATE, Toast> {
-    static readonly CLASS_IDENTIFIER: string = "N2Toast";
+export class N2Toast<STATE extends StateN2Toast = StateN2Toast> extends N2EjBasic<STATE, Toast> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Toast';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Toast.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Toast.CLASS_IDENTIFIER);
     }
 
     createEjObj(): void {

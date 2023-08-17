@@ -1,15 +1,15 @@
-import {DropDownButton, DropDownButtonModel} from "@syncfusion/ej2-splitbuttons";
-import {StringArg, stringArgVal} from "../../../BaseUtils";
-import {Nx2Evt_OnLogic} from "../../Nx2";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {DropDownButton, DropDownButtonModel} from '@syncfusion/ej2-splitbuttons';
+import {StringArg, stringArgVal} from '../../../BaseUtils';
+import {N2Evt_OnLogic} from '../../N2';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2DropDownButtonRef extends StateNx2EjBasicRef {
+export interface StateN2DropDownButtonRef extends StateN2EjBasicRef {
     widget?: N2DropDownButton;
 }
 
-export interface StateN2DropDownButton extends StateNx2EjBasic<DropDownButtonModel> {
+export interface StateN2DropDownButton extends StateN2EjBasic<DropDownButtonModel> {
 
     /**
      * function or string yielding the text or HTML that will overwrite the 'content' value of the DropDownButtonModel
@@ -23,12 +23,12 @@ export interface StateN2DropDownButton extends StateNx2EjBasic<DropDownButtonMod
     ref?: StateN2DropDownButtonRef;
 }
 
-export class N2DropDownButton<STATE extends StateN2DropDownButton = StateN2DropDownButton> extends Nx2EjBasic<STATE, DropDownButton> {
-    static readonly CLASS_IDENTIFIER: string = "N2DropDownButton"
+export class N2DropDownButton<STATE extends StateN2DropDownButton = StateN2DropDownButton> extends N2EjBasic<STATE, DropDownButton> {
+    static readonly CLASS_IDENTIFIER: string = 'N2DropDownButton'
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2DropDownButton.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2DropDownButton.CLASS_IDENTIFIER);
     }
 
 
@@ -37,7 +37,7 @@ export class N2DropDownButton<STATE extends StateN2DropDownButton = StateN2DropD
         super.onStateInitialized(state);
     }
 
-    onLogic(ev: Nx2Evt_OnLogic) {
+    onLogic(ev: N2Evt_OnLogic) {
         let state = this.state;
         if (state.label)
             state.ej.content = stringArgVal(state.label); // DropDownButton content label/ html

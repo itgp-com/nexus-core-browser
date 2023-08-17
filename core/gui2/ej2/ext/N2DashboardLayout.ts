@@ -1,13 +1,13 @@
-import {DashboardLayout, DashboardLayoutModel} from "@syncfusion/ej2-layouts";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {DashboardLayout, DashboardLayoutModel} from '@syncfusion/ej2-layouts';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2DashboardLayoutRef extends StateNx2EjBasicRef {
+export interface StateN2DashboardLayoutRef extends StateN2EjBasicRef {
   widget ?: N2DashboardLayout;
 }
 
-export interface StateN2DashboardLayout<WIDGET_LIBRARY_MODEL extends DashboardLayoutModel = DashboardLayoutModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+export interface StateN2DashboardLayout<WIDGET_LIBRARY_MODEL extends DashboardLayoutModel = DashboardLayoutModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -15,12 +15,12 @@ export interface StateN2DashboardLayout<WIDGET_LIBRARY_MODEL extends DashboardLa
     ref ?: StateN2DashboardLayoutRef;
 }
 
-export class N2DashboardLayout<STATE extends StateN2DashboardLayout = StateN2DashboardLayout> extends Nx2EjBasic<STATE,DashboardLayout> {
-    static readonly CLASS_IDENTIFIER:string = "N2DashboardLayout"
+export class N2DashboardLayout<STATE extends StateN2DashboardLayout = StateN2DashboardLayout> extends N2EjBasic<STATE,DashboardLayout> {
+    static readonly CLASS_IDENTIFIER:string = 'N2DashboardLayout'
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2DashboardLayout.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2DashboardLayout.CLASS_IDENTIFIER);
     }
 
 

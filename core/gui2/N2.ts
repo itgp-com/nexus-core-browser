@@ -9,19 +9,21 @@ import {getErrorHandler} from "../CoreErrorHandling";
 import {isDev} from '../CoreUtils';
 import {ExceptionEvent} from "../ExceptionEvent";
 import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
-import {addNx2Child, removeNx2Child} from './ej2/Ej2Utils';
-import {addNx2Class, IHtmlUtils} from "./Nx2HtmlDecorator";
-import {Elem_or_Nx2, getFirstHTMLElementChild, isNx2} from './Nx2Utils';
-import {StateNx2} from "./StateNx2";
+import {addN2Child, removeN2Child} from './ej2/Ej2Utils';
+import {addN2Class, IHtmlUtils} from "./N2HtmlDecorator";
+import {Elem_or_N2, getFirstHTMLElementChild, isN2} from './N2Utils';
+import {StateN2} from "./StateN2";
 
 
-export let NX2_CLASS = '_nx2_';
+export let N2_CLASS = '_n2_';
 
 
-export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
-    protected constructor(state ?: STATE) {
+export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
+    static readonly CLASS_IDENTIFIER: string = 'N2';
+
+        protected constructor(state ?: STATE) {
         this._constructor(state);
-        addNx2Class(this.state.deco, 'Nx2'); // this might not be the same as the actual _nx2_ HTMLElement
+        addN2Class(this.state.deco, N2.CLASS_IDENTIFIER); // this might not be the same as the actual _n2_ HTMLElement
     } //  constructor
 
     /**
@@ -35,7 +37,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         state.other = state.other || {};
 
         state.deco = state.deco || {} as IHtmlUtils;
-        IHtmlUtils.initForNx2(state);
+        IHtmlUtils.initForN2(state);
 
         state.ref.widget = this;
         this.state = state;
@@ -86,7 +88,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
                         console.error('State mismatch. Old State is', this.state, 'New state is', state);
                         setTimeout(() => {
                                 DialogUtility.alert({
-                                    title: 'Nx2 component state problem',
+                                    title: 'N2 component state problem',
                                     content: '<p>State used is a completely new variable instead of the original. <p>This new state will be ignored, so you won\'t see its contents in the UI and wonder why that is!!!<p>See console for details.<p>',
                                     width: 'min(80%, 500px)',
                                     height: 'min(80%, 300px)',
@@ -103,11 +105,11 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
 
     /**
-     * A boolean indicating this instance is a Nx2.
+     * A boolean indicating this instance is a N2.
      * @type {boolean}
      * @readonly
      */
-    readonly isNx2: boolean = true;
+    readonly isN2: boolean = true;
 
     private _state: STATE;
 
@@ -123,7 +125,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             if (state.ref.widget && state.ref.widget != this) {
                 throw new Error(`The state instance is already set to widget ${state.ref.widget.state.tagId} and is now trying to be assigned to ${state.tagId}!}`);
             }
-            state.ref.widget = this as Nx2; // tag the state with the widget
+            state.ref.widget = this as N2; // tag the state with the widget
 
         } else {
             // If being assigned a null state, then remove the reference to this widget from the previous state
@@ -149,9 +151,9 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
     /**
      *
-     * @param evt Nx2Evt_Resized
+     * @param evt N2Evt_Resized
      */
-    onResized(evt?: Nx2Evt_Resized): void {
+    onResized(evt?: N2Evt_Resized): void {
     }
 
 
@@ -222,7 +224,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             if (this.resizeAllowed) {
                 if (this && this.initialized) {
 
-                    let param: Nx2Evt_Resized = {widget: this, size: _size}
+                    let param: N2Evt_Resized = {widget: this, size: _size}
 
                     if (this.state.onResized) {
                         this.state.onResized(param);
@@ -283,13 +285,13 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         this._initLogicInProgress = value;
     }
 
-    private _parent: Nx2;
+    private _parent: N2;
 
-    get parent(): Nx2 {
+    get parent(): N2 {
         return this._parent;
     }
 
-    set parent(value: Nx2) {
+    set parent(value: N2) {
         try {
             this._parent = value;
             // if (this.parentAddedListeners.countListeners() > 0) {
@@ -341,19 +343,19 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
                 this.resizeSensor.detach();
             }
 
-            let actualNx2Elem = oldElement;
+            let actualN2Elem = oldElement;
             if (oldElement.id != this.state.tagId) {
                 // oldElement is probably the wrapper
                 try {
-                    actualNx2Elem = oldElement.querySelector(`#${this.state.tagId}`);
+                    actualN2Elem = oldElement.querySelector(`#${this.state.tagId}`);
                 } catch (e) {
-                    actualNx2Elem = document.getElementById(this.state.tagId);
+                    actualN2Elem = document.getElementById(this.state.tagId);
                 }
             }
 
-            if (actualNx2Elem) {
-                actualNx2Elem.classList.remove(NX2_CLASS); // untag the element
-                actualNx2Elem[NX2_CLASS] = null; // remove the reference to this object
+            if (actualN2Elem) {
+                actualN2Elem.classList.remove(N2_CLASS); // untag the element
+                actualN2Elem[N2_CLASS] = null; // remove the reference to this object
             }
 
         }
@@ -362,19 +364,19 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         if (value) {
             // tag this element with the widget
 
-            let actualNx2Elem = value;
+            let actualN2Elem = value;
             if (value.id != this.state.tagId) {
                 // value is probably the wrapper
                 try {
-                    actualNx2Elem = value.querySelector(`#${this.state.tagId}`);
+                    actualN2Elem = value.querySelector(`#${this.state.tagId}`);
                 } catch (e) {
-                    actualNx2Elem = document.getElementById(this.state.tagId);
+                    actualN2Elem = document.getElementById(this.state.tagId);
                 }
             }
-            if (actualNx2Elem) {
-                actualNx2Elem.classList.remove(NX2_CLASS); // just in case
-                actualNx2Elem.classList.add(NX2_CLASS); // tag the element
-                actualNx2Elem[NX2_CLASS] = this; // tag the element with the widget itself
+            if (actualN2Elem) {
+                actualN2Elem.classList.remove(N2_CLASS); // just in case
+                actualN2Elem.classList.add(N2_CLASS); // tag the element
+                actualN2Elem[N2_CLASS] = this; // tag the element with the widget itself
             }
 
             if (state.resizeTracked) {
@@ -450,9 +452,9 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         return state.tagId != null;
     }
 
-    abstract onDestroy(args: Nx2Evt_Destroy): void;
+    abstract onDestroy(args: N2Evt_Destroy): void;
 
-    abstract onHtml(args: Nx2Evt_OnHtml): HTMLElement;
+    abstract onHtml(args: N2Evt_OnHtml): HTMLElement;
 
     /**
      * This is the method that gives a component the chance to call any JavaScript and instantiate the widget.
@@ -462,7 +464,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * Therefore, all children JS objects are available at this point in time.
      *
      */
-    abstract onLogic(args: Nx2Evt_OnLogic): void ;
+    abstract onLogic(args: N2Evt_OnLogic): void ;
 
     /**
      * This is the perfect event in which to initialize any children or settings for 'this' rightContainer before
@@ -470,7 +472,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * @protected
      * @param _args
      */
-    protected onBeforeInitHtml(_args: Nx2Evt_OnHtml): void {
+    protected onBeforeInitHtml(_args: N2Evt_OnHtml): void {
     }
 
     initHtml(): void {
@@ -500,7 +502,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         this._triggerOnStateInitialized(); // trigger onStateInitialized if not already called
 
 
-        let args: Nx2Evt_BeforeLogic = {
+        let args: N2Evt_BeforeLogic = {
             widget: this,
             cancel: false,
         };
@@ -553,18 +555,18 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
             }
 
             let atLeastOneChildInitialized: boolean = false;
-            let children: Elem_or_Nx2[];
+            let children: Elem_or_N2[];
             if (state.children)
                 children = state.children;
             if (children && children.length > 0) {
                 children.map((child) => {
                     if (child) {
-                        if (isNx2(child)) {
+                        if (isN2(child)) {
                             if (!child.initialized) {
                                 atLeastOneChildInitialized = true;
                                 return child.initLogic();
                             }
-                        } // if ( isNx2(child))
+                        } // if ( isN2(child))
                     } // if ( child)
                 });
             } // if ( this.children)
@@ -596,7 +598,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
 
             if (this.onAfterInitLogic) {
                 // ------------ After Init Logic Listeners -----------------------
-                let args: Nx2Evt_AfterLogic = {
+                let args: N2Evt_AfterLogic = {
                     widget: thisX
                 };
 
@@ -635,7 +637,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     /**
      * Called after the widget AND any children's logic have been initialized
      */
-    onAfterInitLogic(_args: Nx2Evt_AfterLogic): void {
+    onAfterInitLogic(_args: N2Evt_AfterLogic): void {
     }
 
 
@@ -644,14 +646,14 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
      * Should you need to call the corresponding widget method, you can call it manually from this method
      * by using the widget instance in the parameter
      */
-    onBeforeInitLogic(_args: Nx2Evt_BeforeLogic): void {
+    onBeforeInitLogic(_args: N2Evt_BeforeLogic): void {
     }
 
     /**
      *  Called after initLogic has been completed for this component but NOT for any child components
      *  Use the <link>onChildrenInstantiated</link> event if you need all child components to also have been initialized
      */
-    onAfterInitWidgetOnly(_args: Nx2Evt_AfterLogic): void {}
+    onAfterInitWidgetOnly(_args: N2Evt_AfterLogic): void {}
 
 
     private _initLogicIfNeeded(){
@@ -664,7 +666,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         }
     } // _initLogicIfNeeded
     /**
-     * Returns the HTMLElement for this widget that makes sure that the Nx2 widget's logic has been initialized
+     * Returns the HTMLElement for this widget that makes sure that the N2 widget's logic has been initialized
      * @return {HTMLElement}
      */
     get htmlElementInitialized(): HTMLElement {
@@ -675,7 +677,7 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     } //htmlElementInitialized
 
     /**
-     * Returns the HTMLElementAnchor for this widget that makes sure that the Nx2 widget's logic has been initialized
+     * Returns the HTMLElementAnchor for this widget that makes sure that the N2 widget's logic has been initialized
      * @return {HTMLElement}
      */
     get htmlElementAnchorInitialized(): HTMLElement {
@@ -684,24 +686,24 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
         return htmlElement;
     } //htmlElementInitialized
     /**
-     * Add child(ren) Nx2 or HTMLElement to this Nx2 instance
+     * Add child(ren) N2 or HTMLElement to this N2 instance
      * @return {boolean} true if successful, false if error
-     * @param nx2
+     * @param n2
      */
-    addNx2Child(...nx2: Array<Nx2>): void {
-        addNx2Child(this, ...nx2);
-    } // addNx2Child
+    addN2Child(...n2: Array<N2>): void {
+        addN2Child(this, ...n2);
+    } // addN2Child
 
 
     /**
      *
-     * Remove child(ren) Nx2 or HTMLElement from this Nx2 instance
+     * Remove child(ren) N2 or HTMLElement from this N2 instance
      * @return {boolean} true if successful, false if error
-     * @param nx2
+     * @param n2
      */
-    removeNx2Child(...nx2: Array<Nx2>): boolean {
-        return removeNx2Child(this, ...nx2);
-    } // removeNx2Child
+    removeN2Child(...n2: Array<N2>): boolean {
+        return removeN2Child(this, ...n2);
+    } // removeN2Child
 
 
     /**
@@ -772,20 +774,22 @@ export abstract class Nx2<STATE extends StateNx2 = any, JS_COMPONENT = any> {
     } // _triggerOnStateInitialized
     //--------------------------------------------
 
-} // Nx2
+    get classIdentifier(): string { return N2.CLASS_IDENTIFIER; }
 
-export interface Nx2Evt<WIDGET extends Nx2 = Nx2> {
+} // N2
+
+export interface N2Evt<WIDGET extends N2 = N2> {
     widget: WIDGET;
 }
 
-export interface Nx2Evt_OnHtml<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
+export interface N2Evt_OnHtml<WIDGET extends N2 = N2> extends N2Evt<WIDGET> {
 }
 
-export interface Nx2Evt_OnLogic<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
+export interface N2Evt_OnLogic<WIDGET extends N2 = N2> extends N2Evt<WIDGET> {
 }
 
 
-export interface Nx2Evt_Ref<EVENT_TYPE, WIDGET extends Nx2> {
+export interface N2Evt_Ref<EVENT_TYPE, WIDGET extends N2> {
 
     /**
      * The widget that the refresh was triggered on. Autofilled by the refresh method.
@@ -796,7 +800,7 @@ export interface Nx2Evt_Ref<EVENT_TYPE, WIDGET extends Nx2> {
      * The immediate parent widget that the refresh was triggered on
      * Null if the refresh is triggered at this level
      */
-    parent?: Nx2;
+    parent?: N2;
 
 
     /**
@@ -804,7 +808,7 @@ export interface Nx2Evt_Ref<EVENT_TYPE, WIDGET extends Nx2> {
      * Null if the refresh is triggered at this level
      *
      */
-    topParent?: Nx2;
+    topParent?: N2;
 
     /**
      * True if this parameter is created by the algorithm while refreshing the children.
@@ -818,7 +822,7 @@ export interface Nx2Evt_Ref<EVENT_TYPE, WIDGET extends Nx2> {
     parentArgument?: EVENT_TYPE;
 }
 
-export interface Nx2Evt_Destroy<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
+export interface N2Evt_Destroy<WIDGET extends N2 = N2> extends N2Evt<WIDGET> {
 
     /**
      * Allows user to add either data or functions to be passed down the refresh chain.
@@ -828,11 +832,11 @@ export interface Nx2Evt_Destroy<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET>
     /**
      * Properties that are filled in by the refresh method
      */
-    ref?: Nx2Evt_Ref<Nx2Evt_Destroy, WIDGET>;
+    ref?: N2Evt_Ref<N2Evt_Destroy, WIDGET>;
 
 }
 
-export interface Nx2Evt_BeforeLogic<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WIDGET> {
+export interface N2Evt_BeforeLogic<WIDGET extends N2 = N2> extends N2Evt<WIDGET> {
 
     /**
      * If developer sets to true, the initLogic will not be called.
@@ -840,10 +844,10 @@ export interface Nx2Evt_BeforeLogic<WIDGET extends Nx2 = Nx2> extends Nx2Evt<WID
     cancel: boolean;
 }
 
-export interface Nx2Evt_AfterLogic extends Nx2Evt {
+export interface N2Evt_AfterLogic extends N2Evt {
 }
 
-export interface Nx2Evt_Resized extends Nx2Evt {
+export interface N2Evt_Resized extends N2Evt {
     size?: { width: number; height: number; }
 }
 
@@ -862,7 +866,7 @@ export interface Nx2Evt_Resized extends Nx2Evt {
 //     this._refreshInProgress = value;
 // }
 
-// refresh(args ?: Nx2Evt_Refresh) {
+// refresh(args ?: N2Evt_Refresh) {
 //     if (this.initialized) {
 //         try {
 //             this.refreshInProgress = true;
@@ -881,14 +885,14 @@ export interface Nx2Evt_Resized extends Nx2Evt {
 //             ref.widget = this;
 //
 //             // if (!args.currentLevelOnly) {
-//             //     let children: Nx2[];
+//             //     let children: N2[];
 //             //     if (state.children)
 //             //         children = state.children;
 //             //     if (children) {
 //             //         for (const child of children) {
 //             //
 //             //             try {
-//             //                 let childArgs: Nx2Evt_Refresh = {
+//             //                 let childArgs: N2Evt_Refresh = {
 //             //                     widget: child,
 //             //                     // currentLevelOnly: false,
 //             //                     // resetUIOnRefresh: args.resetUIOnRefresh,
@@ -968,7 +972,7 @@ export interface Nx2Evt_Resized extends Nx2Evt {
 //
 // } // refresh
 
-// reset(args ?: Nx2Evt_Destroy): void {
+// reset(args ?: N2Evt_Destroy): void {
 //     /*
 //      Resets the htmlElement and calls initLogic on this widget only.
 //

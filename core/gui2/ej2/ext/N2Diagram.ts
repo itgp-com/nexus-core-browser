@@ -1,4 +1,4 @@
-import {Diagram, DiagramModel} from "@syncfusion/ej2-diagrams";
+import {Diagram, DiagramModel} from '@syncfusion/ej2-diagrams';
 import {BlazorTooltip} from '@syncfusion/ej2-diagrams/src/diagram/blazor-tooltip/blazor-Tooltip';
 import {DataBinding} from '@syncfusion/ej2-diagrams/src/diagram/data-binding/data-binding';
 import {ConnectorEditing} from '@syncfusion/ej2-diagrams/src/diagram/interaction/connector-editing';
@@ -16,8 +16,8 @@ import {LayoutAnimation} from '@syncfusion/ej2-diagrams/src/diagram/objects/layo
 import {Snapping} from '@syncfusion/ej2-diagrams/src/diagram/objects/snapping';
 import {UndoRedo} from '@syncfusion/ej2-diagrams/src/diagram/objects/undo-redo';
 import {PrintAndExport} from '@syncfusion/ej2-diagrams/src/diagram/print-settings';
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 Diagram.Inject(
     HierarchicalTree, MindMap, RadialTree, ComplexHierarchicalTree, DataBinding, Snapping, PrintAndExport, BlazorTooltip,
@@ -25,11 +25,11 @@ Diagram.Inject(
     LineRouting, LineDistribution
 );
 
-export interface StateN2DiagramRef extends StateNx2EjBasicRef {
+export interface StateN2DiagramRef extends StateN2EjBasicRef {
     widget?: N2Diagram;
 }
 
-export interface StateN2Diagram<WIDGET_LIBRARY_MODEL extends DiagramModel = DiagramModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+export interface StateN2Diagram<WIDGET_LIBRARY_MODEL extends DiagramModel = DiagramModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -37,12 +37,12 @@ export interface StateN2Diagram<WIDGET_LIBRARY_MODEL extends DiagramModel = Diag
     ref?: StateN2DiagramRef;
 }
 
-export class N2Diagram<STATE extends StateN2Diagram = StateN2Diagram> extends Nx2EjBasic<STATE, Diagram> {
-    static readonly CLASS_IDENTIFIER: string = "N2Diagram"
+export class N2Diagram<STATE extends StateN2Diagram = StateN2Diagram> extends N2EjBasic<STATE, Diagram> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Diagram'
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Diagram.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Diagram.CLASS_IDENTIFIER);
     }
 
     createEjObj(): void {

@@ -1,10 +1,10 @@
-import {TextBox, TextBoxModel} from "@syncfusion/ej2-inputs";
-import {StateNx2PropertyName} from "../../generic/StateNx2PropertyName";
-import {Nx2Evt_OnHtml} from "../../Nx2";
-import {addNx2Class, IHtmlUtils, Nx2HtmlDecorator} from "../../Nx2HtmlDecorator";
-import {createNx2HtmlBasic, createNx2HtmlBasicFromDecorator, findHtmlInputElement} from "../../Nx2Utils";
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
-import {StateNx2Validator, ValidationRuleDetails} from '../StateNx2Validator';
+import {TextBox, TextBoxModel} from '@syncfusion/ej2-inputs';
+import {StateN2PropertyName} from '../../generic/StateN2PropertyName';
+import {N2Evt_OnHtml} from '../../N2';
+import {addN2Class, IHtmlUtils, N2HtmlDecorator} from '../../N2HtmlDecorator';
+import {createN2HtmlBasic, createN2HtmlBasicFromDecorator, findHtmlInputElement} from '../../N2Utils';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {StateN2Validator, ValidationRuleDetails} from '../StateN2Validator';
 
 export enum TextFieldType_Ej2_Material {
     regular = '',
@@ -12,14 +12,14 @@ export enum TextFieldType_Ej2_Material {
     outline = 'e-outline',
 }
 
-export interface StateN2TextFieldRef extends StateNx2EjBasicRef {
+export interface StateN2TextFieldRef extends StateN2EjBasicRef {
     widget?: N2TextField;
     errorElement?: HTMLElement;
     labelElement?: HTMLElement;
     wrapperElement?: HTMLElement;
 }
 
-export interface StateN2TextField<WIDGET extends N2TextField = N2TextField> extends StateNx2EjBasic<TextBoxModel>, StateNx2PropertyName, StateNx2Validator {
+export interface StateN2TextField<WIDGET extends N2TextField = N2TextField> extends StateN2EjBasic<TextBoxModel>, StateN2PropertyName, StateN2Validator {
 
     required?: boolean;
 
@@ -31,8 +31,8 @@ export interface StateN2TextField<WIDGET extends N2TextField = N2TextField> exte
      */
     noErrorLine?: boolean;
 
-    labelDecorator?: Nx2HtmlDecorator;
-    errorDecorator?: Nx2HtmlDecorator;
+    labelDecorator?: N2HtmlDecorator;
+    errorDecorator?: N2HtmlDecorator;
 
     /**
      * Override with specific type used in code completion
@@ -41,14 +41,14 @@ export interface StateN2TextField<WIDGET extends N2TextField = N2TextField> exte
     ref?: StateN2TextFieldRef;
 }
 
-export class N2TextField extends Nx2EjBasic<StateN2TextField, TextBox> {
-    static readonly CLASS_IDENTIFIER: string = "N2TextField";
+export class N2TextField extends N2EjBasic<StateN2TextField, TextBox> {
+    static readonly CLASS_IDENTIFIER: string = 'N2TextField';
 
     labelTagId: string;
 
     constructor(state ?: StateN2TextField) {
         super(state);
-        addNx2Class(this.state.deco, N2TextField.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2TextField.CLASS_IDENTIFIER);
     }
 
     protected _constructor(state ?: StateN2TextField) {
@@ -59,13 +59,13 @@ export class N2TextField extends Nx2EjBasic<StateN2TextField, TextBox> {
         state.wrapperTagId = `${this.state.tagId}_wrapper`;
         this.labelTagId = `${this.state.tagId}_label`;
 
-        IHtmlUtils.initForNx2(state);
+        IHtmlUtils.initForN2(state);
 
         super.onStateInitialized(state);
     }
 
 
-    onHtml(args: Nx2Evt_OnHtml): HTMLElement {
+    onHtml(args: N2Evt_OnHtml): HTMLElement {
         let state = this.state;
         let hasErrorLine = !state.noErrorLine;
         let errorTagId = `error_${this.state.tagId}`;
@@ -95,18 +95,18 @@ export class N2TextField extends Nx2EjBasic<StateN2TextField, TextBox> {
         labelDeco.classes = ['e-float-text'];
         labelDeco.otherAttr['for'] = state.tagId;
         labelDeco.otherAttr['id'] = this.labelTagId;
-        let labelElement: HTMLElement = createNx2HtmlBasicFromDecorator(labelDeco);
+        let labelElement: HTMLElement = createN2HtmlBasicFromDecorator(labelDeco);
 
         //------- Error Element ---
         let errorElement: HTMLElement
         if (hasErrorLine) {
             state.errorDecorator = IHtmlUtils.init(state.errorDecorator);
             state.errorDecorator.otherAttr['id'] = errorTagId;
-            errorElement = createNx2HtmlBasicFromDecorator(state.errorDecorator);
+            errorElement = createN2HtmlBasicFromDecorator(state.errorDecorator);
             state.ref.errorElement = errorElement;
         }
 
-        let wrapperElement: HTMLElement = createNx2HtmlBasic<StateN2TextField>(state);
+        let wrapperElement: HTMLElement = createN2HtmlBasic<StateN2TextField>(state);
         state.ref.wrapperElement = wrapperElement; // stamp wrapper
 
         wrapperElement.appendChild(lineElement);

@@ -9,9 +9,9 @@ import {Resize} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/action
 import {Audio} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/audio-module';
 import {Table} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/table-module';
 import {Video} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/video-module';
-import {StateNx2PropertyName} from '../../generic/StateNx2PropertyName';
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {StateN2PropertyName} from '../../generic/StateN2PropertyName';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 RichTextEditor.Inject(
     Audio,
@@ -30,11 +30,11 @@ RichTextEditor.Inject(
     Video,
 );
 
-export interface StateN2RichTextEditorRef extends StateNx2EjBasicRef {
+export interface StateN2RichTextEditorRef extends StateN2EjBasicRef {
     widget?: N2RichTextEditor;
 }
 
-export interface StateN2RichTextEditor extends StateNx2EjBasic<RichTextEditorModel>, StateNx2PropertyName {
+export interface StateN2RichTextEditor extends StateN2EjBasic<RichTextEditorModel>, StateN2PropertyName {
 
     /**
      * Override with specific type used in code completion
@@ -43,12 +43,12 @@ export interface StateN2RichTextEditor extends StateNx2EjBasic<RichTextEditorMod
     ref?: StateN2RichTextEditorRef;
 } // state class
 
-export class N2RichTextEditor<STATE extends StateN2RichTextEditor = StateN2RichTextEditor> extends Nx2EjBasic<STATE, RichTextEditor> {
-    static readonly CLASS_IDENTIFIER: string = "Nx2EjRichTextEditor";
+export class N2RichTextEditor<STATE extends StateN2RichTextEditor = StateN2RichTextEditor> extends N2EjBasic<STATE, RichTextEditor> {
+    static readonly CLASS_IDENTIFIER: string = 'N2RichTextEditor';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2RichTextEditor.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2RichTextEditor.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {

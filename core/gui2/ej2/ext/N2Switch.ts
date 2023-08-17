@@ -1,13 +1,13 @@
-import {Switch, SwitchModel} from "@syncfusion/ej2-buttons";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {Switch, SwitchModel} from '@syncfusion/ej2-buttons';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2SwitchRef extends StateNx2EjBasicRef {
+export interface StateN2SwitchRef extends StateN2EjBasicRef {
     widget?: N2Switch;
 }
 
-export interface StateN2Switch extends StateNx2EjBasic<SwitchModel> {
+export interface StateN2Switch extends StateN2EjBasic<SwitchModel> {
 
     /**
      * Override with specific type used in code completion
@@ -16,12 +16,12 @@ export interface StateN2Switch extends StateNx2EjBasic<SwitchModel> {
     ref?: StateN2SwitchRef;
 } // state class
 
-export class N2Switch<STATE extends StateN2Switch = StateN2Switch> extends Nx2EjBasic<STATE, Switch> {
-    static readonly CLASS_IDENTIFIER: string = "N2Switch";
+export class N2Switch<STATE extends StateN2Switch = StateN2Switch> extends N2EjBasic<STATE, Switch> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Switch';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Switch.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Switch.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {

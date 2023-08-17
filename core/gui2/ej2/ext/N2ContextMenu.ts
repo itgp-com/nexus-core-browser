@@ -1,13 +1,13 @@
-import {ContextMenu, ContextMenuModel} from "@syncfusion/ej2-navigations";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {ContextMenu, ContextMenuModel} from '@syncfusion/ej2-navigations';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2ContextMenuRef extends StateNx2EjBasicRef {
+export interface StateN2ContextMenuRef extends StateN2EjBasicRef {
     widget?: N2ContextMenu;
 }
 
-export interface StateN2ContextMenu extends StateNx2EjBasic<ContextMenuModel> {
+export interface StateN2ContextMenu extends StateN2EjBasic<ContextMenuModel> {
 
     /**
      * Override with specific type used in code completion
@@ -16,15 +16,15 @@ export interface StateN2ContextMenu extends StateNx2EjBasic<ContextMenuModel> {
     ref?: StateN2ContextMenuRef;
 } // state class
 
-export class N2ContextMenu<STATE extends StateN2ContextMenu = StateN2ContextMenu> extends Nx2EjBasic<STATE, ContextMenu> {
-    static readonly CLASS_IDENTIFIER:string = "N2ContextMenu"
+export class N2ContextMenu<STATE extends StateN2ContextMenu = StateN2ContextMenu> extends N2EjBasic<STATE, ContextMenu> {
+    static readonly CLASS_IDENTIFIER:string = 'N2ContextMenu'
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2ContextMenu.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2ContextMenu.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
-        state.deco.tag = 'ul'; // <ul id="contextmenu"></ul> and references different div for 'target'
+        state.deco.tag = 'ul'; // <ul id='contextmenu'></ul> and references different div for 'target'
         super.onStateInitialized(state);
     }
 

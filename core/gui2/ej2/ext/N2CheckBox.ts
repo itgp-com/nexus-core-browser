@@ -1,13 +1,13 @@
-import {CheckBox, CheckBoxModel} from "@syncfusion/ej2-buttons";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {CheckBox, CheckBoxModel} from '@syncfusion/ej2-buttons';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2CheckBoxRef extends StateNx2EjBasicRef {
+export interface StateN2CheckBoxRef extends StateN2EjBasicRef {
     widget?: N2CheckBox;
 }
 
-export interface StateN2CheckBox extends StateNx2EjBasic<CheckBoxModel> {
+export interface StateN2CheckBox extends StateN2EjBasic<CheckBoxModel> {
 
     /**
      * Override with specific type used in code completion
@@ -16,11 +16,11 @@ export interface StateN2CheckBox extends StateNx2EjBasic<CheckBoxModel> {
     ref?: StateN2CheckBoxRef;
 } // state class
 
-export class N2CheckBox<STATE extends StateN2CheckBox = StateN2CheckBox> extends Nx2EjBasic<STATE, CheckBox> {
-    static readonly CLASS_IDENTIFIER: string = "N2CheckBox"
+export class N2CheckBox<STATE extends StateN2CheckBox = StateN2CheckBox> extends N2EjBasic<STATE, CheckBox> {
+    static readonly CLASS_IDENTIFIER: string = 'N2CheckBox'
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2CheckBox.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2CheckBox.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {

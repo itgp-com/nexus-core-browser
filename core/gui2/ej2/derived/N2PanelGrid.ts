@@ -1,20 +1,20 @@
-import {Grid, GridModel} from "@syncfusion/ej2-grids";
-import {CSS_FLEX_MAX_XY} from "../../../CoreCSS";
+import {Grid, GridModel} from '@syncfusion/ej2-grids';
+import {CSS_FLEX_MAX_XY} from '../../../CoreCSS';
 import {N2PanelLayout, StateN2PanelLayout} from '../../generic/N2PanelLayout';
-import {EnumPanelLayout} from "../../generic/N2PanelLayoutFlex";
-import {Nx2Evt_Resized} from "../../Nx2";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {getGridDecoratorsHeight} from "../Ej2Utils";
-import {N2Grid, StateN2Grid} from "../ext/N2Grid";
+import {EnumPanelLayout} from '../../generic/N2PanelLayoutFlex';
+import {N2Evt_Resized} from '../../N2';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {getGridDecoratorsHeight} from '../Ej2Utils';
+import {N2Grid, StateN2Grid} from '../ext/N2Grid';
 
-export type Elem_or_Nx2EjGrid<STATE extends StateN2Grid = any> = HTMLElement | N2Grid<STATE>; // compatible with  Elem_or_Nx2
+export type Elem_or_N2EjGrid<STATE extends StateN2Grid = any> = HTMLElement | N2Grid<STATE>; // compatible with  Elem_or_N2
 
 export interface StateN2PanelGrid<STATE extends StateN2Grid = StateN2Grid> extends StateN2PanelLayout {
 
     /**
      * This is where the Grid component or wrapper.
      */
-    center?: Elem_or_Nx2EjGrid<STATE>
+    center?: Elem_or_N2EjGrid<STATE>
 
     /**
      * Defaults to true if not specified.
@@ -31,15 +31,15 @@ export interface StateN2PanelGrid<STATE extends StateN2Grid = StateN2Grid> exten
 }
 
 /**
- * Specializes {@link Nx2PanelLayoutFlex} to use a Grid component as the centerContainer.
+ * Specializes {@link N2PanelLayoutFlex} to use a Grid component as the centerContainer.
  */
 export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN2PanelGrid = StateN2PanelGrid> extends N2PanelLayout<STATE> {
-    static readonly CLASS_IDENTIFIER:string = "N2PanelGrid"
-    private _nx2Grid: GRID_TYPE;
+    static readonly CLASS_IDENTIFIER:string = 'N2PanelGrid'
+    private _n2Grid: GRID_TYPE;
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, CSS_FLEX_MAX_XY, N2PanelGrid.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, CSS_FLEX_MAX_XY, N2PanelGrid.CLASS_IDENTIFIER);
     }
 
     protected onStateInitialized(state: STATE) {
@@ -92,14 +92,14 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
      *
      * @param evt
      */
-    onResized(evt?: Nx2Evt_Resized): void {
+    onResized(evt?: N2Evt_Resized): void {
         super.onResized(evt);
 
         try {
             this.resizeAllowed = false; // disable resize events while we are resizing the grid
-            if (this._nx2Grid) {
+            if (this._n2Grid) {
                 let state = this.state;
-                let grid: Grid = this._nx2Grid.obj;
+                let grid: Grid = this._n2Grid.obj;
 
                 if (state.gridAutoHeight) {
 
@@ -116,7 +116,7 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
                         grid.width = newWidth;
                     }
                 }
-            } // if (this.nx2Grid)
+            } // if (this.n2Grid)
         } finally {
             setTimeout(() => {
                 this.resizeAllowed = true;
@@ -125,9 +125,9 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
     }
 
     protected calculateGridHeight(): number {
-        if (!this._nx2Grid)
+        if (!this._n2Grid)
             return 0;
-        let grid: Grid = this._nx2Grid.obj;
+        let grid: Grid = this._n2Grid.obj;
         if (!grid)
             return 0;
 
@@ -148,9 +148,9 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
 
     protected calculateGridWidth(): number {
 
-        if (!this._nx2Grid)
+        if (!this._n2Grid)
             return 0;
-        let grid: Grid = this._nx2Grid.obj;
+        let grid: Grid = this._n2Grid.obj;
         if (!grid)
             return 0;
 
@@ -161,11 +161,11 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
     }
 
 
-    public get nx2Grid(): GRID_TYPE {
-        return this._nx2Grid;
+    public get n2Grid(): GRID_TYPE {
+        return this._n2Grid;
     }
 
-    public set nx2Grid(n2Grid: GRID_TYPE) {
+    public set n2Grid(n2Grid: GRID_TYPE) {
 
 
         // Trigger resize event on actionComplete of the grid
@@ -185,6 +185,6 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
             }
         } // gridModel.actionComplete
 
-        this._nx2Grid = n2Grid;
+        this._n2Grid = n2Grid;
     }
 }

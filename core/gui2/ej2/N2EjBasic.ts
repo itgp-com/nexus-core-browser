@@ -1,21 +1,21 @@
 import {Component} from '@syncfusion/ej2-base';
 import * as _ from 'lodash';
-import {Nx2Evt_Destroy, Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../Nx2";
-import {addNx2Class} from '../Nx2HtmlDecorator';
-import {createNx2HtmlBasic, isNx2} from "../Nx2Utils";
+import {N2Evt_Destroy, N2Evt_OnHtml, N2Evt_OnLogic} from "../N2";
+import {addN2Class} from '../N2HtmlDecorator';
+import {createN2HtmlBasic, isN2} from "../N2Utils";
 import {isEj2HtmlElement} from './Ej2Utils';
-import {Nx2Ej, StateNx2Ej, StateNx2EjRef} from "./Nx2Ej";
+import {N2Ej, StateN2Ej, StateN2EjRef} from "./N2Ej";
 
-export interface StateNx2EjBasicRef extends StateNx2EjRef{
-    widget ?: Nx2EjBasic;
+export interface StateN2EjBasicRef extends StateN2EjRef{
+    widget ?: N2EjBasic;
 }
 
-export interface StateNx2EjBasic< WIDGET_LIBRARY_MODEL = any> extends StateNx2Ej<WIDGET_LIBRARY_MODEL> {
+export interface StateN2EjBasic< WIDGET_LIBRARY_MODEL = any> extends StateN2Ej<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
-    ref ?:StateNx2EjBasicRef
+    ref ?:StateN2EjBasicRef
 
 
     /**
@@ -27,27 +27,28 @@ export interface StateNx2EjBasic< WIDGET_LIBRARY_MODEL = any> extends StateNx2Ej
 }
 
 
-export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic, EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any> extends Nx2Ej<STATE, EJ2COMPONENT> {
+export abstract class N2EjBasic<STATE extends StateN2EjBasic = StateN2EjBasic, EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any> extends N2Ej<STATE, EJ2COMPONENT> {
+    static readonly CLASS_IDENTIFIER: string = 'N2EjBasic';
 
     protected constructor(state?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, 'Nx2EjBasic');
+        addN2Class(this.state.deco, N2EjBasic.CLASS_IDENTIFIER);
     }
 
 
-    onHtml(args: Nx2Evt_OnHtml): HTMLElement {
-        return createNx2HtmlBasic<StateNx2EjBasic>(this.state);
+    onHtml(args: N2Evt_OnHtml): HTMLElement {
+        return createN2HtmlBasic<StateN2EjBasic>(this.state);
     }
 
 
-    // onClear(args:Nx2Evt_OnClear): void {
+    // onClear(args:N2Evt_OnClear): void {
     // }
 
-    onDestroy(args: Nx2Evt_Destroy): void {
+    onDestroy(args: N2Evt_Destroy): void {
         if (this.state.children) {
             this.state.children.forEach(child => {
                 try {
-                    if (child && isNx2(child))
+                    if (child && isN2(child))
                         child.destroy();
                 } catch (e) {
                     console.error('Error destroying child', e);
@@ -64,7 +65,7 @@ export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic
 
     } // onDestroy
 
-    onLogic(args : Nx2Evt_OnLogic): void {
+    onLogic(args : N2Evt_OnLogic): void {
         this.createEjObj();
         if (!this.state.skipAppendEjToHtmlElement) {
             this.appendEjToHtmlElement();
@@ -100,9 +101,11 @@ export abstract class Nx2EjBasic<STATE extends StateNx2EjBasic = StateNx2EjBasic
     isAppendToCalled(): boolean {
         let called:boolean = false;
         if ( this.htmlElementAnchor && this.obj) {
-            called = isEj2HtmlElement(this.htmlElementAnchor); // if there's an nx2 in htmlElementAnchor, appendTo was called
+            called = isEj2HtmlElement(this.htmlElementAnchor); // if there's an n2 in htmlElementAnchor, appendTo was called
         } // if ( this.htmlElementAnchor && this.obj)
         return called;
     } // isAppendToCalled
+
+    get classIdentifier(): string {         return N2EjBasic.CLASS_IDENTIFIER;     }
 
 }

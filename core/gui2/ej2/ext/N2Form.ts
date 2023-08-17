@@ -1,17 +1,17 @@
 import {FormValidator, FormValidatorModel} from '@syncfusion/ej2-inputs';
-import {Nx2Evt_OnHtml, Nx2Evt_OnLogic} from "../../Nx2";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {findNx2ChildrenAllLevels, findParentNx2ByClass} from '../../Nx2Utils';
-import {StateNx2, StateNx2Ref} from "../../StateNx2";
-import {Nx2EjBasic} from "../Nx2EjBasic";
-import {NX_VALIDATION_RULE, ValidationErrorMessage, ValidationEvent} from '../StateNx2Validator';
+import {N2Evt_OnHtml, N2Evt_OnLogic} from '../../N2';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {findN2ChildrenAllLevels, findParentN2ByClass} from '../../N2Utils';
+import {StateN2, StateN2Ref} from '../../StateN2';
+import {N2EjBasic} from '../N2EjBasic';
+import {N2_VALIDATION_RULE, ValidationErrorMessage, ValidationEvent} from '../StateN2Validator';
 
-export interface StateN2FormRef extends StateNx2Ref{
+export interface StateN2FormRef extends StateN2Ref{
     widget ?: N2Form;
     validator?: FormValidator;
 }
 
-export interface StateN2Form extends StateNx2 {
+export interface StateN2Form extends StateN2 {
 
 
     validatorModel?: FormValidatorModel;
@@ -33,18 +33,18 @@ export interface StateN2Form extends StateNx2 {
  * It also provides a way to get an EJ2 FormValidator instance that acts upon the HTMLFormElement.
  *
  */
-export class N2Form<STATE extends StateN2Form = StateN2Form> extends Nx2EjBasic<STATE> {
-    static readonly CLASS_IDENTIFIER:string = "N2Form"
+export class N2Form<STATE extends StateN2Form = StateN2Form> extends N2EjBasic<STATE> {
+    static readonly CLASS_IDENTIFIER:string = 'N2Form'
 
     private initializedValidatorRulesFromChildren:boolean = false;
 
     constructor(state: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Form.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Form.CLASS_IDENTIFIER);
     }
 
 
-    onLogic(args: Nx2Evt_OnLogic) {
+    onLogic(args: N2Evt_OnLogic) {
         super.onLogic(args);
         try {
 
@@ -66,7 +66,7 @@ export class N2Form<STATE extends StateN2Form = StateN2Form> extends Nx2EjBasic<
         }
     } // onLogic
 
-    onHtml(args: Nx2Evt_OnHtml): HTMLElement {
+    onHtml(args: N2Evt_OnHtml): HTMLElement {
         let state = this.state;
         state.deco.tag = 'form';
 
@@ -130,12 +130,12 @@ export class N2Form<STATE extends StateN2Form = StateN2Form> extends Nx2EjBasic<
     }
 
     /**
-     * Update the validationRule rules for all Nx2 children of all levels  of this instance that have an validationRule property defined in the state
+     * Update the validationRule rules for all N2 children of all levels  of this instance that have an validationRule property defined in the state
      */
     public updateValidatorRulesFromChildren() {
 
-        findNx2ChildrenAllLevels(this).forEach((nx2) => {
-            let state = nx2.state;
+        findN2ChildrenAllLevels(this).forEach((n2) => {
+            let state = n2.state;
             if ( state?.validationRule){
                 attachValidation(state);
             } // if state?.validationRule
@@ -150,16 +150,16 @@ export class N2Form<STATE extends StateN2Form = StateN2Form> extends Nx2EjBasic<
     get classIdentifier() {
         return N2Form.CLASS_IDENTIFIER;
     }
-} // Nx2FormHtml
+} // N2FormHtml
 
 
-export function attachValidation(nx2State: StateNx2) : void {
+export function attachValidation(n2State: StateN2) : void {
 
-    let n2Form = findParentNx2ByClass<N2Form>(nx2State.ref.widget, 'Nx2EjForm');
+    let n2Form = findParentN2ByClass<N2Form>(n2State.ref.widget, N2Form.CLASS_IDENTIFIER);
     if (!n2Form)
         return; // if no form, nothing to attach
 
-    let widgetName: string = nx2State['name'];
+    let widgetName: string = n2State['name'];
     if (!widgetName)
         return; // if no name, there's nothing to validate here
 
@@ -168,20 +168,20 @@ export function attachValidation(nx2State: StateNx2) : void {
     if (existingRules) {
         let rules = n2Form.getFormValidator().rules[widgetName]; // remove existing rules for this widget
         if ( rules) {
-            let nx_validation_rule = rules[NX_VALIDATION_RULE];
-            if (nx_validation_rule) {
-                delete n2Form.getFormValidator().rules[widgetName][NX_VALIDATION_RULE];
+            let n2_validation_rule = rules[N2_VALIDATION_RULE];
+            if (n2_validation_rule) {
+                delete n2Form.getFormValidator().rules[widgetName][N2_VALIDATION_RULE];
             }
         }
     }
 
-    if ( (nx2State as any).validationRule) {
+    if ( (n2State as any).validationRule) {
 
         let fnSyncfusionValidation = (syncfusionArgs: any): boolean | string => {
 
             let vData: any = null;
-            if ((nx2State as any)?.validationRule?.data) {
-                let validatorFunctionOrData = (nx2State as any)?.validationRule?.data;
+            if ((n2State as any)?.validationRule?.data) {
+                let validatorFunctionOrData = (n2State as any)?.validationRule?.data;
                 if (typeof validatorFunctionOrData === 'function') {
                     try {
                         vData = validatorFunctionOrData();
@@ -195,25 +195,25 @@ export function attachValidation(nx2State: StateNx2) : void {
 
 
             if (typeof syncfusionArgs === 'string') {
-                if ((nx2State as any)?.validationRule?.errorMessage) {
+                if ((n2State as any)?.validationRule?.errorMessage) {
                     // create ValidationErrorMessage, call n2Widget.errorMessage
                     let validationErrorMessage: ValidationErrorMessage = {
-                        n2Widget: nx2State.ref.widget,
+                        n2Widget: n2State.ref.widget,
                         data: vData
                     }
-                    return (nx2State as any).validationRule.errorMessage(validationErrorMessage);
+                    return (n2State as any).validationRule.errorMessage(validationErrorMessage);
                 } else {
                     return 'Error';
                 }
             } else {
                 // create ValidationEvent, call n2Widget.validationRule
                 let validationEvent: ValidationEvent = {
-                    n2Widget: nx2State.ref.widget,
+                    n2Widget: n2State.ref.widget,
                     element: syncfusionArgs?.element,
                     value: syncfusionArgs?.value,
                     data: vData
                 };
-                return (nx2State as any).validationRule.validator(validationEvent);
+                return (n2State as any).validationRule.validator(validationEvent);
             }
         } // fnSyncfusionValidation
 
@@ -222,7 +222,7 @@ export function attachValidation(nx2State: StateNx2) : void {
         // which means it will call the same function with the '{0}' as the parameter and expect the full
         // error message to be
 
-        n2Form.getFormValidator().rules[widgetName] = {'_nx_validation': [fnSyncfusionValidation, '{0}']};
+        n2Form.getFormValidator().rules[widgetName] = {N2_VALIDATION_RULE: [fnSyncfusionValidation, '{0}']};
     } // if state.validationRule
 
 

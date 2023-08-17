@@ -1,4 +1,4 @@
-import {PivotView, PivotViewModel} from "@syncfusion/ej2-pivotview";
+import {PivotView, PivotViewModel} from '@syncfusion/ej2-pivotview';
 import {Common} from '@syncfusion/ej2-pivotview/src/common/actions/common';
 import {CalculatedField} from '@syncfusion/ej2-pivotview/src/common/calculatedfield/calculated-field';
 import {ConditionalFormatting} from '@syncfusion/ej2-pivotview/src/common/conditionalformatting/conditional-formatting';
@@ -14,8 +14,8 @@ import {ExcelExport} from '@syncfusion/ej2-pivotview/src/pivotview/actions/excel
 import {Pager} from '@syncfusion/ej2-pivotview/src/pivotview/actions/pager';
 import {PDFExport} from '@syncfusion/ej2-pivotview/src/pivotview/actions/pdf-export';
 import {VirtualScroll} from '@syncfusion/ej2-pivotview/src/pivotview/actions/virtualscroll';
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 PivotView.Inject(
     CalculatedField,
@@ -35,11 +35,11 @@ PivotView.Inject(
     VirtualScroll,
 );
 
-export interface StateN2PivotViewRef extends StateNx2EjBasicRef {
+export interface StateN2PivotViewRef extends StateN2EjBasicRef {
     widget?: N2PivotView;
 }
 
-export interface StateN2PivotView extends StateNx2EjBasic<PivotViewModel> {
+export interface StateN2PivotView extends StateN2EjBasic<PivotViewModel> {
 
     /**
      * Override with specific type used in code completion
@@ -48,12 +48,12 @@ export interface StateN2PivotView extends StateNx2EjBasic<PivotViewModel> {
     ref?: StateN2PivotViewRef;
 } // state class
 
-export class N2PivotView<STATE extends StateN2PivotView = StateN2PivotView> extends Nx2EjBasic<STATE, PivotView> {
-    static readonly CLASS_IDENTIFIER: string = "N2PivotView";
+export class N2PivotView<STATE extends StateN2PivotView = StateN2PivotView> extends N2EjBasic<STATE, PivotView> {
+    static readonly CLASS_IDENTIFIER: string = 'N2PivotView';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2PivotView.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2PivotView.CLASS_IDENTIFIER);
     }
 
     createEjObj(): void {

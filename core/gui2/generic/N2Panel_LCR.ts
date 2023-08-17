@@ -1,67 +1,67 @@
-import {Nx2Basic, StateNx2Basic, StateNx2BasicRef} from '../Nx2Basic';
-import {addNx2Class, IHtmlUtils} from '../Nx2HtmlDecorator';
-import {Elem_or_Nx2} from '../Nx2Utils';
-import {Nx2Panel, StateNx2Panel} from './Nx2Panel';
+import {N2Basic, StateN2Basic, StateN2BasicRef} from '../N2Basic';
+import {addN2Class, IHtmlUtils} from '../N2HtmlDecorator';
+import {Elem_or_N2} from '../N2Utils';
+import {N2Panel, StateN2Panel} from './N2Panel';
 import {
-    CLASS_NX2_PANEL_LAYOUT_CENTER,
-    CLASS_NX2_PANEL_LAYOUT_LEFT,
-    CLASS_NX2_PANEL_LAYOUT_RIGHT
+    CLASS_N2_PANEL_LAYOUT_CENTER,
+    CLASS_N2_PANEL_LAYOUT_LEFT,
+    CLASS_N2_PANEL_LAYOUT_RIGHT
 } from './N2PanelLayout';
 
 
-export interface StateNx2Panel_LCRRef extends StateNx2BasicRef {
-    widget ?: Nx2Panel_LCR<StateNx2Panel_LCR>;
+export interface StateN2Panel_LCRRef extends StateN2BasicRef {
+    widget ?: N2Panel_LCR<StateN2Panel_LCR>;
 }
 
-export interface StateNx2Panel_LCR extends StateNx2Basic {
+export interface StateN2Panel_LCR extends StateN2Basic {
 
     /**
      * State of the internal container that is the parent of any leftContainer element given by the user
      */
-    stateLeftContainer?: StateNx2Panel;
+    stateLeftContainer?: StateN2Panel;
     /**
      * Inside the row, and spans the {@link top}, {@link center}, and {@link bottom} components
      * The {@link outerTop} and {@link outerBottom} components are fully above and below it.
      */
-    left?: Elem_or_Nx2;
+    left?: Elem_or_N2;
 
 
 
     /**
      * State of the internal container that is the parent of any centerContainer element given by the user
      */
-    stateCenterContainer?: StateNx2Panel;
+    stateCenterContainer?: StateN2Panel;
 
     /**
      * Center component.
      * Inside the row, and bordered by {@link top}, {@link bottom}, {@link left}, {@link right} components
      */
-    center?: Elem_or_Nx2;
+    center?: Elem_or_N2;
 
 
     /**
      * State of the internal container that is the parent of any rightContainer element given by the user
      */
-    stateRightContainer?: StateNx2Panel;
+    stateRightContainer?: StateN2Panel;
 
     /**
      * Inside the row, and spans the {@link top}, {@link center}, and {@link bottom} components
      * The {@link outerTop} and {@link outerBottom} components are fully above and below it.
      */
-    right?: Elem_or_Nx2;
+    right?: Elem_or_N2;
 
 
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
-    ref ?: StateNx2Panel_LCRRef;
+    ref ?: StateN2Panel_LCRRef;
 }
-export class Nx2Panel_LCR<STATE extends StateNx2Panel_LCR = StateNx2Panel_LCR> extends Nx2Basic<STATE> {
+export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> extends N2Basic<STATE> {
 
-    _leftContainer: Nx2Panel;
-    _centerContainer:Nx2Panel;
-    _rightContainer:Nx2Panel;
+    _leftContainer: N2Panel;
+    _centerContainer:N2Panel;
+    _rightContainer:N2Panel;
 
     constructor(state: STATE) {
         super(state);
@@ -80,43 +80,43 @@ export class Nx2Panel_LCR<STATE extends StateNx2Panel_LCR = StateNx2Panel_LCR> e
         state.deco.style = style;
 
 
-        let leftState: StateNx2Panel = state.stateLeftContainer || {};
-        IHtmlUtils.initForNx2(leftState);
+        let leftState: StateN2Panel = state.stateLeftContainer || {};
+        IHtmlUtils.initForN2(leftState);
 
         leftState.deco.style = {
             'min-width': '0',
         }
         leftState.tagId = state.tagId + '_left';
-        addNx2Class(leftState.deco, CLASS_NX2_PANEL_LAYOUT_LEFT);
+        addN2Class(leftState.deco, CLASS_N2_PANEL_LAYOUT_LEFT);
         if (state.left)
             leftState.children = [state.left];
-        this._leftContainer = new Nx2Panel(leftState);
+        this._leftContainer = new N2Panel(leftState);
 
 
 
-        let centerState: StateNx2Panel = state.stateCenterContainer || {};
-        IHtmlUtils.initForNx2(centerState);
+        let centerState: StateN2Panel = state.stateCenterContainer || {};
+        IHtmlUtils.initForN2(centerState);
         centerState.deco.style = {
             flex: 1, // expand to take all available space
             'min-width': '0',
         }
         centerState.tagId = state.tagId + '_center';
-        addNx2Class(centerState.deco, CLASS_NX2_PANEL_LAYOUT_CENTER);
+        addN2Class(centerState.deco, CLASS_N2_PANEL_LAYOUT_CENTER);
         if (state.center)
             centerState.children = [state.center];
-        this._centerContainer = new Nx2Panel(centerState);
+        this._centerContainer = new N2Panel(centerState);
 
 
-        let rightState: StateNx2Panel = state.stateRightContainer || {};
-        IHtmlUtils.initForNx2(rightState);
+        let rightState: StateN2Panel = state.stateRightContainer || {};
+        IHtmlUtils.initForN2(rightState);
         rightState.deco.style = {
             'min-width' : '0',
         }
         rightState.tagId = state.tagId + '_right';
-        addNx2Class(rightState.deco, CLASS_NX2_PANEL_LAYOUT_RIGHT);
+        addN2Class(rightState.deco, CLASS_N2_PANEL_LAYOUT_RIGHT);
         if (state.right)
             rightState.children = [state.right];
-        this._rightContainer = new Nx2Panel(rightState);
+        this._rightContainer = new N2Panel(rightState);
         state.children = [this._leftContainer, this._centerContainer, this._rightContainer];
 
         super.onStateInitialized(state);

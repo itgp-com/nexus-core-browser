@@ -1,13 +1,13 @@
-import {Uploader, UploaderModel} from "@syncfusion/ej2-inputs";
-import {addNx2Class} from '../../Nx2HtmlDecorator';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {Uploader, UploaderModel} from '@syncfusion/ej2-inputs';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface StateN2UploaderRef extends StateNx2EjBasicRef {
+export interface StateN2UploaderRef extends StateN2EjBasicRef {
     widget?: N2Uploader;
 }
 
-export interface StateN2Uploader<WIDGET_LIBRARY_MODEL extends UploaderModel = UploaderModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+export interface StateN2Uploader<WIDGET_LIBRARY_MODEL extends UploaderModel = UploaderModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -15,17 +15,17 @@ export interface StateN2Uploader<WIDGET_LIBRARY_MODEL extends UploaderModel = Up
     ref?: StateN2UploaderRef;
 }
 
-export class N2Uploader<STATE extends StateN2Uploader = StateN2Uploader> extends Nx2EjBasic<STATE, Uploader> {
-    static readonly CLASS_IDENTIFIER: string = "N2Uploader";
+export class N2Uploader<STATE extends StateN2Uploader = StateN2Uploader> extends N2EjBasic<STATE, Uploader> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Uploader';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Uploader.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Uploader.CLASS_IDENTIFIER);
     }
 
 
     protected onStateInitialized(state: STATE) {
-        // Tag looks like this: <input type="file" id='xyz_123' />
+        // Tag looks like this: <input type='file' id='xyz_123' />
         state.deco.tag = 'input';
         state.deco.otherAttr.type = 'file';
         if (state.wrapper == null) {

@@ -1,26 +1,26 @@
-import {Tab, TabModel} from "@syncfusion/ej2-navigations";
+import {Tab, TabModel} from '@syncfusion/ej2-navigations';
 import {SelectEventArgs} from '@syncfusion/ej2-navigations/src/tab/tab';
-import {Nx2, Nx2Evt_OnLogic} from "../../Nx2";
-import {addClassesToElement, addNx2Class, removeClassesFromElement} from '../../Nx2HtmlDecorator';
-import {getNx2FromHtmlElement} from '../../Nx2Utils';
-import {Nx2EjBasic, StateNx2EjBasic, StateNx2EjBasicRef} from "../Nx2EjBasic";
+import {N2, N2Evt_OnLogic} from '../../N2';
+import {addClassesToElement, addN2Class, removeClassesFromElement} from '../../N2HtmlDecorator';
+import {getN2FromHtmlElement} from '../../N2Utils';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 
-export interface Nx2Tab_PostCreated_Event {
-    nx2: N2Tab;
+export interface N2Tab_PostCreated_Event {
+    n2: N2Tab;
     args: Event;
 }
 
-export interface Nx2Tab_PreSelected_Event {
-    nx2: N2Tab;
+export interface N2Tab_PreSelected_Event {
+    n2: N2Tab;
     ev: SelectEventArgs;
 }
 
-export interface StateN2TabRef extends StateNx2EjBasicRef {
+export interface StateN2TabRef extends StateN2EjBasicRef {
     widget?: N2Tab;
 }
 
-export interface StateN2Tab<WIDGET_LIBRARY_MODEL extends TabModel = TabModel> extends StateNx2EjBasic<WIDGET_LIBRARY_MODEL> {
+export interface StateN2Tab<WIDGET_LIBRARY_MODEL extends TabModel = TabModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -28,35 +28,35 @@ export interface StateN2Tab<WIDGET_LIBRARY_MODEL extends TabModel = TabModel> ex
     ref?: StateN2TabRef;
 
     /**
-     * Called before the Nx2EjTab is selected code is run.
-     * The regular state.ej.selected is called AFTER the Nx2EjTab internal 'selected' code is run, so this gives the
+     * Called before the N2Tab is selected code is run.
+     * The regular state.ej.selected is called AFTER the N2Tab internal 'selected' code is run, so this gives the
      * developer a chance to execute code before also.
-     * @param {Nx2Tab_PreSelected_Event} ev
+     * @param {N2Tab_PreSelected_Event} ev
      */
-    preSelected?: (ev: Nx2Tab_PreSelected_Event) => void;
+    preSelected?: (ev: N2Tab_PreSelected_Event) => void;
 
     /**
-     * Called after the Nx2EjTab is created code is run.
-     * The regular state.ej.created is called BEFORE the Nx2EjTab internal 'created' code is run, so this gives the
+     * Called after the N2Tab is created code is run.
+     * The regular state.ej.created is called BEFORE the N2Tab internal 'created' code is run, so this gives the
      * developer a chance to execute code after also.
-     * @param {Nx2Tab_PostCreated_Event} ev
+     * @param {N2Tab_PostCreated_Event} ev
      */
-    postCreated?: (ev: Nx2Tab_PostCreated_Event) => void;
+    postCreated?: (ev: N2Tab_PostCreated_Event) => void;
 }
 
 /**
  *  Please see all the add-on TabOption_XXXXXXX constants that have predefined settings for the Tab state in state.ej
  */
-export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends Nx2EjBasic<STATE, Tab> {
-    static readonly CLASS_IDENTIFIER: string = "Nx2EjTab";
+export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends N2EjBasic<STATE, Tab> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Tab';
 
     constructor(state ?: STATE) {
         super(state);
-        addNx2Class(this.state.deco, N2Tab.CLASS_IDENTIFIER);
+        addN2Class(this.state.deco, N2Tab.CLASS_IDENTIFIER);
     }
 
 
-    onLogic(args: Nx2Evt_OnLogic) {
+    onLogic(args: N2Evt_OnLogic) {
 
         //---------
         let fPostCreated = this?.state?.postCreated;
@@ -71,15 +71,15 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends Nx2EjBasic<STA
                 try {
                     tabSelected(index, this);
                 } catch (e) {
-                    console.error(e, 'index=', index, 'Nx2EjTab=', this)
+                    console.error(e, 'index=', index, `${N2Tab.CLASS_IDENTIFIER}=`, this)
                 }
             }); // setTimeout
 
             if (fPostCreated) {
                 try {
-                    fPostCreated.apply(this, [{nx2: this, args}]);
+                    fPostCreated.apply(this, [{n2: this, args}]);
                 } catch (e) {
-                    console.error(e, ' fPostCreated ', 'index=', index, 'Nx2EjTab=', this)
+                    console.error(e, ' fPostCreated ', 'index=', index, `${N2Tab.CLASS_IDENTIFIER}=`, this)
                 }
             } // if fPostCreated
 
@@ -95,9 +95,9 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends Nx2EjBasic<STA
 
             if (fPreSelected) {
                 try {
-                    fPreSelected.apply(this, [{nx2: this, ev}]);
+                    fPreSelected.apply(this, [{n2: this, ev}]);
                 } catch (e) {
-                    console.error(e, ' preSelected ', 'index=', index, 'Nx2EjTab=', this)
+                    console.error(e, ' preSelected ', 'index=', index, `${N2Tab.CLASS_IDENTIFIER}=`, this)
                 }
             } // if fPreSelected
 
@@ -108,26 +108,26 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends Nx2EjBasic<STA
                     this._deselectListeners.forEach(listener => {
                         try {
                             listener.tabDeselected({
-                                nx2: this,
+                                n2: this,
                                 ev: ev,
                                 previousIndex: ev.previousIndex,
                                 previousHTMLElem: ev.previousItem
                             });
                         } catch (e) {
-                            console.error(e, 'index=', index, 'Nx2EjTab=', this, 'deSelectListener=', listener);
+                            console.error(e, 'index=', index, `${N2Tab.CLASS_IDENTIFIER}=`, this, 'deSelectListener=', listener);
                         }
                     });
 
                 }
             } catch (e) {
-                console.error(e, 'index=', index, 'Nx2EjTab=', this)
+                console.error(e, 'index=', index, `${N2Tab.CLASS_IDENTIFIER}=`, this)
             }
 
 
             try {
                 tabSelected(index, this);
             } catch (e) {
-                console.error(e, 'index=', index, 'Nx2EjTab=', this)
+                console.error(e, 'index=', index, `${N2Tab.CLASS_IDENTIFIER}=`, this)
             } // try
 
             if (fSelected)
@@ -156,9 +156,9 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends Nx2EjBasic<STA
     get classIdentifier(): string { return N2Tab.CLASS_IDENTIFIER; }
 
 
-    private _deselectListeners: Nx2Tab_Deselected_Listener[] = [];
+    private _deselectListeners: N2Tab_Deselected_Listener[] = [];
 
-    addDeselectListener(listener: Nx2Tab_Deselected_Listener) {
+    addDeselectListener(listener: N2Tab_Deselected_Listener) {
         if (listener) {
             if (this._deselectListeners.indexOf(listener) === -1) {
                 this._deselectListeners.push(listener);
@@ -166,7 +166,7 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends Nx2EjBasic<STA
         } // if listener
     } // addDeselectListener
 
-    removeDeselectListener(listener: Nx2Tab_Deselected_Listener) {
+    removeDeselectListener(listener: N2Tab_Deselected_Listener) {
         if (listener) {
             let index = this._deselectListeners.indexOf(listener);
             if (index !== -1) {
@@ -175,55 +175,55 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends Nx2EjBasic<STA
         } // if listener
     } // removeDeselectListener
 
-} // class Nx2EjTab
+} // class N2Tab
 
-export const NX2TAB_DESELECTED_EVENT: string = '_nx2tab_deselected_';
+export const N2TAB_DESELECTED_EVENT: string = '_n2tab_deselected_';
 
-export interface Nx2Tab_Deselected_Listener {
-    tabDeselected: (ev: Nx2Tab_Deselected_Event) => void;
+export interface N2Tab_Deselected_Listener {
+    tabDeselected: (ev: N2Tab_Deselected_Event) => void;
 }
 
-export interface Nx2Tab_Deselected_Event {
-    nx2: N2Tab;
+export interface N2Tab_Deselected_Event {
+    n2: N2Tab;
     ev: SelectEventArgs;
     previousIndex: number;
     previousHTMLElem: HTMLElement;
 }
 
-export function addNx2Tab_Deselected_Listener(elem: HTMLElement, listener: Nx2Tab_Deselected_Listener) {
+export function addN2Tab_Deselected_Listener(elem: HTMLElement, listener: N2Tab_Deselected_Listener) {
     if (!elem) return;
     if (!listener) return;
 
-    addClassesToElement(elem, NX2TAB_DESELECTED_EVENT);
-    elem[NX2TAB_DESELECTED_EVENT] = listener; // tag the element with the listener
-} // addNx2Tab_Deselected_Listener
+    addClassesToElement(elem, N2TAB_DESELECTED_EVENT);
+    elem[N2TAB_DESELECTED_EVENT] = listener; // tag the element with the listener
+} // addN2Tab_Deselected_Listener
 
-export function removeNx2Tab_Deselected_Listener(elem: HTMLElement) {
+export function removeN2Tab_Deselected_Listener(elem: HTMLElement) {
     if (!elem) return;
-    removeClassesFromElement(elem, NX2TAB_DESELECTED_EVENT);
-    elem[NX2TAB_DESELECTED_EVENT] = undefined;
-} // removeNx2Tab_Deselected_Listener
+    removeClassesFromElement(elem, N2TAB_DESELECTED_EVENT);
+    elem[N2TAB_DESELECTED_EVENT] = undefined;
+} // removeN2Tab_Deselected_Listener
 
 
 /**
- * Function called when a tab is selected. It initializes the Nx2 component within the tab.
+ * Function called when a tab is selected. It initializes the N2 component within the tab.
  * @function tabSelected
  * @param {number} index - The index of the selected tab.
- * @param {N2Tab} nx2Tab - The Nx2EjTab instance.
+ * @param {N2Tab} n2Tab - The N2Tab instance.
  */
-function tabSelected(index: number, nx2Tab: N2Tab) {
+function tabSelected(index: number, n2Tab: N2Tab) {
     try {
-        let tab = nx2Tab.obj;
+        let tab = n2Tab.obj;
         let tabContent = tab.items[index].content as HTMLElement
 
-        let nx2: Nx2 = getNx2FromHtmlElement(tabContent) // get the Nx2 component in the tab
-        if (nx2) {
+        let n2: N2 = getN2FromHtmlElement(tabContent) // get the N2 component in the tab
+        if (n2) {
             // The contextmenu needs to be initialized only after the target is already in the DOM
             // calling initLogic() will initialize the contextmenu but only once. Subsequent calls will be ignored.
-            nx2.initLogic()
+            n2.initLogic()
         }
     } catch (e) {
-        console.error(e, 'index=', index, 'Nx2EjTab=', nx2Tab)
+        console.error(e, 'index=', index, `${N2Tab.CLASS_IDENTIFIER}=`, n2Tab)
     }
 } // tabSelected
 

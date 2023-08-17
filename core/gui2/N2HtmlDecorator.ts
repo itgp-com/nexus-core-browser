@@ -2,9 +2,9 @@ import {isEmpty} from "lodash";
 import {IKeyValueString} from "../BaseUtils";
 import {cssStyleToString} from "../CoreUtils";
 import {CssStyle} from "../gui/AbstractWidget";
-import {StateNx2} from "./StateNx2";
+import {StateN2} from "./StateN2";
 
-export interface Nx2HtmlDecorator<STATE extends StateNx2 = StateNx2> {
+export interface N2HtmlDecorator<STATE extends StateN2 = StateN2> {
     /**
      * the tag type of the HTMLElement
      */
@@ -25,7 +25,7 @@ export interface Nx2HtmlDecorator<STATE extends StateNx2 = StateNx2> {
     otherAttr?: IKeyValueString;
 
     /**
-     * Any string that belongs inside this tab. If this string is actually HTML, it should really be added as <link>Nx2Html</link> children of the widget.
+     * Any string that belongs inside this tab. If this string is actually HTML, it should really be added as <link>N2Html</link> children of the widget.
      */
     text?: string;
     /**
@@ -34,39 +34,39 @@ export interface Nx2HtmlDecorator<STATE extends StateNx2 = StateNx2> {
     escapeText?: boolean;
 
     /**
-     * Nx2 component state (if any)
+     * N2 component state (if any)
      */
     state?: STATE;
 
-} // end of Nx2HtmlDecorator
+} // end of N2HtmlDecorator
 
 
 export class IHtmlUtils {
 
     /**
-     * Initializes an Nx2HtmlDecorator object for a given StateNx2 object.
+     * Initializes an N2HtmlDecorator object for a given StateN2 object.
      * Assigns the decorator to the state object and stamps the state in the decorator.
      *
      * @static
-     * @param {StateNx2} state - The StateNx2 object to initialize the Nx2HtmlDecorator for.
+     * @param {StateN2} state - The StateN2 object to initialize the N2HtmlDecorator for.
      */
-    static initForNx2(state: StateNx2) {
+    static initForN2(state: StateN2) {
         if (!state)
             return;
-        let deco: Nx2HtmlDecorator = state.deco;
+        let deco: N2HtmlDecorator = state.deco;
         state.deco = IHtmlUtils.init(deco); // if state.deco was null, it is now initialized
         state.deco.state = state; // stamp the state in the decorator
     }
 
     /**
-     * Initializes an Nx2HtmlDecorator object with default values if not already set.
+     * Initializes an N2HtmlDecorator object with default values if not already set.
      * Sets the tag to 'div', initializes empty class list, style object, and other attributes object.
      *
      * @static
-     * @param {Nx2HtmlDecorator} decorator - The Nx2HtmlDecorator object to initialize.
-     * @returns {Nx2HtmlDecorator} - The initialized Nx2HtmlDecorator object with default values set if needed.
+     * @param {N2HtmlDecorator} decorator - The N2HtmlDecorator object to initialize.
+     * @returns {N2HtmlDecorator} - The initialized N2HtmlDecorator object with default values set if needed.
      */
-    static init(decorator: Nx2HtmlDecorator): Nx2HtmlDecorator {
+    static init(decorator: N2HtmlDecorator): N2HtmlDecorator {
         if (!decorator)
             decorator = {};
         if (!decorator.tag)
@@ -81,14 +81,14 @@ export class IHtmlUtils {
     } //init
 
     /**
-     * Generates a class attribute string with the class list from the given Nx2HtmlDecorator object.
+     * Generates a class attribute string with the class list from the given N2HtmlDecorator object.
      * Initializes the decorator if necessary and concatenates its class list into a single string.
      *
      * @static
-     * @param {Nx2HtmlDecorator} decorator - The Nx2HtmlDecorator object containing the class list.
+     * @param {N2HtmlDecorator} decorator - The N2HtmlDecorator object containing the class list.
      * @returns {string} - The generated class attribute string, or an empty string if no classes are present.
      */
-    static class(decorator: Nx2HtmlDecorator): string {
+    static class(decorator: N2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let c: string = '';
         if (decorator.classes.length > 0)
@@ -97,14 +97,14 @@ export class IHtmlUtils {
     }
 
     /**
-     * Generates a style attribute string with the style properties from the given Nx2HtmlDecorator object.
+     * Generates a style attribute string with the style properties from the given N2HtmlDecorator object.
      * Initializes the decorator if necessary and converts its style object into a single string.
      *
      * @static
-     * @param {Nx2HtmlDecorator} decorator - The Nx2HtmlDecorator object containing the style properties.
+     * @param {N2HtmlDecorator} decorator - The N2HtmlDecorator object containing the style properties.
      * @returns {string} - The generated style attribute string, or an empty string if no style properties are present.
      */
-    static style(decorator: Nx2HtmlDecorator): string {
+    static style(decorator: N2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let htmlTagStyle = '';
         if (decorator.style && !isEmpty(decorator.style))
@@ -113,14 +113,14 @@ export class IHtmlUtils {
     }
 
     /**
-     * Generates a string with other attributes from the given Nx2HtmlDecorator object.
+     * Generates a string with other attributes from the given N2HtmlDecorator object.
      * Initializes the decorator if necessary and concatenates its other attributes into a single string.
      *
      * @static
-     * @param {Nx2HtmlDecorator} decorator - The Nx2HtmlDecorator object containing the other attributes.
+     * @param {N2HtmlDecorator} decorator - The N2HtmlDecorator object containing the other attributes.
      * @returns {string} - The generated other attributes string, or an empty string if no other attributes are present.
      */
-    static otherAttr(decorator: Nx2HtmlDecorator): string {
+    static otherAttr(decorator: N2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let otherAttrArray = Object.entries(decorator.otherAttr as any);
         let htmlAttrs: string = (otherAttrArray.length > 0 ? ' ' : '');
@@ -140,14 +140,14 @@ export class IHtmlUtils {
     }
 
     /**
-     * Generates a single string containing class, style, and other attributes from the given Nx2HtmlDecorator object.
+     * Generates a single string containing class, style, and other attributes from the given N2HtmlDecorator object.
      * Initializes the decorator if necessary and concatenates its class, style, and other attributes into a single string.
      *
      * @static
-     * @param {Nx2HtmlDecorator} decorator - The Nx2HtmlDecorator object containing the class, style, and other attributes.
+     * @param {N2HtmlDecorator} decorator - The N2HtmlDecorator object containing the class, style, and other attributes.
      * @returns {string} - The generated string with class, style, and other attributes, or an empty string if no attributes are present.
      */
-    static all(decorator: Nx2HtmlDecorator): string {
+    static all(decorator: N2HtmlDecorator): string {
         return `${IHtmlUtils.class(decorator)}${IHtmlUtils.style(decorator)}${IHtmlUtils.otherAttr(decorator)}`;
     }
 
@@ -155,14 +155,14 @@ export class IHtmlUtils {
 } // end of IHtmlUtils
 
 /**
- * Adds specified classes to the given Nx2HtmlDecorator object's class list.
+ * Adds specified classes to the given N2HtmlDecorator object's class list.
  * If the associated widget is initialized, the HTML element's class list will also be updated.
  *
- * @param {Nx2HtmlDecorator} args - The Nx2HtmlDecorator object containing the class list to update.
+ * @param {N2HtmlDecorator} args - The N2HtmlDecorator object containing the class list to update.
  * @param {(string | string[])} additionalClasses - The class or classes to add to the class list.
- * @returns {Nx2HtmlDecorator} - The updated Nx2HtmlDecorator object with the specified classes added.
+ * @returns {N2HtmlDecorator} - The updated N2HtmlDecorator object with the specified classes added.
  */
-export function addNx2Class(args: Nx2HtmlDecorator, ...additionalClasses: string[]): Nx2HtmlDecorator {
+export function addN2Class(args: N2HtmlDecorator, ...additionalClasses: string[]): N2HtmlDecorator {
     args = IHtmlUtils.init(args);
 
     if (!additionalClasses)
@@ -177,17 +177,17 @@ export function addNx2Class(args: Nx2HtmlDecorator, ...additionalClasses: string
         addClassesToElement(htmlElement, args.classes);
     } // if args.state.ref.widget.initialized
     return args;
-} // addNx2Class
+} // addN2Class
 
 /**
- * Removes specified classes from the given Nx2HtmlDecorator object's class list.
+ * Removes specified classes from the given N2HtmlDecorator object's class list.
  * If the associated widget is initialized, the HTML element's class list will also be updated.
  *
- * @param {Nx2HtmlDecorator} args - The Nx2HtmlDecorator object containing the class list to update.
+ * @param {N2HtmlDecorator} args - The N2HtmlDecorator object containing the class list to update.
  * @param {(string | string[])} classesToRemove - The class or classes to remove from the class list.
- * @returns {Nx2HtmlDecorator} - The updated Nx2HtmlDecorator object with the specified classes removed.
+ * @returns {N2HtmlDecorator} - The updated N2HtmlDecorator object with the specified classes removed.
  */
-export function removeNx2Class(args:Nx2HtmlDecorator, ...classesToRemove: string[]): Nx2HtmlDecorator {
+export function removeN2Class(args:N2HtmlDecorator, ...classesToRemove: string[]): N2HtmlDecorator {
 
     args = IHtmlUtils.init(args);
 
@@ -204,7 +204,7 @@ export function removeNx2Class(args:Nx2HtmlDecorator, ...classesToRemove: string
     } // if args.state.ref.widget.initialized
 
     return args;
-} // removeNx2Class
+} // removeN2Class
 
 
 
@@ -293,15 +293,15 @@ export function removeClassesFromElement(htmlElement: HTMLElement | null | undef
 }
 
 /**
- * Transfers classes, style, and other attributes from the source Nx2HtmlDecorator to the target HTMLElement.
+ * Transfers classes, style, and other attributes from the source N2HtmlDecorator to the target HTMLElement.
  * Optionally, changes the tag type of the target HTMLElement.
  *
- * @param {Nx2HtmlDecorator} source - The source Nx2HtmlDecorator instance from which to transfer the attributes.
+ * @param {N2HtmlDecorator} source - The source N2HtmlDecorator instance from which to transfer the attributes.
  * @param {HTMLElement} target - The target HTMLElement to which the attributes will be transferred.
  * @param {string=} changeTagType - The new tag type to change the target HTMLElement. If specified and different from the source tag type, the function will replace the target element with a new element of the specified tag type.
  * @returns {void}
  */
-export function decoToHtmlElement(source: Nx2HtmlDecorator, target: HTMLElement, changeTagType?: string): void {
+export function decoToHtmlElement(source: N2HtmlDecorator, target: HTMLElement, changeTagType?: string): void {
     if (!source || !target) {
         return;
     }
@@ -322,4 +322,4 @@ export function decoToHtmlElement(source: Nx2HtmlDecorator, target: HTMLElement,
             target.setAttribute(attrName, attrValue);
         }
     }
-} // transferNx2HtmlDecorator
+} // transferN2HtmlDecorator
