@@ -1,15 +1,15 @@
+// noinspection UnnecessaryLocalVariableJS
 
 /**
  * Switches the theme for Syncfusion EJ2 components by updating the href attribute of the specified link elements.
  *
  * @param {string} linkClassName - The class name of the link elements to target.
- * @param {string} themeName - The name of the theme to switch to. Must be one of the themes listed at https://ej2.syncfusion.com/documentation/appearance/theme#cdn-reference (e.g., 'material', 'material-dark', etc.).
- * @see {@link https://ej2.syncfusion.com/documentation/appearance/theme#cdn-reference} for the available theme names.
+ * @param {'light' | 'dark'} themeType - The type of theme to switch to. Must be either 'light' or 'dark'.
  * @example
- * //Example usage to switch to the "material" theme for elements with the class "app-theme"
- * switchEj2Theme('app-theme', 'material');
+ * // Switch to the "light" theme for elements with the class "theme-material-dark"
+ * switchEj2Theme('theme-material-dark', 'light');
  */
-export function switchEj2Theme(linkClassName: string, themeName: string) {
+function switchEj2Theme(linkClassName: string, themeType: 'light' | 'dark') {
     // Query all the elements with the specified class name
     const links = document.querySelectorAll(`.${linkClassName}`);
 
@@ -18,10 +18,15 @@ export function switchEj2Theme(linkClassName: string, themeName: string) {
         // Get the current href value
         const currentHref = link.href;
 
-        // Find the last '/' character and replace the text after it with the new theme name
-        const newHref = currentHref.substring(0, currentHref.lastIndexOf('/') + 1) + themeName + '.css';
+        // Find the last '/' character and extract the prefix before the '.css'
+        const prefix = currentHref.substring(0, currentHref.lastIndexOf('/') + 1);
+        const baseName = currentHref.substring(currentHref.lastIndexOf('/') + 1, currentHref.lastIndexOf('.'));
+        const newBaseName = baseName.replace(/-dark$/, ''); // Remove '-dark' suffix if present
+
+        // Construct the new href value based on the theme type
+        const newHref = themeType === 'light' ? `${prefix}${newBaseName}.css` : `${prefix}${newBaseName}-dark.css`;
 
         // Update the "href" attribute with the new value
         link.href = newHref;
     });
-}
+} // switchEj2Theme
