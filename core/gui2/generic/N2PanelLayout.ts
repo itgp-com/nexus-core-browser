@@ -67,10 +67,28 @@ export interface StateN2PanelLayout extends StateN2Basic {
     center?: Elem_or_N2;
 
     /**
-     * If true, the centerContainer component will be scrollable
-     * Defaults to true
+     * If true, the centerContainer component will have <code>overflow='auto'</code>.
+     * <p>
+     * The CSS property <code>overflow</code> is used to control what happens to content that overflows an element's box.
+     * The <code>auto</code> value for the <code>overflow</code> property means that the browser will automatically manage
+     * the overflow based on the content and the size of the containing box.
+     * </p>
+     * <p>
+     * Here's what happens with <code>overflow: auto;</code>:
+     * <ul>
+     *   <li><strong>Content Fits</strong>: If the content fits inside the container, no scrollbars are added, and the content is displayed normally.</li>
+     *   <li><strong>Content Overflows</strong>: If the content overflows the container's bounds, scrollbars are added to allow the user to scroll to see the overflowed content.
+     *     <ul>
+     *       <li><strong>Horizontal Overflow</strong>: If the content overflows horizontally, a horizontal scrollbar is added.</li>
+     *       <li><strong>Vertical Overflow</strong>: If the content overflows vertically, a vertical scrollbar is added.</li>
+     *     </ul>
+     *   </li>
+     *   <li><strong>Scrollbars</strong>: The scrollbars themselves may be either visible all the time or only when the user hovers over the content, depending on the browser and operating system settings.</li>
+     * </ul>
+     * </p>
+     * <p>Defaults to true.</p>
      */
-    centerScrollable?: boolean;
+    center_overflow_auto?: boolean;
 }
 
 export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout> extends N2Basic<STATE> {
@@ -94,8 +112,8 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
     }
     protected onStateInitialized(state: STATE): void {
 
-        if (state.centerScrollable == null) {
-            state.centerScrollable = true;
+        if (state.center_overflow_auto == null) {
+            state.center_overflow_auto = true;
         }
 
 
@@ -122,7 +140,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         IHtmlUtils.initForN2(centerState);
         centerState.tagId = state.tagId + '_center';
         addN2Class(centerState.deco, CLASS_N2_PANEL_LAYOUT_CENTER);
-        if (state.centerScrollable) {
+        if (state.center_overflow_auto) {
             centerState.deco.style.overflow = 'auto'; // make it scrollable
         }
 
