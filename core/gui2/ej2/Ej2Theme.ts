@@ -9,7 +9,7 @@
  * // Switch to the "light" theme for elements with the class "theme-material-dark"
  * switchEj2Theme('theme-material-dark', 'light');
  */
-function switchEj2Theme(linkClassName: string, themeType: 'light' | 'dark') {
+export function switchEj2Theme(linkClassName: string, themeType: 'light' | 'dark') {
     // Query all the elements with the specified class name
     const links = document.querySelectorAll(`.${linkClassName}`);
 
