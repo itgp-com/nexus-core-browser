@@ -1,7 +1,7 @@
 import {setAppBase} from "./AppPathUtils";
 import {getErrorHandler} from "./CoreErrorHandling";
 import {UIStartedListener} from "./gui/UIStartedListener";
-import {switchEj2Theme} from './gui2/Theming';
+import {switchTheme} from './gui2/Theming';
 import {ListenerHandler} from "./ListenerHandler";
 import {NexusUI} from "./NexusUI";
 
@@ -35,7 +35,7 @@ export class NexusMain {
          thisX.ui.menuRegistry = await thisX.ui.createNewMenuRegistry();
 
          // on start, call the theme initialization with the initial theme state
-         switchEj2Theme(thisX.ui.initialThemeState());
+         switchTheme(thisX.ui.initialThemeState());
 
          await thisX.ui.initUI();
 

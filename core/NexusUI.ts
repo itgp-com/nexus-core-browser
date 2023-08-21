@@ -52,7 +52,7 @@ export abstract class NexusUI {
     * Return the initial theme state for the application that describes the
     * initial theme that should exist in all html pages.
     *
-    * On Nexus start the switchEj2Theme will be called with this state
+    * On Nexus start the switchTheme will be called with this state
     * @return {ThemeState}
     */
    abstract initialThemeState():ThemeState;

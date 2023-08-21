@@ -62,9 +62,9 @@ export function themeChangeListeners(): ListenerHandler<ThemeChangeEvent, ThemeC
  * @param {'light' | 'dark'} themeType - The type of theme to switch to. Must be either 'light' or 'dark'.
  * @example
  * // Switch to the "light" theme for elements with the class "app-theme"
- * switchEj2Theme('app-theme', 'light');
+ * switchTheme('app-theme', 'light');
  */
-export function switchEj2Theme(newThemeState: ThemeState) {
+export function switchTheme(newThemeState: ThemeState) {
     if (!newThemeState)
         return;
 
@@ -104,4 +104,4 @@ export function switchEj2Theme(newThemeState: ThemeState) {
     }
 
     _currentThemeState = newThemeState;
-} // switchEj2Theme
+} // switchTheme
