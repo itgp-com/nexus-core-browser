@@ -1,0 +1,5 @@
+// Not standalone - needs the vars-material-xxx.scss to be imported before this
+.N2Button.e-btn, .N2Button.e-css.e-btn {
+  font-size: $app_font_size_regular;
+  text-transform: unset !important;
+}
