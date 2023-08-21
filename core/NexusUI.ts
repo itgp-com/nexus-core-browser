@@ -1,6 +1,7 @@
 import {ScreenRegistry} from "./gui/ScreenRegistry";
 import {MenuRegistry}   from "./gui/MenuRegistry";
 import {HttpRequestEvt, HttpResponseEvt} from "./data/NexusComm";
+import {ThemeState} from './gui2/ej2/Ej2Theme';
 
 export abstract class NexusUI {
 
@@ -46,6 +47,15 @@ export abstract class NexusUI {
     * @param initialParamsAsString  initial parameters (free range - depends on specific app)
     */
    abstract processURLParameters(initialParamsAsString:string):Promise<void>;
+
+   /**
+    * Return the initial theme state for the application that describes the
+    * initial theme that should exist in all html pages.
+    *
+    * On Nexus start the switchEj2Theme will be called with this state
+    * @return {ThemeState}
+    */
+   abstract initialThemeState():ThemeState;
 
 
    get mainUITagID(): string {
