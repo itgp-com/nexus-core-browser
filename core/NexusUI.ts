@@ -1,7 +1,7 @@
 import {ScreenRegistry} from "./gui/ScreenRegistry";
 import {MenuRegistry}   from "./gui/MenuRegistry";
 import {HttpRequestEvt, HttpResponseEvt} from "./data/NexusComm";
-import {ThemeState} from './gui2/ej2/Ej2Theme';
+import {ThemeState} from './gui2/Theming';
 
 export abstract class NexusUI {
 

@@ -3,7 +3,7 @@ import {ChartTheme} from '@syncfusion/ej2-charts/src/chart/utils/enum'
 import {BaseListener} from '../BaseListener';
 import {ListenerHandler} from '../ListenerHandler';
 
-export {ChartTheme}; // make it available to other modules
+export type {ChartTheme}; // make it available to other modules
 
 /** @type {string} - Represents the theme type, either 'light' or 'dark' */
 export type ThemeType = 'light' | 'dark';
