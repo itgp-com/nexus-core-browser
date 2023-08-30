@@ -40,8 +40,14 @@ export class N2Form<STATE extends StateN2Form = StateN2Form> extends N2EjBasic<S
 
     constructor(state: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Form.CLASS_IDENTIFIER);
     }
+
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Form.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
 
     onLogic(args: N2Evt_OnLogic) {

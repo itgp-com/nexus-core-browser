@@ -64,8 +64,13 @@ export class N2TreeGrid<STATE extends StateN2TreeGrid = StateN2TreeGrid> extends
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2TreeGrid.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2TreeGrid.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new TreeGrid(this.state.ej);

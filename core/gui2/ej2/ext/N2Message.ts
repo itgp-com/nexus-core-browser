@@ -20,8 +20,13 @@ export class N2Message<STATE extends StateN2Message = StateN2Message> extends N2
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Message.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Message.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
 
     createEjObj(): void {

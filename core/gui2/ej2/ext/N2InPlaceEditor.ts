@@ -38,8 +38,13 @@ export class N2InPlaceEditor<STATE extends StateN2InPlaceEditor = StateN2InPlace
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2InPlaceEditor.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2InPlaceEditor.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new InPlaceEditor(this.state.ej);

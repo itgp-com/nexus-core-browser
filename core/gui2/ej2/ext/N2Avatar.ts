@@ -14,10 +14,10 @@ export class N2Avatar<STATE extends StateN2Avatar = StateN2Avatar> extends N2Bas
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Avatar.CLASS_IDENTIFIER, 'e-avatar');
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Avatar.CLASS_IDENTIFIER, 'e-avatar');
         state.deco.tag = 'span';
         super.onStateInitialized(state);
     }

@@ -39,8 +39,13 @@ export class N2Ribbon<STATE extends StateN2Ribbon = StateN2Ribbon> extends N2EjB
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Ribbon.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Ribbon.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Ribbon(this.state.ej);

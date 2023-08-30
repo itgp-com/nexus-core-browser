@@ -48,8 +48,13 @@ export class N2Maps<STATE extends StateN2Maps = StateN2Maps> extends N2EjBasic<S
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Maps.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Maps.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Maps(this.state.ej);

@@ -48,14 +48,10 @@ export class N2TextField extends N2EjBasic<StateN2TextField, TextBox> {
 
     constructor(state ?: StateN2TextField) {
         super(state);
-        addN2Class(this.state.deco, N2TextField.CLASS_IDENTIFIER);
-    }
-
-    protected _constructor(state ?: StateN2TextField) {
-        super._constructor(state);
     }
 
     protected onStateInitialized(state: StateN2TextField) {
+        addN2Class(state.deco, N2TextField.CLASS_IDENTIFIER);
         state.wrapperTagId = `${this.state.tagId}_wrapper`;
         this.labelTagId = `${this.state.tagId}_label`;
 

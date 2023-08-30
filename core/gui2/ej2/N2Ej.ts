@@ -23,7 +23,12 @@ export abstract class N2Ej<  STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT e
 
    protected constructor(state ?:STATE) {
       super(state);
-      addN2Class(this.state.deco, N2Ej.CLASS_IDENTIFIER);
+   }
+
+
+   protected onStateInitialized(state: STATE) {
+      addN2Class(state.deco, N2Ej.CLASS_IDENTIFIER);
+      super.onStateInitialized(state)
    }
 
 

@@ -20,8 +20,13 @@ export class N2Skeleton<STATE extends StateN2Skeleton = StateN2Skeleton> extends
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Skeleton.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Skeleton.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Skeleton(this.state.ej);

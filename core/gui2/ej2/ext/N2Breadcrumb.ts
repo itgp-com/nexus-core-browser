@@ -20,10 +20,10 @@ export class N2Breadcrumb<STATE extends StateN2Breadcrumb = StateN2Breadcrumb> e
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Breadcrumb.CLASS_IDENTIFIER);
     }
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Breadcrumb.CLASS_IDENTIFIER);
         state.deco.tag = 'ul'; // Breadcrumb requires a ul tag
         super.onStateInitialized(state);
     }

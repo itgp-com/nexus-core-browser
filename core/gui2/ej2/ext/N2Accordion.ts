@@ -19,7 +19,11 @@ export class N2Accordion<STATE extends StateN2Accordion = StateN2Accordion> exte
     static readonly CLASS_IDENTIFIER:string = 'N2Accordion'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Accordion.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Accordion.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

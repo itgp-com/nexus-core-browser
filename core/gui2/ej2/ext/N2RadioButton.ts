@@ -21,10 +21,10 @@ export class N2RadioButton<STATE extends StateN2RadioButton = StateN2RadioButton
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2RadioButton.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2RadioButton.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         state.deco.otherAttr['type'] = 'radio';
         super.onStateInitialized(state);

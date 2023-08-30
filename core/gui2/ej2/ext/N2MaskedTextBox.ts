@@ -20,11 +20,11 @@ export class N2MaskedTextBox<STATE extends StateN2MaskedTextBox = StateN2MaskedT
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2MaskedTextBox.CLASS_IDENTIFIER);
     }
 
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2MaskedTextBox.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         state.deco.otherAttr.type = 'text';
         super.onStateInitialized(state);

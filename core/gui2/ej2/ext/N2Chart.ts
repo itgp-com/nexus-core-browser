@@ -86,9 +86,12 @@ export class N2Chart<STATE extends StateN2Chart = StateN2Chart> extends N2EjBasi
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Chart.CLASS_IDENTIFIER);
     }
 
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Chart.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
 
     createEjObj(): void {
         this.obj = new Chart(this.state.ej);

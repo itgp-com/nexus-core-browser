@@ -20,10 +20,10 @@ export class N2Signature<STATE extends StateN2Signature = StateN2Signature> exte
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Signature.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Signature.CLASS_IDENTIFIER);
         state.deco.tag = 'canvas';
         super.onStateInitialized(state);
     }

@@ -20,7 +20,11 @@ export class N2Carousel<STATE extends StateN2Carousel = StateN2Carousel> extends
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Carousel.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Carousel.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

@@ -20,7 +20,11 @@ export class N2ChipList<STATE extends StateN2ChipList = StateN2ChipList> extends
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2ChipList.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2ChipList.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

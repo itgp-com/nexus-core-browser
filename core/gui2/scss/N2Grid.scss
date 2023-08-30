@@ -1,0 +1,131 @@
+// Not standalone - needs the vars-material-xxx.scss to be imported before this
+// Requires:
+// $app-filter-text-background-color
+// $app_grid_line_color
+// $app-row-disabled-background-color-lightgray
+// $app_color_panel_background
+
+$N2Grid = 'N2Grid';
+// Removes blue background from grid editable checkbox and restores border and font color
+.#{$N2Grid} .e-checkbox-wrapper .e-frame.e-check, .#{$N2Grid} .e-css.e-checkbox-wrapper .e-frame.e-check {
+    background-color: transparent;
+    border-color: unset;
+    color: black;
+}
+
+// Make tops of grid filters change colors for enabled filters
+.#{$N2Grid} .e-filtertext:not(.e-disable) {
+    background-color: $app-filter-text-background-color !important;
+    padding-left: 1ch !important;
+}
+
+// start Grid lines color
+.#{$N2Grid}.e-control.e-grid .e-rowcell, .e-control.e-grid .e-groupcaption, .e-control.e-grid .e-indentcell, .e-control.e-grid .e-recordplusexpand, .e-control.e-grid .e-recordpluscollapse, .e-control.e-grid .e-detailrowcollapse, .e-control.e-grid .e-detailrowexpand, .e-control.e-grid .e-detailindentcell, .e-control.e-grid .e-detailcell,
+.#{$N2Grid}.e-control.e-grid .e-toolbar, .e-control.e-pager, .e-control.e-grid, .e-control.e-grid .e-headercell, .e-control.e-grid .e-detailheadercell, e-columnheader,
+.#{$N2Grid}.e-control.e-grid.e-resize-lines .e-headercell .e-rhandler, .e-control.e-grid.e-resize-lines .e-headercell .e-rsuppress {
+    border-color: $app_grid_line_color !important;
+}
+
+.#{$N2Grid}.e-control.e-grid .e-gridheader, .e-columnheader {
+    border-bottom-color: $app_grid_line_color !important;
+    border-top-color: $app_grid_line_color !important;
+}
+
+.#{$N2Grid} tr, .#{$N2Grid} th {
+    border-color: $app_grid_line_color !important;
+}
+
+//  Grid opacity
+.#{$N2Grid}.e-control.e-grid .e-rowcell:not(.e-editedbatchcell), .e-control.e-grid .e-detailrowcollapse:not(.e-editedbatchcell), .e-control.e-grid .e-detailrowexpand:not(.e-editedbatchcell), .e-control.e-grid .e-gridcontent .e-rowdragdrop:not(.e-editedbatchcell), .e-control.e-grid .e-emptyrow:not(.e-editedbatchcell) {
+    opacity: 1 !important;
+}
+
+
+// Reduce the padding of the header grid cells from 1.8em default
+.#{$N2Grid}.e-grid .e-gridheader .e-sortfilter .e-headercelldiv, .e-grid .e-gridheader .e-stackedheadercelldiv,
+.#{$N2Grid}.e-grid .e-gridheader .e-headercell .e-headercelldiv.e-headerchkcelldiv {
+    padding-right: 0.5em;
+}
+
+//.e-headercell .e-sortfilterdiv {
+//  margin: -18px -4px !important;
+//}
+
+// Make row hovered over readable (background goes to light gray by default, so turn font to black)
+.#{$N2Grid}.e-grid.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-editedrow):not(.e-detailrow):hover .e-rowcell:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.#{$N2Grid}.e-grid.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-detailrow):hover .e-detailrowcollapse:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.#{$N2Grid}.e-grid.e-gridhover tr[role=row]:not(.e-disable-gridhover):hover .e-rowdragdrop:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.#{$N2Grid}.e-grid.e-rtl .e-gridhover tr[role=row]:not(.e-disable-gridhover):hover .e-rowdragdrop:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.#{$N2Grid}.e-grid.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-detailrow):hover .e-detailrowexpand:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell) {
+    color: black !important;
+}
+
+
+.#{$N2Grid}.e-control.e-grid .e-rowcell {
+    font-family: $app_font_family;
+    font-size: $app_font_size_regular;
+}
+
+.#{$N2Grid}.e-control.e-grid .e-toolbar .e-tbar-btn .e-tbar-btn-text {
+    font-family: $app_font_family;
+    font-size: $app_font_size_regular
+}
+
+// gray left divider for row cell, header and filter cells
+.#{$N2Grid}.e-control.e-grid .e-rowcell, .#{$N2Grid}.e-control.e-grid .e-filterbarcell, .#{$N2Grid}.e-control.e-grid .e-headercell {
+    border-left-width: 1px !important;
+    border-left-style: solid !important;
+    border-left-color: $app_grid_line_color !important;
+}
+
+// eliminate visible gray bar from resize handler cell
+.#{$N2Grid}.e-control.e-grid .e-headercell .e-rhandler {
+    border-right-width: 0px !important;
+    border-right-style: solid !important;
+    border-right-color: white !important;
+}
+
+.#{$N2Grid}.e-control.e-grid .e-tableborder {
+    border-right-color: $app_grid_line_color !important;
+}
+
+
+/* These are all the grid bar buttons (Excel, Add, Cancel, etc) */
+.#{$N2Grid} .e-tbar-btn, .e-tbtn-txt {
+    background-color: $accent !important;
+    border-radius: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.#{$N2Grid} .e-tbar-btn-text, .#{$N2Grid} .e-btn-icon.e-excelexport {
+    //background-color:$accent !important;
+    color: white !important;
+}
+
+
+// --------------- screen classes ----------------------------
+
+.#{$N2Grid}.e-grid .e-rowcell, .e-grid .e-filterbarcell, .e-grid .e-filterbarcelldisabled, .e-grid .e-headercell, .e-grid .e-detailheadercell {
+    // Controls the left/right padding in grid cells
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+.#{$N2Grid}.e-grid .e-rowcell.screen-grid-col-disabled {
+    // this class is used to denote a disabled row in the grid
+    background-color: $app-row-disabled-background-color-lightgray;
+}
+
+.#{$N2Grid}.e-grid .e-headercell.screen-grid-col-disabled {
+    // this class is used to denote a disabled row in the grid
+    background-color: $app-row-disabled-background-color-lightgray !important;
+}
+
+.#{$N2Grid}.e-grid .e-grouptext {
+    width: unset; // Ej2 defaults the width to 57px for some strange reason
+}
+
+.#{$N2Grid}.e-grid .e-groupdroparea.e-grouped {
+    background-color: $app_color_panel_background; // light gray
+}

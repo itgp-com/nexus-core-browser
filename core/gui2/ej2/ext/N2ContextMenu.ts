@@ -20,10 +20,10 @@ export class N2ContextMenu<STATE extends StateN2ContextMenu = StateN2ContextMenu
     static readonly CLASS_IDENTIFIER:string = 'N2ContextMenu'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2ContextMenu.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2ContextMenu.CLASS_IDENTIFIER);
         state.deco.tag = 'ul'; // <ul id='contextmenu'></ul> and references different div for 'target'
         super.onStateInitialized(state);
     }

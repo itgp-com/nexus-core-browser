@@ -28,11 +28,11 @@ export class N2SpeedDial<STATE extends StateN2SpeedDial = StateN2SpeedDial> exte
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2SpeedDial.CLASS_IDENTIFIER);
     }
 
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2SpeedDial.CLASS_IDENTIFIER);
         state.deco.tag = 'button';
         super.onStateInitialized(state);
     }

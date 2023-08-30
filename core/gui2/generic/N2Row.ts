@@ -19,8 +19,13 @@ export class N2Row<STATE extends StateN2Row = any> extends N2Basic<STATE> {
 
     constructor(state: STATE) {
         super(state);
-        addN2Class(this.state.deco, CSS_FLEX_ROW_DIRECTION, N2Row.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, CSS_FLEX_ROW_DIRECTION, N2Row.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     get classIdentifier(): string { return N2Row.CLASS_IDENTIFIER; }
 

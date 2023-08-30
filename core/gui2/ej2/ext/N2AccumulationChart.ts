@@ -32,7 +32,11 @@ export class N2AccumulationChart<STATE extends StateN2AccumulationChart = StateN
     static readonly CLASS_IDENTIFIER:string = 'N2AccumulationChart'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco,  N2AccumulationChart.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2AccumulationChart.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

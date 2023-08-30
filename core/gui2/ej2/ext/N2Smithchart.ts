@@ -21,8 +21,13 @@ export class N2Smithchart<STATE extends StateN2Smithchart = StateN2Smithchart> e
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Smithchart.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Smithchart.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Smithchart(this.state.ej);

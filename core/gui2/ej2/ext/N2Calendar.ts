@@ -23,7 +23,11 @@ export class N2Calendar<STATE extends StateN2Calendar = StateN2Calendar> extends
     static readonly CLASS_IDENTIFIER:string = 'N2Calendar'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Calendar.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Calendar.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

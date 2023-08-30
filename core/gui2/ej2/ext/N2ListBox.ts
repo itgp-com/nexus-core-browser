@@ -21,10 +21,10 @@ export class N2ListBox<STATE extends StateN2ListBox = StateN2ListBox> extends N2
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2ListBox.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2ListBox.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         super.onStateInitialized(state);
     }

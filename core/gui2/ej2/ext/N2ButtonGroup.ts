@@ -13,7 +13,11 @@ export class N2ButtonGroup<STATE extends StateN2ButtonGroup = StateN2ButtonGroup
     static readonly CLASS_IDENTIFIER:string = 'N2ButtonGroup'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2ButtonGroup.CLASS_IDENTIFIER, 'e-btn-group');
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2ButtonGroup.CLASS_IDENTIFIER, 'e-btn-group');
+        super.onStateInitialized(state)
     }
 
     get classIdentifier() { return N2ButtonGroup.CLASS_IDENTIFIER; }

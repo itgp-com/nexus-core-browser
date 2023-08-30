@@ -13,10 +13,10 @@ export class N2Badge<STATE extends StateN2Badge = StateN2Badge> extends N2Basic<
     static readonly CLASS_IDENTIFIER:string = 'N2Badge'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco,  N2Badge.CLASS_IDENTIFIER, 'e-badge');
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Badge.CLASS_IDENTIFIER, 'e-badge');
         state.deco.tag = 'span';
         super.onStateInitialized(state);
     }

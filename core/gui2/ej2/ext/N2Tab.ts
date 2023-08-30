@@ -52,8 +52,13 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends N2EjBasic<STAT
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Tab.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Tab.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
 
     onLogic(args: N2Evt_OnLogic) {

@@ -35,8 +35,13 @@ export class N2LinearGauge<STATE extends StateN2LinearGauge = StateN2LinearGauge
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2LinearGauge.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2LinearGauge.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new LinearGauge(this.state.ej);

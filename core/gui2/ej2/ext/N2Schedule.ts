@@ -53,8 +53,13 @@ export class N2Schedule<STATE extends StateN2Schedule = StateN2Schedule> extends
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Schedule.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Schedule.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Schedule(this.state.ej);

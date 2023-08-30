@@ -48,10 +48,10 @@ export class N2RichTextEditor<STATE extends StateN2RichTextEditor = StateN2RichT
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2RichTextEditor.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2RichTextEditor.CLASS_IDENTIFIER);
         if (state.name)
             state.deco.otherAttr['name'] = state.name; // if there's a name defined, use it for any parent form
         super.onStateInitialized(state);

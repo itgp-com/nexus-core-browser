@@ -19,10 +19,10 @@ export class N2AutoComplete<STATE extends StateN2AutoComplete = StateN2AutoCompl
     static readonly CLASS_IDENTIFIER:string = 'N2AutoComplete'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2AutoComplete.CLASS_IDENTIFIER);
     }
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2AutoComplete.CLASS_IDENTIFIER);
         state.deco.tag = 'input'; // AutoComplete requires a header tag
         super.onStateInitialized(state);
     }

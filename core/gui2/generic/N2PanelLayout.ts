@@ -97,7 +97,6 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2PanelLayout.CLASS_IDENTIFIER);
     }
 
 
@@ -111,6 +110,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         return N2PanelLayout.CLASS_IDENTIFIER;
     }
     protected onStateInitialized(state: STATE): void {
+        addN2Class(state.deco, N2PanelLayout.CLASS_IDENTIFIER);
 
         if (state.center_overflow_auto == null) {
             state.center_overflow_auto = true;

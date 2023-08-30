@@ -20,7 +20,6 @@ export class N2DashboardLayout<STATE extends StateN2DashboardLayout = StateN2Das
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2DashboardLayout.CLASS_IDENTIFIER);
     }
 
 
@@ -30,9 +29,7 @@ export class N2DashboardLayout<STATE extends StateN2DashboardLayout = StateN2Das
      * @protected
      */
     protected onStateInitialized(state: STATE) {
-        // if ( state.wrapper == null ) {
-        //     state.wrapper = {}; // must have a wrapper or else EJ2 will not work
-        // }
+        addN2Class(state.deco, N2DashboardLayout.CLASS_IDENTIFIER);
         super.onStateInitialized(state);
     }
 

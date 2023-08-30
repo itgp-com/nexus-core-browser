@@ -20,10 +20,10 @@ export class N2ColorPicker<STATE extends StateN2ColorPicker = StateN2ColorPicker
     static readonly CLASS_IDENTIFIER: string = 'N2ColorPicker'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2ColorPicker.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2ColorPicker.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         state.deco.otherAttr['type'] = 'color';
         super.onStateInitialized(state);

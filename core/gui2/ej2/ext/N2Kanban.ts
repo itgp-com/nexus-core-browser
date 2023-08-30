@@ -19,8 +19,13 @@ export class N2Kanban<STATE extends StateN2Kanban = StateN2Kanban> extends N2EjB
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Kanban.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Kanban.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Kanban(this.state.ej);

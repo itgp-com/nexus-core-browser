@@ -20,8 +20,13 @@ export class N2QRCode<STATE extends StateN2QRCode = StateN2QRCode> extends N2EjB
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2QRCode.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2QRCode.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new QRCodeGenerator(this.state.ej);

@@ -33,11 +33,11 @@ export class N2ProgressButton<STATE extends StateN2ProgressButton = StateN2Progr
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2ProgressButton.CLASS_IDENTIFIER);
     }
 
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2ProgressButton.CLASS_IDENTIFIER);
         state.deco.tag = 'button';
         super.onStateInitialized(state);
     }

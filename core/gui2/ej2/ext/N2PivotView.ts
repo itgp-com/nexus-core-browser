@@ -53,8 +53,13 @@ export class N2PivotView<STATE extends StateN2PivotView = StateN2PivotView> exte
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2PivotView.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2PivotView.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new PivotView(this.state.ej);

@@ -22,8 +22,13 @@ export class N2StockChart<STATE extends StateN2StockChart = StateN2StockChart> e
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2StockChart.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2StockChart.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new StockChart(this.state.ej);

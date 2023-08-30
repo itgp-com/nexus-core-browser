@@ -38,10 +38,10 @@ export class N2PanelGridFlex<GRID_TYPE extends N2Grid = N2Grid, STATE extends St
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, CSS_FLEX_MAX_XY, N2PanelGridFlex.CLASS_IDENTIFIER);
     }
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, CSS_FLEX_MAX_XY, N2PanelGridFlex.CLASS_IDENTIFIER);
 
         if (state.resizeTracked == null)
             state.resizeTracked = true; // enable resize tracking by default

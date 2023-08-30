@@ -28,11 +28,11 @@ export class N2DropDownButton<STATE extends StateN2DropDownButton = StateN2DropD
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2DropDownButton.CLASS_IDENTIFIER);
     }
 
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2DropDownButton.CLASS_IDENTIFIER);
         state.deco.tag = 'button';
         super.onStateInitialized(state);
     }

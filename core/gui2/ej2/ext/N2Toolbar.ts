@@ -20,8 +20,13 @@ export class N2Toolbar<STATE extends StateN2Toolbar = StateN2Toolbar> extends N2
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Toolbar.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Toolbar.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Toolbar(this.state.ej);

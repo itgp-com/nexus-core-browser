@@ -34,7 +34,11 @@ export class N2DocumentEditor<STATE extends StateN2DocumentEditor = StateN2Docum
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2DocumentEditor.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2DocumentEditor.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

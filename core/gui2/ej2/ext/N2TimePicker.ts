@@ -21,10 +21,10 @@ export class N2TimePicker<STATE extends StateN2TimePicker = StateN2TimePicker> e
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2TimePicker.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2TimePicker.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         super.onStateInitialized(state);
     }

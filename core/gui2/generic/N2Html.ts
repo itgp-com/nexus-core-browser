@@ -18,11 +18,16 @@ export interface StateN2Html extends StateN2Basic {
 } // state
 
 export class N2Html<STATE extends StateN2Html = StateN2Html> extends N2Basic<STATE> {
-
+static readonly CLASS_IDENTIFIER: string = 'N2Html'
    constructor(state:STATE) {
       super(state);
-      addN2Class(this.state.deco, 'N2Html');
    }
+
+   protected onStateInitialized(state: STATE) {
+      addN2Class(state.deco, N2Html.CLASS_IDENTIFIER);
+      super.onStateInitialized(state)
+   }
+
 
    onHtml(args:N2Evt_OnHtml): HTMLElement {
       if ( this.state.value == null )

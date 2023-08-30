@@ -38,8 +38,13 @@ export class N2TreeMap<STATE extends StateN2TreeMap = StateN2TreeMap> extends N2
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2TreeMap.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2TreeMap.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new TreeMap(this.state.ej);

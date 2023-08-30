@@ -28,7 +28,11 @@ export class N2CircularGauge<STATE extends StateN2CircularGauge = StateN2Circula
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2CircularGauge.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2CircularGauge.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

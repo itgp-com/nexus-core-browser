@@ -21,10 +21,10 @@ export class N2Menu<STATE extends StateN2Menu = StateN2Menu> extends N2EjBasic<S
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Menu.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Menu.CLASS_IDENTIFIER);
         state.deco.tag = 'ul'; // <ul id='contextmenu'></ul> and references different div for 'target'
         super.onStateInitialized(state);
     }

@@ -20,8 +20,13 @@ export class N2Slider<STATE extends StateN2Slider = StateN2Slider> extends N2EjB
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Slider.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Slider.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Slider(this.state.ej);

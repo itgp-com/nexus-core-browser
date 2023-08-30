@@ -32,11 +32,11 @@ export class N2Button<STATE extends StateN2Button = StateN2Button> extends N2EjB
     static readonly CLASS_IDENTIFIER:string = 'N2Button'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Button.CLASS_IDENTIFIER);
     }
 
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Button.CLASS_IDENTIFIER);
         state.deco.tag = 'button';
         state.deco.otherAttr['type'] = 'button';
         super.onStateInitialized(state);

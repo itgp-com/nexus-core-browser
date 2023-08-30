@@ -23,8 +23,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
 
         protected constructor(state ?: STATE) {
         this._constructor(state);
-        addN2Class(this.state.deco, N2.CLASS_IDENTIFIER); // this might not be the same as the actual _n2_ HTMLElement
-    } //  constructor
+   } //  constructor
 
     /**
      * The constructor calls this method as soon as the class is created.
@@ -57,6 +56,8 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
      * @protected
      */
     protected onStateInitialized(state: STATE) {
+
+        addN2Class(state.deco, N2.CLASS_IDENTIFIER); // this might not be the same as the actual _n2_ HTMLElement
 
         if (!this.__onStateInitializedInProgress && state.onStateInitialized) {
             // if state contains the method, that overrides this one

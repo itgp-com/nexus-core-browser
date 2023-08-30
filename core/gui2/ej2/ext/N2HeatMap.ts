@@ -21,7 +21,11 @@ export class N2HeatMap<STATE extends StateN2HeatMap = StateN2HeatMap> extends N2
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2HeatMap.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2HeatMap.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

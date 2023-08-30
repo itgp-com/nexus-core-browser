@@ -20,11 +20,11 @@ export class N2DropDownList<STATE extends StateN2DropDownList = StateN2DropDownL
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2DropDownList.CLASS_IDENTIFIER);
     }
 
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2DropDownList.CLASS_IDENTIFIER);
         if (state.deco.tag == null)
             state.deco.tag = 'input';
         if (state.deco.otherAttr.type == null)

@@ -21,10 +21,10 @@ export class N2Tooltip<STATE extends StateN2Tooltip = StateN2Tooltip> extends N2
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Tooltip.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Tooltip.CLASS_IDENTIFIER);
         state.deco.tag = 'span';
         super.onStateInitialized(state);
     }

@@ -72,8 +72,84 @@ export class N2PanelLayoutFlex<STATE extends StateN2PanelLayoutFlex = StateN2Pan
 
     constructor(state: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2PanelLayoutFlex.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+
+        addN2Class(state.deco,  N2PanelLayoutFlex.CLASS_IDENTIFIER);
+
+        let innerColumn = this.innerColumn;
+        let innerColumnElem: HTMLElement = innerColumn.htmlElement;
+
+
+        if (!state.top)
+            state.top = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.top));
+        innerColumnElem.appendChild(this.createElement(state.top, EnumPanelLayout.top));
+
+
+        if (!state.center)
+            state.center = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.center));
+        innerColumnElem.appendChild(this.createElement(state.center, EnumPanelLayout.center))
+
+
+        if (!state.bottom)
+            state.bottom = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.bottom));
+        innerColumnElem.appendChild(this.createElement(state.bottom, EnumPanelLayout.bottom));
+
+
+        let outerCenterRow = this.outerCenter;
+        let outerCenterRowElem: HTMLElement = outerCenterRow.htmlElement;
+
+        if (!state.left)
+            state.left = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.left));
+        outerCenterRowElem.appendChild(this.createElement(state.left, EnumPanelLayout.left))
+
+        outerCenterRowElem.appendChild(innerColumnElem);
+
+        if (!state.right)
+            state.right = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.right));
+        outerCenterRowElem.appendChild(this.createElement(state.right, EnumPanelLayout.right))
+
+
+        let outerColumn = this.outerColumn;
+        let outerColumnElem: HTMLElement = outerColumn.htmlElement;
+
+        if (!state.outerTop)
+            state.outerTop = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.outerTop));
+        outerColumnElem.appendChild(this.createElement(state.outerTop, EnumPanelLayout.outerTop));
+
+        outerColumnElem.appendChild(outerCenterRowElem);
+
+        if (!state.outerBottom)
+            state.outerBottom = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.outerBottom));
+        outerColumnElem.appendChild(this.createElement(state.outerBottom, EnumPanelLayout.outerBottom));
+
+
+        if (isDev()) {
+            if (state.children) {
+
+                console.error('N2PanelLayoutFlex state.children has been set, but will be overwritten. Value to be overwritten is: ', state.children);
+
+                setTimeout(() => {
+                        DialogUtility.alert({
+                            title: 'N2PanelLayoutFlex state children set and overwritten',
+                            content: '<p>State.children has been set but will be overwritten!!!<p>See console for details.<p>',
+                            width: 'min(80%, 500px)',
+                            height: 'min(80%, 300px)',
+                            isModal: true,
+                        });
+                    },
+                    500);
+
+            } // if state.children
+        } // if isDev()
+
+        state.children = [outerColumn];
+
+        super.onStateInitialized(state);
+
+    } // onStateInitialized
+
     get classIdentifier() {
         return N2PanelLayoutFlex.CLASS_IDENTIFIER;
     }
@@ -264,80 +340,7 @@ export class N2PanelLayoutFlex<STATE extends StateN2PanelLayoutFlex = StateN2Pan
         return n2; // all good, return the same instance
     } // _checkCreateMissingN2
 
-    protected onStateInitialized(state: STATE) {
 
-
-        let innerColumn = this.innerColumn;
-        let innerColumnElem: HTMLElement = innerColumn.htmlElement;
-
-
-        if (!state.top)
-            state.top = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.top));
-        innerColumnElem.appendChild(this.createElement(state.top, EnumPanelLayout.top));
-
-
-        if (!state.center)
-            state.center = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.center));
-        innerColumnElem.appendChild(this.createElement(state.center, EnumPanelLayout.center))
-
-
-        if (!state.bottom)
-            state.bottom = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.bottom));
-        innerColumnElem.appendChild(this.createElement(state.bottom, EnumPanelLayout.bottom));
-
-
-        let outerCenterRow = this.outerCenter;
-        let outerCenterRowElem: HTMLElement = outerCenterRow.htmlElement;
-
-        if (!state.left)
-            state.left = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.left));
-        outerCenterRowElem.appendChild(this.createElement(state.left, EnumPanelLayout.left))
-
-        outerCenterRowElem.appendChild(innerColumnElem);
-
-        if (!state.right)
-            state.right = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.right));
-        outerCenterRowElem.appendChild(this.createElement(state.right, EnumPanelLayout.right))
-
-
-        let outerColumn = this.outerColumn;
-        let outerColumnElem: HTMLElement = outerColumn.htmlElement;
-
-        if (!state.outerTop)
-            state.outerTop = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.outerTop));
-        outerColumnElem.appendChild(this.createElement(state.outerTop, EnumPanelLayout.outerTop));
-
-        outerColumnElem.appendChild(outerCenterRowElem);
-
-        if (!state.outerBottom)
-            state.outerBottom = this._checkCreateMissingN2(this.createPlaceholderPanel(EnumPanelLayout.outerBottom));
-        outerColumnElem.appendChild(this.createElement(state.outerBottom, EnumPanelLayout.outerBottom));
-
-
-        if (isDev()) {
-            if (state.children) {
-
-                console.error('N2PanelLayoutFlex state.children has been set, but will be overwritten. Value to be overwritten is: ', state.children);
-
-                setTimeout(() => {
-                        DialogUtility.alert({
-                            title: 'N2PanelLayoutFlex state children set and overwritten',
-                            content: '<p>State.children has been set but will be overwritten!!!<p>See console for details.<p>',
-                            width: 'min(80%, 500px)',
-                            height: 'min(80%, 300px)',
-                            isModal: true,
-                        });
-                    },
-                    500);
-
-            } // if state.children
-        } // if isDev()
-
-        state.children = [outerColumn];
-
-        super.onStateInitialized(state);
-
-    }
 
     /**
      * Override this to create a different N2 for a missing position

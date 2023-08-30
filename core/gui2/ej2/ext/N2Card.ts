@@ -25,12 +25,13 @@ export class N2Card<STATE extends StateN2Card = StateN2Card> extends N2Basic<STA
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Card.CLASS_IDENTIFIER, 'e-card');
     }
 
 
 
     onStateInitialized(state: STATE) {
+
+        addN2Class(state.deco, N2Card.CLASS_IDENTIFIER, 'e-card');
 
         state.header_deco = state.header_deco || {};
         state.header_caption_deco = state.header_caption_deco || {};

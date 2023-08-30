@@ -28,11 +28,11 @@ export class N2SplitButton<STATE extends StateN2SplitButton = StateN2SplitButton
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2SplitButton.CLASS_IDENTIFIER);
     }
 
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2SplitButton.CLASS_IDENTIFIER);
         state.deco.tag = 'button';
         super.onStateInitialized(state);
     }

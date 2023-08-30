@@ -24,8 +24,14 @@ export class N2FileManager<STATE extends StateN2FileManager = StateN2FileManager
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2FileManager.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2FileManager.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
+
 
     createEjObj(): void {
         this.obj = new FileManager(this.state.ej);

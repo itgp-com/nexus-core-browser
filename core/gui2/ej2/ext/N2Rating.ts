@@ -20,10 +20,10 @@ export class N2Rating<STATE extends StateN2Rating = StateN2Rating> extends N2EjB
     static readonly CLASS_IDENTIFIER: string = 'N2Rating';
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Rating.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Rating.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         super.onStateInitialized(state);
     }

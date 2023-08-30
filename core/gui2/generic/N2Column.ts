@@ -19,8 +19,14 @@ export class N2Column<STATE extends StateN2Column = any> extends N2Basic<STATE> 
 
     constructor(state: STATE) {
         super(state);
-        addN2Class(this.state.deco, CSS_FLEX_COL_DIRECTION, N2Column.CLASS_IDENTIFIER);
+
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, CSS_FLEX_COL_DIRECTION, N2Column.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     get classIdentifier(): string { return N2Column.CLASS_IDENTIFIER; }
 

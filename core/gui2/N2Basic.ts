@@ -20,8 +20,13 @@ export class N2Basic<STATE extends StateN2Basic = StateN2Basic> extends N2<STATE
 
     protected constructor(state?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Basic.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Basic.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     onHtml(args: N2Evt_OnHtml): HTMLElement {
         return createN2HtmlBasic<StateN2Basic>(this.state);

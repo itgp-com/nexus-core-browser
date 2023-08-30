@@ -20,11 +20,11 @@ export class N2ComboBox<STATE extends StateN2ComboBox = StateN2ComboBox> extends
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2ComboBox.CLASS_IDENTIFIER);
     }
 
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2ComboBox.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         state.deco.otherAttr.type = 'text';
         super.onStateInitialized(state);

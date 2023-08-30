@@ -19,7 +19,11 @@ export class N2Barcode<STATE extends StateN2Barcode = StateN2Barcode> extends N2
     static readonly CLASS_IDENTIFIER:string = 'N2Barcode'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Barcode.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Barcode.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

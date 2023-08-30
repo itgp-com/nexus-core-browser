@@ -20,10 +20,10 @@ export class N2Sidebar<STATE extends StateN2Sidebar = StateN2Sidebar> extends N2
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Sidebar.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Sidebar.CLASS_IDENTIFIER);
         state.deco.tag = 'aside';
         super.onStateInitialized(state);
     }

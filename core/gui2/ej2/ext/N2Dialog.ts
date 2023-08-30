@@ -67,11 +67,11 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Dialog.CLASS_IDENTIFIER);
     }
 
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Dialog.CLASS_IDENTIFIER);
         state.ej = state.ej || {};
 
         //if not set to anything, default to true

@@ -19,10 +19,10 @@ export class N2AppBar<STATE extends StateN2AppBar = StateN2AppBar> extends N2EjB
     static readonly CLASS_IDENTIFIER:string = 'N2AppBar'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2AppBar.CLASS_IDENTIFIER);
     }
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2AppBar.CLASS_IDENTIFIER);
         state.deco.tag = 'header'; // AppBar requires a header tag
         super.onStateInitialized(state);
     }

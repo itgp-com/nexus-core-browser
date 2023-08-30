@@ -33,11 +33,11 @@ export class N2Fab<STATE extends StateN2Fab = StateN2Fab> extends N2EjBasic<STAT
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Fab.CLASS_IDENTIFIER);
     }
 
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Fab.CLASS_IDENTIFIER);
         state.deco.tag = 'button';
         super.onStateInitialized(state);
     }

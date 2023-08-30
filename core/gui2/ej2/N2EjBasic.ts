@@ -32,8 +32,13 @@ export abstract class N2EjBasic<STATE extends StateN2EjBasic = StateN2EjBasic, E
 
     protected constructor(state?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2EjBasic.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2EjBasic.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
 
     onHtml(args: N2Evt_OnHtml): HTMLElement {

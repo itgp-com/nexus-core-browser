@@ -28,7 +28,11 @@ export class N2Splitter<STATE extends StateN2Splitter = StateN2Splitter> extends
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Splitter.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Splitter.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
 

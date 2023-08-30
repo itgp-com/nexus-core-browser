@@ -28,8 +28,13 @@ export class N2Pager<STATE extends StateN2Pager = StateN2Pager> extends N2EjBasi
     static readonly CLASS_IDENTIFIER: string = 'N2Pager';
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Pager.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Pager.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Pager(this.state.ej);

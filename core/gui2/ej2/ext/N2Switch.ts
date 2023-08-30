@@ -21,10 +21,10 @@ export class N2Switch<STATE extends StateN2Switch = StateN2Switch> extends N2EjB
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Switch.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Switch.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         state.deco.otherAttr['type'] = 'checkbox';
         if (!state.wrapper) {

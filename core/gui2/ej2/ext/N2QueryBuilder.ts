@@ -19,8 +19,13 @@ export class N2QueryBuilder<STATE extends StateN2QueryBuilder = StateN2QueryBuil
     static readonly CLASS_IDENTIFIER: string = 'N2QueryBuilder';
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2QueryBuilder.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2QueryBuilder.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new QueryBuilder(this.state.ej);

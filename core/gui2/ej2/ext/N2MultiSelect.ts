@@ -20,11 +20,11 @@ export class N2MultiSelect<STATE extends StateN2MultiSelect = StateN2MultiSelect
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2MultiSelect.CLASS_IDENTIFIER);
     }
 
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2MultiSelect.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         state.deco.otherAttr.type = 'text';
         super.onStateInitialized(state);

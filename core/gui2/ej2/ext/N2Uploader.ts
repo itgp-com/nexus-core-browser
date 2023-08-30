@@ -20,11 +20,11 @@ export class N2Uploader<STATE extends StateN2Uploader = StateN2Uploader> extends
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Uploader.CLASS_IDENTIFIER);
     }
 
 
     protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Uploader.CLASS_IDENTIFIER);
         // Tag looks like this: <input type='file' id='xyz_123' />
         state.deco.tag = 'input';
         state.deco.otherAttr.type = 'file';

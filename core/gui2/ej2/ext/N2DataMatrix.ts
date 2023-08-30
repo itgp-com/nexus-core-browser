@@ -20,7 +20,11 @@ export class N2DataMatrix<STATE extends StateN2DataMatrix = StateN2DataMatrix> e
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2DataMatrix.CLASS_IDENTIFIER);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2DataMatrix.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
     }
 
     createEjObj(): void {

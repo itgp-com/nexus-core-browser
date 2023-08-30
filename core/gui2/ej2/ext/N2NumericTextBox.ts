@@ -46,22 +46,16 @@ export class N2NumericTextBox extends N2EjBasic<StateN2NumericTextBox, NumericTe
 
     constructor(state ?: StateN2NumericTextBox) {
         super(state);
-        addN2Class(this.state.deco, N2NumericTextBox.CLASS_IDENTIFIER);
-    }
-
-    protected _constructor(state ?: StateN2NumericTextBox) {
-        super._constructor(state);
     }
 
     protected onStateInitialized(state: StateN2NumericTextBox) {
+        addN2Class(state.deco, N2NumericTextBox.CLASS_IDENTIFIER);
         this.labelTagId = `label_${this.state.tagId}`;
         if (!state.wrapper) {
             state.wrapper = {};
 
         }
-
         IHtmlUtils.initForN2(state);
-
         super.onStateInitialized(state);
     }
 

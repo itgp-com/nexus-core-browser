@@ -22,9 +22,12 @@ export class N2BulletChart<STATE extends StateN2BulletChart = StateN2BulletChart
     static readonly CLASS_IDENTIFIER:string = 'N2BulletChart'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2BulletChart.CLASS_IDENTIFIER);
     }
 
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2BulletChart.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
 
     createEjObj(): void {
         this.obj = new BulletChart(this.state.ej);

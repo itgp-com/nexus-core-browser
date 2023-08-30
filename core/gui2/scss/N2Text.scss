@@ -1,0 +1,58 @@
+
+
+//----------------- N2 TextBox + Grid ---------------
+.N2 .e-input-group input.e-input,
+.N2 .e-input-group.e-control-wrapper input.e-input,
+.N2 .e-input-group textarea.e-input,
+.N2 .e-input-group.e-control-wrapper textarea.e-input,
+.e-input-group.N2 input.e-input,
+.e-input-group.e-control-wrapper.N2 input.e-input,
+.e-input-group.N2 textarea.e-input,
+.e-input-group.e-control-wrapper.N2 textarea.e-input {
+  font-family: $app_font_family !important;
+}
+
+/* For input elements */
+.N2 input.e-input,
+.N2 .e-input-group input.e-input,
+.N2 .e-input-group.e-control-wrapper input.e-input,
+input.e-input.N2,
+.e-input-group.N2 input.e-input,
+.e-input-group.e-control-wrapper.N2 input.e-input,
+
+  /* For textarea elements */
+.N2 textarea.e-input,
+.N2 .e-input-group textarea.e-input,
+.N2 .e-input-group.e-control-wrapper textarea.e-input,
+textarea.e-input.N2,
+.e-input-group.N2 textarea.e-input,
+.e-input-group.e-control-wrapper.N2 textarea.e-input {
+  padding-bottom: 1px;
+}
+
+/* float label inside the input element */
+.N2 .e-float-input:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top),
+.e-float-input.N2:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top) {
+  color: $app-label-color-coolgray !important;
+}
+
+/* change the border color while focus the input element */
+.N2 .e-float-input:not(.e-input-group) .e-float-line::before,
+.N2 .e-float-input:not(.e-input-group) .e-float-line::after,
+.e-float-input.N2:not(.e-input-group) .e-float-line::before,
+.e-float-input.N2:not(.e-input-group) .e-float-line::after {
+  background: $app-label-color-coolgray !important;
+}
+
+/* float label color on top of the input element while focus the input */
+.N2 .e-float-input:not(.e-error) input:focus ~ label.e-float-text,
+.e-float-input.N2:not(.e-error) input:focus ~ label.e-float-text {
+  color: $app-label-color-coolgray !important;
+  font-size: 14px !important;
+}
+
+/* float label color on top of the input element */
+.N2 .e-float-input:not(.e-error) input:valid ~ label.e-float-text,
+.e-float-input.N2:not(.e-error) input:valid ~ label.e-float-text {
+  color: $app-label-color-coolgray;
+}

@@ -22,8 +22,13 @@ export class N2ProgressBar<STATE extends StateN2ProgressBar = StateN2ProgressBar
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2ProgressBar.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2ProgressBar.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
 
     createEjObj(): void {

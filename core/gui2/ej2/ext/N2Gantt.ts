@@ -82,8 +82,13 @@ export class N2Gantt<STATE extends StateN2Gantt = StateN2Gantt> extends N2EjBasi
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2Gantt.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Gantt.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new Gantt(this.state.ej);

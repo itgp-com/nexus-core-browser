@@ -38,8 +38,13 @@ export class N2RangeNavigator<STATE extends StateN2RangeNavigator = StateN2Range
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2RangeNavigator.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2RangeNavigator.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new RangeNavigator(this.state.ej);

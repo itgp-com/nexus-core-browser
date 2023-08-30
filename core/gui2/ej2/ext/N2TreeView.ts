@@ -20,8 +20,13 @@ export class N2TreeView<STATE extends StateN2TreeView = StateN2TreeView> extends
 
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2TreeView.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2TreeView.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new TreeView(this.state.ej);

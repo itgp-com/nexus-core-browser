@@ -22,8 +22,13 @@ export class N2ListView<STATE extends StateN2ListView = StateN2ListView> extends
 
     constructor(state: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2ListView.CLASS_IDENTIFIER);
     }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2ListView.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 
     createEjObj(): void {
         this.obj = new ListView(this.state.ej);

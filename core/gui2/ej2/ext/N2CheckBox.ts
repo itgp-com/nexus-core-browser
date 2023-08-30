@@ -20,10 +20,10 @@ export class N2CheckBox<STATE extends StateN2CheckBox = StateN2CheckBox> extends
     static readonly CLASS_IDENTIFIER: string = 'N2CheckBox'
     constructor(state ?: STATE) {
         super(state);
-        addN2Class(this.state.deco, N2CheckBox.CLASS_IDENTIFIER);
     }
 
     onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2CheckBox.CLASS_IDENTIFIER);
         state.deco.tag = 'input';
         state.deco.otherAttr['type'] = 'checkbox';
         if (!state.wrapper) {
