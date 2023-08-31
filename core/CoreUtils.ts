@@ -575,7 +575,7 @@ export function cssAddSelector(cssSelectorName: string, rules: string | CssLikeO
         return;
     }
 
-    let classArray: cssRule[];
+    let classArray: CssRule[];
     let t = typeof rules;
     if ((t === 'string')) {
         classArray = [{className: cssSelectorName, body: rules as string}];
@@ -610,7 +610,7 @@ export function cssAddSelector(cssSelectorName: string, rules: string | CssLikeO
             cachedStyle.sheet.insertRule(`${cssRule.className}{${cssRule.body}}`, n); // insert at the end
             ruleMap.set(cssRule.className, 1); // keep track of the fact that it's already been added
         }
-    } // for cssRule
+    } // for CssRule
 
 } // cssAddSelector
 
@@ -654,14 +654,14 @@ function joinSelectors(parentSelector: string, nestedSelector: string) {
     }
 }
 
-export class cssRule {
+export class CssRule {
     className: string;
     body: string;
 }
 
 // https://yyjhao.com/posts/roll-your-own-css-in-js/
-export function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: CssLikeObject): cssRule[] {
-    const result: cssRule[] = [];
+export function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: CssLikeObject): CssRule[] {
+    const result: CssRule[] = [];
 
     // We use a helper here to walk through the tree recursively
     function _helper(selector: string, declaration: CssLikeObject) {
