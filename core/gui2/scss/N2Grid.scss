@@ -5,7 +5,7 @@
 // $app-row-disabled-background-color-lightgray
 // $app_color_panel_background
 
-$N2Grid = 'N2Grid';
+$N2Grid : 'N2Grid';
 // Removes blue background from grid editable checkbox and restores border and font color
 .#{$N2Grid} .e-checkbox-wrapper .e-frame.e-check, .#{$N2Grid} .e-css.e-checkbox-wrapper .e-frame.e-check {
     background-color: transparent;
