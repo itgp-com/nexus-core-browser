@@ -1,148 +1,158 @@
-import {ExceptionEvent}      from "./ExceptionEvent";
-import {BaseListener}        from "./BaseListener";
+import { ExceptionEvent } from "./ExceptionEvent";
+import { BaseListener } from "./BaseListener";
 
+/**
+ * Class to stop the listener chain.
+ */
 export class StopListenerChain {
-   stopEventProcessing ?: boolean;
+   /** If true, stops the event processing. */
+   stopEventProcessing?: boolean;
 }
 
+/**
+ * Type guard for StopListenerChain.
+ * @param arg - The object to check.
+ * @returns True if the object is a StopListenerChain.
+ */
 export function isStopListenerChain(arg: any): arg is StopListenerChain {
-   if (!arg)
-      return false;
-   let maybe = (arg as StopListenerChain);
-   return (maybe.stopEventProcessing != undefined);
+   if (!arg) return false;
+   let maybe = arg as StopListenerChain;
+   return maybe.stopEventProcessing !== undefined;
 }
 
+/**
+ * Arguments for firing a listener.
+ */
 export class Args_FireListener<E, Listener extends BaseListener<E>> {
+   /** The event object. */
    event: E;
-   /**
-    * If this listener extends {@link StopListenerChain} and turns the {@link StopListenerChain.stopEventProcessing} value to true
-    * then the listener event calling is stopped immediately.
-    */
-   exceptionHandler?: { (event: ExceptionEvent): void }
+   /** Optional exception handler. */
+   exceptionHandler?: { (event: ExceptionEvent): void };
 }
 
-
+/**
+ * Handler for managing listeners.
+ */
 export class ListenerHandler<E, Listener extends BaseListener<E>> {
-   private listeners: Listener[] = [];
-   private xref:[BaseListener<E>,(ev:E)=>void] [] = [];
+   /** Array of listeners with their priorities. */
+   private listeners: { listener: Listener; priority: number }[] = [];
+   /** Cross-reference array for function-based listeners. */
+   private xref: [BaseListener<E>, (ev: E) => void][] = [];
 
-   add(f:(ev:E)=>void ){
+   /**
+    * Add a function-based listener.
+    * @param f - The listener function.
+    * @param priority - The priority of the listener. Default is 100.
+    */
+   add(f: (ev: E) => void, priority: number = 100) {
       let baseListener: BaseListener<E> = new class BaseListener {
          eventFired(ev: E): void {
-               f(ev);
+            f(ev);
          }
       };
       this.xref.push([baseListener, f]);
-      this.addListener(baseListener as Listener);
+      this.addListener(baseListener as Listener, priority);
    }
 
-   addListener(listener: Listener): void {
+   /**
+    * Add a listener object.
+    * @param listener - The listener object.
+    * @param priority - The priority of the listener. Default is 100.
+    */
+   addListener(listener: Listener, priority: number = 100): void {
       if (listener) {
-         let n: number = this.listeners.length;
-         for (let i = 0; i < n; i++) {
-            let l = this.listeners[i];
-            if (l === listener)
-               return; // this listener already exists
-         } // for
-         this.listeners.push(listener);
-      } // if listener
-   } // addListener
-
-   remove(f:(ev:E)=>void){
-      let n = this.xref.length
-      for (let i = 0; i < n; i++) {
-         let tuple = this.xref[i];
-         if ( tuple[1] === f){
-            this.xref = this.xref.splice(i);
-            this.removeListener(tuple[0] as Listener);
+         if (!this.listeners.some(item => item.listener === listener)) {
+            this.listeners.push({ listener, priority });
+            this.listeners.sort((a, b) => a.priority - b.priority);
          }
-      } // for i1
-   } // remove
-
-   removeListener(listener: Listener): void {
-      if (listener) {
-
-         let n: number = this.listeners.length;
-         for (let i = 0; i < n; i++) {
-            let l = this.listeners[i];
-            if (l === listener) {
-               this.listeners = this.listeners.splice(i);
-
-
-               let n1 = this.xref.length
-               for (let i1 = 0; i1 < n1; i1++) {
-                  let tuple = this.xref[i1];
-                  if ( tuple[0] === listener){
-                     this.xref = this.xref.splice(i1);
-                  }
-               } // for i1
-
-               return; // done, since a listener is in there only once
-            }
-         } // for
-      } // if listener
-   } // remove
+      }
+   }
 
    /**
-    * Remove all the listeners
+    * Remove a function-based listener.
+    * @param f - The listener function to remove.
     */
-   clear(): void{
+   remove(f: (ev: E) => void) {
+      this.xref = this.xref.filter(([baseListener, func]) => {
+         if (func === f) {
+            this.removeListener(baseListener as Listener);
+            return false;
+         }
+         return true;
+      });
+   }
+
+   /**
+    * Remove a listener object.
+    * @param listener - The listener object to remove.
+    */
+   removeListener(listener: Listener): void {
+      if (listener) {
+         this.listeners = this.listeners.filter(item => item.listener !== listener);
+         this.xref = this.xref.filter(([baseListener]) => baseListener !== listener);
+      }
+   }
+
+   /**
+    * Clear all listeners.
+    */
+   clear(): void {
       this.listeners.length = 0;
       this.xref.length = 0;
    }
 
    /**
-    * Returns a copy of the listener list. Modifying this list has no effect on the listeners in the handler.
-    * To add and remove listeners you have to use the add and remove methods of the handler instance.
+    * List all listeners.
+    * @returns An array of all listener objects.
     */
    listListeners() {
-      let newList: Listener[] = [...this.listeners];
-      return newList;
+      return this.listeners.map(item => item.listener);
    }
 
+   /**
+    * Count the number of listeners.
+    * @returns The number of listeners.
+    */
    countListeners(): number {
       return this.listeners.length;
    }
 
-   //fire(event:E, exceptionHandler?:{(event: ExceptionEvent): void} ) {
+   /**
+    * Fire an event to all listeners.
+    * @param args - The arguments for firing the event.
+    */
    fire(args: Args_FireListener<E, Listener>) {
-      let event                                               = args.event;
+      let event = args.event;
       let exceptionHandler: { (event: ExceptionEvent): void } = args.exceptionHandler;
 
       if (this.listeners) {
-         let n: number = this.listeners.length;
-         for (let i = 0; i < n; i++) {
-            let l = this.listeners[i];
-            if (l) {
+         for (const { listener } of this.listeners) {
+            if (listener) {
                try {
-                  l.eventFired(event);
+                  listener.eventFired(event);
 
                   if (isStopListenerChain(event)) {
-                     let stop: boolean = (<StopListenerChain>event).stopEventProcessing;
+                     let stop: boolean = event.stopEventProcessing;
                      if (stop) {
-                        break; // get out of for loop
+                        break;
                      }
                   }
-
                } catch (ex) {
                   if (exceptionHandler) {
                      let ev: ExceptionEvent = {
-                        event_id:                  'ListenerHandler_fire',
-                        originInstance:            this,
-                        exception:                 ex,
-                        parametersAtExceptionTime: [l, args],
-                        description:               "Exception occurred why calling ListenerHandler.fire with listener " + JSON.stringify(l) + " with arguments " + JSON.stringify(args),
-                     }; // ev
+                        event_id: 'ListenerHandler_fire',
+                        originInstance: this,
+                        exception: ex,
+                        parametersAtExceptionTime: [listener, args],
+                        description: "Exception occurred while calling ListenerHandler.fire with listener " + JSON.stringify(listener) + " with arguments " + JSON.stringify(args),
+                     };
                      exceptionHandler(ev);
                   } else {
-                     // silent, but at least show a trace that an exception occurred
                      console.log(ex);
-                  } // if (exceptionHandler)
-               } // catch
-
-            } // if l
+                  }
+               } // if (exceptionHandler)
+            } // if listener
          } // for
-      } // if this.listeners
-   } // fireEvent
-
-} // main class
+      } // if (this.listeners)
+   } // fire
+} // ListenerHandler

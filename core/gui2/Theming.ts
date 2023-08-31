@@ -65,43 +65,78 @@ export function themeChangeListeners(): ListenerHandler<ThemeChangeEvent, ThemeC
  * switchTheme('app-theme', 'light');
  */
 export function switchTheme(newThemeState: ThemeState) {
+    // Check if the new theme state is valid
     if (!newThemeState)
         return;
 
-    // Query all the elements with the specified class name
+    // Query all the elements with the specified class name to find the theme links
     const links = document.querySelectorAll(`.${newThemeState.style_class_name}`);
 
-    // Iterate through the elements and update the "href" attribute
-    links.forEach((link: HTMLLinkElement) => {
-        // Get the current href value
-        const currentHref = link.href;
+    // Convert the NodeList to an array for easier manipulation
+    const linksArray = Array.from(links);
 
-        // Find the last '/' character and extract the prefix before the '.css'
-        const prefix = currentHref.substring(0, currentHref.lastIndexOf('/') + 1);
-        const baseName = currentHref.substring(currentHref.lastIndexOf('/') + 1, currentHref.lastIndexOf('.'));
-        const newBaseName = baseName.replace(/-dark$/, ''); // Remove '-dark' suffix if present
+    // Create an array of promises to track the loading state of each link
+    const loadPromises = linksArray.map((link: HTMLLinkElement) => {
+        return new Promise<void>((resolve, reject) => {
+            // Clone the existing link element to ensure the load event fires
+            const clonedLink = link.cloneNode(false) as HTMLLinkElement;
 
-        // Construct the new href value based on the theme type
-        const newHref = newThemeState.theme_type === 'light' ? `${prefix}${newBaseName}.css` : `${prefix}${newBaseName}-dark.css`;
+            // Add a "load" event listener to the cloned link
+            clonedLink.addEventListener("load", function onLoad() {
+                // Remove the event listener to avoid multiple triggers
+                clonedLink.removeEventListener("load", onLoad);
+                resolve();
+            });
 
-        // Update the "href" attribute with the new value
-        link.href = newHref;
+            // Add an "error" event listener to the cloned link
+            clonedLink.addEventListener("error", function onError() {
+                // Remove the event listener to avoid multiple triggers
+                clonedLink.removeEventListener("error", onError);
+                reject(new Error("Failed to load CSS"));
+            });
+
+            // Extract the current href value
+            const currentHref = link.href;
+
+            // Extract the prefix and base name from the current href
+            const prefix = currentHref.substring(0, currentHref.lastIndexOf('/') + 1);
+            const baseName = currentHref.substring(currentHref.lastIndexOf('/') + 1, currentHref.lastIndexOf('.'));
+            const newBaseName = baseName.replace(/-dark$/, ''); // Remove '-dark' if present
+
+            // Construct the new href based on the theme type
+            const newHref = newThemeState.theme_type === 'light' ? `${prefix}${newBaseName}.css` : `${prefix}${newBaseName}-dark.css`;
+
+            // Update the href of the cloned link
+            clonedLink.href = newHref;
+
+            // Replace the original link with the cloned link
+            link.parentNode?.replaceChild(clonedLink, link);
+        });
     });
 
+    // Wait for all the promises to resolve
+    Promise.all(loadPromises).then(() => {
+        // console.log("All CSS files have been loaded!");
 
-    try {
-        let themeChangeEvent: ThemeChangeEvent = {
-            previousState: _currentThemeState,
-            newState: newThemeState
+        // Fire the theme change event
+        try {
+            let themeChangeEvent: ThemeChangeEvent = {
+                previousState: _currentThemeState,
+                newState: newThemeState
+            }
+
+            _themeChangeListeners.fire({
+                event: themeChangeEvent
+            });
+
+        } catch (e) {
+            console.error(e);
         }
 
-        _themeChangeListeners.fire({
-            event: themeChangeEvent
-        });
+    }).catch((error) => {
+        console.error("switchTheme function error: Failed to load some CSS files:", error);
+    });
 
-    } catch (e) {
-        console.error(e);
-    }
-
+    // Update the current theme state
     _currentThemeState = newThemeState;
 } // switchTheme
