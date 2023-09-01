@@ -638,7 +638,10 @@ export function cssRemoveSelector(cssSelectorName: string, global: boolean = fal
                 // Your custom error handler
                 getErrorHandler().displayExceptionToUser(ex);
             } // catch
-            if (removed) break;
+
+            // do not exit just in case the selector exists in multiple styleSheets
+            // if (removed) break;
+
         } // for
     } else { // if global
         let cachedSheet: CSSStyleSheet = cachedStyle.sheet;
