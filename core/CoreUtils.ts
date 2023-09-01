@@ -593,10 +593,7 @@ export function cssAddSelector(cssSelectorName: string, rules: string | CssLikeO
 
 
     if (ruleMap.get(cssSelectorName)) {
-        // First, remove the class if it already exists
-        let removed = cssRemoveClass(cssSelectorName);
-        if (removed)
-            ruleMap.delete(cssSelectorName);
+        let removed = cssRemoveSelector(cssSelectorName);
     }
 
 
@@ -618,26 +615,52 @@ export function cssAddSelector(cssSelectorName: string, rules: string | CssLikeO
  ------Exists in CORE----
  * @param cssSelectorName
  */
-export function cssRemoveSelector(cssSelectorName: string): boolean {
+export function cssRemoveSelector(cssSelectorName: string, global: boolean = false): boolean {
     let removed: boolean = false;
-    let cachedSheet: CSSStyleSheet = cachedStyle.sheet;
-    if (cachedSheet) {
+
+    if (global) {
+        // Loop through all stylesheets
+        for (let i = 0; i < document.styleSheets.length; i++) {
+            const styleSheet = document.styleSheets[i] as CSSStyleSheet;
+            try {
+                const rules = styleSheet.cssRules || styleSheet.rules;
+                for (let j = 0; j < rules.length; j++) {
+                    const rule = rules[j] as CSSStyleRule;
+                    if (rule.selectorText === cssSelectorName) {
+                        styleSheet.deleteRule(j);
+                        removed = true;
+                        break;
+                    }
+                } // for j
+            } catch (ex) {
+                console.error(ex);
+                // Your custom error handler
+                getErrorHandler().displayExceptionToUser(ex);
+            } // catch
+            if (removed) break;
+        } // for
+    } else { // if global
+        let cachedSheet: CSSStyleSheet = cachedStyle.sheet;
+        if (cachedSheet) {
 
 
-        for (let j = 0; j < cachedSheet.cssRules.length; j++) {
-            if ((cachedSheet.cssRules[j] as CSSStyleRule).selectorText == `${cssSelectorName}`) {
-                try {
-                    cachedSheet.deleteRule(j);
-                    removed = true;
-                    break;
-                } catch (ex) {
-                    console.error(ex);
-                    getErrorHandler().displayExceptionToUser(ex);
-                }
-            } // if
-        } //for
-    } // cssRemoveClass
+            for (let j = 0; j < cachedSheet.cssRules.length; j++) {
+                if ((cachedSheet.cssRules[j] as CSSStyleRule).selectorText == `${cssSelectorName}`) {
+                    try {
+                        cachedSheet.deleteRule(j);
+                        removed = true;
+                        break;
+                    } catch (ex) {
+                        console.error(ex);
+                        getErrorHandler().displayExceptionToUser(ex);
+                    }
+                } // if
+            } //for
+        } // cssRemoveClass
+    } // if global
 
+    if (removed)
+        ruleMap.delete(cssSelectorName);
     return removed;
 } // cssRemoveSelector
 
