@@ -629,7 +629,8 @@ export function cssRemoveSelector(cssSelectorName: string, global: boolean = fal
                     if (rule.selectorText === cssSelectorName) {
                         styleSheet.deleteRule(j);
                         removed = true;
-                        break;
+                        // do not exit just in case the selector exists in multiple styleSheets
+                        // break;
                     }
                 } // for j
             } catch (ex) {
