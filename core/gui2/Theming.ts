@@ -2,6 +2,7 @@
 import {ChartTheme} from '@syncfusion/ej2-charts/src/chart/utils/enum'
 import {BaseListener} from '../BaseListener';
 import {ListenerHandler} from '../ListenerHandler';
+import * as _ from 'lodash';
 
 export type {ChartTheme}; // make it available to other modules
 
@@ -68,6 +69,11 @@ export function switchTheme(newThemeState: ThemeState) {
     // Check if the new theme state is valid
     if (!newThemeState)
         return;
+    if ( _currentThemeState && _.isEqual(_currentThemeState, newThemeState))
+        return;
+
+
+
 
     // Query all the elements with the specified class name to find the theme links
     const links = document.querySelectorAll(`.${newThemeState.style_class_name}`);
