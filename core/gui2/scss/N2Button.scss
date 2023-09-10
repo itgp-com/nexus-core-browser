@@ -6,7 +6,9 @@
 
 
 $N2Button: 'N2Button';
-.#{$N2Button}.e-btn, .#{$N2Button}.e-css.e-btn {
+.#{$N2Button}.e-btn, .#{$N2Button}.e-css.e-btn,
+.N2DropDownButton.e-btn, .N2DropDownButton.e-css.e-btn
+{
   font-size: $app_font_size_regular;
   text-transform: unset !important;
 }
