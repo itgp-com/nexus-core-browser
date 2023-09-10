@@ -1,0 +1,15 @@
+//----------Define the custom material theme colors for this app ----------
+$primary: #37474f; /* rgba(55,71,79,1); */
+$primary-font: #fff;
+$accent: #16a2ff; // lighter #10669F;
+$accent-font: #fff;
+
+$font-size: 12px;
+$btn-font-size: $font-size;
+$drop-down-btn-font-size: $font-size;
+$drop-down-btn-icon-font-size: $font-size;
+
+//--------Overwrite syncfusion scss variables -----
+$panel-box-shadow: 0px 2px 5px 0px rgba($accent, 45%);
+
+@import 'vars-material-common.scss'; // variable :root definitions

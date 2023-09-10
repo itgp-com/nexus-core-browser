@@ -1,0 +1,120 @@
+// ---------------- application variables definitions ----------------
+
+$app_color_panel_background: #f5f5f5;
+
+$app_font_main: 'Roboto-Regular';
+$app_font_family: $app_font_main, sans-serif, !default;
+$font-family: $app_font_family !default;
+$app_font_size_base_number: $font-size !default;
+$app_font_size_regular: #{$app_font_size_base_number}px !default;
+$app_font_size_minus_1: #{$app_font_size_base_number - 1}px !default;
+$app_font_size_minus_2: #{$app_font_size_base_number - 2}px !default;
+$app_font_size_plus_1: #{$app_font_size_base_number + 1}px !default;
+$app_font_size_plus_2: #{$app_font_size_base_number + 2}px !default;
+$app_font_size_label: #{$app_font_size_base_number - $app_font_size_base_number  * 0.125 }px !default; // $app_font_size_base_number(1 - 0.125)
+$app_font_size_header: #{$app_font_size_base_number + $app_font_size_base_number * 0.125 }px !default; // $app_font_size_base_number(1 + 0.125)
+$app_font_size_section_title: #{$app_font_size_base_number+ $app_font_size_base_number * 0.1875 }px !default; // $app_font_size_base_number(1 + 0.1875)
+
+
+$app-dialog-header-font-color: white !default;
+$app-dialog-header-background-color: black !default;
+
+$app_color_green: #087b3e !default;
+$app_color_blue: $accent; // #2174af !default; // #0f5b91; // #1277BF;
+$app_color_link_blue: #1e90ff !default; // dodgerblue
+$app_color_cyan: #03E0DF !default;
+$appColorLightGray001: #E9E9E9 !default;
+
+$app_grid_line_color: #EDEDED; // white;    // was #CDCDCD or darkgray
+
+
+$app-gray-input-background: #F3F3F3 !default;
+
+$app-light-background: #a5d4f6 !default;
+$app-bright-red: #E1251B !default;
+
+$app-label-color-coolgray: #616161 !default; //#B1B1B1;
+$app_color_gray_text1: #a3a3a3;
+$app_color_gray_text2: #b3b3b3;
+$app_color_gray_text3: #c3c3c3;
+
+$app-header-text-color-dark-gray: #4D4D4D !default;
+$app_header_text_color_dark_green: #6C7E7F !default;
+$app-row-disabled-background-color-lightgray: #E6E6E6 !default;
+
+$app-filter-text-background-color: #F2F8FF !default; //lighten($app-light-background, 16%) !default;
+$app-dashboard-button-text-color: white !default;
+$app-dashboard-button-background-color: $app_color_blue !default; // #171d20; // was $primary-100;
+$app-widget_spacing: 10px !default;
+$app_nav_band_background: #2174af !default;
+$app-text-highlight-warn-background-color: lighten($app-bright-red, 10%) !default;
+$app-text-highlight-warn-text-color: white !default;
+
+$app_color_red_01: #E1251B !default;
+$app_color_red_02: #FDF4F4 !default; // very light red for backgrounds
+$app_color_yellow_01: #fefe4c !default;
+$app_color_yellow_02: #FFFFE0 !default; // very light yellow for backgrounds
+$app_color_yellow_03: #fcfcb3 !default; // light yellow for backgrounds
+$app_color_yellow_04: #ffd43b !default;
+$app_color_green_01: #087b3e !default;
+$app_color_green_02: #E9FEF3 !default; // very light green for backgrounds
+$app_color_green_03: #92D050 !default; // light green for backgrounds
+$app_color_blue_01: #2174af !default;
+
+
+:root {
+  --material-primary-color: #{$primary};
+  --material-primary-font-color: #{$primary-font};
+  --material-accent-color: #{$accent};
+  --material-accent-font-color: #{$accent-font};
+
+  --app_color_panel_background: #{$app_color_panel_background};
+  --app_font_main: #{$app_font_main};
+  --app_font_family: #{$app_font_family};
+  --font_family: #{$font-family};
+  --app_font_size_base_number: #{$app_font_size_base_number}px;
+  --app_font_size_regular: #{$app_font_size_regular};
+  --app_font_size_minus_1: #{$app_font_size_minus_1};
+  --app_font_size_minus_2: #{$app_font_size_minus_2};
+  --app_font_size_plus_1: #{$app_font_size_plus_1};
+  --app_font_size_plus_2: #{$app_font_size_plus_2};
+  --app_font_size_label: #{$app_font_size_label};
+  --app_font_size_header: #{$app_font_size_header};
+  --app_font_size_section_title: #{$app_font_size_section_title};
+  --app_dialog_header_font_color: #{$app-dialog-header-font-color};
+  --app_dialog_header_background_color: #{$app-dialog-header-background-color};
+  --app_color_green: #{$app_color_green};
+  --app_color_blue: #{$app_color_blue};
+  --app_color_link_blue: #{$app_color_link_blue};
+  --app_color_cyan: #{$app_color_cyan};
+  --app_color_light_gray_001: #{$appColorLightGray001};
+  --app_grid_line_color: #{$app_grid_line_color};
+  --app-gray-input-background: #{$app-gray-input-background};
+  --app-light-background: #{$app-light-background};
+  --app-bright-red: #{$app-bright-red};
+  --app-label-color-coolgray: #{$app-label-color-coolgray};
+  --app_color_gray_text1: #{$app_color_gray_text1};
+  --app_color_gray_text2: #{$app_color_gray_text2};
+  --app_color_gray_text3: #{$app_color_gray_text3};
+  --app-header-text-color-dark-gray: #{$app-header-text-color-dark-gray};
+  --app_header_text_color_dark_green: #{$app_header_text_color_dark_green};
+  --app-row-disabled-background-color-lightgray: #{$app-row-disabled-background-color-lightgray};
+  --app-filter-text-background-color: #{$app-filter-text-background-color};
+  --app-dashboard-button-text-color: #{$app-dashboard-button-text-color};
+  --app-dashboard-button-background-color: #{$app-dashboard-button-background-color};
+  --app-widget_spacing: #{$app-widget_spacing};
+  --app_nav_band_background: #{$app_nav_band_background};
+  --app-text-highlight-warn-background-color: #{$app-text-highlight-warn-background-color};
+  --app-text-highlight-warn-text-color: #{$app-text-highlight-warn-text-color};
+  --app_color_red_01: #{$app_color_red_01};
+  --app_color_red_02: #{$app_color_red_02};
+  --app_color_yellow_01: #{$app_color_yellow_01};
+  --app_color_yellow_02: #{$app_color_yellow_02};
+  --app_color_yellow_03: #{$app_color_yellow_03};
+  --app_color_yellow_04: #{$app_color_yellow_04};
+  --app_color_green_01: #{$app_color_green_01};
+  --app_color_green_02: #{$app_color_green_02};
+  --app_color_green_03: #{$app_color_green_03};
+  --app_color_blue_01: #{$app_color_blue_01};
+
+}

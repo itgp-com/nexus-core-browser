@@ -20,7 +20,9 @@ import {Sort} from '@syncfusion/ej2-treegrid/src/treegrid/actions/sort';
 import {Aggregate} from '@syncfusion/ej2-treegrid/src/treegrid/actions/summary';
 import {Toolbar} from '@syncfusion/ej2-treegrid/src/treegrid/actions/toolbar';
 import {addN2Class} from '../../N2HtmlDecorator';
+import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {cssForN2Grid, N2Grid} from './N2Grid';
 
 
 TreeGrid.Inject(
@@ -77,4 +79,8 @@ export class N2TreeGrid<STATE extends StateN2TreeGrid = StateN2TreeGrid> extends
     }
 
     get classIdentifier(): string { return N2TreeGrid.CLASS_IDENTIFIER; }
-}
+} //N2TreeGrid
+
+themeChangeListeners().add((ev: ThemeChangeEvent) => {
+    cssForN2Grid(N2TreeGrid.CLASS_IDENTIFIER, 'e-treegrid');
+}); // normal priority

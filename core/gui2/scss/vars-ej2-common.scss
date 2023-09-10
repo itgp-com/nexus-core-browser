@@ -1,0 +1,51 @@
+// export syncfusion variables based on @syncfusion/ej2-base/styles/_material-definition.scss
+:root {
+
+
+  --font-family: #{$font-family};
+  --font-size: #{$font-size};
+  --font-weight: #{$font-weight};
+  --font-path: #{$font-path};
+  --header-bg-color: #{$header-bg-color};
+  --header-gradient-color: #{$header-gradient-color};
+  --header-border-color: #{$header-border-color};
+  --header-font-color: #{$header-font-color};
+  --header-icon-color: #{$header-icon-color};
+  --content-bg-color: #{$content-bg-color};
+  --content-border-color: #{$content-border-color};
+  --content-font-color: #{$content-font-color};
+  --default-bg-color: #{$default-bg-color};
+  --default-gradient-color: #{$default-gradient-color};
+  --default-border-color: #{$default-border-color};
+  --default-font-color: #{$default-font-color};
+  --default-icon-color: #{$default-icon-color};
+  --hover-bg-color: #{$hover-bg-color};
+  --hover-gradient-color: #{$hover-gradient-color};
+  --hover-border-color: #{$hover-border-color};
+  --hover-font-color: #{$hover-font-color};
+  --hover-icon-color: #{$hover-icon-color};
+  --active-bg-color: #{$active-bg-color};
+  --active-gradient-color: #{$active-gradient-color};
+  --active-border-color: #{$active-border-color};
+  --active-font-color: #{$active-font-color};
+  --active-icon-color: #{$active-icon-color};
+  --error-font-color: #{$error-font-color};
+  --warning-font-color: #{$warning-font-color};
+  --success-font-color: #{$success-font-color};
+  --information-font-color: #{$information-font-color};
+  --overlay-bg-color: #{$overlay-bg-color};
+  --shadow-color: #{$shadow-color};
+  --border-size: #{$border-size};
+  --border-type: #{$border-type};
+  --border-radius: #{$border-radius};
+  --border-left-radius: #{$border-left-radius};
+  --border-right-radius: #{$border-right-radius};
+  --border-top-radius: #{$border-top-radius};
+  --border-bottom-radius: #{$border-bottom-radius};
+
+
+  --grid-hover-bg-color: #{$grid-hover-bg-color};
+  --grid-table-background-color: #{$grid-table-background-color};
+  --grid-header-border-color: #{$grid-header-border-color};
+  --panel-box-shadow: #{$panel-box-shadow};
+}
