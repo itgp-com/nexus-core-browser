@@ -25,6 +25,19 @@ declare global {
     }
 }
 
+/**
+ * Inserts one or more items at a specified index in the array.
+ *
+ * @this {Array} - The array context on which the method is called.
+ * @param {number} index - The index at which the new items should be inserted.
+ * @param {...any} items - The items to be inserted into the array.
+ * @returns {Array} - Returns a new array with the items inserted at the specified index.
+ *
+ * @example
+ * const arr = [1, 2, 4];
+ * const newArr = arr.insert(2, 3);
+ * console.log(newArr); // Outputs: [1, 2, 3, 4]
+ */
 Array.prototype.insert = function (index: number, ...items: any) {
     //return this.splice(index, 0, item);
     return [
@@ -33,6 +46,19 @@ Array.prototype.insert = function (index: number, ...items: any) {
         ...this.slice(index)
     ];
 };
+
+
+/**
+ * Escapes special HTML characters (`&`, `<`, `>`) in a string.
+ *
+ * @this {String} - The string context on which the method is called.
+ * @returns {string} - Returns a new string with special HTML characters escaped.
+ *
+ * @example
+ * const unsafeString = "<div>Hello & Welcome!</div>";
+ * const safeString = unsafeString.escapeHTML();
+ * console.log(safeString); // Outputs: "&lt;div&gt;Hello &amp; Welcome!&lt;/div&gt;"
+ */
 String.prototype.escapeHTML = function (this: Object) {
     if (this === undefined)
         return 'undefined';
@@ -62,12 +88,40 @@ String.prototype.escapeHTML = function (this: Object) {
 
 //------------------------- Data Provider filter function type -------
 
-
+/**
+ * Displays the provided error to the user using displayExceptionToUser on the default errorHandler and then returns the error.
+ *
+ * @export
+ * @param {Error} ex - The error object to be displayed.
+ * @returns {Error} - Returns the provided error object.
+ *
+ * @example
+ * try {
+ *     // Some code that might throw an error
+ * } catch (error) {
+ *     showEx(error);
+ * }
+ */
 export function showEx(ex: Error): Error {
     getErrorHandler().displayExceptionToUser(ex);
     return ex;
 }
 
+/**
+ * Determines if an HTMLElement is visible in the DOM.
+ *
+ * @export
+ * @param {HTMLElement} elem - The HTML element to check.
+ * @returns {boolean} - Returns true if the element is visible, otherwise returns false.
+ *
+ * @see {@link https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js} for the source of the implementation (as of 2018-03-11).
+ *
+ * @example
+ * const elem = document.getElementById('myElement');
+ * if (isVisible(elem)) {
+ *     console.log('The element is visible!');
+ * }
+ */
 // noinspection JSUnusedGlobalSymbols
 export function isVisible(elem: HTMLElement): boolean {
     return (!!elem &&
@@ -78,9 +132,35 @@ export function isVisible(elem: HTMLElement): boolean {
     ); // source (2018-03-11): https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
 }
 
-// Declare the function type for the next callback
-type typeClickOutsideCallback = (elem: HTMLElement, ev: MouseEvent) => void;
+/**
+ * Type definition for the callback function that gets triggered when a click occurs outside the specified element.
+ * Used in the {@link callbackOnClickOutside} function.
+ *
+ * @typedef {Function} typeClickOutsideCallback
+ * @param {HTMLElement} elem - The HTML element that was being monitored for outside clicks.
+ * @param {MouseEvent} ev - The mouse event object associated with the outside click.
+ */
+export type typeClickOutsideCallback = (elem: HTMLElement, ev: MouseEvent) => void;
 
+/**
+ * Sets up an event listener to detect a click outside of a given element and triggers a callback when such a click occurs.
+ * Useful for scenarios like closing a modal or dropdown when a user clicks outside of it.
+ *
+ * @export
+ * @param {Component<HTMLElement>} component - The component to which the element belongs.
+ * @param {HTMLElement} element - The HTML element to monitor for outside clicks.
+ * @param {typeClickOutsideCallback} callbackFunction - The callback function to execute when an outside click is detected.
+ *
+ * @see {@link https://stackoverflow.com/questions/152975/how-do-i-detect-a-click-outside-an-element} for more details on the approach.
+ *
+ * @example
+ * const myComponent = new MyComponent();
+ * const myElem = document.getElementById('myDropdown');
+ * callbackOnClickOutside(myComponent, myElem, (elem, event) => {
+ *     console.log('Clicked outside the element!');
+ *     myComponent.closeDropdown();
+ * });
+ */
 export function callbackOnClickOutside(component: Component<HTMLElement>, element: HTMLElement, callbackFunction: typeClickOutsideCallback) {
 
     let elementClickFunction = function (ev: MouseEvent) {
@@ -113,7 +193,33 @@ export function callbackOnClickOutside(component: Component<HTMLElement>, elemen
 /* helpers for runScripts below
  */
 
-// runs an array of async functions in sequential order
+/**
+ * Runs an array of asynchronous functions in sequential order. Once all functions have been executed,
+ * a final callback is invoked.
+ *
+ * @param {any[]} arr - An array of asynchronous functions. Each function should accept a single callback as its argument.
+ * @param {Function} callback - The final callback function to be invoked after all asynchronous functions have been executed.
+ * @param {number} [index=0] - The starting index for the sequential execution. Typically used internally for recursive calls.
+ *
+ * @example
+ * const asyncFunc1 = (cb) => {
+ *     setTimeout(() => {
+ *         console.log('First function executed');
+ *         cb();
+ *     }, 1000);
+ * };
+ *
+ * const asyncFunc2 = (cb) => {
+ *     setTimeout(() => {
+ *         console.log('Second function executed');
+ *         cb();
+ *     }, 500);
+ * };
+ *
+ * seq([asyncFunc1, asyncFunc2], () => {
+ *     console.log('All functions executed');
+ * });
+ */
 function seq(arr: any[], callback: any, index: any = 0) {
     // first call, without an index
     if (typeof index === 'undefined') {
@@ -133,25 +239,57 @@ function seq(arr: any[], callback: any, index: any = 0) {
     })
 }
 
-// trigger DOMContentLoaded
+/**
+ * Triggers a 'DOMContentLoaded' event on the document, simulating the browser's native event when the initial HTML is fully loaded and parsed.
+ * Useful for manually signaling that scripts have finished executing and the DOM is ready.
+ */
 function scriptsDone() {
     const DOMContentLoadedEvent = document.createEvent('Event');
     DOMContentLoadedEvent.initEvent('DOMContentLoaded', true, true);
     document.dispatchEvent(DOMContentLoadedEvent)
 }
 
-/* script runner
+/**
+ * Inserts a script into the document's head, either from a provided URL or from inline text.
+ * Once the script is loaded (or if it's inline), a callback function is invoked.
+ *
+ * @param {$script} any - The script element or object containing either the 'src' attribute for external scripts or 'innerText' for inline scripts.
+ * @param {Function} callback - The callback function to be invoked after the script has loaded (for external scripts) or after it's been inserted (for inline scripts).
+ * @param {string} [className] - Optional class name for the script tag.
+ * @param {string} [id] - Optional ID for the script tag.
+ *
+ * @example
+ * // For an external script:
+ * const extScript = document.createElement('script');
+ * extScript.src = 'https://path.to/external/script.js';
+ * insertScript(extScript, () => {
+ *     console.log('External script loaded');
+ * }, 'myScriptClass', 'myScriptID');
+ *
+ * // For an inline script:
+ * const inlineScript = document.createElement('script');
+ * inlineScript.innerText = 'console.log("Inline script executed");';
+ * insertScript(inlineScript, () => {
+ *     console.log('Inline script inserted');
+ * });
  */
-
-function insertScript($script: any, callback: any) {
+function insertScript($script: any, callback: any, className?: string, id?: string) {
     const s = document.createElement('script');
     s.type = 'text/javascript';
     if ($script.src) {
         s.onload = callback;
         s.onerror = callback;
-        s.src = $script.src
+        s.src = $script.src;
     } else {
-        s.textContent = $script.innerText
+        s.textContent = $script.innerText;
+    }
+
+    // Optional class and id
+    if (className) {
+        s.className = className;
+    }
+    if (id) {
+        s.id = id;
     }
 
     // re-insert the script tag so it executes.
@@ -162,9 +300,10 @@ function insertScript($script: any, callback: any) {
 
     // run the callback immediately for inline scripts
     if (!$script.src) {
-        callback()
+        callback();
     }
 }
+
 
 // https://html.spec.whatwg.org/multipage/scripting.html
 const runScriptTypes = [
@@ -186,6 +325,18 @@ const runScriptTypes = [
     'text/x-javascript'
 ];
 
+/**
+ * Finds and executes `<script>` tags within a specified container element.
+ * The function ensures that the scripts are executed in the order they appear in the DOM.
+ *
+ * Note: Only runs scripts without a `type` attribute or those with a recognized JavaScript MIME type.
+ *
+ * @param {HTMLElement} $container - The container element within which to search for and execute `<script>` tags.
+ *
+ * @example
+ * const container = document.getElementById('dynamicContent');
+ * runScripts(container);
+ */
 // noinspection JSUnusedGlobalSymbols
 export function runScripts($container: HTMLElement) {
     // get scripts tags from a node
@@ -212,7 +363,20 @@ export function runScripts($container: HTMLElement) {
 
 
 /* To Title Case © 2018 David Gouch | https://github.com/gouch/to-title-case */
-
+/**
+ * Converts the string to title case. Specific rules are applied:
+ * - Small words (e.g., "an", "and", "of") are left in lowercase unless they are the first or last word.
+ * - Intentional capitalization is left as-is.
+ * - URLs are left as-is.
+ * - The first letter of other words is capitalized.
+ *
+ * @this {String} - The string context on which the method is called.
+ * @returns {string} - Returns a new string converted to title case.
+ *
+ * @example
+ * const str = "this is a test: the title case method";
+ * console.log(str.toTitleCase()); // Outputs: "This is a Test: The Title Case Method"
+ */
 // eslint-disable-next-line no-extend-native
 String.prototype.toTitleCase = function (): string {
     const smallWords = /^(a|an|and|as|at|but|by|en|for|if|in|nor|of|on|or|per|the|to|v.?|vs.?|via)$/i;
@@ -255,6 +419,16 @@ String.prototype.toTitleCase = function (): string {
         .join('')
 };
 
+/**
+ * Capitalizes the first character of the string and returns it.
+ *
+ * @this {String} - The string context on which the method is called.
+ * @returns {string} - Returns a new string with the first character capitalized.
+ *
+ * @example
+ * const str = "hello";
+ * console.log(str.capitalize()); // Outputs: "Hello"
+ */
 String.prototype.capitalize = function (): string {
     return this.charAt(0).toUpperCase() + this.slice(1)
 };
@@ -262,11 +436,21 @@ String.prototype.capitalize = function (): string {
 //---------------------------
 
 
-// noinspection JSUnusedGlobalSymbols
 /**
- * Remove all children of  HTMLElement or of an element ID
- * @param element can be either an HTMLElement or the string element ID
+ * Removes all child nodes from the specified HTML element.
+ *
+ * @export
+ * @param {(HTMLElement | string)} element - The target HTML element or its ID from which to remove child nodes.
+ *
+ * @example
+ * // Using an HTMLElement reference
+ * const myElem = document.getElementById('myDiv');
+ * removeAllChildren(myElem);
+ *
+ * // Using an element ID string
+ * removeAllChildren('myDiv');
  */
+// noinspection JSUnusedGlobalSymbols
 export function removeAllChildren(element: (HTMLElement | string)): void {
     if (element) {
         let htmlElement: HTMLElement;
@@ -286,17 +470,37 @@ export function removeAllChildren(element: (HTMLElement | string)): void {
 
 
 //---------------------------------------
-
+/**
+ * Represents an RGB color with red, green, and blue components.
+ */
 class RGB {
     r: number;
     g: number;
     b: number;
 }
 
+/**
+ * Converts an RGB color to its YIQ luminance value.
+ * The YIQ value can be used to judge the brightness of a color.
+ *
+ * @param {RGB} rgb - The RGB color to convert.
+ * @returns {number} - The YIQ luminance value.
+ */
 function rgbToYIQ(rgb: RGB) {
     return ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000;
 }
 
+/**
+ * Converts a 6-character hexadecimal color string to its RGB representation.
+ *
+ * @export
+ * @param {string} hex - The 6-character hexadecimal color string to convert.
+ * @returns {RGB | undefined} - The RGB representation or `undefined` if the input isn't a valid 6-character hex color.
+ *
+ * @example
+ * const color = hexToRgb("#FFFFFF");
+ * console.log(color); // Outputs: { r: 255, g: 255, b: 255 }
+ */
 export function hexToRgb(hex: string) {
     if (!hex || hex === undefined || hex === '') {
         return undefined;
@@ -315,6 +519,17 @@ export function hexToRgb(hex: string) {
     } : undefined;
 }
 
+/**
+ * Converts an 8-character hexadecimal color string (including alpha) to its RGBA representation.
+ *
+ * @export
+ * @param {string} hex8char - The 8-character hexadecimal color string to convert.
+ * @returns {{ r: number, g: number, b: number, a: number } | undefined} - The RGBA representation or `undefined` if the input isn't a valid 8-character hex color with alpha.
+ *
+ * @example
+ * const color = hexToRgba("#FFFFFF80");
+ * console.log(color); // Outputs: { r: 255, g: 255, b: 255, a: 128 }
+ */
 export function hexToRgba(hex8char: string) {
     if (!hex8char || hex8char === undefined || hex8char === '') {
         return undefined;
@@ -354,15 +569,36 @@ export function fontColor(backgroundColorHex: string, threshold = 128): string {
     return rgbToYIQ(rgb) >= threshold ? '#000000' : '#FFFFFF';
 }
 
+
+/**
+ * Options for the `ej2Query` function.
+ */
 export interface Ej2QueryOptions {
+    /**
+     * The adaptor to be used for the query. If not provided, a default `NexusAdaptor` will be used.
+     */
     adaptor?: NexusAdaptor;
 }
 
 /**
- * Query the appserver (using ej2 syntax) and return back an array of records
- * @param tablename
- * @param query
- * @param options
+ * Queries the appserver using ej2 syntax and returns an array of records.
+ *
+ * @export
+ * @param {string} tablename - The name of the table to be queried.
+ * @param {Query} query - The query object specifying the conditions of the data retrieval.
+ * @param {Ej2QueryOptions} [options] - Optional settings for the query.
+ * @returns {Promise<any[]>} - A promise that resolves with an array of records or rejects with an error.
+ *
+ * @example
+ * const table = "users";
+ * const myQuery = new Query().where('id').equals(5);
+ * ej2Query(table, myQuery)
+ *   .then(records => {
+ *     console.log(records);
+ *   })
+ *   .catch(error => {
+ *     console.error("Error fetching data:", error);
+ *   });
  */
 export async function ej2Query(tablename: string, query: Query, options?: Ej2QueryOptions): Promise<any[]> {
     let dataManager = new DataManager({
@@ -436,8 +672,23 @@ export function removeDoubleSpaces(s: string): string {
     return s.replace(/  +/g, ' ');
 }
 
-
-export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_HtmlDecoration): void {
+/**
+ * Applies decorations (classes, styles, and attributes) to a given HTML element.
+ *
+ * @export
+ * @param {HTMLElement} htmlElement - The target HTML element to which decorations should be applied.
+ * @param {IArgs_HtmlDecoration} decoration - The decoration arguments specifying classes, styles, and attributes.
+ *
+ * @example
+ * const elem = document.getElementById('myDiv');
+ * const decoration = {
+ *   htmlTagClass: 'div',
+ *   htmlTagStyle: { color: 'red', fontSize: '16px' },
+ *   htmlOtherAttr: { 'data-test': 'testValue' }
+ * };
+ * applyHtmlDecoration(elem, decoration);
+ */
+ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_HtmlDecoration): void {
     if (!htmlElement)
         return;
     if (!decoration)
@@ -503,6 +754,22 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
 
 } // applyHtmlDecoration
 
+/**
+ * Converts the provided input, which can be either a string or an array of strings, into a single string.
+ * If the input is an array of strings, it joins the array using the specified delimiter.
+ *
+ * @export
+ * @param {(string | string[])} input - The input which can be either a single string or an array of strings.
+ * @param {string} [joinUsing=' '] - The delimiter to use when joining an array of strings. Defaults to a single space.
+ * @returns {string} - The converted string.
+ *
+ * @example
+ * // Using a single string:
+ * toStringFromMaybeArray('hello'); // Outputs: 'hello'
+ *
+ * // Using an array of strings:
+ * toStringFromMaybeArray(['hello', 'world'], ', '); // Outputs: 'hello, world'
+ */
 export function toStringFromMaybeArray(input: (string | string[]), joinUsing: string = ' '): string {
     if (!input)
         return '';
@@ -521,11 +788,20 @@ let ruleMap: Map<string, number> = new Map<string, number>();
 
 
 /**
- * Add a class with a body under to the document css.
- * It will overwrite an existing class if it exists.
- * Example: cssAddClass('whatever',"background-color: green;");
- * @param className
- * @param rules
+ * Adds a CSS class with specified rules to a cached stylesheet.
+ * If the class already exists, it will be overwritten.
+ *
+ * @export
+ * @param {string} className - The name of the class to be added, without the preceding dot.
+ * @param {string | CssLikeObject} rules - The rules to be applied to the class. Can be a simple string or a CssLikeObject.
+ *
+ * @example
+ * // To add a simple CSS class:
+ * cssAddClass('whatever', 'background-color: green;');
+ *
+ * // To add a CSS class using a CssLikeObject:
+ * const rulesObj = { backgroundColor: 'green', fontSize: '16px' };
+ * cssAddClass('whatever', rulesObj);
  */
 export function cssAddClass(className: string, rules: string | CssLikeObject) {
 
@@ -543,9 +819,15 @@ export function cssAddClass(className: string, rules: string | CssLikeObject) {
 
 
 /**
- * Removes the first instance of the class from the document css
- * Example : cssRemoveClass('whatever')
- * @param className
+ * Removes the first instance of the specified class from the cached stylesheet.
+ *
+ * @export
+ * @param {string} className - The name of the class to be removed.
+ * @returns {boolean} - Returns true if the class was successfully removed, otherwise returns false.
+ *
+ * @example
+ * // To remove a CSS class:
+ * cssRemoveClass('.whatever');
  */
 export function cssRemoveClass(className: string): boolean {
     return cssRemoveSelector(className);
@@ -553,11 +835,21 @@ export function cssRemoveClass(className: string): boolean {
 
 
 /**
- * Add a css selector with a body under to the document css.
- * It will overwrite an existing class if it exists.
- * Example: cssAddSelector_O1('whatever',"background-color: green;");
- * @param cssSelectorName
- * @param rules
+ * Adds a CSS selector with specified rules to a cached stylesheet. If the selector already exists, it is first removed.
+ *
+ * @export
+ * @param {string} cssSelectorName - The CSS selector name to be added.
+ * @param {string | CssLikeObject} rules - The rules to be applied to the selector. Can be a simple string or a CssLikeObject.
+ * @returns {void}
+ * @throws {Error} - Throws an error if there's an issue accessing or modifying the stylesheet, or if the input parameters are not valid.
+ *
+ * @example
+ * // To add a simple CSS selector:
+ * cssAddSelector('.myClass', 'color: red;');
+ *
+ * // To add a CSS selector using a CssLikeObject:
+ * const rulesObj = { color: 'red', fontSize: '16px' };
+ * cssAddSelector('.myClass', rulesObj);
  */
 export function cssAddSelector(cssSelectorName: string, rules: string | CssLikeObject) {
 
@@ -612,8 +904,20 @@ export function cssAddSelector(cssSelectorName: string, rules: string | CssLikeO
 } // cssAddSelector
 
 /**
- ------Exists in CORE----
- * @param cssSelectorName
+ * Removes the specified CSS selector from the stylesheets.
+ *
+ * @export
+ * @param {string} cssSelectorName - The CSS selector name to be removed.
+ * @param {boolean} [global=false] - If true, the function searches all stylesheets. If false, it searches only the cached stylesheet.
+ * @returns {boolean} - Returns true if the selector was successfully removed, otherwise returns false.
+ * @throws {Error} - Throws an error if there's an issue accessing or modifying the stylesheet(s).
+ *
+ * @example
+ * // To remove a selector from all stylesheets:
+ * cssRemoveSelector('.myClass', true);
+ *
+ * // To remove a selector from the cached stylesheet:
+ * cssRemoveSelector('.myClass');
  */
 export function cssRemoveSelector(cssSelectorName: string, global: boolean = false): boolean {
     let removed: boolean = false;
@@ -686,7 +990,33 @@ export class CssRule {
     body: string;
 }
 
-// https://yyjhao.com/posts/roll-your-own-css-in-js/
+/**
+ * Converts a nested CSS declaration object into an array of CSS rules.
+ * The function handles nested CSS properties by generating appropriate selectors.
+ * This is an implementation inspired by CSS-in-JS methodologies.
+ *
+ * @export
+ * @param {string} rootClassName - The root class name to which the CSS properties should be applied.
+ * @param {CssLikeObject} declaration - A nested object representing CSS properties and their values.
+ * @returns {CssRule[]} - An array of CSS rules where each rule has a `className` and a `body`.
+ *
+ * @see {@link https://yyjhao.com/posts/roll-your-own-css-in-js/} for more details on the inspiration.
+ *
+ * @example
+ * const cssObj = {
+ *   color: 'red',
+ *   '&:hover': {
+ *     color: 'blue'
+ *   }
+ * };
+ *
+ * cssNestedDeclarationToRuleStrings('.myClass', cssObj);
+ * // Outputs:
+ * // [
+ * //   { className: '.myClass', body: 'color:red;' },
+ * //   { className: '.myClass:hover', body: 'color:blue;' }
+ * // ]
+ */
 export function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: CssLikeObject): CssRule[] {
     const result: CssRule[] = [];
 
@@ -735,9 +1065,22 @@ export function cssNestedDeclarationToRuleStrings(rootClassName: string, declara
 }
 
 /**
+ * Converts the provided CSS style, which can be either a string or a `CssPropertiesHyphen` object, into a single string.
  *
- * @param cssStyle either a string of css or a CssPropertiesHyphen object
- * @param cssDelimiter - default is '' (no delimiter between css rules)
+ * @export
+ * @param {CssStyle} cssStyle - Either a string of CSS or a `CssPropertiesHyphen` object.
+ * @param {string} [cssDelimiter=''] - The delimiter to use between individual CSS rules. Defaults to an empty string (no delimiter).
+ * @returns {string} - A single string representation of the provided CSS style.
+ *
+ * @example
+ * // Using a simple CSS string:
+ * cssStyleToString('color: red;');
+ * // Outputs: 'color: red;'
+ *
+ * // Using a CssPropertiesHyphen object:
+ * const cssObj = { color: 'red', 'font-size': '16px' };
+ * cssStyleToString(cssObj, ' ');
+ * // Outputs: 'color:red; font-size:16px;'
  */
 export function cssStyleToString(cssStyle: CssStyle, cssDelimiter: string = ''): string {
     const cssProps: CSS.PropertiesHyphen = {};
@@ -769,8 +1112,11 @@ export function cssStyleToString(cssStyle: CssStyle, cssDelimiter: string = ''):
 
 
 /**
+ * Checks if the provided object looks like a Promise by determining if it has a `then` function.
  *
- * @param value true if the object looks like a Promise (has a then function)
+ * @export
+ * @param {any} obj - The object to check.
+ * @returns {boolean} - Returns true if the object looks like a Promise, otherwise returns false.
  */
 export function isPromise(obj: any) {
     return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
@@ -865,6 +1211,20 @@ export let htmlElement_addTooltip_CoreOnly = (elem: HTMLElement, tippyProps: Par
 
 }
 
+/**
+ * Checks if the provided object is an instance of `HTMLElement`.
+ *
+ * @export
+ * @param {any} obj - The object to check.
+ * @returns {boolean} - Returns true if the object is an instance of `HTMLElement`, otherwise returns false.
+ *
+ * @example
+ * const element = document.createElement('div');
+ * isHTMLElement(element); // Outputs: true
+ *
+ * const notElement = { foo: "bar" };
+ * isHTMLElement(notElement); // Outputs: false
+ */
 export function isHTMLElement(obj: any): boolean {
     return obj instanceof HTMLElement;
 }

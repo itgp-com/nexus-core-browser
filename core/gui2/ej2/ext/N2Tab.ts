@@ -1,9 +1,13 @@
 import {Tab, TabModel} from '@syncfusion/ej2-navigations';
 import {SelectEventArgs} from '@syncfusion/ej2-navigations/src/tab/tab';
+import {cssAddSelector} from '../../../CoreUtils';
 import {N2, N2Evt_OnLogic} from '../../N2';
 import {addClassesToElement, addN2Class, removeClassesFromElement} from '../../N2HtmlDecorator';
 import {getN2FromHtmlElement} from '../../N2Utils';
+import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {cssForN2Grid} from './N2Grid';
+import {N2TreeGrid} from './N2TreeGrid';
 
 
 export interface N2Tab_PostCreated_Event {
@@ -242,3 +246,11 @@ function tabSelected(index: number, n2Tab: N2Tab) {
 export const TabOption_FillContent: TabModel = {
     heightAdjustMode: 'Fill', // this is the setting that makes the tab content fill the tab and allows grid resizing to make sens (since the surrounding div is not fixed size)
 }
+
+
+
+themeChangeListeners().add((ev: ThemeChangeEvent) => {
+
+    cssAddSelector(`app-tab-no-text-transform`,`
+    text-transform: unset !important;`);
+}); // normal priority

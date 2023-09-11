@@ -120,8 +120,19 @@ export function cssForN2Grid(n2GridClass:string, eGridClass:string){
     let gridHoverFontColor = fontColor(gridHoverBgColor); // the contrast color to the current background
 
 
+    // Removes blue background from grid editable checkbox and restores border and font color
+    cssAddSelector(`.${n2GridClass} .e-checkbox-wrapper .e-frame.e-check, .${n2GridClass} .e-css.e-checkbox-wrapper .e-frame.e-check`,
+`
+    background-color: transparent;
+    border-color: unset;
+    color: black;`        );
 
-    //----------- Grid/TreeGrid toolbar -----------------
+    // Make tops of grid filters change colors for enabled filters
+    cssAddSelector(`.${n2GridClass} .e-filtertext:not(.e-disable)`, `
+        background-color: $app-filter-text-background-color !important;
+        padding-left: 1ch !important;`);
+    
+    
     cssAddSelector(`.${n2GridClass} .e-tbar-btn, .e-tbtn-txt`,
         `  background-color: ${accent} !important;`
     );
@@ -142,6 +153,7 @@ font-size: ${CORE_MATERIAL.app_font_size_regular};`
   padding-left: 1ch !important;
     `);
 
+    // start Grid lines color
 //         cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell, .e-control.${eGridClass} .e-groupcaption, .e-control.${eGridClass} .e-indentcell, .e-control.${eGridClass} .e-recordplusexpand, .e-control.${eGridClass} .e-recordpluscollapse, .e-control.${eGridClass} .e-detailrowcollapse, .e-control.${eGridClass} .e-detailrowexpand, .e-control.${eGridClass} .e-detailindentcell, .e-control.${eGridClass} .e-detailcell,
 // .${n2GridClass}.e-control.${eGridClass} .e-toolbar, .e-control.e-pager, .e-control.${eGridClass}, .e-control.${eGridClass} .e-headercell, .e-control.${eGridClass} .e-detailheadercell, e-columnheader,
 // .${n2GridClass}.e-control.${eGridClass}.e-resize-lines .e-headercell .e-rhandler, .e-control.${eGridClass}.e-resize-lines .e-headercell .e-rsuppress `, `

@@ -1,13 +1,17 @@
 import {Dialog, DialogModel} from '@syncfusion/ej2-popups';
 import {isArray, isString} from 'lodash';
-import {isHTMLElement} from '../../../CoreUtils';
+import {cssAddSelector, isHTMLElement} from '../../../CoreUtils';
 import {N2Html} from '../../generic/N2Html';
 import {isN2_Interface_Dialog_Close, isN2_Interface_Dialog_Open} from '../../generic/N2Interface_Dialog';
 import {N2Row} from '../../generic/N2Row';
 import {N2, N2Evt_Destroy, N2Evt_OnLogic} from '../../N2';
 import {addN2Class, decoToHtmlElement} from '../../N2HtmlDecorator';
 import {isN2} from '../../N2Utils';
+import {CORE_MATERIAL} from '../../scss/vars-material';
+import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {cssForN2Grid} from './N2Grid';
+import {N2TreeGrid} from './N2TreeGrid';
 import {N2DialogBackArrow} from './util/N2DialogBackArrow';
 
 
@@ -367,3 +371,74 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
     get classIdentifier() { return N2Dialog.CLASS_IDENTIFIER; }
 } // N2Dialog
+
+themeChangeListeners().add((ev: ThemeChangeEvent) => {
+
+
+
+
+cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header` ,`
+        color: ${CORE_MATERIAL.app_dialog_header_font_color}; // color of text in dialog box header
+    `);
+
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header, .${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header *`,`
+        color: ${CORE_MATERIAL.app_dialog_header_font_color}; // color of text in dialog box header
+        font-size: ${CORE_MATERIAL.app_font_size_regular};
+        border: none; // remove border from all buttons and other elements
+`);
+
+
+//noinspection CssReplaceWithShorthandSafely
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-dlg-header-content`,`
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 2px;
+        padding-right: 10px;
+        border-bottom: 5px solid $app_color_blue;
+        background-color: ${CORE_MATERIAL.app_dialog_header_background_color}; // background of dialog box header
+    `);
+
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-content`,`
+        padding: 5px;
+    `);
+
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header-content .e-dlg-header`,`
+        font-size: ${CORE_MATERIAL.app_font_size_regular};
+    `);
+
+
+// This makes the close button visible at all times, not just when being hovered over
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-btn.e-dlg-closeicon-btn`,`
+        background-color: #e0e0e0;
+        border-color: rgba(0, 0, 0, 0);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0)
+    `);
+
+
+
+// Size the dialog heading component to be the whole width of the dialog minus the width of the close button
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header`,`
+        width: calc(100% - #{${CORE_MATERIAL.app_dialog_header_close_button_size})
+    `);
+
+
+//----------------- Size close button and X inside properly -----------
+// See https://support.syncfusion.com/support/tickets/358806
+
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn`, `
+        display: inline-flex;
+        margin-top: 5px;
+        height: #{${CORE_MATERIAL.app_dialog_header_close_button_size}};
+        width: #{${CORE_MATERIAL.app_dialog_header_close_button_size}};
+        padding-top: 3px;
+    `);
+
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon`, `
+        margin-top: 0px;
+    `);
+
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close`,`
+        font-size: 10px; //changed
+    `);
+    
+}); // normal priority

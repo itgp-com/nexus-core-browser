@@ -6,13 +6,15 @@ import {debounce, throttle} from "lodash";
 import {getRandomString} from "../BaseUtils";
 import {Err} from "../Core";
 import {getErrorHandler} from "../CoreErrorHandling";
-import {isDev} from '../CoreUtils';
+import {cssAddSelector, isDev} from '../CoreUtils';
 import {ExceptionEvent} from "../ExceptionEvent";
 import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
 import {addN2Child, removeN2Child} from './ej2/Ej2Utils';
 import {addN2Class, IHtmlUtils} from "./N2HtmlDecorator";
 import {Elem_or_N2, getFirstHTMLElementChild, isN2} from './N2Utils';
+import {CORE_MATERIAL} from './scss/vars-material';
 import {StateN2} from "./StateN2";
+import {ThemeChangeEvent, themeChangeListeners} from './Theming';
 
 
 export let N2_CLASS = '_n2_';
@@ -21,9 +23,9 @@ export let N2_CLASS = '_n2_';
 export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     static readonly CLASS_IDENTIFIER: string = 'N2';
 
-        protected constructor(state ?: STATE) {
+    protected constructor(state ?: STATE) {
         this._constructor(state);
-   } //  constructor
+    } //  constructor
 
     /**
      * The constructor calls this method as soon as the class is created.
@@ -657,7 +659,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     onAfterInitWidgetOnly(_args: N2Evt_AfterLogic): void {}
 
 
-    private _initLogicIfNeeded(){
+    private _initLogicIfNeeded() {
 
         try {
             if (!this.initialized)
@@ -851,6 +853,112 @@ export interface N2Evt_AfterLogic extends N2Evt {
 export interface N2Evt_Resized extends N2Evt {
     size?: { width: number; height: number; }
 }
+
+
+themeChangeListeners().add((ev: ThemeChangeEvent) => {
+
+
+    /* Targets .e-control elements that also have the .${N2.CLASS_IDENTIFIER} class */
+    /* Targets .e-control elements that are descendants of an element with the .${N2.CLASS_IDENTIFIER} class */
+    cssAddSelector(`.e-control.${N2.CLASS_IDENTIFIER}, .${N2.CLASS_IDENTIFIER} .e-control`, `
+    font-family: ${CORE_MATERIAL.app_font_family};    
+    `);
+
+
+    //--------------- the following deals with N2 input components ----------
+
+    let keys: string[] = [];
+    let vals: string[] = [];
+    let key, val;
+
+    key = `.${N2.CLASS_IDENTIFIER} .e-input-group input.e-input,
+.${N2.CLASS_IDENTIFIER} .e-input-group.e-control-wrapper input.e-input,
+.${N2.CLASS_IDENTIFIER} .e-input-group textarea.e-input,
+.${N2.CLASS_IDENTIFIER} .e-input-group.e-control-wrapper textarea.e-input,
+.e-input-group.${N2.CLASS_IDENTIFIER} input.e-input,
+.e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} input.e-input,
+.e-input-group.${N2.CLASS_IDENTIFIER} textarea.e-input,
+.e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} textarea.e-input`;
+
+    val = `  font-family: ${CORE_MATERIAL.app_font_family} !important;`;
+    keys.push(key);
+    vals.push(val);
+    //------------
+
+
+    /* For input elements and for textarea elements */
+    key = `
+.${N2.CLASS_IDENTIFIER} input.e-input,
+.${N2.CLASS_IDENTIFIER} .e-input-group input.e-input,
+.${N2.CLASS_IDENTIFIER} .e-input-group.e-control-wrapper input.e-input,
+input.e-input.${N2.CLASS_IDENTIFIER},
+.e-input-group.${N2.CLASS_IDENTIFIER} input.e-input,
+.e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} input.e-input,
+  
+.${N2.CLASS_IDENTIFIER} textarea.e-input,
+.${N2.CLASS_IDENTIFIER} .e-input-group textarea.e-input,
+.${N2.CLASS_IDENTIFIER} .e-input-group.e-control-wrapper textarea.e-input,
+textarea.e-input.${N2.CLASS_IDENTIFIER},
+.e-input-group.${N2.CLASS_IDENTIFIER} textarea.e-input,
+.e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} textarea.e-input`;
+
+    val = `padding-bottom: 1px;`
+    keys.push(key);
+    vals.push(val);
+    //------------
+
+
+    /* float label inside the input element */
+
+    key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top),
+.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top)`;
+
+    val = `color: ${CORE_MATERIAL.app_label_color_coolgray} !important;`
+    keys.push(key);
+    vals.push(val);
+    //------------
+
+
+    /* change the border color while focus the input element */
+    key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-group) .e-float-line::before,
+.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-group) .e-float-line::after,
+.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-group) .e-float-line::before,
+.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-group) .e-float-line::after`;
+    val = `background: ${CORE_MATERIAL.app_label_color_coolgray} !important;`
+    keys.push(key);
+    vals.push(val);
+    //------------
+
+
+    /* float label color on top of the input element while focus the input */
+    key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-error) input:focus ~ label.e-float-text,
+.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-error) input:focus ~ label.e-float-text`
+    val = `
+        color: ${CORE_MATERIAL.app_label_color_coolgray} !important;
+        font-size: ${CORE_MATERIAL.app_font_size_plus_2}px !important;` // 14px from 12px regular
+
+    keys.push(key);
+    vals.push(val);
+    //------------
+
+    /* float label color on top of the input element */
+    key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-error) input:valid ~ label.e-float-text,
+.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-error) input:valid ~ label.e-float-text`;
+    val = `color: $app-label-color-coolgray;`;
+
+    keys.push(key);
+    vals.push(val);
+    //------------
+
+
+    for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        let val = vals[i];
+        cssAddSelector(key, val);
+    } // for
+
+
+}); // normal priority
 
 
 // private _refreshInProgress: boolean;

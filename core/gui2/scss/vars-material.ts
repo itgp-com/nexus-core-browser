@@ -58,6 +58,7 @@ const CoreMaterialCssFieldNames: string[] = [
     'app_color_green_02',
     'app_color_green_03',
     'app_color_blue_01',
+    'app_dialog_header_close_button_size',
 ];
 
 class CoreMaterialCss {
@@ -114,6 +115,7 @@ class CoreMaterialCss {
     app_color_green_02 ?: string;
     app_color_green_03 ?: string;
     app_color_blue_01 ?: string;
+    app_dialog_header_close_button_size ?: string;
 
 }
 
