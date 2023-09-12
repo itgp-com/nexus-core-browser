@@ -1,0 +1,46 @@
+
+$tippy-bg-color:  #FFFFED !default; // // light yellow
+$tippy-font-color: #787878 !default; // gray text
+$tippy-border-color: gray !default;
+$tippy-arrow-fill: #333 !default;
+@import 'tippy-common';
+
+//
+//.tooltip {
+//  position: relative;
+//  display: inline-block;
+//  border-bottom: 1px dotted black;
+//}
+//
+//.tooltip .tooltiptext {
+//  visibility: hidden;
+//  width: 120px;
+//  background-color: black;
+//  color: #fff;
+//  text-align: center;
+//  border-radius: 6px;
+//  padding: 5px 0;
+//
+//  /* Position the tooltip */
+//  position: absolute;
+//  z-index: 1;
+//}
+//
+//.tooltip:hover .tooltiptext {
+//  visibility: visible;
+//}
+//
+//// Define theme named 'tippy-light-01' to be used in Tippy tooltips
+//.tippy-box[data-theme="tippy-light-01"] {
+//  background-color: #FFFFED; // light yellow
+//  color: #787878; // gray text
+//  border: 1px solid gray;
+//  border-radius: 15px;
+//  white-space: unset;
+//}
+//
+////TODO Specialize this for our data-theme not for tippy content in general
+//.tippy-content {
+//  white-space: pre-wrap;
+//  overflow-wrap: break-word;
+//}

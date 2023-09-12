@@ -1,6 +1,6 @@
 import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 
-const rootStyle = getComputedStyle(document.documentElement);
+export const CORE_MATERIAL: CoreMaterialCss = {};
 
 const CoreMaterialCssFieldNames: string[] = [
 
@@ -8,6 +8,7 @@ const CoreMaterialCssFieldNames: string[] = [
     'material-primary-font-color',
     'material-accent-color',
     'material-accent-font-color',
+    'grey-dark',
 
 
     'app_color_panel_background',
@@ -66,6 +67,7 @@ class CoreMaterialCss {
     primary_font_color ?:string;
     accent_color ?:string;
     accent_font_color ?:string;
+    grey_dark ?:string;
 
     app_color_panel_background ?: string;
     app_font_main ?: string;
@@ -119,7 +121,6 @@ class CoreMaterialCss {
 
 }
 
-export const CORE_MATERIAL: CoreMaterialCss = {};
 
 function updateThemeVariables (ev: ThemeChangeEvent) {
     const rootStyle = getComputedStyle(document.documentElement);

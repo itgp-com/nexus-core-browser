@@ -1,6 +1,7 @@
-import {ThemeChangeEvent, themeChangeListeners, ThemeType} from '../Theming';
+import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 
-const rootStyle = getComputedStyle(document.documentElement);
+// Create an instance of SyncfusionCss and export it
+export const VARS_EJ2_COMMON: Ej2Css = {};
 
 // Define the SyncfusionCss class with optional fields
 class Ej2Css {
@@ -50,9 +51,6 @@ class Ej2Css {
     grid_header_border_color?: string;
     panel_box_shadow?: string;
 }
-
-// Create an instance of SyncfusionCss and export it
-export const VARS_EJ2_COMMON: Ej2Css = {};
 
 
 let updateThemeVariables = (ev: ThemeChangeEvent) => {

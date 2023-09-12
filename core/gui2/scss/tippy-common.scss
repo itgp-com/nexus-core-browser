@@ -1,0 +1,49 @@
+:root {
+  --tippy-bg-color: #{$tippy-bg-color};
+  --tippy-font-color: #{$tippy-font-color};
+  --tippy-border-color: #{$tippy-border-color};
+  --tippy-arrow-fill: #{$tippy-arrow-fill};
+}
+
+//
+//
+//.tooltip {
+//  position: relative;
+//  display: inline-block;
+//  border-bottom: 1px dotted black;
+//}
+//
+//.tooltip .tooltiptext {
+//  visibility: hidden;
+//  width: 120px;
+//  background-color: $tippy-bg-color;
+//  color: $tippy-font-color;
+//  text-align: center;
+//  border-radius: 6px;
+//  padding: 5px 0;
+//
+//  /* Position the tooltip */
+//  position: absolute;
+//  z-index: 1;
+//}
+//
+//.tooltip:hover .tooltiptext {
+//  visibility: visible;
+//}
+
+// Define theme named 'tippy-default' to be used in Tippy tooltips (declared as TIPPY_THEME_DEFAULT in tippy-common.ts)
+.tippy-box[data-theme="tippy-default"] {
+  color: $tippy-font-color;
+  background-color: $tippy-bg-color; // lighten($primary,10%);
+  border: 1px solid $tippy-border-color;
+  border-radius: 15px;
+  white-space: unset;
+}
+.tippy-box[data-theme="tippy-default"] .tippy-svg-arrow {
+  fill:$tippy-arrow-fill;
+}
+
+.tippy-content {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}

@@ -4,10 +4,11 @@ $primary-font: #fff;
 $accent: #16a2ff; // lighter #10669F;
 $accent-font: #fff;
 
-$font-size: 12px;
-$btn-font-size: $font-size;
-$drop-down-btn-font-size: $font-size;
-$drop-down-btn-icon-font-size: $font-size;
+//@import '@syncfusion/ej2-base/styles/definition/_material-dark.scss';
+
+
+
+
 
 //--------Overwrite syncfusion scss variables -----
 $panel-box-shadow: 0px 2px 5px 0px rgba($accent, 45%);

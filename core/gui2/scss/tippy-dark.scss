@@ -1,0 +1,5 @@
+$tippy-bg-color: #55552e !default;
+$tippy-font-color: #FFFFED !default; // light yellow
+$tippy-border-color:  $app_grid_line_color !default; // tippy is imported after vars-material-dark
+$tippy-arrow-fill: lighten($tippy-border-color, 10%) !default;
+@import 'tippy-common';
