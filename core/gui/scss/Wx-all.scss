@@ -1,0 +1,129 @@
+//--------- all the SCSS used in obsolete Wx components in Orca, etc ----------
+
+//-------------- WxButton ---------------------
+
+.WxButton.e-btn, .WxButton.e-css.e-btn,
+.WxDropDownButton.e-btn, .WxDropDownButton.e-css.e-btn {
+  font-size: $app_font_size_regular;
+  text-transform: unset !important;
+}
+
+
+
+
+
+//-------------- WxCarousel ----------------
+.WxCarousel.e-carousel .e-carousel-navigators .e-previous .e-btn:not(:disabled) .e-btn-icon,
+.WxCarousel.e-carousel .e-carousel-navigators .e-next .e-btn:not(:disabled) .e-btn-icon,
+.WxCarousel.e-carousel .e-carousel-navigators .e-play-pause .e-btn:not(:disabled) .e-btn-icon {
+  color: black;
+}
+
+.WxCarousel.e-carousel .e-carousel-navigators .e-previous .e-btn:not(:disabled),
+.WxCarousel.e-carousel .e-carousel-navigators .e-next .e-btn:not(:disabled),
+.WxCarousel.e-carousel .e-carousel-navigators .e-play-pause .e-btn:not(:disabled) {
+  background-color: rgb(200, 200, 200, 0.30); // 30% opaque by default
+}
+
+/**
+Non-active round indicators under the carousel
+ */
+.WxCarousel.e-carousel .e-carousel-indicators .e-indicator-bar:not([class*="e-active"]) .e-indicator div {
+  background-color: rgba(200, 200, 200, 0.90);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.WxCarousel.e-carousel .e-carousel-indicators {
+  min-height: 24px;
+}
+
+
+
+
+//-------------- Start Dialog Box -------------------------
+$WxDialogWindow: 'WxDialogWindow';
+
+.#{$WxDialogWindow} .e-dlg-header {
+  color: $app-dialog-header-font-color; // color of text in dialog box header
+}
+
+.#{$WxDialogWindow} .e-dlg-header, .#{$WxDialogWindow} .e-dlg-header * {
+  color: $app-dialog-header-font-color; // color of text in dialog box header
+  font-size: $app_font_size_regular;
+  border: none; // remove border from all buttons and other elements
+}
+
+
+//noinspection CssReplaceWithShorthandSafely
+.#{$WxDialogWindow}.e-lib.e-dialog .e-dlg-header-content {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 2px;
+  padding-right: 10px;
+  border-bottom: 5px solid $app_color_blue;
+  background-color: $app-dialog-header-background-color; // background of dialog box header
+}
+
+.#{$WxDialogWindow}.e-dialog .e-dlg-content {
+  padding: 5px;
+}
+
+.#{$WxDialogWindow} .e-dlg-header-content .e-dlg-header {
+  font-size: $app_font_size_regular;
+}
+
+
+// This makes the close button visible at all times, not just when being hovered over
+.#{$WxDialogWindow}.e-lib.e-dialog .e-btn.e-dlg-closeicon-btn {
+  background-color: #e0e0e0;
+  border-color: rgba(0, 0, 0, 0);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0)
+}
+
+
+
+// Size the dialog heading component to be the whole width of the dialog minus the width of the close button
+.#{$WxDialogWindow}.e-dialog .e-dlg-header {
+  width: calc(100% - #{$app_dialog_header_close_button_size})
+}
+
+
+//----------------- Size close button and X inside properly -----------
+// See https://support.syncfusion.com/support/tickets/358806
+
+.#{$WxDialogWindow}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn {
+  display: inline-flex;
+  margin-top: 5px;
+  height: #{$app_dialog_header_close_button_size};
+  width: #{$app_dialog_header_close_button_size};
+  padding-top: 3px;
+}
+
+.#{$WxDialogWindow}.e-dialog .e-btn .e-btn-icon {
+  margin-top: 0px;
+}
+
+.#{$WxDialogWindow}.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close {
+  font-size: 10px; //changed
+}
+
+
+//----------------------- DropDown ----------------------------
+
+$Wej2DropDown: 'Wej2DropDown';
+
+.#{$Wej2DropDown} .e-dropdown-popup {
+  background-color: white !important;
+}
+
+
+//----------------- RichTextEditor ----------------------------
+.WxRichTextEditor .e-tbar-btn, .WxRichTextEditor .e-tbtn-txt {
+  background-color: $appColorLightGray001 !important;
+}
+
+//-------------- WxTab / WxTab_Type01 -------------------------
+// Tabs do not capitalize text
+.app-tab-no-text-transform {
+  text-transform: unset !important;
+}
