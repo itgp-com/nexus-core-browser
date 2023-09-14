@@ -9,9 +9,13 @@ import {Resize} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/action
 import {Audio} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/audio-module';
 import {Table} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/table-module';
 import {Video} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/video-module';
+import {cssAddSelector} from '../../../CoreUtils';
 import {StateN2PropertyName} from '../../generic/StateN2PropertyName';
 import {addN2Class} from '../../N2HtmlDecorator';
+import {VARS_EJ2_COMMON} from '../../scss/vars-ej2-common';
+import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {N2Grid} from './N2Grid';
 
 RichTextEditor.Inject(
     Audio,
@@ -64,3 +68,14 @@ export class N2RichTextEditor<STATE extends StateN2RichTextEditor = StateN2RichT
     get classIdentifier(): string { return N2RichTextEditor.CLASS_IDENTIFIER; }
 
 } // main class
+
+
+
+themeChangeListeners().add((ev: ThemeChangeEvent) => {
+    let widgetClass = N2RichTextEditor.CLASS_IDENTIFIER
+
+    // $grey-300 for light and grey-700 for dark
+    cssAddSelector(`.${widgetClass} .e-tbar-btn, .${widgetClass} .e-tbtn-txt`,`
+  background-color: ${VARS_EJ2_COMMON.chip_bg_color} !important;
+    `);
+}); // normal priority

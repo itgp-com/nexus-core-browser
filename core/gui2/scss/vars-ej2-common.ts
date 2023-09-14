@@ -50,6 +50,7 @@ class Ej2Css {
     grid_table_background_color?: string;
     grid_header_border_color?: string;
     panel_box_shadow?: string;
+    chip_bg_color?: string;
 }
 
 
@@ -102,6 +103,7 @@ let updateThemeVariables = (ev: ThemeChangeEvent) => {
     VARS_EJ2_COMMON.grid_table_background_color = rootStyle.getPropertyValue('--grid-table-background-color').trim();
     VARS_EJ2_COMMON.grid_header_border_color = rootStyle.getPropertyValue('--grid-header-border-color').trim();
     VARS_EJ2_COMMON.panel_box_shadow = rootStyle.getPropertyValue('--panel-box-shadow').trim();
+    VARS_EJ2_COMMON.chip_bg_color = rootStyle.getPropertyValue('--chip-bg-color').trim();
 
 };
 
