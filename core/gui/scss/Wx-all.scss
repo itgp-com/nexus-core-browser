@@ -131,6 +131,28 @@ $Wej2DropDown: 'Wej2DropDown';
 
 //-------------- WxGrid -------------------------
 
+// Make tops of grid filters change colors for enabled filters
+.WxGrid .e-filtertext:not(.e-disable) {
+  background-color: $app-filter-text-background-color !important;
+  padding-left: 1ch !important;
+}
+
+// start Grid lines color
+.WxGrid.e-control.e-grid .e-rowcell, .e-control.e-grid .e-groupcaption, .e-control.e-grid .e-indentcell, .e-control.e-grid .e-recordplusexpand, .e-control.e-grid .e-recordpluscollapse, .e-control.e-grid .e-detailrowcollapse, .e-control.e-grid .e-detailrowexpand, .e-control.e-grid .e-detailindentcell, .e-control.e-grid .e-detailcell,
+.WxGrid.e-control.e-grid .e-toolbar, .e-control.e-pager, .e-control.e-grid, .e-control.e-grid .e-headercell, .e-control.e-grid .e-detailheadercell, e-columnheader,
+.WxGrid.e-control.e-grid.e-resize-lines .e-headercell .e-rhandler, .e-control.e-grid.e-resize-lines .e-headercell .e-rsuppress {
+  border-color: $app_grid_line_color !important;
+}
+
+.WxGrid.e-control.e-grid .e-gridheader, .e-columnheader {
+  border-bottom-color: $app_grid_line_color !important;
+  border-top-color: $app_grid_line_color !important;
+}
+
+.WxGrid tr, .WxGrid th {
+  border-color: $app_grid_line_color !important;
+}
+
 //  Grid opacity
 .WxGrid.e-control.e-grid .e-rowcell:not(.e-editedbatchcell), .e-control.e-grid .e-detailrowcollapse:not(.e-editedbatchcell), .e-control.e-grid .e-detailrowexpand:not(.e-editedbatchcell), .e-control.e-grid .e-gridcontent .e-rowdragdrop:not(.e-editedbatchcell), .e-control.e-grid .e-emptyrow:not(.e-editedbatchcell) {
   opacity: 1 !important;
