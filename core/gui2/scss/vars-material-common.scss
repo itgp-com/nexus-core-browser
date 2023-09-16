@@ -4,10 +4,10 @@
 
 // material overrides - items common to both light and dark themes
 $grey-dark: #303030 !default;
-$font-size: 12px;
-$btn-font-size: $font-size;
-$drop-down-btn-font-size: $font-size;
-$drop-down-btn-icon-font-size: $font-size;
+$font-size: 12; // must be an integer
+$btn-font-size: #{$font-size}px;
+$drop-down-btn-font-size: #{$font-size}px;
+$drop-down-btn-icon-font-size: #{$font-size}px;
 
 
 // ---------------- application variables definitions ----------------
