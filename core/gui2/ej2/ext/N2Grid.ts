@@ -110,7 +110,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 export function cssForN2Grid(n2GridClass:string, eGridClass:string){
 
 
-    let accent = CORE_MATERIAL.accent_color;
+    let accent = CORE_MATERIAL.material_accent_color;
     let accentContrastColor = fontColor(accent); // dynamically calculated based on theme color
 
     const rootStyle = getComputedStyle(document.documentElement);
