@@ -415,7 +415,7 @@ cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header` ,`
 
 // Size the dialog heading component to be the whole width of the dialog minus the width of the close button
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header`,`
-        width: calc(100% - #{${CORE_MATERIAL.app_dialog_header_close_button_size})
+        width: calc(100% - ${CORE_MATERIAL.app_dialog_header_close_button_size}px)
     `);
 
 
@@ -425,8 +425,8 @@ cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header` ,`
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn`, `
         display: inline-flex;
         margin-top: 5px;
-        height: #{${CORE_MATERIAL.app_dialog_header_close_button_size}};
-        width: #{${CORE_MATERIAL.app_dialog_header_close_button_size}};
+        height: ${CORE_MATERIAL.app_dialog_header_close_button_size}px;
+        width: ${CORE_MATERIAL.app_dialog_header_close_button_size}px;
         padding-top: 3px;
     `);
 
