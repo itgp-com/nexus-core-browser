@@ -72,7 +72,7 @@ $app_color_green_01: #087b3e !default;
 $app_color_green_02: #E9FEF3 !default; // very light green for backgrounds
 $app_color_green_03: #92D050 !default; // light green for backgrounds
 $app_color_blue_01: #2174af !default;
-$app_dialog_header_close_button_size:18px !default;
+$app_dialog_header_close_button_size: 18px !default; // the size of the dialog close (x) button on the upper right of a dialog header
 
 :root {
   --material-primary-color: #{$primary};
