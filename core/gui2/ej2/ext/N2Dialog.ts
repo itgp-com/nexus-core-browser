@@ -390,12 +390,9 @@ cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header` ,`
 
 //noinspection CssReplaceWithShorthandSafely
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-dlg-header-content`,`
-        padding-top: 0px;
-        padding-bottom: 0px;
-        padding-left: 2px;
-        padding-right: 10px;
-        border-bottom: 5px solid $app_color_blue;
-        background-color: ${CORE_MATERIAL.app_dialog_header_background_color}; // background of dialog box header
+        padding: 0 10px 0 2px;
+        border-bottom: 5px solid ${CORE_MATERIAL.app_color_blue};
+        background-color: ${CORE_MATERIAL.app_dialog_header_background_color}; 
     `);
 
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-content`,`
