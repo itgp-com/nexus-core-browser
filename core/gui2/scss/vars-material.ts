@@ -63,10 +63,10 @@ const CoreMaterialCssFieldNames: string[] = [
 ];
 
 class CoreMaterialCss {
-    primary_color ?:string;
-    primary_font_color ?:string;
-    accent_color ?:string;
-    accent_font_color ?:string;
+    material_primary_color ?:string;
+    material_primary_font_color ?:string;
+    material_accent_color ?:string;
+    material_accent_font_color ?:string;
     grey_dark ?:string;
 
     app_color_panel_background ?: string;
