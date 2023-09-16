@@ -84,7 +84,7 @@ $WxDialogWindow: 'WxDialogWindow';
 
 // Size the dialog heading component to be the whole width of the dialog minus the width of the close button
 .#{$WxDialogWindow}.e-dialog .e-dlg-header {
-  width: calc(100% - #{$app_dialog_header_close_button_size})
+  width: calc(100% - #{$app_dialog_header_close_button_size}px)
 }
 
 
@@ -94,8 +94,8 @@ $WxDialogWindow: 'WxDialogWindow';
 .#{$WxDialogWindow}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn {
   display: inline-flex;
   margin-top: 5px;
-  height: #{$app_dialog_header_close_button_size};
-  width: #{$app_dialog_header_close_button_size};
+  height: #{$app_dialog_header_close_button_size}px;
+  width: #{$app_dialog_header_close_button_size}px;
   padding-top: 3px;
 }
 
@@ -126,4 +126,110 @@ $Wej2DropDown: 'Wej2DropDown';
 // Tabs do not capitalize text
 .app-tab-no-text-transform {
   text-transform: unset !important;
+}
+
+
+//-------------- WxGrid -------------------------
+
+//  Grid opacity
+.WxGrid.e-control.e-grid .e-rowcell:not(.e-editedbatchcell), .e-control.e-grid .e-detailrowcollapse:not(.e-editedbatchcell), .e-control.e-grid .e-detailrowexpand:not(.e-editedbatchcell), .e-control.e-grid .e-gridcontent .e-rowdragdrop:not(.e-editedbatchcell), .e-control.e-grid .e-emptyrow:not(.e-editedbatchcell) {
+  opacity: 1 !important;
+}
+
+
+// Reduce the padding of the header grid cells from 1.8em default
+.WxGrid.e-grid .e-gridheader .e-sortfilter .e-headercelldiv, .e-grid .e-gridheader .e-stackedheadercelldiv,
+.WxGrid.e-grid .e-gridheader .e-headercell .e-headercelldiv.e-headerchkcelldiv {
+  padding-right: 0.5em;
+}
+
+//.e-headercell .e-sortfilterdiv {
+//  margin: -18px -4px !important;
+//}
+
+// Make row hovered over readable (background goes to light gray by default, so turn font to black)
+.WxGrid.e-grid.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-editedrow):not(.e-detailrow):hover .e-rowcell:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.WxGrid.e-grid.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-detailrow):hover .e-detailrowcollapse:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.WxGrid.e-grid.e-gridhover tr[role=row]:not(.e-disable-gridhover):hover .e-rowdragdrop:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.WxGrid.e-grid.e-rtl .e-gridhover tr[role=row]:not(.e-disable-gridhover):hover .e-rowdragdrop:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.WxGrid.e-grid.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-detailrow):hover .e-detailrowexpand:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell) {
+  color: black !important;
+}
+
+
+.WxGrid.e-control.e-grid .e-rowcell {
+  font-family: $app_font_family;
+  font-size: $app_font_size_regular;
+}
+
+.WxGrid.e-control.e-grid .e-toolbar .e-tbar-btn .e-tbar-btn-text {
+  font-family: $app_font_family;
+  font-size: $app_font_size_regular
+}
+
+// gray left divider for row cell, header and filter cells
+.WxGrid.e-control.e-grid .e-rowcell, .WxGrid.e-control.e-grid .e-filterbarcell, .WxGrid.e-control.e-grid .e-headercell {
+  border-left-width: 1px !important;
+  border-left-style: solid !important;
+  border-left-color: $app_grid_line_color !important;
+}
+
+// eliminate visible gray bar from resize handler cell
+.WxGrid.e-control.e-grid .e-headercell .e-rhandler {
+  border-right-width: 0 !important;
+  border-right-style: solid !important;
+  border-right-color: white !important;
+}
+
+.WxGrid.e-control.e-grid .e-tableborder {
+  border-right-color: $app_grid_line_color !important;
+}
+
+
+/* overrride css styles */
+
+/* These are all the grid bar buttons (Excel, Add, Cancel, etc) */
+.WxGrid .e-tbar-btn, .e-tbtn-txt {
+  background-color: $accent !important;
+  border-radius: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.WxGrid .e-tbar-btn-text, .WxGrid .e-btn-icon.e-excelexport {
+  //background-color:$accent !important;
+  color: white !important;
+}
+
+
+// --------------- screen classes ----------------------------
+
+.WxGrid.e-grid .e-rowcell, .e-grid .e-filterbarcell, .e-grid .e-filterbarcelldisabled, .e-grid .e-headercell, .e-grid .e-detailheadercell {
+  // Controls the left/right padding in grid cells
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+.WxGrid.e-grid .e-rowcell.screen-grid-col-disabled {
+  // this class is used to denote a disabled row in the grid
+  background-color: $app-row-disabled-background-color-lightgray;
+}
+
+.WxGrid.e-grid .e-headercell.screen-grid-col-disabled {
+  // this class is used to denote a disabled row in the grid
+  background-color: $app-row-disabled-background-color-lightgray !important;
+}
+
+.WxGrid.e-grid .e-grouptext {
+  width: unset; // Ej2 defaults the width to 57px for some strange reason
+}
+
+.WxGrid.e-grid .e-groupdroparea.e-grouped {
+  background-color: $app_color_panel_background; // light gray
+}
+
+
+// Highlight the cells marked with this class
+.WxGrid_Type01.e-grid .e-content .e-table .e-rowcell.orca_text_highlight_001 {
+  @extend .orca_text_highlight_001;
 }
