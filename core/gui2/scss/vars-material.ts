@@ -4,12 +4,11 @@ export const CORE_MATERIAL: CoreMaterialCss = {};
 
 const CoreMaterialCssFieldNames: string[] = [
 
-    'material-primary-color',
-    'material-primary-font-color',
-    'material-accent-color',
-    'material-accent-font-color',
-    'grey-dark',
-
+    'material_primary_color',
+    'material_primary_font_color',
+    'material_accent_color',
+    'material_accent_font_color',
+    'grey_dark',
 
     'app_color_panel_background',
     'app_font_main',
