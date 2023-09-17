@@ -14,7 +14,7 @@ const CoreMaterialCssFieldNames: string[] = [
     'app_font_main',
     'app_font_family',
     'font_family',
-    'app_font_size_base_number',
+    'app_font_size_base_number', // integer
     'app_font_size_regular',
     'app_font_size_minus_1',
     'app_font_size_minus_2',
