@@ -3,7 +3,7 @@ import {AbstractWidget, addWidgetClass, CssStyle}        from "../../AbstractWid
 import {gridDecoratorsHeight}                            from "../abstract/AbstractGrid";
 import {Args_WxPanelBase, Evt_PanelResized, WxPanelBase} from "./WxPanelBase";
 import {Args_WxGrid1, WxGrid1}                                                 from "../ext/WxGrid1";
-import {CSS_FLEX_MAX_XY}                                                       from "../../../CoreCSS";
+import {CSS_FLEX_MAX_XY}                                                       from "../../../gui2/scss/core";
 import {WxPanel}                                                               from "../ext/WxPanel";
 import {WxRow}                                                                 from "../ext/WxRow";
 

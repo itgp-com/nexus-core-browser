@@ -1,4 +1,5 @@
 import {ColumnModel, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
+import {CSS_CLASS_grid_btn_font_awesome} from '../../../gui2/scss/core';
 import {GridWidgetCallBack}                  from "../../WidgetUtils";
 import {Button}                              from "@syncfusion/ej2-buttons";
 import {Tooltip}                             from "@syncfusion/ej2-popups";
@@ -42,7 +43,7 @@ export abstract class AbstractGridButton {
       if (this.args.fa_classes != null) {
          if (label != '')
             label = ' ' + label // add a space between the icon and the text
-         template = `<button type="button" class="${this.args.buttonClass} grid-btn-font-awesome"><i class="fa ${this.args.fa_classes}" aria-hidden="true"></i>${label}</button>`
+         template = `<button type="button" class="${this.args.buttonClass} ${CSS_CLASS_grid_btn_font_awesome}"><i class="fa ${this.args.fa_classes}" aria-hidden="true"></i>${label}</button>`
 
       }
 

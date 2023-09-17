@@ -1,6 +1,6 @@
 import {Args_AnyWidget}         from "../../AnyWidget";
 import {addWidgetClass}         from "../../AbstractWidget";
-import {CSS_FLEX_ROW_DIRECTION} from "../../../CoreCSS";
+import {CSS_FLEX_ROW_DIRECTION} from "../../../gui2/scss/core";
 import {AnyWidgetStandard}      from "../../AnyWidgetStandard";
 
 export class Args_WxRow extends Args_AnyWidget {

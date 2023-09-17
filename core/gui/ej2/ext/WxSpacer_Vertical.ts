@@ -1,7 +1,7 @@
 import {Args_AnyWidget}      from "../../AnyWidget";
 import {addWidgetClass}      from "../../AbstractWidget";
 import {AnyWidgetStandard}   from "../../AnyWidgetStandard";
-import {css_vertical_spacer} from "../../../CoreCSS";
+import {CSS_CLASS_vertical_spacer} from "../../../gui2/scss/core";
 
 export class Args_WxSpacer_Vertical extends Args_AnyWidget {
    pixels ?: number = 0;
@@ -25,7 +25,7 @@ export class WxSpacer_Vertical extends AnyWidgetStandard {
       if (args.pixels) {
         Object.assign(args.htmlTagStyle , {"margin-top":`${args.pixels}px;`});
       } else {
-         addWidgetClass(args, css_vertical_spacer)
+         addWidgetClass(args, CSS_CLASS_vertical_spacer)
       }
 
       await instance.initialize_AnyWidgetStandard(args);

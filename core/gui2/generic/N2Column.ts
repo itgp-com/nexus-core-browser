@@ -1,4 +1,4 @@
-import {CSS_FLEX_COL_DIRECTION} from "../../CoreCSS";
+import {CSS_FLEX_COL_DIRECTION} from "../scss/core";
 import {N2Basic, StateN2Basic, StateN2BasicRef} from "../N2Basic";
 import {addN2Class} from "../N2HtmlDecorator";
 

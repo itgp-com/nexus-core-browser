@@ -1,5 +1,5 @@
 import {Grid, GridModel} from '@syncfusion/ej2-grids';
-import {CSS_FLEX_MAX_XY} from '../../../CoreCSS';
+import {CSS_FLEX_MAX_XY} from '../../scss/core';
 import {N2PanelLayout, StateN2PanelLayout} from '../../generic/N2PanelLayout';
 import {EnumPanelLayout} from '../../generic/N2PanelLayoutFlex';
 import {N2Evt_Resized} from '../../N2';

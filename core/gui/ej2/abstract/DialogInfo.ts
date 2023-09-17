@@ -1,6 +1,5 @@
-import {Dialog, DialogModel}           from "@syncfusion/ej2-popups";
+import {Dialog, DialogModel} from "@syncfusion/ej2-popups";
 import {ClassArg, classArgInstanceVal} from "../../../BaseUtils";
-import {ej2_icon_ok}                   from "../../../CoreCSS";
 
 export interface DialogInfoModel {
    element: ClassArg<HTMLElement>;
@@ -31,7 +30,7 @@ export class DialogInfo {
             buttonModel: {
                isPrimary: true,
                content:   'Ok',
-               iconCss:   `e-icons ${ej2_icon_ok}`
+               iconCss:   `e-icons`
             }, click:    () => {
                thisX.dialogObj.close();
                setTimeout(() => {

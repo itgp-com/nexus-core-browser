@@ -1,4 +1,4 @@
-import {CSS_FLEX_CONTAINER, CSS_FLEX_CONTAINER_CENTERING, CSS_FLEX_CONTAINER_LEFT_JUSTIFIED, CSS_FLEX_CONTAINER_RIGHT_JUSTIFIED} from "../../../CoreCSS";
+import {CSS_FLEX_CONTAINER, CSS_FLEX_CONTAINER_CENTERING, CSS_FLEX_CONTAINER_LEFT_JUSTIFIED, CSS_FLEX_CONTAINER_RIGHT_JUSTIFIED} from "../../../gui2/scss/core";
 import {Args_AnyWidget}                                                                                                          from "../../AnyWidget";
 import {IArgs_HtmlTag_Utils}                                                                                                     from "../../../BaseUtils";
 import {AbstractWidget, addWidgetClass}                                                                                          from "../../AbstractWidget";

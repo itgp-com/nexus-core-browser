@@ -1,5 +1,5 @@
 import {addWidgetClass}         from "../../AbstractWidget";
-import {CSS_FLEX_COL_DIRECTION} from "../../../CoreCSS";
+import {CSS_FLEX_COL_DIRECTION} from "../../../gui2/scss/core";
 import {Args_AnyWidget}         from "../../AnyWidget";
 import {AnyWidgetStandard}      from "../../AnyWidgetStandard";
 

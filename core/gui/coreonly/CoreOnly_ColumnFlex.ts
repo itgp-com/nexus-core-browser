@@ -7,7 +7,7 @@
 import {AnyWidgetStandard}      from "../AnyWidgetStandard";
 import {Args_AnyWidget}         from "../AnyWidget";
 import {IArgs_HtmlTag_Utils}    from "../../BaseUtils";
-import {CSS_FLEX_COL_DIRECTION} from "../../CoreCSS";
+import {CSS_FLEX_COL_DIRECTION} from "../../gui2/scss/core";
 import {addWidgetClass}         from "../AbstractWidget";
 
 

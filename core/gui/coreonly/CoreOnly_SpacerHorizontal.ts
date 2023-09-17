@@ -1,6 +1,6 @@
 import {AnyWidget, Args_AnyWidget} from "../AnyWidget";
 import {addWidgetClass}            from "../AbstractWidget";
-import {css_horizontal_spacer}     from "../../CoreCSS";
+import {CSS_CLASS_horizontal_spacer}     from "../../gui2/scss/core";
 import {cssStyleToString}          from "../../CoreUtils";
 
 export class Args_CoreOnly_HorizontalSpacer extends Args_AnyWidget { // does not extend Args_AnyWidget on purpose, it's too simple
@@ -31,7 +31,7 @@ export class CoreOnly_SpacerHorizontal extends AnyWidget {
       if (args.pixels) {
          Object.assign(args.htmlTagStyle  , {"margin-right":`${args.pixels}px`})
       } else {
-         addWidgetClass(args, css_horizontal_spacer)
+         addWidgetClass(args, CSS_CLASS_horizontal_spacer)
       }
 
       await instance.initialize_AnyWidget()

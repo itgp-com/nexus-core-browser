@@ -1,6 +1,5 @@
-import {Dialog, DialogModel}          from "@syncfusion/ej2-popups";
-import {voidFunction}                 from "../../../BaseUtils";
-import {ej2_icon_close2, ej2_icon_ok} from "../../../CoreCSS";
+import {Dialog, DialogModel} from "@syncfusion/ej2-popups";
+import {voidFunction} from "../../../BaseUtils";
 
 export interface DialogYesNoModel {
    element: HTMLElement;
@@ -35,7 +34,7 @@ export class DialogYesNo {
             buttonModel: {
                isPrimary: true,
                content:   'Yes',
-               iconCss:   `e-icons ${ej2_icon_ok}`
+               iconCss:   `e-icons`
             }, click:    () => {
                if (thisX.alreadyResponded)
                   return; // don't ever execute again
@@ -51,7 +50,7 @@ export class DialogYesNo {
          }, {
             buttonModel: {
                content: 'No',
-               iconCss: `e-icons ${ej2_icon_close2}`
+               iconCss: `e-icons`
             }, click:    () => {
                if (thisX.alreadyResponded)
                   return; // don't ever execute again

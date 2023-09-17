@@ -1,5 +1,5 @@
 import {DialogUtility} from '@syncfusion/ej2-popups';
-import {CSS_FLEX_MAX_XY} from "../../CoreCSS";
+import {CSS_FLEX_MAX_XY} from "../scss/core";
 import {isDev} from '../../CoreUtils';
 import {N2} from "../N2";
 import {N2Basic, StateN2Basic} from "../N2Basic";

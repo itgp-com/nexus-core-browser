@@ -1,4 +1,4 @@
-import {CSS_FLEX_ROW_DIRECTION} from "../../CoreCSS";
+import {CSS_FLEX_ROW_DIRECTION} from "../../gui2/scss/core";
 import {addWidgetClass}         from "../AbstractWidget";
 import {Args_AnyWidget}         from "../AnyWidget";
 import {AnyWidgetStandard}      from "../AnyWidgetStandard";
