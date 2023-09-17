@@ -6,8 +6,6 @@ import {addClassesToElement, addN2Class, removeClassesFromElement} from '../../N
 import {getN2FromHtmlElement} from '../../N2Utils';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-import {cssForN2Grid} from './N2Grid';
-import {N2TreeGrid} from './N2TreeGrid';
 
 
 export interface N2Tab_PostCreated_Event {

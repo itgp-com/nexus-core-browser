@@ -10,8 +10,6 @@ import {isN2} from '../../N2Utils';
 import {CORE_MATERIAL} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-import {cssForN2Grid} from './N2Grid';
-import {N2TreeGrid} from './N2TreeGrid';
 import {N2DialogBackArrow} from './util/N2DialogBackArrow';
 
 
@@ -374,47 +372,46 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
-
-
-
-cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header` ,`
-        color: ${CORE_MATERIAL.app_dialog_header_font_color}; // color of text in dialog box header
+    // color of text in dialog box header
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header`, `
+        color: ${CORE_MATERIAL.app_dialog_header_font_color}; 
     `);
 
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header, .${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header *`,`
-        color: ${CORE_MATERIAL.app_dialog_header_font_color}; // color of text in dialog box header
+    // color of text in dialog box header
+    // remove border from all buttons and other elements
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header, .${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header *`, `
+        color: ${CORE_MATERIAL.app_dialog_header_font_color}; 
         font-size: ${CORE_MATERIAL.app_font_size_regular};
-        border: none; // remove border from all buttons and other elements
+        border: none;         
 `);
 
 
 //noinspection CssReplaceWithShorthandSafely
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-dlg-header-content`,`
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-dlg-header-content`, `
         padding: 0 10px 0 2px;
         border-bottom: 5px solid ${CORE_MATERIAL.app_color_blue};
         background-color: ${CORE_MATERIAL.app_dialog_header_background_color}; 
     `);
 
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-content`,`
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-content`, `
         padding: 5px;
     `);
 
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header-content .e-dlg-header`,`
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header-content .e-dlg-header`, `
         font-size: ${CORE_MATERIAL.app_font_size_regular};
     `);
 
 
 // This makes the close button visible at all times, not just when being hovered over
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-btn.e-dlg-closeicon-btn`,`
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-btn.e-dlg-closeicon-btn`, `
         background-color: #e0e0e0;
         border-color: rgba(0, 0, 0, 0);
         box-shadow: 0 0 0 rgba(0, 0, 0, 0)
     `);
 
 
-
 // Size the dialog heading component to be the whole width of the dialog minus the width of the close button
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header`,`
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header`, `
         width: calc(100% - ${CORE_MATERIAL.app_dialog_header_close_button_size}px)
     `);
 
@@ -434,8 +431,9 @@ cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header` ,`
         margin-top: 0px;
     `);
 
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close`,`
-        font-size: 10px; //changed
+    //changed
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close`, `
+        font-size: 10px;
     `);
-    
+
 }); // normal priority
