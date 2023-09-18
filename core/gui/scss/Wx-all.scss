@@ -179,12 +179,7 @@ $Wej2DropDown: 'Wej2DropDown';
 }
 
 
-.WxGrid.e-control.e-grid .e-rowcell {
-  font-family: $app_font_family;
-  font-size: $app_font_size_regular;
-}
-
-.WxGrid.e-control.e-grid .e-toolbar .e-tbar-btn .e-tbar-btn-text {
+.WxGrid.e-control.e-grid .e-rowcell .WxGrid.e-control.e-grid .e-toolbar .e-tbar-btn .e-tbar-btn-text {
   font-family: $app_font_family;
   font-size: $app_font_size_regular
 }
