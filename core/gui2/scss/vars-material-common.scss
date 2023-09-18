@@ -1,7 +1,12 @@
 // declare EJ2 variables common to both light and dark themes (no changes just variable declarations)
 // included here so the scss is compiled and available to vards-ej2-common.ts to create VARS_EJ2_COMMON values
 
-
+@font-face {
+  font-family: 'Roboto-Regular';
+  src: url('/fonts/Roboto/Roboto-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 $app_font_size_base_number: 12 !default; // integer
 
 // material overrides - items common to both light and dark themes
@@ -17,7 +22,7 @@ $drop-down-btn-icon-font-size: $font-size;
 $app_color_panel_background: #f5f5f5;
 
 $app_font_main: 'Roboto-Regular';
-$app_font_family: $app_font_main, sans-serif, !default;
+$app_font_family: $app_font_main, sans-serif !default;
 $font-family: $app_font_family !default;
 $app_font_size_regular: #{$app_font_size_base_number}px !default;
 $app_font_size_minus_1: #{$app_font_size_base_number - 1}px !default;
