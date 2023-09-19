@@ -1,9 +1,10 @@
 // declare EJ2 variables common to both light and dark themes (no changes just variable declarations)
 // included here so the scss is compiled and available to vards-ej2-common.ts to create VARS_EJ2_COMMON values
 
+// current folder is 'css' so we need to back up one folder first
 @font-face {
   font-family: 'Roboto-Regular';
-  src: url('fonts/Roboto/Roboto-Regular.ttf') format('truetype');
+  src: url('../fonts/Roboto/Roboto-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
