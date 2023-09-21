@@ -1,6 +1,6 @@
 import {ClassArg, classArgInstanceVal, hget, IArgs_HtmlTag_Utils} from "../../../BaseUtils";
 import {getErrorHandler}                                          from "../../../CoreErrorHandling";
-import {AbstractWidget}                                           from "../../AbstractWidget";
+import {AbstractWidget, addWidgetClass} from "../../AbstractWidget";
 import {Args_AnyWidget}                                           from "../../AnyWidget";
 import {AnyWidgetStandard}                                        from "../../AnyWidgetStandard";
 import {DataManager}                                              from "@syncfusion/ej2-data";
@@ -24,6 +24,7 @@ export class Args_AbstractGrid extends Args_AnyWidget<GridModel> {
 }
 
 export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args_AnyWidget, T> {
+   static readonly CLASS_NAME:string = 'AbstractGrid';
 
    static readonly COL_TABLE_PROPERTY: string = 'ej2Grid';
 
@@ -55,6 +56,7 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
    protected async initialize_AbstractGrid(args: Args_AbstractGrid) {
       args          = IArgs_HtmlTag_Utils.init(args) as Args_AbstractGrid;
       this.initArgs = args;
+      addWidgetClass(args, AbstractGrid.CLASS_NAME);
 
       await this.createGridModel();
 

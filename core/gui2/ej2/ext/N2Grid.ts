@@ -53,8 +53,9 @@ Grid.Inject(
     Selection,
     Toolbar,
 );
+
 export interface StateN2GridRef<N2_GRID extends N2Grid = N2Grid> extends StateN2EjBasicRef {
-  widget ?: N2_GRID;
+    widget?: N2_GRID;
 }
 
 export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
@@ -62,17 +63,18 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
-    ref ?: StateN2GridRef<N2Grid>;
+    ref?: StateN2GridRef<N2Grid>;
 }
 
-export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE,Grid> {
-    static readonly CLASS_IDENTIFIER:string = 'N2Grid';
+export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Grid';
+
     constructor(state ?: STATE) {
         super(state);
     }
 
     protected onStateInitialized(state: STATE) {
-        addN2Class(state.deco,  N2Grid.CLASS_IDENTIFIER);
+        addN2Class(state.deco, N2Grid.CLASS_IDENTIFIER);
         super.onStateInitialized(state)
     }
 
@@ -84,8 +86,6 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     get classIdentifier(): string { return N2Grid.CLASS_IDENTIFIER; }
 
 
-
-
     /**
      * The function is used to generate updated Query from Grid model.
      *
@@ -94,7 +94,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
      * @returns {Query} returns the Query or null if not initialized
      */
     generateQuery(skipPage?: boolean, isAutoCompleteCall?: boolean): Query {
-        if ( !this.obj)
+        if (!this.obj)
             return null;
         return new Data(this.obj).generateQuery(skipPage, isAutoCompleteCall);
     } // generateQuery
@@ -107,7 +107,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
  * @param {string} n2GridClass one of ['N2Grid', 'N2TreeGrid', ]
  * @param {string} eGridClass one of ['e-grid', 'e-treegrid',]
  */
-export function cssForN2Grid(n2GridClass:string, eGridClass:string){
+export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
 
 
     let accent = CORE_MATERIAL.material_accent_color;
@@ -122,17 +122,17 @@ export function cssForN2Grid(n2GridClass:string, eGridClass:string){
 
     // Removes blue background from grid editable checkbox and restores border and font color
     cssAddSelector(`.${n2GridClass} .e-checkbox-wrapper .e-frame.e-check, .${n2GridClass} .e-css.e-checkbox-wrapper .e-frame.e-check`,
-`
+        `
     background-color: transparent;
     border-color: unset;
-    color: black;`        );
+    color: black;`);
 
     // Make tops of grid filters change colors for enabled filters
     cssAddSelector(`.${n2GridClass} .e-filtertext:not(.e-disable)`, `
         background-color: $app-filter-text-background-color !important;
         padding-left: 1ch !important;`);
-    
-    
+
+
     cssAddSelector(`.${n2GridClass} .e-tbar-btn, .e-tbtn-txt`,
         `  background-color: ${accent} !important;`
     );
@@ -242,6 +242,171 @@ font-size: ${CORE_MATERIAL.app_font_size_regular};`
     cssAddSelector(`.${n2GridClass} td.e-rowcell br`, `
      display: none;
     `);
+
+
+    //------------------- General sorting - disable color change for sorted columns -------------
+    cssAddSelector(`.${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=ascending] .e-headertext, 
+.${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=descending] .e-headertext, 
+.${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=ascending] .e-sortfilterdiv, 
+.${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=descending] .e-sortfilterdiv`, `
+        color: unset;
+        opacity: unset;
+    `);
+
+        //--------------- Custom Excel filter --------------------
+
+    const STYLE_CENTER_VERTICAL: string = `
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto 2px;
+        height: 16px;`;
+
+
+    // Reverse the space reservation and reserve 32px to the front of the header cell for the filter and sort icon
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-rightalign.e-fltr-icon .e-headercelldiv`,`
+            margin: -7px -7px -7px 32px;
+    `);
+
+    /**
+     * This is the filter icon that appears in the right of the header of a column that has a filter applied (e-filtered exists).
+     */
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-filtermenudiv.e-filtered::before`, `
+        color: ${CORE_MATERIAL.material_accent_font_color};
+        background-color: ${CORE_MATERIAL.material_accent_color};
+        padding: 3px;
+        border: solid 1px ${VARS_EJ2_COMMON.grid_header_border_color};
+        border-radius: 5px;
+        ${STYLE_CENTER_VERTICAL}
+        right: 0;
+   `);
+
+    /**
+     * This is the filter icon that appears on the left of the header of a column that has a filter applied (e-filtered exists) and the header is right justified.
+     */
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-rightalign .e-filtermenudiv.e-filtered::before`, `
+        right: unset;
+        left: 0;
+    `);
+
+
+    /**
+     * This is the filter icon that appears in the right of the header of a column that has no filter (e-filtered doesn't exist).
+     */
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-filtermenudiv:not(.e-filtered)::before`, `
+        padding: 3px;
+        border: solid 1px ${VARS_EJ2_COMMON.grid_header_border_color};
+        border-radius: 5px;
+        ${STYLE_CENTER_VERTICAL}
+        right: 0;
+    `);
+
+    /**
+     * This is the filter icon that appears on the left of the header of a column that has no filter (e-filtered doesn't exist) and the header is right justified.
+     */
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-rightalign .e-filtermenudiv:not(.e-filtered)::before`, `
+        right: unset;
+        left: 0;
+    `);
+
+
+
+
+
+    //-------------------- sort icons if there's a filter menu present ---------------------------
+    // this has right=36px because there's a filter menu present amd the filtersort icon
+    cssAddSelector(`.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-gridheader .e-sortnumber`, `
+        margin: 2px 15px 2px 0;
+        ${STYLE_CENTER_VERTICAL}
+        width: 16px;
+        right: 36px;
+        `
+    );
+
+    // if the header is right justified and there's a filter menu present, move the sort number to the left, still 36px just like the right above
+    cssAddSelector(`.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-gridheader  .e-rightalign .e-sortnumber`, `
+        right: unset;
+        left: 36px;
+    `);
+
+
+    // this has right=0 because there's a filter menu present
+    cssAddSelector(`.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-sortfilterdiv.e-ascending::before,
+.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-sortfilterdiv.e-descending::before`,
+        `
+        margin-left: -10px;
+        padding: 2px 3px 4px 3px;
+        border: solid 1px ${VARS_EJ2_COMMON.grid_header_border_color};
+        border-radius: 5px;
+        ${STYLE_CENTER_VERTICAL}
+        right: 18px;
+    `);
+
+    // if the header is right justified and there's a filter menu present, move the sort filter icon to the left
+    cssAddSelector(`.${n2GridClass}.${eGridClass}.grid_filter_menu_present  .e-rightalign .e-sortfilterdiv.e-ascending::before,
+.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-headercelldiv[style*="text-align: right;"] + .e-sortfilterdiv.e-descending::before`,
+        `
+        right: unset;
+        left: 18px;
+    `);
+
+
+
+    //-------------------- sort icons if there's a filter menu IS NOT PRESENT ---------------------------
+    // this has right=18px because there's no filter menu present, but there is the filtersort icon
+    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-gridheader .e-sortnumber`, `
+        margin: 1px 18px 0px 0px;
+        ${STYLE_CENTER_VERTICAL}
+        width: 16px;
+        right: 18px;
+        `
+    );
+
+    // if the header is right justified, move the sort icon to the left, still 18px just like the right above
+    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-gridheader .e-rightalign .e-sortnumber`, `
+        right: unset;
+        left: 18px;
+    `);
+
+
+    // this has right=0 because there's no filter menu present
+    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-sortfilterdiv.e-ascending::before,
+.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-sortfilterdiv.e-descending::before`,
+        `
+        margin-left: 2px;
+        padding: 3px;
+        border: 1px solid ${VARS_EJ2_COMMON.grid_header_border_color};
+        border-radius: 5px;
+        ${STYLE_CENTER_VERTICAL}
+        right: 0px;
+    `);
+
+    // if the header is right justified, move the sort icon to the left
+    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-rightalign .e-sortfilterdiv.e-ascending::before,
+.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-rightalign .e-sortfilterdiv.e-descending::before`,
+        `
+        right: unset;
+        left: 0px;
+    `);
+
+
+    //---------------------
+
+    // align sort and menu vertically
+    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-columnheader.e-wrap .e-sortfilterdiv, .${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-columnheader .e-sortfilterdiv`, `
+        margin: -19px 10px;    
+    `);
+
+
+    // now center the menu character in the menufilter div ::before
+    cssAddSelector(`
+    .${n2GridClass}.${eGridClass} .e-icon-filter::before, 
+    .${n2GridClass}.${eGridClass} .e-icon-filter.e-filtered::before, 
+    .${n2GridClass}.${eGridClass} .e-grid-menu .e-icon-filter::before, 
+    .${n2GridClass}.${eGridClass} .e-grid-menu .e-icon-filter.e-filtered::before`, `
+line-height: 8px;
+`);
+
 } // cssForN2Grid
 
 themeChangeListeners().add((ev: ThemeChangeEvent) => {

@@ -17,7 +17,12 @@ export const CSS_CLASS_grid_btn_font_awesome: string = 'grid-btn-font-awesome';
 
 export const CSS_CLASS_vertical_spacer = 'core_vertical_spacer';
 export const CSS_CLASS_horizontal_spacer = 'core-horizontal-spacer';
-
+export const CSS_CLASS_row_number_001 = 'core_row_number_001';
+/**
+ * Added next to e-grid and N2Grid, WxGrid when the customized excel filter is present
+ * CSS looks for this class in order to position the sort indicators (arrow and sort order number bubble) correctly
+ * */
+export const CSS_CLASS_GRID_FILTER_MENU_PRESENT = 'grid_filter_menu_present';
 
 /***
  *  See
