@@ -262,6 +262,13 @@ font-size: ${CORE_MATERIAL.app_font_size_regular};`
         margin: auto 2px;
         height: 16px;`;
 
+    // Move the hidden div that the floating dialog opening next to to the left if the menu is on the left side (if text is right justified)
+    cssAddSelector(`.${n2GridClass}.e-control.${eGridClass}  .e-rightalign .e-filtermenudiv`,`
+    float: unset;
+    width: 40px;
+	`);
+
+
 
     // Reverse the space reservation and reserve 32px to the front of the header cell for the filter and sort icon
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-rightalign.e-fltr-icon .e-headercelldiv`,`
