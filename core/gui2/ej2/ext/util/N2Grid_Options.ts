@@ -8,7 +8,14 @@ import {RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interfa
 import {ExcelFilterBase} from '@syncfusion/ej2-grids/src/grid/common/excel-filter-base';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {ClickEventArgs, ItemModel} from '@syncfusion/ej2-navigations';
-import {createElementParams, createSpinner, hideSpinner, showSpinner, SpinnerArgs} from '@syncfusion/ej2-popups';
+import {
+    createElementParams,
+    createSpinner,
+    Dialog,
+    hideSpinner,
+    showSpinner,
+    SpinnerArgs
+} from '@syncfusion/ej2-popups';
 import * as _ from 'lodash';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {EJINSTANCES} from '../../N2Ej';
@@ -356,17 +363,18 @@ export function stateGrid_CustomExcelFilter(gridModel: GridModel) {
                 if (args.requestType === "filterchoicerequest" || args.requestType === "filtersearchbegin") {
                     args.filterChoiceCount = 0; // do not individually filter anything
 
-                    //                   let dlgElem = args.filterModel.dlg;
-                    //                   if (dlgElem) {
-                    //                       let dlgContent = dlgElem.querySelector('.e-dlg-content'); // this is the panel for individual values that should not exist
-                    //                       if (dlgContent) {
-                    //                           dlgContent.innerHTML = `<div style="    display: flex;
-                    //   justify-content: center; /* Center horizontally */
-                    //   align-items: center;     /* Center vertically */
-                    // "><h5 style="color:green;">Hello</h5></div>`
-                    //                       } // if dlgContent
-                    //                   } // if dlgElem
-                    //               } // if filterchoicerequest
+                    let dlgElem = args.filterModel.dlg;
+                    if (dlgElem) {
+                        let dlgContent = dlgElem.querySelector('.e-dlg-content'); // this is the panel for individual values that should not exist
+                        if (dlgContent) {
+                            dlgContent.innerHTML = ``;
+                            //                           dlgContent.innerHTML = `<div style="    display: flex;
+                            //   justify-content: center; /* Center horizontally */
+                            //   align-items: center;     /* Center vertically */
+                            // "><h5 style="color:green;">Hello</h5></div>`
+
+                        } // if dlgContent
+                    } // if dlgElem
 
 
                     try {
@@ -389,6 +397,15 @@ export function stateGrid_CustomExcelFilter(gridModel: GridModel) {
                                                 e['column'] = excelFilterBase.options?.column;
                                                 try {
                                                     prevSelectHandler.call(excelFilterBase, e); // call in context
+
+                                                    let dialog: Dialog = excelFilterBase['dlgObj'] as any;
+                                                    if (dialog) {
+
+                                                        setTimeout(() => {
+                                                            let header = dialog.header;
+                                                            dialog.header = `${header}: '${e?.column?.headerText}'`;
+                                                        });
+                                                    }
                                                 } catch (ex) {
                                                     console.error(ex);
                                                 }
