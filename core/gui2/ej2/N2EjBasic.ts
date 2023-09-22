@@ -1,9 +1,7 @@
 import {Component} from '@syncfusion/ej2-base';
-import * as _ from 'lodash';
-import {N2Evt_Destroy, N2Evt_OnHtml, N2Evt_OnLogic} from "../N2";
+import {N2Evt_OnHtml} from "../N2";
 import {addN2Class} from '../N2HtmlDecorator';
-import {createN2HtmlBasic, isN2} from "../N2Utils";
-import {isEj2HtmlElement} from './Ej2Utils';
+import {createN2HtmlBasic} from "../N2Utils";
 import {N2Ej, StateN2Ej, StateN2EjRef} from "./N2Ej";
 
 export interface StateN2EjBasicRef extends StateN2EjRef{

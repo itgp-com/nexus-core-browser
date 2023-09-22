@@ -16,6 +16,7 @@ import {
     showSpinner,
     SpinnerArgs
 } from '@syncfusion/ej2-popups';
+import {TreeGridModel} from '@syncfusion/ej2-treegrid';
 import * as _ from 'lodash';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {EJINSTANCES} from '../../N2Ej';
@@ -323,7 +324,7 @@ export function stateN2Grid_Spinner(state: StateN2Grid, options?: stateN2Grid_Sp
     };
 } // stateN2Grid_Spinner
 
-export function stateGrid_CustomExcelFilter(gridModel: GridModel) {
+export function stateGrid_CustomExcelFilter(gridModel: (GridModel|TreeGridModel)) {
     if (gridModel == null)
         throw new Error('gridModel cannot be null! in function stateGrid_CustomExcelFilter(gridModel:GridModel)');
 

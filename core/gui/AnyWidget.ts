@@ -1,14 +1,28 @@
-import {BaseListener}                                                                                                    from "../BaseListener";
-import {classArgInstanceVal, getRandomString, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal, voidFunction} from "../BaseUtils";
-import {DataProvider, DataProviderChangeEvent, IDataProviderSimple}                                                      from "../data/DataProvider";
-import {ListenerHandler}                                                                                                 from "../ListenerHandler";
-import {AbstractWidget, AbstractWidgetVoidFunction, addWidgetClass, Args_AbstractWidget, findForm}  from "./AbstractWidget";
-import {BeforeInitLogicEvent, BeforeInitLogicListener}                                                                   from "./BeforeInitLogicListener";
-import {Component}                                                                                                       from "@syncfusion/ej2-base";
-import * as _                                                                                                            from "lodash";
-import {isFunction}                                                                                                      from "lodash";
-import {resolveWidgetArray}                          from "./WidgetUtils";
+import {Component} from "@syncfusion/ej2-base";
+import * as _ from "lodash";
+import {isFunction} from "lodash";
+import {BaseListener} from "../BaseListener";
+import {
+   classArgInstanceVal,
+   getRandomString,
+   IArgs_HtmlTag,
+   IArgs_HtmlTag_Utils,
+   StringArg,
+   stringArgVal
+} from "../BaseUtils";
+import {DataProvider, DataProviderChangeEvent, IDataProviderSimple} from "../data/DataProvider";
+import {EJINSTANCES} from '../gui2/ej2/N2Ej';
+import {ListenerHandler} from "../ListenerHandler";
+import {
+   AbstractWidget,
+   AbstractWidgetVoidFunction,
+   addWidgetClass,
+   Args_AbstractWidget,
+   findForm
+} from "./AbstractWidget";
 import {AfterInitLogicEvent, AfterInitLogicListener} from "./AfterInitLogicListener";
+import {BeforeInitLogicEvent, BeforeInitLogicListener} from "./BeforeInitLogicListener";
+import {resolveWidgetArray} from "./WidgetUtils";
 
 export class Args_AnyWidget<CONTROLMODEL = any> extends Args_AbstractWidget {
 
@@ -376,6 +390,7 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    // noinspection JSUnusedGlobalSymbols
    set obj(value: EJ2COMPONENT) {
       super.obj = value;
+      this.tagEjWithEJComponent(value);
    }
 
    get initArgs(): ARGS_ANY_WIDGET {
@@ -616,6 +631,75 @@ export abstract class AnyWidget<EJ2COMPONENT extends (Component<HTMLElement> | H
    convertValueBeforeSet(val: any): any {
       return val;
    }
+
+
+   //---------------------------------
+   tagEjWithEJComponent(ejInstance: EJ2COMPONENT): void {
+      try {
+         if (!ejInstance)
+            return;
+
+         let state: ARGS_ANY_WIDGET = this.initArgs;
+         if (!state)
+            return; // unlikely, but who knows...
+
+         // Get ej value. Initialize ej in state if it doesn't exist
+         let ej: any = state.ej;
+         if (!ej) {
+            ej = {};
+            state.ej = ej;
+         }
+
+         // Get ejInstances value. Initialize ejInstances in ej if the array doesn't exist
+         let ejInstances: EJ2COMPONENT[] = ej[EJINSTANCES];
+         if (!ejInstances) {
+            ejInstances = [];
+            ej[EJINSTANCES] = ejInstances;
+         }
+
+         // At this point state.ej.ejInstances is an array that is guaranteed to exist (empty or not)
+
+         // Check if the instance is not already in the array
+         if (!ejInstances.includes(ejInstance)) {
+            // Only add if not in array already
+            ejInstances.push(ejInstance); // actually add the instance to the array
+         }
+
+      } catch (e) {
+         console.error('Error tagging ej2 component', e);
+      }
+   } // tagEjWithEJComponent
+
+   untagEjWithEJComponent(ejInstance: EJ2COMPONENT): void {
+      try {
+         if (!ejInstance)
+            return;
+
+         let state: ARGS_ANY_WIDGET = this.initArgs;
+         if (!state)
+            return; // unlikely, but who knows...
+
+         // Get ej value. Initialize ej in state if it doesn't exist
+         let ej: any = state.ej;
+         if (!ej)
+            return; // nothing to untag
+
+         // Get ejInstances value. Initialize ejInstances in ej if the array doesn't exist
+         let ejInstances: EJ2COMPONENT[] = ej[EJINSTANCES];
+         if (!ejInstances)
+            return; // nothing to untag
+
+         // At this point state.ej.ejInstances is an array that is guaranteed to exist (empty or not)
+
+         const index = ejInstances.indexOf(ejInstance);
+         if (index !== -1) {
+            ejInstances.splice(index, 1); // actually remove the instance from the array
+         }
+
+      } catch (e) {
+         console.error('Error tagging ej2 component', e);
+      }
+   } // untagEjWithEJComponent
 
 } // AnyWidget
 

@@ -1,4 +1,7 @@
-import {addWidgetClass}                          from "../../AbstractWidget";
+import {cssForN2Grid} from '../../../gui2/ej2/ext/N2Grid';
+import {stateGrid_CustomExcelFilter} from '../../../gui2/ej2/ext/util/N2Grid_Options';
+import {ThemeChangeEvent, themeChangeListeners} from '../../../gui2/Theming';
+import {addWidgetClass} from "../../AbstractWidget";
 import {AbstractTreeGrid, Args_AbstractTreeGrid} from "../abstract/AbstractTreeGrid";
 
 export class Args_WxTreeGrid extends Args_AbstractTreeGrid {
@@ -23,6 +26,11 @@ export class WxTreeGrid extends AbstractTreeGrid {
 
       args.ej = args.ej || {};
       addWidgetClass(args, WxTreeGrid.CLASS_NAME);
+      stateGrid_CustomExcelFilter(args.ej); // Every WxGrid gets an Excel filter from now on
       await super.initialize_AbstractTreeGrid(args);
    }
-}
+} // WxTreeGrid
+
+themeChangeListeners().add((ev: ThemeChangeEvent) => {
+   cssForN2Grid(WxTreeGrid.CLASS_NAME, 'e-treegrid');
+}); // normal priority
