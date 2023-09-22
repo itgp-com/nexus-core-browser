@@ -1,9 +1,11 @@
-import {isNullOrUndefined, EmitType} from '@syncfusion/ej2-base';
+import {EmitType, isNullOrUndefined} from '@syncfusion/ej2-base';
 import {CrudOptions, DataManager, DataOptions, Query} from '@syncfusion/ej2-data';
 import {DataResult} from '@syncfusion/ej2-data/src/adaptors';
 import {ColumnModel, Filter, Grid, GridModel, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
+import {ExcelFilter} from '@syncfusion/ej2-grids/src/grid/actions/excel-filter';
 import {ToolbarItem, ToolbarItems} from '@syncfusion/ej2-grids/src/grid/base/enum';
 import {RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
+import {ExcelFilterBase} from '@syncfusion/ej2-grids/src/grid/common/excel-filter-base';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {ClickEventArgs, ItemModel} from '@syncfusion/ej2-navigations';
 import {createElementParams, createSpinner, hideSpinner, showSpinner, SpinnerArgs} from '@syncfusion/ej2-popups';
@@ -315,7 +317,7 @@ export function stateN2Grid_Spinner(state: StateN2Grid, options?: stateN2Grid_Sp
 } // stateN2Grid_Spinner
 
 export function stateGrid_CustomExcelFilter(gridModel: GridModel) {
-    if ( gridModel == null)
+    if (gridModel == null)
         throw new Error('gridModel cannot be null! in function stateGrid_CustomExcelFilter(gridModel:GridModel)');
 
     let prevCreated = gridModel.created
@@ -329,35 +331,87 @@ export function stateGrid_CustomExcelFilter(gridModel: GridModel) {
 
             filterSettings: {type: 'Excel', showFilterBarStatus: true, showFilterBarOperator: true,},
             created: (args) => {
-                let grid: Grid = (gridModel[EJINSTANCES] as any[])[0];
-                if ( !grid.element.classList.contains(CSS_CLASS_GRID_FILTER_MENU_PRESENT)){
-                    grid.element.classList.add(CSS_CLASS_GRID_FILTER_MENU_PRESENT);
+                try {
+                    for (let i = 0; i < gridModel[EJINSTANCES].length; i++) {
+                        let grid: Grid = gridModel[EJINSTANCES][i];
+                        if (grid) {
+                            if (!grid.element.classList.contains(CSS_CLASS_GRID_FILTER_MENU_PRESENT)) {
+                                grid.element.classList.add(CSS_CLASS_GRID_FILTER_MENU_PRESENT);
+                            } // if not already present
+                        } // if grid
+                    } // for
+                } catch (e) {
+                    console.error(e);
+                }
+
+                try {
+                    if (prevCreated)
+                        prevCreated(args);
+                } catch (e) {
+                    console.error(e);
                 }
             },
+
             actionBegin: (args) => {
                 if (args.requestType === "filterchoicerequest" || args.requestType === "filtersearchbegin") {
                     args.filterChoiceCount = 0; // do not individually filter anything
 
-                    let dlgElem = args.filterModel.dlg;
-                    if (dlgElem) {
-                        let dlgContent = dlgElem.querySelector('.e-dlg-content'); // this is the panel for individual values that should not exist
-                        if (dlgContent) {
-                            dlgContent.innerHTML = `<div style="    display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center;     /* Center vertically */
-  "><h5 style="color:green;">Hello</h5></div>`
-                        } // if dlgContent
-                    } // if dlgElem
-                } // if filterchoicerequest
+                    //                   let dlgElem = args.filterModel.dlg;
+                    //                   if (dlgElem) {
+                    //                       let dlgContent = dlgElem.querySelector('.e-dlg-content'); // this is the panel for individual values that should not exist
+                    //                       if (dlgContent) {
+                    //                           dlgContent.innerHTML = `<div style="    display: flex;
+                    //   justify-content: center; /* Center horizontally */
+                    //   align-items: center;     /* Center vertically */
+                    // "><h5 style="color:green;">Hello</h5></div>`
+                    //                       } // if dlgContent
+                    //                   } // if dlgElem
+                    //               } // if filterchoicerequest
 
-                if (prevActionBegin) {
+
                     try {
-                        prevActionBegin(args);
+                        for (let i = 0; i < gridModel[EJINSTANCES].length; i++) {
+                            let grid: Grid = gridModel[EJINSTANCES][i];
+                            if (grid) {
+
+                                let filterModule: Filter = grid.filterModule;
+                                if (filterModule) {
+                                    if (filterModule.filterModule instanceof ExcelFilter) {
+                                        let excelFilter: ExcelFilter = filterModule.filterModule as ExcelFilter;
+                                        let excelFilterBase: ExcelFilterBase = excelFilter.excelFilterBase;
+                                        if (excelFilterBase['selectHandlerReplaced'] == true)
+                                            return; // don't do it twice
+                                        if (excelFilterBase) {
+                                            let prevSelectHandler = excelFilterBase['selectHandler'];
+                                            excelFilterBase['selectHandler'] = (e: any) => {
+                                                e['excelFilterBase'] = excelFilterBase;
+                                                e['options'] = excelFilterBase.options;
+                                                e['column'] = excelFilterBase.options?.column;
+                                                try {
+                                                    prevSelectHandler.call(excelFilterBase, e); // call in context
+                                                } catch (ex) {
+                                                    console.error(ex);
+                                                }
+                                            }; // excelFilterBase['selectHandler'] = ...
+                                            excelFilterBase['selectHandlerReplaced'] = true; // mark it as replaced
+                                        } // if excelFilterBase
+                                    } // if filterModule.filterModule instanceof ExcelFilter
+                                } // if filterModule
+                            } // if grid
+                        } // for i
                     } catch (e) {
                         console.error(e);
                     }
-                }
 
+
+                    if (prevActionBegin) {
+                        try {
+                            prevActionBegin(args);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    } // if prevActionBegin
+                } // if filterchoicerequest || filtersearchbegin
             }, // actionBegin
             actionComplete: (args) => {
                 if (args.requestType === 'filtering') {
