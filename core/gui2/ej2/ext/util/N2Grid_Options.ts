@@ -1,8 +1,11 @@
 import {EmitType, isNullOrUndefined} from '@syncfusion/ej2-base';
 import {CrudOptions, DataManager, DataOptions, Query} from '@syncfusion/ej2-data';
 import {DataResult} from '@syncfusion/ej2-data/src/adaptors';
+import {Predicate} from '@syncfusion/ej2-data/src/query';
+import {AutoComplete} from '@syncfusion/ej2-dropdowns';
+import {FilteringEventArgs} from '@syncfusion/ej2-dropdowns/src/drop-down-base/drop-down-base';
 import {ColumnModel, Filter, Grid, GridModel, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
-import {ExcelFilter} from '@syncfusion/ej2-grids/src/grid/actions/excel-filter';
+import * as events from '@syncfusion/ej2-grids/src/grid/base/constant';
 import {ToolbarItem, ToolbarItems} from '@syncfusion/ej2-grids/src/grid/base/enum';
 import {RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
 import {ExcelFilterBase} from '@syncfusion/ej2-grids/src/grid/common/excel-filter-base';
@@ -324,7 +327,7 @@ export function stateN2Grid_Spinner(state: StateN2Grid, options?: stateN2Grid_Sp
     };
 } // stateN2Grid_Spinner
 
-export function stateGrid_CustomExcelFilter(gridModel: (GridModel|TreeGridModel)) {
+export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridModel)) {
     if (gridModel == null)
         throw new Error('gridModel cannot be null! in function stateGrid_CustomExcelFilter(gridModel:GridModel)');
 
@@ -361,7 +364,204 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel|TreeGridModel)
             },
 
             actionBegin: (args) => {
-                if (args.requestType === "filterchoicerequest" || args.requestType === "filtersearchbegin") {
+
+                if (args.requestType == events.filterBeforeOpen) {
+                    try {
+
+                        try {
+                            let dlgElem = args?.filterModel?.dlg;
+                            if (dlgElem) {
+                                let dlgContent = dlgElem.querySelector('.e-dlg-content'); // this is the panel for individual values that should not exist
+                                if (dlgContent) {
+                                    dlgContent.innerHTML = ``;
+                                    //                           dlgContent.innerHTML = `<div style="    display: flex;
+                                    //   justify-content: center; /* Center horizontally */
+                                    //   align-items: center;     /* Center vertically */
+                                    // "><h5 style="color:green;">Hello</h5></div>`
+
+                                } // if dlgContent
+                            } // if dlgElem
+                        } catch (e) {
+                            console.error(e);
+                        }
+
+                        let excelFilterBase: ExcelFilterBase = args?.filterModel;
+                        if (excelFilterBase) {
+                            excelFilterBase.options.dataSource = [];
+
+
+                            /**
+                             * One of the ugliest, but most effective hacks under the sun.
+                             * Before the Custom Filter dialog is created, this happens:
+                             *     ExcelFilterBase.prototype.createdDialog = function (target, column) {
+                             *         this.renderCustomFilter(target, column);
+                             *         this.dlgObj.element.style.left = '0px';
+                             *         if (!this.options.isResponsiveFilter) {
+                             *             this.dlgObj.element.style.top = '0px';
+                             *         }
+                             *         else {
+                             *             var content = document.querySelector('.e-responsive-dialog > .e-dlg-header-content');
+                             *             var height = content.offsetHeight + 4;
+                             *             this.dlgObj.element.style.top = height + 'px';
+                             *         }
+                             *         if (!this.options.isResponsiveFilter && Browser.isDevice && window.innerWidth < 440) {
+                             *             this.dlgObj.element.style.width = '90%';
+                             *         }
+                             *         this.parent.notify(events.beforeCustomFilterOpen, { column: column, dialog: this.dialogObj });
+                             *         this.dlgObj.show();
+                             *         applyBiggerTheme(this.parent.element, this.dlgObj.element.parentElement);
+                             *     };
+                             *
+                             * Basically the grid's localObserver (which is protected) needs to have a beforeCustomFilterOpen boundedEvent array implemented
+                             *  (which it is not) in order for the beforeCustomFilterOpen event to be triggered on something. This is not
+                             *  exposed though any of the interfaces, yet we need it if we're going to control the contents of the dialog in
+                             *  any way
+                             *
+                             * events.beforeCustomFilterOpen
+                             *
+                             **/
+                            try {
+
+                                let grid: Grid = (excelFilterBase as any).parent as any;
+                                let localObserver = (grid as any).localObserver;
+                                if (localObserver) {
+                                    let boundedEvents = ((grid as any).localObserver as any).boundedEvents;
+                                    if (boundedEvents) {
+                                        let existingEvents = boundedEvents[events.beforeCustomFilterOpen];
+                                        if (!existingEvents) {
+                                            existingEvents = [];
+                                            ((grid as any).localObserver as any).boundedEvents[events.beforeCustomFilterOpen] = existingEvents;
+                                        } // if existingEvents
+
+                                        let f = (args: { column: string, dialog: Dialog }): void => {
+                                            // let dialogElem = args.dialog.element; // ?? don't know what this is, but it's not a dialog
+                                            // this is dialogElem.outerHTML in the debugger
+                                            // <div class="e-filter-popup e-excelfilter" id="qguPe_575_70348string_excelDlg" uid="grid-column7" aria-label="Excel filter dialog"></div>
+
+
+                                            let dialogAutoCompleteArray: AutoComplete[] = []
+                                            let autoCompleteElems = document.querySelectorAll(`.e-xlflmenu.e-control.e-dialog    .e-xlfl-maindiv .e-xlfl-valuediv .e-control.e-autocomplete.e-lib.e-input`);
+                                            for (let i = 0; i < autoCompleteElems.length; i++) {
+                                                let autoCompleteElem = autoCompleteElems[i];
+                                                let ejInstances = autoCompleteElem['ej2_instances'];
+                                                for (let j = 0; j < ejInstances.length; j++) {
+                                                    let obj = ejInstances[j];
+                                                    if (obj instanceof AutoComplete) {
+                                                        dialogAutoCompleteArray.push(obj);
+                                                    }
+                                                } // for j - ejInstances
+                                            } // for i - autoCompleteElems
+
+
+                                            for (let i = 0; i < dialogAutoCompleteArray.length; i++) {
+                                                let ac: AutoComplete = dialogAutoCompleteArray[i];
+                                                ac.minLength = 999999;
+                                                ac.noRecordsTemplate = '';
+                                                if ((ac as any).nexus == true) {
+                                                    // do nothing - already modified
+                                                } else {
+                                                    ac.filtering = (ev: FilteringEventArgs) => {
+                                                        ac.value = ev.text; // set right away
+                                                    };
+                                                    (ac as any).nexus = true;
+                                                } // if ( (ac as any).nexus == true)
+                                            }// for
+
+                                        }; // f
+
+                                        // any object found will do
+                                        let previouslyAdded = existingEvents.some((obj: any) => {
+                                            return obj.nexus == true;
+                                        });
+                                        if (!previouslyAdded) {
+                                            existingEvents.push({context: grid, handler: f, nexus: true});
+                                        }
+
+                                    } // if boundedEvents
+                                } // if localObserver
+                            } catch (e) {
+                                console.error(e);
+                            }
+
+                            try {
+                                if (excelFilterBase['getAllDataReplaced'] == true) {
+                                    //don't do it twice, go to the next grid in the for loop
+                                } else {
+                                    excelFilterBase['getAllData'] = () => {
+                                        var _this = excelFilterBase;
+                                        var query = new Query();
+                                        var args = {
+                                            requestType: events.filterChoiceRequest,
+                                            query: query,
+                                            filterChoiceCount: null as any
+                                        };
+                                        var filterModel = 'filterModel';
+                                        args["" + filterModel] = _this;
+                                        (_this as any).parent.trigger(events.actionBegin, args, function (args: any) {
+                                            // args.filterChoiceCount = !isNullOrUndefined(args.filterChoiceCount) ? args.filterChoiceCount : 1000;
+                                            // query.take(args.filterChoiceCount);
+                                            // if (!args.query.distincts.length) {
+                                            //     _this.customQuery = true;
+                                            //     _this.queryGenerate(query);
+                                            // }
+                                            // if (_this.parent.dataSource && 'result' in _this.parent.dataSource) {
+                                            let f = _this['filterEvent'] as any;
+                                            if (_.isFunction(f)) {
+                                                f.call(_this, args, query); // _this.filterEvent(args, query);
+                                            }
+                                            // }
+                                            // else {
+                                            //     _this.processDataOperation(query, true);
+                                            // }
+                                        });
+                                    }; // remove this function so it doesn't trigger any request to the back-end whatsoever
+                                    excelFilterBase['getAllDataReplaced'] = true;
+                                }
+                            } catch (e) {
+                                console.error(e);
+                            }
+
+
+                            try {
+                                if (excelFilterBase['selectHandlerReplaced'] == true) {
+                                    // don't do it twice, go to the next grid in the for loop
+                                } else {
+                                    let prevSelectHandler = excelFilterBase['selectHandler'];
+                                    excelFilterBase['selectHandler'] = (e: any) => {
+                                        e['excelFilterBase'] = excelFilterBase;
+                                        e['options'] = excelFilterBase.options;
+                                        e['column'] = excelFilterBase.options?.column;
+                                        try {
+                                            prevSelectHandler.call(excelFilterBase, e); // call in context
+
+                                            let dialog: Dialog = excelFilterBase['dlgObj'] as any;
+                                            if (dialog) {
+
+                                                setTimeout(() => {
+                                                    let header = dialog.header;
+                                                    dialog.header = `${header}: '${e?.column?.headerText}'`;
+                                                });
+                                            }
+                                        } catch (ex) {
+                                            console.error(ex);
+                                        }
+                                    }; // excelFilterBase['selectHandler'] = ...
+                                    excelFilterBase['selectHandlerReplaced'] = true; // mark it as replaced
+                                } // if excelFilterBase['selectHandlerReplaced'] == true
+                            } catch (e) {
+                                console.error(e);
+                            }
+
+                        } // if excelFilterBase
+
+                    } catch (e) {
+                        console.error(e);
+                    }
+
+                } // if filterbeforeopen
+
+
+                if (args.requestType === events.filterChoiceRequest || args.requestType === events.filterSearchBegin) {
                     args.filterChoiceCount = 0; // do not individually filter anything
 
                     let dlgElem = args.filterModel.dlg;
@@ -376,51 +576,6 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel|TreeGridModel)
 
                         } // if dlgContent
                     } // if dlgElem
-
-
-                    try {
-                        for (let i = 0; i < gridModel[EJINSTANCES].length; i++) {
-                            let grid: Grid = gridModel[EJINSTANCES][i];
-                            if (grid) {
-
-                                let filterModule: Filter = grid.filterModule;
-                                if (filterModule) {
-                                    if (filterModule.filterModule instanceof ExcelFilter) {
-                                        let excelFilter: ExcelFilter = filterModule.filterModule as ExcelFilter;
-                                        let excelFilterBase: ExcelFilterBase = excelFilter.excelFilterBase;
-                                        if (excelFilterBase['selectHandlerReplaced'] == true)
-                                            return; // don't do it twice
-                                        if (excelFilterBase) {
-                                            let prevSelectHandler = excelFilterBase['selectHandler'];
-                                            excelFilterBase['selectHandler'] = (e: any) => {
-                                                e['excelFilterBase'] = excelFilterBase;
-                                                e['options'] = excelFilterBase.options;
-                                                e['column'] = excelFilterBase.options?.column;
-                                                try {
-                                                    prevSelectHandler.call(excelFilterBase, e); // call in context
-
-                                                    let dialog: Dialog = excelFilterBase['dlgObj'] as any;
-                                                    if (dialog) {
-
-                                                        setTimeout(() => {
-                                                            let header = dialog.header;
-                                                            dialog.header = `${header}: '${e?.column?.headerText}'`;
-                                                        });
-                                                    }
-                                                } catch (ex) {
-                                                    console.error(ex);
-                                                }
-                                            }; // excelFilterBase['selectHandler'] = ...
-                                            excelFilterBase['selectHandlerReplaced'] = true; // mark it as replaced
-                                        } // if excelFilterBase
-                                    } // if filterModule.filterModule instanceof ExcelFilter
-                                } // if filterModule
-                            } // if grid
-                        } // for i
-                    } catch (e) {
-                        console.error(e);
-                    }
-
 
                     if (prevActionBegin) {
                         try {
@@ -499,7 +654,113 @@ function getGridFilterMessage(gObj: Grid): string {
                 }
                 filterStatusMsg += column.headerText + ': ' + getFormatFlValue;
             } else {
-                filterStatusMsg += column.headerText + ': ' + thisX.values[column.field];
+                let predicate: Predicate = (columns[index] as any).properties;
+                if (predicate) {
+                    let raw_operator = predicate.operator;
+                    let operator: string = '';
+
+                    /*
+                     '<': 'lessthan',
+                     '>': 'greaterthan',
+                     '<=': 'lessthanorequal',
+                     '>=': 'greaterthanorequal',
+                     '==': 'equal',
+                     '!=': 'notequal',
+                     '*=': 'contains',
+                     '$=': 'endswith',
+                     '^=': 'startswith'
+                     */
+                    switch (raw_operator) {
+                        case 'lessthan':
+                            operator = '<';
+                            break;
+                        case 'greaterthan':
+                            operator = '>';
+                            break;
+                        case 'lessthanorequal':
+                            operator = '<=';
+                            break;
+                        case 'greaterthanorequal':
+                            operator = '>=';
+                            break;
+                        case 'equal':
+                            operator = '=';
+                            break;
+                        case 'notequal':
+                            operator = 'not equal';
+                            break;
+                        case 'contains':
+                            operator = 'contains';
+                            break;
+                        case 'doesnotcontain':
+                            operator = 'does not contain';
+                            break;
+                        case 'endswith':
+                            operator = 'ends with';
+                            break;
+                        case 'doesnotendwith':
+                            operator = 'does not end with';
+                            break;
+
+                        case 'startswith':
+                            operator = 'starts with';
+                            break;
+                        case 'doesnotstartwith':
+                            operator = 'does not start with';
+                            break;
+                        case 'isnotnull':
+                            operator = 'is not null';
+                            break;
+                        case 'isnull':
+                            operator = 'is null';
+                            break;
+                        case 'like':
+                            operator = 'like';
+                            break;
+                        case 'isempty':
+                            operator = 'is empty';
+                            break;
+                        case 'isnotempty':
+                            operator = 'is not empty';
+                            break;
+                        case 'wildcard':
+                            operator = 'wildcard';
+                            break;
+                        default:
+                            operator = raw_operator;
+
+                    }
+                    let column_type = column.type;
+                    let value: any = predicate.value;
+                    let stringValue = '';
+                    switch (column_type) {
+                        case 'date':
+                            stringValue = (value as Date).toLocaleDateString();
+                            break;
+                        case 'datetime':
+                            stringValue = (value as Date).toLocaleString(); // contains time
+                            break;
+                        case 'number':
+                            stringValue = value.toLocaleString();
+                            break;
+                        case 'boolean':
+                            stringValue = value ? 'true' : 'false';
+                            break;
+                        default:
+                            stringValue = value.toString();
+                    }
+
+                    if ( stringValue ) {
+                        // surround with single quotes
+                        stringValue = `'${stringValue}'`;
+                    }
+
+                    filterStatusMsg += `${column.headerText} ${operator} ${stringValue} `;
+
+                } else {
+                    // last-ditch default Syncfusion original code
+                    filterStatusMsg += column.headerText + ': ' + thisX.values[column.field];
+                }
             }
         }
     }

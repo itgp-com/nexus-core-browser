@@ -138,3 +138,15 @@ $app_dialog_header_close_button_size: 18; // integer size of the dialog close (x
   --app-color-blue-01: #{$app_color_blue_01};
   --app-dialog-header-close-button-size: #{$app_dialog_header_close_button_size};
 }
+
+//-- start dismantling excel filter settings that should never have been set in the first place --/
+.e-contextmenu-wrapper ul, .e-contextmenu-container ul {
+  font-size: #{$app_font_size_base_number}px !important;
+}
+
+.e-excel-menu.e-contextmenu.e-menu-parent {
+  max-height: unset !important;
+  overflow-y: unset !important;
+}
+
+//--- end excel filter correcting settings ------
