@@ -1,5 +1,9 @@
 import {ClassArg, classArgInstanceVal, hget, IArgs_HtmlTag_Utils} from "../../../BaseUtils";
 import {getErrorHandler}                                          from "../../../CoreErrorHandling";
+import {
+   adjustColumnWidthForCustomExcelFilters,
+   stateGrid_CustomExcelFilter
+} from '../../../gui2/ej2/ext/util/N2Grid_Options';
 import {AbstractWidget, addWidgetClass} from "../../AbstractWidget";
 import {Args_AnyWidget}                                           from "../../AnyWidget";
 import {AnyWidgetStandard}                                        from "../../AnyWidgetStandard";
@@ -79,7 +83,6 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
       } else {
          this.gridModel.width = "100%"; // default to 100%
       }
-
       await this.initialize_AnyWidgetStandard(args);
    } // initialize_WgtGrid
 
@@ -104,6 +107,12 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
       if (this.initArgs && (this.initArgs as Args_AbstractGrid).beforeGridInstantiated) {
          (this.initArgs as Args_AbstractGrid).beforeGridInstantiated.call(this);
       }
+
+      try {
+         this.initArgs.ej = this.gridModel; // MAKE SURE IT'S THE SAME OBJECT!!!!!!
+         stateGrid_CustomExcelFilter(this.gridModel); // Every abstract grid gets an Excel filter from now on
+         adjustColumnWidthForCustomExcelFilters(this.gridModel.columns as ColumnModel[]);
+      } catch(ex){console.error(ex)}
       try {
          this.obj = new Grid(this.gridModel);
          this.obj.appendTo(hget(this.tagId))

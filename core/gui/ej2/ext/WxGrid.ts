@@ -29,8 +29,6 @@ export class WxGrid extends AbstractGrid{
       args.ej = args.ej ||{};
       addWidgetClass(args, WxGrid.CLASS_NAME);
 
-      stateGrid_CustomExcelFilter(args.ej); // Every WxGrid gets an Excel filter from now on
-
       await super.initialize_AbstractGrid(args);
    }
 
