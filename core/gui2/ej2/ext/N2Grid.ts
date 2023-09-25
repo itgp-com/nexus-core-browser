@@ -28,6 +28,7 @@ import {VARS_EJ2_COMMON} from '../../scss/vars-ej2-common';
 import {CORE_MATERIAL} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {stateGrid_CustomExcelFilter} from './util/N2Grid_Options';
 
 Grid.Inject(
     Clipboard,
@@ -64,6 +65,12 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
     ref?: StateN2GridRef<N2Grid>;
+
+    /**
+     * By default this component implements a custom Excel filter on every filterable column.
+     * Set this to true to disable this feature.
+     */
+    disableCustomFilter?: boolean;
 }
 
 export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {
@@ -75,13 +82,18 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco, N2Grid.CLASS_IDENTIFIER);
+
+        if ( state.disableCustomFilter == undefined || !state.disableCustomFilter) {
+            stateGrid_CustomExcelFilter(state.ej); // Every N2Grid gets an Excel filter from now on unless disabled by state.disableCustomFilter
+        }
+
         super.onStateInitialized(state)
-    }
+    } // onStateInitialized
 
 
     createEjObj(): void {
         this.obj = new Grid(this.state.ej);
-    }
+    } // createEjObj
 
     get classIdentifier(): string { return N2Grid.CLASS_IDENTIFIER; }
 
@@ -108,6 +120,14 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
  * @param {string} eGridClass one of ['e-grid', 'e-treegrid',]
  */
 export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
+
+    let app_custom_excel_filter_width_number:number;
+    try {
+        app_custom_excel_filter_width_number = Number.parseInt(CORE_MATERIAL.app_custom_excel_filter_width_number);
+    } catch (e) {}
+    if (app_custom_excel_filter_width_number == 0)
+        app_custom_excel_filter_width_number = 18;
+
 
 
     let accent = CORE_MATERIAL.material_accent_color;
@@ -346,7 +366,7 @@ font-size: ${CORE_MATERIAL.app_font_size_regular};`
         border: solid 1px ${VARS_EJ2_COMMON.grid_header_border_color};
         border-radius: 5px;
         ${STYLE_CENTER_VERTICAL}
-        right: 18px;
+        right: ${app_custom_excel_filter_width_number}px;
     `);
 
     // if the header is right justified and there's a filter menu present, move the sort filter icon to the left
@@ -354,7 +374,7 @@ font-size: ${CORE_MATERIAL.app_font_size_regular};`
 .${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-headercelldiv[style*="text-align: right;"] + .e-sortfilterdiv.e-descending::before`,
         `
         right: unset;
-        left: 18px;
+        left: ${app_custom_excel_filter_width_number}px;
     `);
 
 
@@ -362,17 +382,17 @@ font-size: ${CORE_MATERIAL.app_font_size_regular};`
     //-------------------- sort icons if there's a filter menu IS NOT PRESENT ---------------------------
     // this has right=18px because there's no filter menu present, but there is the filtersort icon
     cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-gridheader .e-sortnumber`, `
-        margin: 1px 18px 0px 0px;
+        margin: 1px ${app_custom_excel_filter_width_number}px 0px 0px;
         ${STYLE_CENTER_VERTICAL}
         width: 16px;
-        right: 18px;
+        right: ${app_custom_excel_filter_width_number}px;
         `
     );
 
     // if the header is right justified, move the sort icon to the left, still 18px just like the right above
     cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-gridheader .e-rightalign .e-sortnumber`, `
         right: unset;
-        left: 18px;
+        left: ${app_custom_excel_filter_width_number}px;
     `);
 
 

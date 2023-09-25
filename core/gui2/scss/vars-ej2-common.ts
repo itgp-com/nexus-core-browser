@@ -49,6 +49,9 @@ class Ej2Css {
     grid_hover_bg_color?: string;
     grid_table_background_color?: string;
     grid_header_border_color?: string;
+    grid_header_font_weight ?: string;
+    grid_header_font_size ?:string;
+    grid_header_height ?:string;
     panel_box_shadow?: string;
     chip_bg_color?: string;
 }
@@ -102,6 +105,13 @@ let updateThemeVariables = (ev: ThemeChangeEvent) => {
     VARS_EJ2_COMMON.grid_hover_bg_color = rootStyle.getPropertyValue('--grid-hover-bg-color').trim();
     VARS_EJ2_COMMON.grid_table_background_color = rootStyle.getPropertyValue('--grid-table-background-color').trim();
     VARS_EJ2_COMMON.grid_header_border_color = rootStyle.getPropertyValue('--grid-header-border-color').trim();
+    // --grid-header-font-weight: #{$grid-header-font-weight};
+    // --grid-header-font-size: #{$grid-header-font-size};
+    // --grid-header-height: #{$grid-header-height};
+    VARS_EJ2_COMMON.grid_header_font_weight = rootStyle.getPropertyValue('--grid-header-font-weight').trim();
+    VARS_EJ2_COMMON.grid_header_font_size = rootStyle.getPropertyValue('--grid-header-font-size').trim();
+    VARS_EJ2_COMMON.grid_header_height = rootStyle.getPropertyValue('--grid-header-height').trim();
+
     VARS_EJ2_COMMON.panel_box_shadow = rootStyle.getPropertyValue('--panel-box-shadow').trim();
     VARS_EJ2_COMMON.chip_bg_color = rootStyle.getPropertyValue('--chip-bg-color').trim();
 

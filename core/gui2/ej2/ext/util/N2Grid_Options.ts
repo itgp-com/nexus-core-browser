@@ -22,6 +22,8 @@ import {
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
 import * as _ from 'lodash';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
+import {VARS_EJ2_COMMON} from '../../../scss/vars-ej2-common';
+import {CORE_MATERIAL} from '../../../scss/vars-material';
 import {EJINSTANCES} from '../../N2Ej';
 import {N2Grid, StateN2Grid} from '../N2Grid';
 import {isSpinnerCreated} from './Spinner_Options';
@@ -755,7 +757,9 @@ function getGridFilterMessage(gObj: Grid): string {
                         stringValue = `'${stringValue}'`;
                     }
 
-                    filterStatusMsg += `${column.headerText} ${operator} ${stringValue} `;
+                    let headerText = (column.headerText || column.field || ( _.isString(column.headerTemplate)? column.headerTemplate.replace('<br>', ' / ').replace('<p>', ' / ') : 'column')) // if not text then DB col name
+
+                    filterStatusMsg += `${headerText} ${operator} ${stringValue} `;
 
                 } else {
                     // last-ditch default Syncfusion original code
@@ -810,3 +814,99 @@ function applyColumnFormat(filter: Filter, filterValue: any) {
         thisX.values[thisX.column.field] = thisX.setFormatForFlColumn(getFlvalue, thisX.column);
     }
 }
+
+
+//----------------------------------------------
+
+
+
+
+
+export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
+    let baseFontSize = Number.parseInt(CORE_MATERIAL.app_font_size_base_number);
+    let app_custom_excel_filter_width_number:number;
+    try {
+        app_custom_excel_filter_width_number = Number.parseInt(CORE_MATERIAL.app_custom_excel_filter_width_number);
+    } catch (e) {}
+    if (app_custom_excel_filter_width_number == 0)
+        app_custom_excel_filter_width_number = 18;
+
+
+    if (columns) {
+        for (const column of columns) {
+            let extra :number = 0
+            if (column.allowFiltering !== false) // undefined same as true
+                extra += 2 * app_custom_excel_filter_width_number;
+            if (column.allowSorting !== false) // undefined same as true
+                extra += app_custom_excel_filter_width_number;
+
+            if (extra > 0) {
+                let width:string|number = column.width;
+
+                if (typeof width === 'string' && width.endsWith('ch')) {
+                    const numberValue = parseFloat(width.slice(0, -2)); // Extract the number part of the string
+                    width =  numberValue * CHAR_WIDTH_PIXELS;
+                }
+
+                if (typeof width === 'string' &&  width.endsWith('em')) {
+                    const numericValue = parseFloat(width.slice(0, -2)); // Extract the number part of the string
+                    width = numericValue * baseFontSize;
+                }
+
+
+                if (_.isNumber(width)) {
+                    let defaultWidth:number = calculateDefaultHeaderWidth(column);
+
+                    if ( defaultWidth + extra < width) {
+                        // do nothing if the width is already big enough for the default width and the extra (there's enough room for the filter and sort icons)
+                    } else {
+                        // width should be adjusted
+
+                        if (width < defaultWidth)
+                            width = defaultWidth; // width should at least cover the header text itself
+
+                        column.width = width + extra;
+
+                    } // if ( defaultWidth + extra < width)
+
+                } // if (isNumber(width))
+
+            }
+        } // for
+    } // if (columns)
+
+
+} // adjustColumnWidthForFilters
+
+function calculateDefaultHeaderWidth(column:ColumnModel) : number{
+    let headerText:string = (column.headerTemplate ? column.headerTemplate as string : column.headerText) || '';
+
+    // Create a temporary div element
+    const tempDiv = document.createElement('div');
+
+
+    // Set the styles for the div
+    tempDiv.style.fontFamily = CORE_MATERIAL.app_font_family; // 'Roboto-Regular, sans-serif';
+    tempDiv.style.fontSize = VARS_EJ2_COMMON.grid_header_font_size; //'12px';
+    tempDiv.style.fontWeight = VARS_EJ2_COMMON.grid_header_font_weight; // '500';
+    tempDiv.style.height = `${CORE_MATERIAL.app_custom_excel_filter_width_number}px`;
+    tempDiv.style.position = 'absolute';  // So it doesn't affect layout
+    tempDiv.style.left = '-9999px';       // Move it off-screen
+    tempDiv.style.whiteSpace = 'nowrap';  // Prevent wrapping
+
+    // Insert the text into the div
+    tempDiv.innerHTML = headerText;
+
+    // Append the div to the body
+    document.body.appendChild(tempDiv);
+
+    // Measure the width of the div
+    const width = tempDiv.offsetWidth;
+
+    // Remove the div from the body
+    document.body.removeChild(tempDiv);
+
+    return width;
+}
+
+//-------------------------------------------
