@@ -1,6 +1,10 @@
 import {IMMEDIATE_MODE_DELAY}            from "../../CoreUtils";
+import {
+   adjustColumnWidthForCustomExcelFilters,
+   stateGrid_CustomExcelFilter
+} from '../../gui2/ej2/ext/util/N2Grid_Options';
 import {Args_AbstractGrid, AbstractGrid} from "../ej2/abstract/AbstractGrid";
-import {Grid}                            from "@syncfusion/ej2-grids";
+import {ColumnModel, Grid} from "@syncfusion/ej2-grids";
 
 export class Args_CoreOnly_Grid_FilterPage extends Args_AbstractGrid {
    pagingDisabled?: boolean;
@@ -51,18 +55,20 @@ export class CoreOnly_Grid_FilterPage<T = any> extends AbstractGrid {
       let localArgs: Args_CoreOnly_Grid_FilterPage = this.initArgs as Args_CoreOnly_Grid_FilterPage;
 
       if (!localArgs.filteringDisabled){
-         this.gridModel = {
-            ...this.gridModel,
-            ...{
-               allowFiltering: true,
-               filterSettings: {
-                  columns:             (thisX.initArgs as any)?.filters, // if filters are set, use them
-                  showFilterBarStatus: true,
-                  mode:                "Immediate",
-                  immediateModeDelay:  IMMEDIATE_MODE_DELAY,
-               },
-            },
-         }
+         stateGrid_CustomExcelFilter(this.gridModel); // Every WxGrid gets an Excel filter from now on
+         adjustColumnWidthForCustomExcelFilters(this.gridModel.columns as ColumnModel[]);
+         // this.gridModel = {
+         //    ...this.gridModel,
+         //    ...{
+         //       allowFiltering: true,
+         //       filterSettings: {
+         //          columns:             (thisX.initArgs as any)?.filters, // if filters are set, use them
+         //          showFilterBarStatus: true,
+         //          mode:                "Immediate",
+         //          immediateModeDelay:  IMMEDIATE_MODE_DELAY,
+         //       },
+         //    },
+         // }
       } // if
 
 
