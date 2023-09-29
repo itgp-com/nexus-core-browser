@@ -14,19 +14,19 @@ describe('IHtmlUtils', () => {
     it('should generate class attribute string', () => {
         const decorator: N2HtmlDecorator = { classes: ['class1', 'class2'] };
         const classStr = IHtmlUtils.class(decorator);
-        expect(classStr).to.equal(' class="class1 class2"');
+        expect(classStr).to.equal('class="class1 class2"');
     });
 
     it('should generate style attribute string', () => {
         const decorator: N2HtmlDecorator = { style: { color: 'red' } };
         const styleStr = IHtmlUtils.style(decorator);
-        expect(styleStr).to.equal(' style="color: red;"'); // Assuming cssStyleToString function converts to this format
+        expect(styleStr).to.equal('style="color:red;"'); // Assuming cssStyleToString function converts to this format
     });
 
     it('should generate other attributes string', () => {
         const decorator: N2HtmlDecorator = { otherAttr: { id: 'test', disabled: 'true' } };
         const otherAttrStr = IHtmlUtils.otherAttr(decorator);
-        expect(otherAttrStr).to.equal(' id="test" disabled="true"');
+        expect(otherAttrStr).to.equal('id="test" disabled="true"');
     });
 
     it('should generate all attributes string', () => {
@@ -36,7 +36,7 @@ describe('IHtmlUtils', () => {
             otherAttr: { id: 'test' }
         };
         const allStr = IHtmlUtils.all(decorator);
-        expect(allStr).to.equal(' class="class1" style="color: red;" id="test"');
+        expect(allStr).to.equal('class="class1" style="color:red;" id="test"');
     });
 });
 

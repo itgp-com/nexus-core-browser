@@ -95,9 +95,9 @@ export class IHtmlUtils {
             let classes = decorator.classes;
             let classArray = (decorator?.classes ? Array.isArray(decorator.classes) ? decorator.classes : [decorator.classes] : [])
             if (classArray.length > 0)
-                c = ` class="${classArray.join(' ')}"`;
+                c = `class="${classArray.join(' ')}"`; // no space prefix
         }
-        return c;
+        return c; // no space prefix
     }
 
     /**
@@ -112,7 +112,7 @@ export class IHtmlUtils {
         decorator = IHtmlUtils.init(decorator);
         let htmlTagStyle = '';
         if (decorator.style && !isEmpty(decorator.style))
-            htmlTagStyle = ` style="${cssStyleToString(decorator.style)}"`;
+            htmlTagStyle = `style="${cssStyleToString(decorator.style)}"`; // no space prefix
         return htmlTagStyle;
     }
 
@@ -127,19 +127,21 @@ export class IHtmlUtils {
     static otherAttr(decorator: N2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let otherAttrArray = Object.entries(decorator.otherAttr as any);
-        let htmlAttrs: string = (otherAttrArray.length > 0 ? ' ' : '');
+        let htmlAttrs: string = '';
         if (decorator.otherAttr) {
             otherAttrArray.forEach(entry => {
                 let key = entry[0];
                 let value = entry[1];
                 //use key and value here
+                let spacer:string = (htmlAttrs.length > 0 ? ' ' : '');
                 if (value == null) {
-                    htmlAttrs += ` ${key}` // attributes like 'required' that don't have an equal something after the name
+                    htmlAttrs += `${spacer}${key}` // attributes like 'required' that don't have an equal something after the name
                 } else {
-                    htmlAttrs += ` ${key}="${value}"`;
+                    htmlAttrs += `${spacer}${key}="${value}"`;
                 }
             });
         }
+
         return htmlAttrs;
     }
 
@@ -152,7 +154,25 @@ export class IHtmlUtils {
      * @returns {string} - The generated string with class, style, and other attributes, or an empty string if no attributes are present.
      */
     static all(decorator: N2HtmlDecorator): string {
-        return `${IHtmlUtils.class(decorator)}${IHtmlUtils.style(decorator)}${IHtmlUtils.otherAttr(decorator)}`;
+        let classStr = IHtmlUtils.class(decorator);
+        let styleStr = IHtmlUtils.style(decorator);
+        let otherAttrStr = IHtmlUtils.otherAttr(decorator);
+
+        let x = `${classStr}`;
+
+        if (styleStr.length > 0){
+            if (x.length > 0)
+                x += ' ';
+            x += styleStr;
+        }
+
+        if (otherAttrStr.length > 0){
+            if (x.length > 0)
+                x += ' ';
+            x += otherAttrStr;
+        }
+        return x; // no space prefix
+        //return `${IHtmlUtils.class(decorator)}${IHtmlUtils.style(decorator)}${IHtmlUtils.otherAttr(decorator)}`;
     }
 
 
