@@ -1,7 +1,16 @@
 /**
  * Basic utils that have no 'import' statements from anywhere else in Core
  */
-import base32Encode       from 'base32-encode'
+// import base32Encode       from 'base32-encode'
+let base32Encode: any;
+
+async function init() {
+   base32Encode = (await import('base32-encode')).default;
+}
+
+init();
+
+
 import {isFunction}       from "lodash";
 import {cssStyleToString} from "./CoreUtils";
 import {CssStyle}         from "./gui/AbstractWidget";
