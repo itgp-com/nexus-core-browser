@@ -1,6 +1,6 @@
 import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 
-export const CORE_MATERIAL: CoreMaterialCss = {};
+export const CSS_VARS_CORE: CssVarsAppCore = {};
 
 const CoreMaterialCssFieldNames: string[] = [
 
@@ -30,7 +30,7 @@ const CoreMaterialCssFieldNames: string[] = [
     'app_color_link_blue',
     'app_color_cyan',
     'app_color_light_gray_001',
-    'app_grid_line_color',
+    // 'app_grid_line_color',
     'app_gray_input_background',
     'app_light_background',
     'app_bright_red',
@@ -62,7 +62,8 @@ const CoreMaterialCssFieldNames: string[] = [
     'app_custom_excel_filter_width_number',
 ];
 
-class CoreMaterialCss {
+
+export class CssVarsAppCore {
     material_primary_color ?:string;
     material_primary_font_color ?:string;
     material_accent_color ?:string;
@@ -89,7 +90,7 @@ class CoreMaterialCss {
     app_color_link_blue ?: string;
     app_color_cyan ?: string;
     app_color_light_gray_001 ?: string;
-    app_grid_line_color ?: string;
+    // app_grid_line_color ?: string;
     app_gray_input_background ?: string;
     app_light_background ?: string;
     app_bright_red ?: string;
@@ -121,6 +122,16 @@ class CoreMaterialCss {
     app_custom_excel_filter_width_number ?: string; //
 }
 
+export const getCSS_VARS_CORE = (): CssVarsAppCore => {
+    return CSS_VARS_CORE;
+};
+
+
+
+// export get CSS_VARS_CORE() : CssVarsAppCore{
+//     return CSS_VARS_CORE;
+// }
+
 
 function updateThemeVariables (ev: ThemeChangeEvent) {
     const rootStyle = getComputedStyle(document.documentElement);
@@ -129,9 +140,9 @@ function updateThemeVariables (ev: ThemeChangeEvent) {
     CoreMaterialCssFieldNames.forEach(key => {
         const cssVarName = `--${key.replace(/_/g, '-')}`;
         // console.log('Assigning value for ', cssVarName);
-        CORE_MATERIAL[key] = rootStyle.getPropertyValue(cssVarName).trim();
+        CSS_VARS_CORE[key] = rootStyle.getPropertyValue(cssVarName).trim();
     });
 }
 
-// Listener function with a priority of 0 (default is 100) so it loads first (parallel with VARS_EJ2_COMMON)
+// Listener function with a priority of 0 (default is 100) so it loads first (parallel with CSS_VARS_EJ2)
 themeChangeListeners().add(updateThemeVariables, 0); // 0 is the highest priority since all other theme clases and selectors use these

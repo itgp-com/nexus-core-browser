@@ -72,12 +72,14 @@ static readonly CLASS_IDENTIFIER: string = 'N2Html'
    // }
 } //N2Html
 
-function mergeClasses(element1:HTMLElement, classList2:string[]) {
+function mergeClasses(element1:HTMLElement, classList2:string|string[]) {
    let classList1 = element1.classList;
 
-   for (let i = 0; i < classList2.length; i++) {
-      if (!classList1.contains(classList2[i])) {
-         classList1.add(classList2[i]);
+   let classArray2 = (classList2? (Array.isArray(classList2) ? classList2 : [classList2]) : []);
+
+   for (let i = 0; i < classArray2.length; i++) {
+      if (!classList1.contains(classArray2[i])) {
+         classList1.add(classArray2[i]);
       }
    }
 }

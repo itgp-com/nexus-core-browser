@@ -1,7 +1,7 @@
 //----------Define the custom material theme colors for this app ----------
 $primary: #37474f; /* rgba(55,71,79,1); */
 $primary-font: #fff;
-$accent: #16a2ff; // lighter #10669F;
+$accent: #10669F; // #16a2ff; // lighter #10669F;
 $accent-font: #fff;
 
 //@import '@syncfusion/ej2-base/styles/definition/_material-dark.scss';
@@ -12,5 +12,5 @@ $accent-font: #fff;
 
 //--------Overwrite syncfusion scss variables -----
 $panel-box-shadow: 0px 2px 5px 0px rgba($accent, 45%);
-
+$app_color_panel_background: var(--grey-dark);
 @import 'vars-material-common.scss'; // variable :root definitions

@@ -22,8 +22,8 @@ import {
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
 import * as _ from 'lodash';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
-import {VARS_EJ2_COMMON} from '../../../scss/vars-ej2-common';
-import {CORE_MATERIAL} from '../../../scss/vars-material';
+import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
+import {CSS_VARS_CORE} from '../../../scss/vars-material';
 import {EJINSTANCES} from '../../N2Ej';
 import {N2Grid, StateN2Grid} from '../N2Grid';
 import {isSpinnerCreated} from './Spinner_Options';
@@ -823,10 +823,10 @@ function applyColumnFormat(filter: Filter, filterValue: any) {
 
 
 export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
-    let baseFontSize = Number.parseInt(CORE_MATERIAL.app_font_size_base_number);
+    let baseFontSize = Number.parseInt(CSS_VARS_CORE.app_font_size_base_number);
     let app_custom_excel_filter_width_number:number;
     try {
-        app_custom_excel_filter_width_number = Number.parseInt(CORE_MATERIAL.app_custom_excel_filter_width_number);
+        app_custom_excel_filter_width_number = Number.parseInt(CSS_VARS_CORE.app_custom_excel_filter_width_number);
     } catch (e) {}
     if (app_custom_excel_filter_width_number == 0)
         app_custom_excel_filter_width_number = 18;
@@ -886,10 +886,10 @@ function calculateDefaultHeaderWidth(column:ColumnModel) : number{
 
 
     // Set the styles for the div
-    tempDiv.style.fontFamily = CORE_MATERIAL.app_font_family; // 'Roboto-Regular, sans-serif';
-    tempDiv.style.fontSize = VARS_EJ2_COMMON.grid_header_font_size; //'12px';
-    tempDiv.style.fontWeight = VARS_EJ2_COMMON.grid_header_font_weight; // '500';
-    tempDiv.style.height = `${CORE_MATERIAL.app_custom_excel_filter_width_number}px`;
+    tempDiv.style.fontFamily = CSS_VARS_CORE.app_font_family; // 'Roboto-Regular, sans-serif';
+    tempDiv.style.fontSize = CSS_VARS_EJ2.grid_header_font_size; //'12px';
+    tempDiv.style.fontWeight = CSS_VARS_EJ2.grid_header_font_weight; // '500';
+    tempDiv.style.height = `${CSS_VARS_CORE.app_custom_excel_filter_width_number}px`;
     tempDiv.style.position = 'absolute';  // So it doesn't affect layout
     tempDiv.style.left = '-9999px';       // Move it off-screen
     tempDiv.style.whiteSpace = 'nowrap';  // Prevent wrapping

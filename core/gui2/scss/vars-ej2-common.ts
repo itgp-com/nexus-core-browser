@@ -1,7 +1,7 @@
 import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 
 // Create an instance of SyncfusionCss and export it
-export const VARS_EJ2_COMMON: Ej2Css = {};
+export const CSS_VARS_EJ2: Ej2Css = {};
 
 // Define the SyncfusionCss class with optional fields
 class Ej2Css {
@@ -61,59 +61,59 @@ let updateThemeVariables = (ev: ThemeChangeEvent) => {
 
     const rootStyle = getComputedStyle(document.documentElement);
 
-    VARS_EJ2_COMMON.font_family = rootStyle.getPropertyValue('--font-family').trim();
-    VARS_EJ2_COMMON.font_size = rootStyle.getPropertyValue('--font-size').trim();
-    VARS_EJ2_COMMON.font_weight = rootStyle.getPropertyValue('--font-weight').trim();
-    VARS_EJ2_COMMON.font_path = rootStyle.getPropertyValue('--font-path').trim();
-    VARS_EJ2_COMMON.header_bg_color = rootStyle.getPropertyValue('--header-bg-color').trim();
-    VARS_EJ2_COMMON.header_gradient_color = rootStyle.getPropertyValue('--header-gradient-color').trim();
-    VARS_EJ2_COMMON.header_border_color = rootStyle.getPropertyValue('--header-border-color').trim();
-    VARS_EJ2_COMMON.header_font_color = rootStyle.getPropertyValue('--header-font-color').trim();
-    VARS_EJ2_COMMON.header_icon_color = rootStyle.getPropertyValue('--header-icon-color').trim();
-    VARS_EJ2_COMMON.content_bg_color = rootStyle.getPropertyValue('--content-bg-color').trim();
-    VARS_EJ2_COMMON.content_border_color = rootStyle.getPropertyValue('--content-border-color').trim();
-    VARS_EJ2_COMMON.content_font_color = rootStyle.getPropertyValue('--content-font-color').trim();
-    VARS_EJ2_COMMON.default_bg_color = rootStyle.getPropertyValue('--default-bg-color').trim();
-    VARS_EJ2_COMMON.default_gradient_color = rootStyle.getPropertyValue('--default-gradient-color').trim();
-    VARS_EJ2_COMMON.default_border_color = rootStyle.getPropertyValue('--default-border-color').trim();
-    VARS_EJ2_COMMON.default_font_color = rootStyle.getPropertyValue('--default-font-color').trim();
-    VARS_EJ2_COMMON.default_icon_color = rootStyle.getPropertyValue('--default-icon-color').trim();
-    VARS_EJ2_COMMON.hover_bg_color = rootStyle.getPropertyValue('--hover-bg-color').trim();
-    VARS_EJ2_COMMON.hover_gradient_color = rootStyle.getPropertyValue('--hover-gradient-color').trim();
-    VARS_EJ2_COMMON.hover_border_color = rootStyle.getPropertyValue('--hover-border-color').trim();
-    VARS_EJ2_COMMON.hover_font_color = rootStyle.getPropertyValue('--hover-font-color').trim();
-    VARS_EJ2_COMMON.hover_icon_color = rootStyle.getPropertyValue('--hover-icon-color').trim();
-    VARS_EJ2_COMMON.active_bg_color = rootStyle.getPropertyValue('--active-bg-color').trim();
-    VARS_EJ2_COMMON.active_gradient_color = rootStyle.getPropertyValue('--active-gradient-color').trim();
-    VARS_EJ2_COMMON.active_border_color = rootStyle.getPropertyValue('--active-border-color').trim();
-    VARS_EJ2_COMMON.active_font_color = rootStyle.getPropertyValue('--active-font-color').trim();
-    VARS_EJ2_COMMON.active_icon_color = rootStyle.getPropertyValue('--active-icon-color').trim();
-    VARS_EJ2_COMMON.error_font_color = rootStyle.getPropertyValue('--error-font-color').trim();
-    VARS_EJ2_COMMON.warning_font_color = rootStyle.getPropertyValue('--warning-font-color').trim();
-    VARS_EJ2_COMMON.success_font_color = rootStyle.getPropertyValue('--success-font-color').trim();
-    VARS_EJ2_COMMON.information_font_color = rootStyle.getPropertyValue('--information-font-color').trim();
-    VARS_EJ2_COMMON.overlay_bg_color = rootStyle.getPropertyValue('--overlay-bg-color').trim();
-    VARS_EJ2_COMMON.shadow_color = rootStyle.getPropertyValue('--shadow-color').trim();
-    VARS_EJ2_COMMON.border_size = rootStyle.getPropertyValue('--border-size').trim();
-    VARS_EJ2_COMMON.border_type = rootStyle.getPropertyValue('--border-type').trim();
-    VARS_EJ2_COMMON.border_radius = rootStyle.getPropertyValue('--border-radius').trim();
-    VARS_EJ2_COMMON.border_left_radius = rootStyle.getPropertyValue('--border-left-radius').trim();
-    VARS_EJ2_COMMON.border_right_radius = rootStyle.getPropertyValue('--border-right-radius').trim();
-    VARS_EJ2_COMMON.border_top_radius = rootStyle.getPropertyValue('--border-top-radius').trim();
-    VARS_EJ2_COMMON.border_bottom_radius = rootStyle.getPropertyValue('--border-bottom-radius').trim();
+    CSS_VARS_EJ2.font_family = rootStyle.getPropertyValue('--font-family').trim();
+    CSS_VARS_EJ2.font_size = rootStyle.getPropertyValue('--font-size').trim();
+    CSS_VARS_EJ2.font_weight = rootStyle.getPropertyValue('--font-weight').trim();
+    CSS_VARS_EJ2.font_path = rootStyle.getPropertyValue('--font-path').trim();
+    CSS_VARS_EJ2.header_bg_color = rootStyle.getPropertyValue('--header-bg-color').trim();
+    CSS_VARS_EJ2.header_gradient_color = rootStyle.getPropertyValue('--header-gradient-color').trim();
+    CSS_VARS_EJ2.header_border_color = rootStyle.getPropertyValue('--header-border-color').trim();
+    CSS_VARS_EJ2.header_font_color = rootStyle.getPropertyValue('--header-font-color').trim();
+    CSS_VARS_EJ2.header_icon_color = rootStyle.getPropertyValue('--header-icon-color').trim();
+    CSS_VARS_EJ2.content_bg_color = rootStyle.getPropertyValue('--content-bg-color').trim();
+    CSS_VARS_EJ2.content_border_color = rootStyle.getPropertyValue('--content-border-color').trim();
+    CSS_VARS_EJ2.content_font_color = rootStyle.getPropertyValue('--content-font-color').trim();
+    CSS_VARS_EJ2.default_bg_color = rootStyle.getPropertyValue('--default-bg-color').trim();
+    CSS_VARS_EJ2.default_gradient_color = rootStyle.getPropertyValue('--default-gradient-color').trim();
+    CSS_VARS_EJ2.default_border_color = rootStyle.getPropertyValue('--default-border-color').trim();
+    CSS_VARS_EJ2.default_font_color = rootStyle.getPropertyValue('--default-font-color').trim();
+    CSS_VARS_EJ2.default_icon_color = rootStyle.getPropertyValue('--default-icon-color').trim();
+    CSS_VARS_EJ2.hover_bg_color = rootStyle.getPropertyValue('--hover-bg-color').trim();
+    CSS_VARS_EJ2.hover_gradient_color = rootStyle.getPropertyValue('--hover-gradient-color').trim();
+    CSS_VARS_EJ2.hover_border_color = rootStyle.getPropertyValue('--hover-border-color').trim();
+    CSS_VARS_EJ2.hover_font_color = rootStyle.getPropertyValue('--hover-font-color').trim();
+    CSS_VARS_EJ2.hover_icon_color = rootStyle.getPropertyValue('--hover-icon-color').trim();
+    CSS_VARS_EJ2.active_bg_color = rootStyle.getPropertyValue('--active-bg-color').trim();
+    CSS_VARS_EJ2.active_gradient_color = rootStyle.getPropertyValue('--active-gradient-color').trim();
+    CSS_VARS_EJ2.active_border_color = rootStyle.getPropertyValue('--active-border-color').trim();
+    CSS_VARS_EJ2.active_font_color = rootStyle.getPropertyValue('--active-font-color').trim();
+    CSS_VARS_EJ2.active_icon_color = rootStyle.getPropertyValue('--active-icon-color').trim();
+    CSS_VARS_EJ2.error_font_color = rootStyle.getPropertyValue('--error-font-color').trim();
+    CSS_VARS_EJ2.warning_font_color = rootStyle.getPropertyValue('--warning-font-color').trim();
+    CSS_VARS_EJ2.success_font_color = rootStyle.getPropertyValue('--success-font-color').trim();
+    CSS_VARS_EJ2.information_font_color = rootStyle.getPropertyValue('--information-font-color').trim();
+    CSS_VARS_EJ2.overlay_bg_color = rootStyle.getPropertyValue('--overlay-bg-color').trim();
+    CSS_VARS_EJ2.shadow_color = rootStyle.getPropertyValue('--shadow-color').trim();
+    CSS_VARS_EJ2.border_size = rootStyle.getPropertyValue('--border-size').trim();
+    CSS_VARS_EJ2.border_type = rootStyle.getPropertyValue('--border-type').trim();
+    CSS_VARS_EJ2.border_radius = rootStyle.getPropertyValue('--border-radius').trim();
+    CSS_VARS_EJ2.border_left_radius = rootStyle.getPropertyValue('--border-left-radius').trim();
+    CSS_VARS_EJ2.border_right_radius = rootStyle.getPropertyValue('--border-right-radius').trim();
+    CSS_VARS_EJ2.border_top_radius = rootStyle.getPropertyValue('--border-top-radius').trim();
+    CSS_VARS_EJ2.border_bottom_radius = rootStyle.getPropertyValue('--border-bottom-radius').trim();
     //----
-    VARS_EJ2_COMMON.grid_hover_bg_color = rootStyle.getPropertyValue('--grid-hover-bg-color').trim();
-    VARS_EJ2_COMMON.grid_table_background_color = rootStyle.getPropertyValue('--grid-table-background-color').trim();
-    VARS_EJ2_COMMON.grid_header_border_color = rootStyle.getPropertyValue('--grid-header-border-color').trim();
+    CSS_VARS_EJ2.grid_hover_bg_color = rootStyle.getPropertyValue('--grid-hover-bg-color').trim();
+    CSS_VARS_EJ2.grid_table_background_color = rootStyle.getPropertyValue('--grid-table-background-color').trim();
+    CSS_VARS_EJ2.grid_header_border_color = rootStyle.getPropertyValue('--grid-header-border-color').trim();
     // --grid-header-font-weight: #{$grid-header-font-weight};
     // --grid-header-font-size: #{$grid-header-font-size};
     // --grid-header-height: #{$grid-header-height};
-    VARS_EJ2_COMMON.grid_header_font_weight = rootStyle.getPropertyValue('--grid-header-font-weight').trim();
-    VARS_EJ2_COMMON.grid_header_font_size = rootStyle.getPropertyValue('--grid-header-font-size').trim();
-    VARS_EJ2_COMMON.grid_header_height = rootStyle.getPropertyValue('--grid-header-height').trim();
+    CSS_VARS_EJ2.grid_header_font_weight = rootStyle.getPropertyValue('--grid-header-font-weight').trim();
+    CSS_VARS_EJ2.grid_header_font_size = rootStyle.getPropertyValue('--grid-header-font-size').trim();
+    CSS_VARS_EJ2.grid_header_height = rootStyle.getPropertyValue('--grid-header-height').trim();
 
-    VARS_EJ2_COMMON.panel_box_shadow = rootStyle.getPropertyValue('--panel-box-shadow').trim();
-    VARS_EJ2_COMMON.chip_bg_color = rootStyle.getPropertyValue('--chip-bg-color').trim();
+    CSS_VARS_EJ2.panel_box_shadow = rootStyle.getPropertyValue('--panel-box-shadow').trim();
+    CSS_VARS_EJ2.chip_bg_color = rootStyle.getPropertyValue('--chip-bg-color').trim();
 
 };
 

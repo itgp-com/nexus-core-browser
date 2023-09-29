@@ -12,7 +12,7 @@ import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
 import {addN2Child, removeN2Child} from './ej2/Ej2Utils';
 import {addN2Class, IHtmlUtils} from "./N2HtmlDecorator";
 import {Elem_or_N2, getFirstHTMLElementChild, isN2} from './N2Utils';
-import {CORE_MATERIAL} from './scss/vars-material';
+import {CSS_VARS_CORE} from './scss/vars-material';
 import {StateN2} from "./StateN2";
 import {ThemeChangeEvent, themeChangeListeners} from './Theming';
 
@@ -861,7 +861,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     /* Targets .e-control elements that also have the .${N2.CLASS_IDENTIFIER} class */
     /* Targets .e-control elements that are descendants of an element with the .${N2.CLASS_IDENTIFIER} class */
     cssAddSelector(`.e-control.${N2.CLASS_IDENTIFIER}, .${N2.CLASS_IDENTIFIER} .e-control`, `
-    font-family: ${CORE_MATERIAL.app_font_family};    
+    font-family: ${CSS_VARS_CORE.app_font_family};    
     `);
 
 
@@ -880,7 +880,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
 .e-input-group.${N2.CLASS_IDENTIFIER} textarea.e-input,
 .e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} textarea.e-input`;
 
-    val = `  font-family: ${CORE_MATERIAL.app_font_family} !important;`;
+    val = `  font-family: ${CSS_VARS_CORE.app_font_family} !important;`;
     keys.push(key);
     vals.push(val);
     //------------
@@ -913,7 +913,7 @@ textarea.e-input.${N2.CLASS_IDENTIFIER},
     key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top),
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top)`;
 
-    val = `color: ${CORE_MATERIAL.app_label_color_coolgray} !important;`
+    val = `color: ${CSS_VARS_CORE.app_label_color_coolgray} !important;`
     keys.push(key);
     vals.push(val);
     //------------
@@ -924,7 +924,7 @@ textarea.e-input.${N2.CLASS_IDENTIFIER},
 .${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-group) .e-float-line::after,
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-group) .e-float-line::before,
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-group) .e-float-line::after`;
-    val = `background: ${CORE_MATERIAL.app_label_color_coolgray} !important;`
+    val = `background: ${CSS_VARS_CORE.app_label_color_coolgray} !important;`
     keys.push(key);
     vals.push(val);
     //------------
@@ -934,8 +934,8 @@ textarea.e-input.${N2.CLASS_IDENTIFIER},
     key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-error) input:focus ~ label.e-float-text,
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-error) input:focus ~ label.e-float-text`
     val = `
-        color: ${CORE_MATERIAL.app_label_color_coolgray} !important;
-        font-size: ${CORE_MATERIAL.app_font_size_plus_2}px !important;` // 14px from 12px regular
+        color: ${CSS_VARS_CORE.app_label_color_coolgray} !important;
+        font-size: ${CSS_VARS_CORE.app_font_size_plus_2}px !important;` // 14px from 12px regular
 
     keys.push(key);
     vals.push(val);

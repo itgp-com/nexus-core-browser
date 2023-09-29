@@ -12,7 +12,7 @@ export interface N2HtmlDecorator<STATE extends StateN2 = StateN2> {
     /**
      * the classes assigned to this HTMLElement
      */
-    classes?: string[];
+    classes?: string | string[];
 
     /**
      * the style assigned to this HTMLElement
@@ -91,8 +91,12 @@ export class IHtmlUtils {
     static class(decorator: N2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let c: string = '';
-        if (decorator.classes.length > 0)
-            c = ` class="${decorator.classes.join(' ')}"`;
+        if ( decorator?.classes) {
+            let classes = decorator.classes;
+            let classArray = (decorator?.classes ? Array.isArray(decorator.classes) ? decorator.classes : [decorator.classes] : [])
+            if (classArray.length > 0)
+                c = ` class="${classArray.join(' ')}"`;
+        }
         return c;
     }
 
@@ -168,7 +172,11 @@ export function addN2Class(args: N2HtmlDecorator, ...additionalClasses: string[]
     if (!additionalClasses)
         return args;
 
-    args.classes = addClassesToClassList(args.classes, additionalClasses);
+    let classes = args?.classes;
+    let classArray = (classes ? Array.isArray(classes) ? classes : [classes] : [])
+
+
+    args.classes = addClassesToClassList(classArray, additionalClasses);
 
     if (args?.state?.ref?.widget?.initialized) {
         // synchronize classes here with htmlElement if initialized
@@ -194,7 +202,8 @@ export function removeN2Class(args:N2HtmlDecorator, ...classesToRemove: string[]
     if (!classesToRemove)
         return args;
 
-    args.classes = removeClassesFromClassList(args.classes, classesToRemove);
+    let classArray = (args?.classes ? Array.isArray(args.classes) ? args.classes : [args.classes] : []);
+    args.classes = removeClassesFromClassList(classArray, classesToRemove);
 
     if (args?.state?.ref?.widget?.initialized) {
         // synchronize classes here with htmlElement if initialized
@@ -307,8 +316,9 @@ export function decoToHtmlElement(source: N2HtmlDecorator, target: HTMLElement, 
     }
 
     // Transfer classes
-    if (source.classes && source.classes.length > 0) {
-        target.classList.add(...source.classes);
+    let classArray = (source.classes ? Array.isArray(source.classes) ? source.classes : [source.classes]: []);
+    if (classArray && classArray.length > 0) {
+        target.classList.add(...classArray);
     }
 
     // Transfer style

@@ -1,6 +1,7 @@
 import {N2Basic, StateN2Basic, StateN2BasicRef} from '../N2Basic';
 import {addN2Class, IHtmlUtils} from '../N2HtmlDecorator';
 import {Elem_or_N2} from '../N2Utils';
+import {CSS_VARS_CORE} from '../scss/vars-material';
 import {N2Panel, StateN2Panel} from './N2Panel';
 import {
     CLASS_N2_PANEL_LAYOUT_CENTER,
@@ -69,12 +70,14 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
 
 
     protected onStateInitialized(state: STATE): void {
+        addN2Class(state.deco, N2Panel_LCR.CLASS_IDENTIFIER);
 
         let style = state.deco.style || {};
         style = {
             display: 'flex',
             'flex-direction': 'row',
             'justify-content': 'space-between',
+            'background-color': CSS_VARS_CORE.app_color_panel_background,
             ...style
         }
         state.deco.style = style;
@@ -85,6 +88,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
 
         leftState.deco.style = {
             'min-width': '0',
+            'background-color': 'transparent',
         }
         leftState.tagId = state.tagId + '_left';
         addN2Class(leftState.deco, CLASS_N2_PANEL_LAYOUT_LEFT);
@@ -99,6 +103,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
         centerState.deco.style = {
             flex: 1, // expand to take all available space
             'min-width': '0',
+            'background-color': 'transparent',
         }
         centerState.tagId = state.tagId + '_center';
         addN2Class(centerState.deco, CLASS_N2_PANEL_LAYOUT_CENTER);
@@ -111,6 +116,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
         IHtmlUtils.initForN2(rightState);
         rightState.deco.style = {
             'min-width' : '0',
+            'background-color': 'transparent',
         }
         rightState.tagId = state.tagId + '_right';
         addN2Class(rightState.deco, CLASS_N2_PANEL_LAYOUT_RIGHT);

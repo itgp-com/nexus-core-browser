@@ -7,7 +7,8 @@ import {N2Row} from '../../generic/N2Row';
 import {N2, N2Evt_Destroy, N2Evt_OnLogic} from '../../N2';
 import {addN2Class, decoToHtmlElement} from '../../N2HtmlDecorator';
 import {isN2} from '../../N2Utils';
-import {CORE_MATERIAL} from '../../scss/vars-material';
+import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
+import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 import {N2DialogBackArrow} from './util/N2DialogBackArrow';
@@ -372,47 +373,62 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
+    let isDarkTheme:boolean = ev.newState.theme_type == 'dark';
+
+    if ( isDarkTheme) {
+        // dialog itself gets the background color
+        cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog`, `
+        background-color: ${CSS_VARS_CORE.app_color_panel_background};
+        border: 1px solid ${CSS_VARS_EJ2.grid_header_border_color};
+    `);
+    } // if ( isDarkTheme)
+
+
     // color of text in dialog box header
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header`, `
-        color: ${CORE_MATERIAL.app_dialog_header_font_color}; 
+        color: ${CSS_VARS_CORE.app_dialog_header_font_color}; 
     `);
 
     // color of text in dialog box header
     // remove border from all buttons and other elements
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header, .${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header *`, `
-        color: ${CORE_MATERIAL.app_dialog_header_font_color}; 
-        font-size: ${CORE_MATERIAL.app_font_size_regular};
+        color: ${CSS_VARS_CORE.app_dialog_header_font_color}; 
+        font-size: ${CSS_VARS_CORE.app_font_size_regular};
         border: none;         
 `);
 
 
-//noinspection CssReplaceWithShorthandSafely
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-dlg-header-content`, `
-        padding: 0 10px 0 2px;
-        border-bottom: 5px solid ${CORE_MATERIAL.app_color_blue};
-        background-color: ${CORE_MATERIAL.app_dialog_header_background_color}; 
-    `);
 
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-content`, `
+    // dialog header gets background color
+//noinspection CssReplaceWithShorthandSafely
+
+    let rules:string = `
+        padding: 0 10px 0 2px;
+        border-bottom: 5px solid ${CSS_VARS_CORE.app_color_blue};
+        background-color: ${CSS_VARS_CORE.app_dialog_header_background_color}; 
+    `;
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-dlg-header-content`, rules);
+
+
+    rules = `
         padding: 5px;
-    `);
+    `
+    if ( isDarkTheme) {
+        rules += `
+        background-color: ${CSS_VARS_CORE.app_color_panel_background}; 
+        `;
+    }
+    // dialog content gets background color
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-content`, rules);
 
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header-content .e-dlg-header`, `
-        font-size: ${CORE_MATERIAL.app_font_size_regular};
-    `);
-
-
-// This makes the close button visible at all times, not just when being hovered over
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-btn.e-dlg-closeicon-btn`, `
-        background-color: #e0e0e0;
-        border-color: rgba(0, 0, 0, 0);
-        box-shadow: 0 0 0 rgba(0, 0, 0, 0)
+        font-size: ${CSS_VARS_CORE.app_font_size_regular};
     `);
 
 
 // Size the dialog heading component to be the whole width of the dialog minus the width of the close button
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header`, `
-        width: calc(100% - ${CORE_MATERIAL.app_dialog_header_close_button_size}px)
+        width: calc(100% - ${CSS_VARS_CORE.app_dialog_header_close_button_size}px)
     `);
 
 
@@ -422,9 +438,19 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn`, `
         display: inline-flex;
         margin-top: 5px;
-        height: ${CORE_MATERIAL.app_dialog_header_close_button_size}px;
-        width: ${CORE_MATERIAL.app_dialog_header_close_button_size}px;
+        height: ${CSS_VARS_CORE.app_dialog_header_close_button_size}px;
+        width: ${CSS_VARS_CORE.app_dialog_header_close_button_size}px;
         padding-top: 3px;
+    `);
+    // This makes the close button visible at all times, not just when being hovered over
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-btn.e-dlg-closeicon-btn`, `
+        background-color: #e0e0e0;
+        border-color: rgba(0, 0, 0, 0);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0)
+    `);
+    // black x on gray #e0e0e0 background
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn .e-icon-dlg-close`, `
+        color:#000;
     `);
 
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon`, `

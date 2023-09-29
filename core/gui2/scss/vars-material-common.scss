@@ -1,5 +1,5 @@
 // declare EJ2 variables common to both light and dark themes (no changes just variable declarations)
-// included here so the scss is compiled and available to vards-ej2-common.ts to create VARS_EJ2_COMMON values
+// included here so the scss is compiled and available to vards-ej2-common.ts to create CSS_VARS_EJ2 values
 
 // current folder is 'css' so we need to back up one folder first
 @font-face {
@@ -20,7 +20,7 @@ $drop-down-btn-icon-font-size: $font-size;
 
 // ---------------- application variables definitions ----------------
 
-$app_color_panel_background: #f5f5f5;
+//$app_color_panel_background: #f5f5f5; // moved to dark/light
 
 $app_font_main: 'Roboto-Regular';
 $app_font_family: $app_font_main, sans-serif !default;
@@ -43,7 +43,7 @@ $app_color_link_blue: #1e90ff !default; // dodgerblue
 $app_color_cyan: #03E0DF !default;
 $appColorLightGray001: #E9E9E9 !default;
 
-$app_grid_line_color: #EDEDED; // white;    // was #CDCDCD or darkgray
+//$app_grid_line_color: #EDEDED;
 
 
 $app-gray-input-background: #F3F3F3 !default;
@@ -109,7 +109,7 @@ $app_custom_excel_filter_width_number: 18 !default; // size of the filter icon a
   --app-color-link-blue: #{$app_color_link_blue};
   --app-color-cyan: #{$app_color_cyan};
   --app-color-light-gray-001: #{$appColorLightGray001};
-  --app-grid-line-color: #{$app_grid_line_color};
+  //--app-grid-line-color: #{$app_grid_line_color};
   --app-gray-input-background: #{$app-gray-input-background};
   --app-light-background: #{$app-light-background};
   --app-bright-red: #{$app-bright-red};

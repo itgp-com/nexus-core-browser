@@ -12,7 +12,7 @@ import {Video} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/rendere
 import {cssAddSelector} from '../../../CoreUtils';
 import {StateN2PropertyName} from '../../generic/StateN2PropertyName';
 import {addN2Class} from '../../N2HtmlDecorator';
-import {VARS_EJ2_COMMON} from '../../scss/vars-ej2-common';
+import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 import {N2Grid} from './N2Grid';
@@ -76,6 +76,6 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
     // $grey-300 for light and grey-700 for dark
     cssAddSelector(`.${widgetClass} .e-tbar-btn, .${widgetClass} .e-tbtn-txt`,`
-  background-color: ${VARS_EJ2_COMMON.chip_bg_color} !important;
+  background-color: ${CSS_VARS_EJ2.chip_bg_color} !important;
     `);
 }); // normal priority

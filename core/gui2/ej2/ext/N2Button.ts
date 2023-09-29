@@ -3,7 +3,7 @@ import {StringArg, stringArgVal} from '../../../BaseUtils';
 import {cssAddSelector} from '../../../CoreUtils';
 import {N2Evt_OnLogic} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
-import {CORE_MATERIAL} from '../../scss/vars-material';
+import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
@@ -74,6 +74,6 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
     cssAddSelector(`.${N2Button.CLASS_IDENTIFIER}.e-btn, .${N2Button.CLASS_IDENTIFIER}.e-css.e-btn,
 .N2DropDownButton.e-btn, .N2DropDownButton.e-css.e-btn`, `
-  font-size: ${CORE_MATERIAL.app_font_size_regular};
+  font-size: ${CSS_VARS_CORE.app_font_size_regular};
   text-transform: unset !important;`);
 }); // normal priority
