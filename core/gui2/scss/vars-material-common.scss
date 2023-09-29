@@ -139,6 +139,7 @@ $app_custom_excel_filter_width_number: 18 !default; // size of the filter icon a
   --app-color-blue-01: #{$app_color_blue_01};
   --app-dialog-header-close-button-size: #{$app_dialog_header_close_button_size};
   --app-custom-excel-filter-width-number: #{$app_custom_excel_filter_width_number}px;
+  --app-island-background-color: #{$island-background-color}; // light and dark versions exist
 }
 
 //-- start dismantling excel filter settings that should never have been set in the first place --/

@@ -60,6 +60,8 @@ const CoreMaterialCssFieldNames: string[] = [
     'app_color_blue_01',
     'app_dialog_header_close_button_size',
     'app_custom_excel_filter_width_number',
+
+    'island_background_color',
 ];
 
 
@@ -120,6 +122,8 @@ export class CssVarsAppCore {
     app_color_blue_01 ?: string;
     app_dialog_header_close_button_size ?: string;
     app_custom_excel_filter_width_number ?: string; //
+
+    island_background_color ?: string;
 }
 
 export const getCSS_VARS_CORE = (): CssVarsAppCore => {
