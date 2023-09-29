@@ -821,7 +821,12 @@ function applyColumnFormat(filter: Filter, filterValue: any) {
 
 
 
+const COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS :string = '_n2_cwa_';
 
+/**
+ * Calculates the grid column width so that filter and sorting widgets in the column heading have space to display without overlapping the text
+ * @param {ColumnModel[]} columns
+ */
 export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
     let baseFontSize = Number.parseInt(CSS_VARS_CORE.app_font_size_base_number);
     let app_custom_excel_filter_width_number:number;
@@ -834,11 +839,40 @@ export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
 
     if (columns) {
         for (const column of columns) {
+            if ( column[COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS] == true)
+                continue; // already adjusted
+
+
+            /*
+            extra calculation explained:
+            For columns that are right and left justified, most of the time we need to make room for 3*18px (filter arrow + sorting arrow + bubble )
+            For centered columns, the bubble arrow is part of the centered text, and as such we need to introduce the filter arrow and sorting arrow widths as extra padding to keep the heading centered and nothing overwriting
+             */
+
             let extra :number = 0
+            let filterArrowWidth = app_custom_excel_filter_width_number
+            let sortArrowWidth = app_custom_excel_filter_width_number
+            let sortBubbleWidth = app_custom_excel_filter_width_number
+
             if (column.allowFiltering !== false) // undefined same as true
-                extra += 2 * app_custom_excel_filter_width_number;
-            if (column.allowSorting !== false) // undefined same as true
-                extra += app_custom_excel_filter_width_number;
+                extra += filterArrowWidth;
+            let isSorted:boolean = (column.allowSorting !== false) ; // undefined same as true
+            if (isSorted) {
+                extra += sortArrowWidth; // sort arrow
+                extra += sortBubbleWidth// bubble
+            } // if (isSorted)
+
+
+            if (column.headerTextAlign == "Center"){
+                extra += filterArrowWidth; // need to allow space on the opposite side for the filter arrow so it is balanced
+                if ( isSorted ) {
+                    extra += sortArrowWidth; // sort arrow
+                }
+
+                // We do not balance for the sort bubble because it is part of the centered text of the heading
+                // It gets created as a sub-div of the heading) and as such there is no balancing necessary since it is part of the heading and is centered with the heading
+                // Therefore only the filter and the arrow width need to be added as padding on the opposite side to keep centered
+            } // if (column.headerTextAlign == "Center")
 
             if (extra > 0) {
                 let width:string|number = column.width;
@@ -855,17 +889,20 @@ export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
 
 
                 if (_.isNumber(width)) {
-                    let defaultWidth:number = calculateDefaultHeaderWidth(column);
+                    let headerText:string = (column.headerTemplate ? column.headerTemplate as string : column.headerText) || '';
+                    let defaultWidth:number = calculateDefaultHeaderWidth(headerText);
 
                     if ( defaultWidth + extra < width) {
                         // do nothing if the width is already big enough for the default width and the extra (there's enough room for the filter and sort icons)
                     } else {
                         // width should be adjusted
+                        //
+                        // if (width < defaultWidth)
+                        //     width = defaultWidth; // width should at least cover the header text itself
 
-                        if (width < defaultWidth)
-                            width = defaultWidth; // width should at least cover the header text itself
 
-                        column.width = width + extra;
+                        column.width = defaultWidth + extra;
+                        column[COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS] = true;
 
                     } // if ( defaultWidth + extra < width)
 
@@ -878,8 +915,8 @@ export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
 
 } // adjustColumnWidthForFilters
 
-function calculateDefaultHeaderWidth(column:ColumnModel) : number{
-    let headerText:string = (column.headerTemplate ? column.headerTemplate as string : column.headerText) || '';
+function calculateDefaultHeaderWidth(headerText:string) : number{
+
 
     // Create a temporary div element
     const tempDiv = document.createElement('div');
