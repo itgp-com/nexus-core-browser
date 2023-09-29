@@ -872,7 +872,9 @@ export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
                 // We do not balance for the sort bubble because it is part of the centered text of the heading
                 // It gets created as a sub-div of the heading) and as such there is no balancing necessary since it is part of the heading and is centered with the heading
                 // Therefore only the filter and the arrow width need to be added as padding on the opposite side to keep centered
-            } // if (column.headerTextAlign == "Center")
+            } else if (column.headerTextAlign == null || column.headerTextAlign == "Left" || column.headerTextAlign == "Right"){
+                extra += 6; // avoid overwriting the last character (based on the css rules set by N2Grid cssForN2Grid(...) function
+            }// if (column.headerTextAlign == "Center")
 
             if (extra > 0) {
                 let width:string|number = column.width;
