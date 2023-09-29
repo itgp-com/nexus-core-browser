@@ -320,9 +320,9 @@ font-size: ${CSS_VARS_CORE.app_font_size_regular};`
         left: 0;
     `);
 
-    // when right-align the left padding was 1.8em by default. Now it's 18px, exactly the size of the sort bubble so things line up
+    // when right-align the left padding was 1.8em by default. Now it's 17px, exactly 1px less than the size of the sort bubble so things line up
     cssAddSelector(`.${n2GridClass}.${eGridClass}  .e-gridheader .e-sortfilter .e-rightalign .e-headercelldiv, .${n2GridClass}.${eGridClass} .e-gridheader .e-rightalign .e-stackedheadercelldiv`,`
-        padding: 0 0.6em 0 18px;
+        padding: 0 0.6em 0 17px;
     `);
 
 
