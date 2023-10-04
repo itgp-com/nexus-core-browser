@@ -403,6 +403,10 @@ font-size: ${CSS_VARS_CORE.app_font_size_regular};`
     `);
 
 
+
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-frozenheader > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent .e-virtualtable > .e-table, .${n2GridClass}.${eGridClass} .e-frozenheader .e-virtualtable > .e-table`, `
+        border-right-color: ${CSS_VARS_EJ2.grid_header_border_color};
+    ` );
     //---------------------
 
     // align sort and menu vertically
