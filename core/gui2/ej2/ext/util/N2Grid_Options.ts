@@ -132,17 +132,16 @@ export function stateN2Grid_excelExport(state: StateN2Grid, fnExcelExport: EmitT
 
 } // stateN2Grid_excelExport
 
-export interface StateN2Grid_RowNumber_Options {
+export interface Grid_RowNumber_Options {
     pageRowNumberOnly?: boolean;
 }
 
 /**
  * Your grid must have a column with field = COL_ROW_NUMBER
  * @param {StateN2Grid} state
- * @param {StateN2Grid_RowNumber_Options} options
+ * @param {Grid_RowNumber_Options} options
  */
-export function stateN2Grid_RowNumber(state: StateN2Grid, options: StateN2Grid_RowNumber_Options = {}): void {
-    let gridModel: GridModel = state?.ej;
+export function stateN2Grid_RowNumber(gridModel: GridModel, options: Grid_RowNumber_Options = {}): void {
     if (!gridModel)
         return; // nothing to do
 
