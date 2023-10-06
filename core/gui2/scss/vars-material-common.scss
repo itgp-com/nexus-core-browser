@@ -8,6 +8,7 @@
   font-weight: normal;
   font-style: normal;
 }
+
 $app_font_size_base_number: 12 !default; // integer
 
 // material overrides - items common to both light and dark themes
@@ -20,7 +21,6 @@ $drop-down-btn-icon-font-size: $font-size;
 
 // ---------------- application variables definitions ----------------
 
-//$app_color_panel_background: #f5f5f5; // moved to dark/light
 
 $app_font_main: 'Roboto-Regular';
 $app_font_family: $app_font_main, sans-serif !default;
@@ -56,6 +56,19 @@ $app_color_gray_text1: #a3a3a3;
 $app_color_gray_text2: #b3b3b3;
 $app_color_gray_text3: #c3c3c3;
 
+$app_color_gray_50: #fafafa;
+$app_color_gray_100: #f5f5f5;
+$app_color_gray_200: #eee;
+$app_color_gray_300: #e0e0e0;
+$app_color_gray_400: #bdbdbd;
+$app_color_gray_500: #9e9e9e;
+$app_color_gray_600: #757575;
+$app_color_gray_700: #616161;
+$app_color_gray_800: #424242;
+$app_color_gray_900: #212121;
+$app_color_gray_dark: #303030;
+
+
 $app-header-text-color-dark-gray: #4D4D4D !default;
 $app_header_text_color_dark_green: #6C7E7F !default;
 $app-row-disabled-background-color-lightgray: #E6E6E6 !default;
@@ -89,7 +102,10 @@ $app_custom_excel_filter_width_number: 18 !default; // size of the filter icon a
   --material-accent-font-color: #{$accent-font};
   --grey-dark: #{$grey-dark};
 
+  --app-label-color: #{$app_label_color};
+  --app-text-color: #{$app_text_color};
   --app-color-panel-background: #{$app_color_panel_background};
+
   --app-font-main: #{$app_font_main};
   --app-font-family: #{$app_font_family};
   --font-family: #{$font-family};
@@ -117,6 +133,19 @@ $app_custom_excel_filter_width_number: 18 !default; // size of the filter icon a
   --app-color-gray-text1: #{$app_color_gray_text1};
   --app-color-gray-text2: #{$app_color_gray_text2};
   --app-color-gray-text3: #{$app_color_gray_text3};
+
+  --app-color-gray-50: #{$app_color_gray_50};
+  --app-color-gray-100: #{$app_color_gray_100};
+  --app-color-gray-200: #{$app_color_gray_200};
+  --app-color-gray-300: #{$app_color_gray_300};
+  --app-color-gray-400: #{$app_color_gray_400};
+  --app-color-gray-500: #{$app_color_gray_500};
+  --app-color-gray-600: #{$app_color_gray_600};
+  --app-color-gray-700: #{$app_color_gray_700};
+  --app-color-gray-800: #{$app_color_gray_800};
+  --app-color-gray-900: #{$app_color_gray_900};
+  --app-color-gray-dark: #{$app_color_gray_dark};
+
   --app-header-text-color-dark-gray: #{$app-header-text-color-dark-gray};
   --app-header-text-color-dark-green: #{$app_header_text_color_dark_green};
   --app-row-disabled-background-color-lightgray: #{$app-row-disabled-background-color-lightgray};

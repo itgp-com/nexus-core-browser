@@ -77,7 +77,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
             display: 'flex',
             'flex-direction': 'row',
             'justify-content': 'space-between',
-            'background-color': CSS_VARS_CORE.app_color_panel_background,
+            'background-color': 'var(--app-color-panel-background)',
             ...style
         }
         state.deco.style = style;

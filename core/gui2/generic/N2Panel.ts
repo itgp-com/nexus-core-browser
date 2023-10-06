@@ -33,7 +33,7 @@ export class N2Panel<STATE extends StateN2Panel = StateN2Panel> extends N2Basic<
 
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
     let rules = `
-        background-color: ${CSS_VARS_CORE.app_color_panel_background}; 
+        background-color: var(--app-color-panel-background); 
     `;
     console.log(`N2Panel scss rules:` , rules);
     cssAddSelector(`.${N2Panel.CLASS_IDENTIFIER}`, rules);

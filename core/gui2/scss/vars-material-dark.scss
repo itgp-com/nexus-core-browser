@@ -7,11 +7,11 @@ $accent-font: #fff;
 //@import '@syncfusion/ej2-base/styles/definition/_material-dark.scss';
 
 
-
-
+$app_label_color: var(--app-color-gray-text1);
+$app_text_color: #fff; // white
 
 //--------Overwrite syncfusion scss variables -----
 $panel-box-shadow: 0px 2px 5px 0px rgba($accent, 45%);
-$app_color_panel_background: var(--grey-dark);
+$app_color_panel_background: var(--app-color-gray-dark);
 $island-background-color: rgba($app_color_panel_background, 60%);
 @import 'vars-material-common.scss'; // variable :root definitions

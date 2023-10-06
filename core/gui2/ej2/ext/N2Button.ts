@@ -74,6 +74,6 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
     cssAddSelector(`.${N2Button.CLASS_IDENTIFIER}.e-btn, .${N2Button.CLASS_IDENTIFIER}.e-css.e-btn,
 .N2DropDownButton.e-btn, .N2DropDownButton.e-css.e-btn`, `
-  font-size: ${CSS_VARS_CORE.app_font_size_regular};
+  font-size: var(--app-font-size-regular);
   text-transform: unset !important;`);
 }); // normal priority

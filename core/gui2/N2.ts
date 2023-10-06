@@ -861,7 +861,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     /* Targets .e-control elements that also have the .${N2.CLASS_IDENTIFIER} class */
     /* Targets .e-control elements that are descendants of an element with the .${N2.CLASS_IDENTIFIER} class */
     cssAddSelector(`.e-control.${N2.CLASS_IDENTIFIER}, .${N2.CLASS_IDENTIFIER} .e-control`, `
-    font-family: ${CSS_VARS_CORE.app_font_family};    
+    font-family: var(--app-font-family);    
     `);
 
 
@@ -880,7 +880,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
 .e-input-group.${N2.CLASS_IDENTIFIER} textarea.e-input,
 .e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} textarea.e-input`;
 
-    val = `  font-family: ${CSS_VARS_CORE.app_font_family} !important;`;
+    val = `  font-family: var(--app-font-family) !important;`;
     keys.push(key);
     vals.push(val);
     //------------

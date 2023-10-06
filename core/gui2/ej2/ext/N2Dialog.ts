@@ -378,8 +378,8 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     if ( isDarkTheme) {
         // dialog itself gets the background color
         cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog`, `
-        background-color: ${CSS_VARS_CORE.app_color_panel_background};
-        border: 1px solid ${CSS_VARS_EJ2.grid_header_border_color};
+        background-color: var(--app-color-panel-background);
+        border: 1px solid var(--grid-header-border-color);
     `);
     } // if ( isDarkTheme)
 
@@ -393,7 +393,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     // remove border from all buttons and other elements
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header, .${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header *`, `
         color: ${CSS_VARS_CORE.app_dialog_header_font_color}; 
-        font-size: ${CSS_VARS_CORE.app_font_size_regular};
+        font-size: var(--app-font-size-regular);
         border: none;         
 `);
 
@@ -415,14 +415,14 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     `
     if ( isDarkTheme) {
         rules += `
-        background-color: ${CSS_VARS_CORE.app_color_panel_background}; 
+        background-color: var(--app-color-panel-background); 
         `;
     }
     // dialog content gets background color
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-content`, rules);
 
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header-content .e-dlg-header`, `
-        font-size: ${CSS_VARS_CORE.app_font_size_regular};
+        font-size: var(--app-font-size-regular);
     `);
 
 

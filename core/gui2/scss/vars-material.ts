@@ -10,7 +10,10 @@ const CoreMaterialCssFieldNames: string[] = [
     'material_accent_font_color',
     'grey_dark',
 
+    'app_label_color',
+    'app_text_color',
     'app_color_panel_background',
+
     'app_font_main',
     'app_font_family',
     'font_family',
@@ -72,7 +75,11 @@ export class CssVarsAppCore {
     material_accent_font_color ?:string;
     grey_dark ?:string;
 
+    app_label_color ?: string;
+    app_text_color ?: string;
     app_color_panel_background ?: string;
+
+
     app_font_main ?: string;
     app_font_family ?: string;
     font_family ?: string;

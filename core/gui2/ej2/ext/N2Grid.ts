@@ -164,13 +164,13 @@ export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
 
 
     cssAddSelector(`.${n2GridClass}.e-control .e-toolbar .e-tbar-btn .e-tbar-btn-text`,
-        `font-family: ${CSS_VARS_CORE.app_font_family};
-font-size: ${CSS_VARS_CORE.app_font_size_regular};`
+        `font-family: var(--app-font-family);
+font-size: var(--app-font-size-regular);`
     );
 
     //Make tops of grid filters change colors for enabled filters
     cssAddSelector(`.${n2GridClass} .e-filtertext:not(.e-disable) `, `
-     background-color: ${CSS_VARS_CORE.app_filter_text_background_color} !important;
+     background-color: var(--app-filter-text-background-color) !important;
   padding-left: 1ch !important;
     `);
 
@@ -197,25 +197,25 @@ font-size: ${CSS_VARS_CORE.app_font_size_regular};`
 
     // Grid cell font type and size
     cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell`, `
-  font-family: ${CSS_VARS_CORE.app_font_family};
-  font-size: ${CSS_VARS_CORE.app_font_size_regular};    
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size-regular);    
     `);
 
 
     // left divider color for row cell, header and filter cells
     cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell, .${n2GridClass}.e-control.${eGridClass} .e-filterbarcell, .${n2GridClass}.e-control.${eGridClass} .e-headercell`, `
-  border-left: 1px solid ${CSS_VARS_EJ2.grid_header_border_color};
+  border-left: 1px solid var(--grid-header-border-color);
     `);
 
     // eliminate resize handler cell visible border
     cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-headercell .e-rhandler`, `
   border-right-width: 0px !important;
   border-right-style: solid !important;
-  border-right-color: ${CSS_VARS_EJ2.grid_table_background_color} !important;    
+  border-right-color: var(--grid-table-background-color) !important;    
     `);
 
     cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-tableborder `, `
-      border-right-color: ${CSS_VARS_EJ2.grid_header_border_color} !important;
+      border-right-color: var(--grid-header-border-color) !important;
     `);
 
     // Controls the left/right padding in grid cells
@@ -240,7 +240,7 @@ font-size: ${CSS_VARS_CORE.app_font_size_regular};`
 
     // group area background color
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-groupdroparea.e-grouped`, `
-  background-color: ${CSS_VARS_CORE.app_color_panel_background};    
+  background-color: var(--app-color-panel-background);     
     `);
 // This is here for the grid cell to not wrap on <br>
     cssAddSelector(`.${n2GridClass} td.e-rowcell br`, `
@@ -283,10 +283,10 @@ font-size: ${CSS_VARS_CORE.app_font_size_regular};`
      * This is the filter icon that appears in the right of the header of a column that has a filter applied (e-filtered exists).
      */
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-filtermenudiv.e-filtered::before`, `
-        color: ${CSS_VARS_CORE.material_accent_font_color};
-        background-color: ${CSS_VARS_CORE.material_accent_color};
+        color: var(--material-accent-font-color);
+        background-color: var(--material-accent-color);
         padding: 3px;
-        border: solid 1px ${CSS_VARS_EJ2.grid_header_border_color};
+        border: solid 1px var(--grid-header-border-color);
         border-radius: 5px;
         ${STYLE_CENTER_VERTICAL}
         right: 0;
@@ -306,7 +306,7 @@ font-size: ${CSS_VARS_CORE.app_font_size_regular};`
      */
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-filtermenudiv:not(.e-filtered)::before`, `
         padding: 3px;
-        border: solid 1px ${CSS_VARS_EJ2.grid_header_border_color};
+        border: solid 1px var(--grid-header-border-color);
         border-radius: 5px;
         ${STYLE_CENTER_VERTICAL}
         right: 0;
@@ -349,7 +349,7 @@ font-size: ${CSS_VARS_CORE.app_font_size_regular};`
         `
         margin-left: -10px;
         padding: 2px 3px 4px 3px;
-        border: solid 1px ${CSS_VARS_EJ2.grid_header_border_color};
+        border: solid 1px var(--grid-header-border-color);
         border-radius: 5px;
         ${STYLE_CENTER_VERTICAL}
         right: ${app_custom_excel_filter_width_number}px;
@@ -388,7 +388,7 @@ font-size: ${CSS_VARS_CORE.app_font_size_regular};`
         `
         margin-left: 2px;
         padding: 3px;
-        border: 1px solid ${CSS_VARS_EJ2.grid_header_border_color};
+        border: 1px solid var(--grid-header-border-color);
         border-radius: 5px;
         ${STYLE_CENTER_VERTICAL}
         right: 0px;
@@ -405,7 +405,7 @@ font-size: ${CSS_VARS_CORE.app_font_size_regular};`
 
 
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-frozenheader > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent .e-virtualtable > .e-table, .${n2GridClass}.${eGridClass} .e-frozenheader .e-virtualtable > .e-table`, `
-        border-right-color: ${CSS_VARS_EJ2.grid_header_border_color};
+        border-right-color: var(--grid-header-border-color);
     ` );
     //---------------------
 
