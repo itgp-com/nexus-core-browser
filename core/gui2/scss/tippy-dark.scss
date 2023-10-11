@@ -1,5 +1,5 @@
 $tippy-bg-color: #55552e !default;
 $tippy-font-color: #FFFFED !default; // light yellow
 $tippy-border-color:  var(--grid-header-border-color) !default;
-$tippy-arrow-fill: lighten($grid-header-border-color, 10%) !default;
+$tippy-arrow-fill: lighten(#616161, 10%) !default;
 @import 'tippy-common';
