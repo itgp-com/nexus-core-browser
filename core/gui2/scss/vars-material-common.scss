@@ -102,9 +102,16 @@ $app_custom_excel_filter_width_number: 18 !default; // size of the filter icon a
   --material-accent-font-color: #{$accent-font};
   --grey-dark: #{$grey-dark};
 
-  --app-label-color: #{$app_label_color};
-  --app-text-color: #{$app_text_color};
-  --app-color-panel-background: #{$app_color_panel_background};
+  --app-color-panel-background: #{$app-color-panel-background};
+  --app-island-background-color: #{$island-background-color}; // light and dark versions exist
+
+
+  --app-label-color: #{$app-label-color};
+  --app-text-color: #{$app-text-color};
+  --app-button-bgcolor: #{$app-button-bgcolor};
+  --app-button-color: #{$app-button-color};
+  --app-button-color-accent: #{$app-button-color-accent};
+
 
   --app-font-main: #{$app_font_main};
   --app-font-family: #{$app_font_family};
@@ -168,7 +175,6 @@ $app_custom_excel_filter_width_number: 18 !default; // size of the filter icon a
   --app-color-blue-01: #{$app_color_blue_01};
   --app-dialog-header-close-button-size: #{$app_dialog_header_close_button_size};
   --app-custom-excel-filter-width-number: #{$app_custom_excel_filter_width_number}px;
-  --app-island-background-color: #{$island-background-color}; // light and dark versions exist
 }
 
 //-- start dismantling excel filter settings that should never have been set in the first place --/

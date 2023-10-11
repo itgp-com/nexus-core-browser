@@ -1,0 +1,17 @@
+//---------------------------------------------------------------------------------
+//----------- SIMPLY HERE TO SHOW THE COLORS AT DEVELOPMENT TIME. NOT COMPILED ----
+//---------------------------------------------------------------------------------
+$primary: #37474f; /* rgba(55,71,79,1); */
+$primary-font: #fff;
+$accent: #10669F; /* #094E84 !default; #2174af; #1277bf; rgba(18,119,191,1); */
+$accent-font: #fff;
+
+$app-color-panel-background: #f5f5f5;
+$island-background-color: #FFFFFF;
+
+$app-label-color: #000; // black
+$app-text-color: #000; // black
+$app-text-color-accent: $accent;
+$app-button-bgcolor: $app_color_gray_50;
+$app-button-color: rgba($grey-black, .87);
+$app-button-color-accent: $app-text-color-accent; // font color when using accent color

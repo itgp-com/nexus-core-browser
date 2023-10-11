@@ -4,8 +4,16 @@ $primary-font: #fff;
 $accent: #10669F; /* #094E84 !default; #2174af; #1277bf; rgba(18,119,191,1); */
 $accent-font: #fff;
 
-$app_color_panel_background: #f5f5f5;
+$app-color-panel-background: #f5f5f5;
 $island-background-color: #FFFFFF;
-$app_label_color: #000; // black
-$app_text_color: #000; // black
+
+$app-label-color: #000; // black
+$app-text-color: #000; // black
+$app-text-color-accent: $accent;
+$app-button-bgcolor: var(--app-color-gray-50);
+$app-button-color: rgba(#000, .87);
+$app-button-color-accent: $accent; // font color when using accent color
+
+
+
 @import 'vars-material-common.scss'; // variable :root definitions

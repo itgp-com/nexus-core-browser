@@ -4,14 +4,20 @@ $primary-font: #fff;
 $accent: #10669F; // #16a2ff; // lighter #10669F;
 $accent-font: #fff;
 
-//@import '@syncfusion/ej2-base/styles/definition/_material-dark.scss';
+$app-color-panel-background: var(--app-color-gray-dark);
+$island-background-color: rgba(var(--app-color-panel-background), 60%);
 
+$app-label-color: var(--app-color-gray-text1);
+$app-text-color: #fff; // white
+$app-text-color-accent: #03a9f4;
+$app-button-bgcolor: var(--app-color-gray-700);
+$app-button-color: #fff; // white same as $grey-dark-font in Ej2)
+$app-button-color-accent: $app-text-color-accent; // font color when using accent color
 
-$app_label_color: var(--app-color-gray-text1);
-$app_text_color: #fff; // white
+$app_color_blue_01: $app-text-color-accent;
+
 
 //--------Overwrite syncfusion scss variables -----
 $panel-box-shadow: 0px 2px 5px 0px rgba($accent, 45%);
-$app_color_panel_background: var(--app-color-gray-dark);
-$island-background-color: rgba($app_color_panel_background, 60%);
+
 @import 'vars-material-common.scss'; // variable :root definitions

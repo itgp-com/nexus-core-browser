@@ -1,0 +1,21 @@
+//---------------------------------------------------------------------------------
+//----------- SIMPLY HERE TO SHOW THE COLORS AT DEVELOPMENT TIME. NOT COMPILED ----
+//---------------------------------------------------------------------------------
+$primary: #37474f; /* rgba(55,71,79,1); */
+$primary-font: #fff;
+$accent: #10669F; // #16a2ff; // lighter #10669F;
+$accent-font: #fff;
+
+$app-color-panel-background: $app_color_gray_dark; // (--app-color-gray-dark);
+$island-background-color: rgba($app-color-panel-background, 60%);
+
+$app-label-color: var(--app-color-gray-text1);
+$app-text-color: #fff; // white
+$app-text-color-accent: #03a9f4;
+$app-button-bgcolor: $app_color_gray_700;
+$app-button-color: #fff; // white same as $grey-dark-font in Ej2)
+$app-button-color-accent: $app-text-color-accent; // font color when using accent color
+
+
+//--------Overwrite syncfusion scss variables -----
+$panel-box-shadow: 0px 2px 5px 0px rgba($accent, 45%);
