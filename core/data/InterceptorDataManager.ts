@@ -1,5 +1,4 @@
 import {DataManager, Query} from '@syncfusion/ej2-data';
-import {Ajax}               from '@syncfusion/ej2-base';
 
 /*
 If in Core, diferent path lib creates incompatibility
@@ -68,7 +67,7 @@ export class InterceptorDataManager extends DataManager {
     }
 
 
-    executeQuery(query: Query | Function, done?: Function, fail?: Function, always?: Function): Promise<Ajax> {
+    executeQuery(query: Query | Function, done?: Function, fail?: Function, always?: Function): Promise<Response> {
 
         let classThis = this;
         let newDone = function (args: SuccessResponse) {

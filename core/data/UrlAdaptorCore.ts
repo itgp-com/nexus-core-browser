@@ -1,5 +1,18 @@
-import {Aggregates, CrudOptions, DataManager, DataOptions, DataResult, ParamOption, Predicate, PvtOptions, Query, QueryOptions, Requests, UrlAdaptor} from "@syncfusion/ej2-data";
-import {Group}                                                                                                                                        from "@syncfusion/ej2-data/src/util";
+import {
+   Aggregates,
+   CrudOptions,
+   DataManager,
+   DataOptions,
+   DataResult,
+   ParamOption,
+   Predicate,
+   PvtOptions,
+   Query,
+   QueryOptions,
+   Requests,
+   UrlAdaptor
+} from "@syncfusion/ej2-data";
+import {Group} from "@syncfusion/ej2-data/src/util";
 
 
 /**
@@ -46,7 +59,7 @@ export interface UrlAdaptorListenerExceptionHandler {
 
 export class EvtBeforeSendListener {
    dm: DataManager;
-   request: XMLHttpRequest;
+   request: Request;
    adaptor: UrlAdaptorCore;
 }
 
@@ -100,9 +113,6 @@ export class UrlAdaptorCore extends UrlAdaptor {
 
    /**
     * Convert the object from processQuery to string which can be added query string.
-    * @param  {Object} req
-    * @param  {Query} query
-    * @param  {DataManager} dm
     */
    convertToQueryString(request: Object, query: Query, dm: DataManager): string {
       return super.convertToQueryString(request, query, dm);
@@ -110,14 +120,8 @@ export class UrlAdaptorCore extends UrlAdaptor {
 
    /**
     * Return the data from the data manager processing.
-    * @param  {DataResult} data
-    * @param  {DataOptions} ds?
-    * @param  {Query} query?
-    * @param  {XMLHttpRequest} xhr?
-    * @param  {Object} request?
-    * @param  {CrudOptions} changes?
     */
-   processResponse(data: DataResult, ds?: DataOptions, query?: Query, xhr?: XMLHttpRequest, request?: Object, changes?: CrudOptions): DataResult {
+   processResponse(data: DataResult, ds?: DataOptions, query?: Query, xhr?: Request, request?: Object, changes?: CrudOptions): DataResult {
       return super.processResponse(data, ds, query, xhr, request, changes);
    }
 
@@ -148,9 +152,6 @@ export class UrlAdaptorCore extends UrlAdaptor {
    /**
     * Prepare the request body based on the newly added, removed and updated records.
     * The result is used by the batch request.
-    * @param  {DataManager} dm
-    * @param  {CrudOptions} changes
-    * @param  {Object} e
     */
    batchRequest(dm: DataManager, changes: CrudOptions, e: Object, query: Query, original?: Object): Object {
       return super.batchRequest(dm, changes, e, query, original);
@@ -160,11 +161,8 @@ export class UrlAdaptorCore extends UrlAdaptor {
    /**
     * Method will trigger before send the request to server side.
     * Used to set the custom header or modify the request options.
-    * @param  {DataManager} dm
-    * @param  {XMLHttpRequest} request
-    * @returns void
     */
-   beforeSend(dm: DataManager, request: XMLHttpRequest) {
+   beforeSend(dm: DataManager, request: Request) {
       let thisX = this;
       if (this.beforeSendListeners.length) {
          let done: boolean = false;

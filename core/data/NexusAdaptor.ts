@@ -16,7 +16,6 @@ export class NexusAdaptor extends UrlAdaptor {
 
     /**
      * Constructor for Adaptor class
-     * @param  {DataOptions} ds?
      * @hidden
      * @returns aggregates
      */

@@ -43,7 +43,7 @@ export interface UrlAdaptorListenerExceptionHandler {
 
 //-------------- Adaptor Methods ----------------------
 export interface BeforeSendListener {
-   beforeSend(dm: DataManager, request: XMLHttpRequest, adaptor: UrlAdaptor_Abstract): UrlAdaptorListenerRetVal;
+   beforeSend(dm: DataManager, request: Request, adaptor: UrlAdaptor_Abstract): UrlAdaptorListenerRetVal;
 }
 
 export class UrlAdaptor_Abstract extends UrlAdaptor {
@@ -72,7 +72,7 @@ export class UrlAdaptor_Abstract extends UrlAdaptor {
       return super.convertToQueryString(request, query, dm);
    }
 
-   processResponse(data: DataResult, ds?: DataOptions, query?: Query, xhr?: XMLHttpRequest, request?: Object, changes?: CrudOptions): DataResult {
+   processResponse(data: DataResult, ds?: DataOptions, query?: Query, xhr?: Request, request?: Object, changes?: CrudOptions): DataResult {
       return super.processResponse(data, ds, query, xhr, request, changes);
    }
 
@@ -88,7 +88,7 @@ export class UrlAdaptor_Abstract extends UrlAdaptor {
       return super.batchRequest(dm, changes, e, query, original);
    }
 
-   beforeSend(dm: DataManager, request: XMLHttpRequest) {
+   beforeSend(dm: DataManager, request: Request) {
       let thisX = this;
       if (this.beforeSendListeners.length) {
          let done: boolean = false;

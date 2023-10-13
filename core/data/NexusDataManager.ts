@@ -32,10 +32,6 @@ export class NexusDataManager extends DataManager {
 
     /**
      * Constructor for DataManager class
-     * @param  {DataOptions|JSON[]} dataSource?
-     * @param  {Query} query?
-     * @param  {AdaptorOptions|string} adaptor?
-     * @hidden
      */
     constructor(dataSource?: DataOptions | JSON[] | Object[], query?: Query, adaptor?: AdaptorOptions | string) {
         super(dataSource, query, adaptor);
@@ -153,6 +149,7 @@ export class NexusDataManager extends DataManager {
      * @param  {string} key - Defines the column field.
      * @param  {string|Query} tableName - Defines the table name.
      * @param  {Query} query - Sets default query for the DataManager.
+     * @param {Object} original - not documented by Syncfusion
      */
     saveChanges(changes: Object, key?: string, tableName?: string | Query, query?: Query, original?: Object): Promise<Object> | Object {
         // Custom logic to save changes
