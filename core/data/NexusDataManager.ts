@@ -1,5 +1,4 @@
 import {DataManager, Query} from '@syncfusion/ej2-data';
-import {Ajax} from "@syncfusion/ej2-base";
 import {AdaptorOptions, DataOptions} from "@syncfusion/ej2-data/src/manager";
 import {nexusMain} from "../NexusMain";
 import {HttpRequestEvtDataManager, HttpResponseEvtDataManager} from "./NexusComm";
@@ -61,7 +60,7 @@ export class NexusDataManager extends DataManager {
      * @param  {Function} fail - Defines the callback function and triggers when the Promise is rejected.
      * @param  {Function} always - Defines the callback function and triggers when the Promise is resolved or rejected.
      */
-    executeQuery(query: Query | Function, done?: Function, fail?: Function, always?: Function): Promise<Ajax> {
+    executeQuery(query: Query | Function, done?: Function, fail?: Function, always?: Function): Promise<Response> {
 
         if (NexusDataManager.DEBUG_ON)
             console.log("executeQuery");

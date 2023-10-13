@@ -1,3 +1,4 @@
+import {Fetch} from '@syncfusion/ej2-base';
 import {CrudOptions, DataManager, DataOptions, Query, UrlAdaptor} from '@syncfusion/ej2-data';
 import {DataResult, PvtOptions, Requests} from "@syncfusion/ej2-data/src/adaptors";
 import {ParamOption, Predicate, QueryOptions} from "@syncfusion/ej2-data/src/query";
@@ -59,9 +60,6 @@ export class NexusAdaptor extends UrlAdaptor {
     /**
      * Prepare the request body based on the newly added, removed and updated records.
      * The result is used by the batch request.
-     * @param  {DataManager} dm
-     * @param  {CrudOptions} changes
-     * @param  {Object} e
      */
     batchRequest(dm: DataManager, changes: CrudOptions, e: Object, query: Query, original?: Object): Object {
         if (NexusAdaptor.showDebug)
@@ -76,7 +74,7 @@ export class NexusAdaptor extends UrlAdaptor {
      * @param  {XMLHttpRequest} request
      * @returns void
      */
-    beforeSend(dm: DataManager, request: XMLHttpRequest): void {
+    beforeSend(dm: DataManager, request: Request): void {
         if (NexusAdaptor.showDebug)
             console.log("beforeSend");
 
@@ -92,7 +90,7 @@ export class NexusAdaptor extends UrlAdaptor {
 
     /**
      * Convert the object from processQuery to string which can be added query string.
-     * @param  {Object} req
+     * @param  {Object} request
      * @param  {Query} query
      * @param  {DataManager} dm
      */
@@ -134,9 +132,6 @@ export class NexusAdaptor extends UrlAdaptor {
 
     /**
      * Prepare and returns request body which is used to insert a new record in the table.
-     * @param  {DataManager} dm
-     * @param  {Object} data
-     * @param  {string} tableName
      */
     insert(dm: DataManager, data: Object, tableName: string, query: Query): Object {
         if (NexusAdaptor.showDebug)
@@ -168,9 +163,10 @@ export class NexusAdaptor extends UrlAdaptor {
 
     /**
      * Process the query to generate request body.
-     * @param  {DataManager} dm
-     * @param  {Query} query
-     * @param  {Object[]} hierarchyFilters?
+     *
+     * @param {DataManager} dm
+     * @param {Query} query
+     * @param hierarchyFilters
      * @returns p
      */
     processQuery(dm: DataManager, query: Query, hierarchyFilters?: Object[]): Object {
@@ -181,14 +177,8 @@ export class NexusAdaptor extends UrlAdaptor {
 
     /**
      * Return the data from the data manager processing.
-     * @param  {DataResult} data
-     * @param  {DataOptions} ds?
-     * @param  {Query} query?
-     * @param  {XMLHttpRequest} xhr?
-     * @param  {Object} request?
-     * @param  {CrudOptions} changes?
      */
-    processResponse(data: DataResult, ds?: DataOptions, query?: Query, xhr?: XMLHttpRequest, request?: Object, changes?: CrudOptions): DataResult {
+    processResponse(data: DataResult, ds?: DataOptions, query?: Query, xhr?: Request, request?: Fetch, changes?: CrudOptions): Object{
         if (NexusAdaptor.showDebug)
             console.log("processResponse");
 
@@ -211,10 +201,6 @@ export class NexusAdaptor extends UrlAdaptor {
 
     /**
      * Prepare and return request body which is used to remove record from the table.
-     * @param  {DataManager} dm
-     * @param  {string} keyField
-     * @param  {number|string} value
-     * @param  {string} tableName
      */
     remove(dm: DataManager, keyField: string, value: number | string, tableName: string, query: Query): Object {
         if (NexusAdaptor.showDebug)
@@ -224,10 +210,6 @@ export class NexusAdaptor extends UrlAdaptor {
 
     /**
      * Prepare and return request body which is used to update record.
-     * @param  {DataManager} dm
-     * @param  {string} keyField
-     * @param  {Object} value
-     * @param  {string} tableName
      */
     update(dm: DataManager, keyField: string, value: Object, tableName: string, query: Query): Object {
         if (NexusAdaptor.showDebug)

@@ -12,7 +12,7 @@ export interface HttpRequestEvt extends NexusCommEvt {
 }
 
 export interface HttpRequestEvtAdaptor extends HttpRequestEvt{
-    xhr: XMLHttpRequest; // From URLAdaptor beforeSend
+    xhr: Request; // From URLAdaptor beforeSend
     dm: DataManager // // From URLAdaptor beforeSend
 
     /**
@@ -54,7 +54,7 @@ export interface HttpResponseEvtAdaptor extends HttpResponseEvt {
     data: DataResult;
     ds?: DataOptions;
     query?: Query;
-    xhr?: XMLHttpRequest;
+    xhr?: Request;
     request?: Object;
     changes?: CrudOptions;
 }
