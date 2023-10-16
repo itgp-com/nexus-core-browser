@@ -258,6 +258,7 @@ export function stateN2Grid_Spinner(state: StateN2Grid, options?: stateN2Grid_Sp
             let htmlElementAnchor: HTMLElement = n2Grid.htmlElementAnchor;
             spinnerArgs = options?.spinnerArgs || {
                 target: htmlElementAnchor,
+                type: 'Bootstrap5', // more visible circle
             } as SpinnerArgs;
 
             target = spinnerArgs.target as HTMLElement;
