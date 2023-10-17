@@ -439,35 +439,57 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                                             // let dialogElem = args.dialog.element; // ?? don't know what this is, but it's not a dialog
                                             // this is dialogElem.outerHTML in the debugger
                                             // <div class="e-filter-popup e-excelfilter" id="qguPe_575_70348string_excelDlg" uid="grid-column7" aria-label="Excel filter dialog"></div>
+                                            try {
+
+                                                let dialogAutoCompleteArray: AutoComplete[] = []
+                                                let autoCompleteElems = document.querySelectorAll(`.e-xlflmenu.e-control.e-dialog    .e-xlfl-maindiv .e-xlfl-valuediv .e-control.e-autocomplete.e-lib.e-input`);
+                                                for (let i = 0; i < autoCompleteElems.length; i++) {
+                                                    let autoCompleteElem = autoCompleteElems[i];
+                                                    let ejInstances = autoCompleteElem['ej2_instances'];
+                                                    for (let j = 0; j < ejInstances.length; j++) {
+                                                        let obj = ejInstances[j];
+                                                        if (obj instanceof AutoComplete) {
+                                                            dialogAutoCompleteArray.push(obj);
+                                                        }
+                                                    } // for j - ejInstances
+                                                } // for i - autoCompleteElems
 
 
-                                            let dialogAutoCompleteArray: AutoComplete[] = []
-                                            let autoCompleteElems = document.querySelectorAll(`.e-xlflmenu.e-control.e-dialog    .e-xlfl-maindiv .e-xlfl-valuediv .e-control.e-autocomplete.e-lib.e-input`);
-                                            for (let i = 0; i < autoCompleteElems.length; i++) {
-                                                let autoCompleteElem = autoCompleteElems[i];
-                                                let ejInstances = autoCompleteElem['ej2_instances'];
-                                                for (let j = 0; j < ejInstances.length; j++) {
-                                                    let obj = ejInstances[j];
-                                                    if (obj instanceof AutoComplete) {
-                                                        dialogAutoCompleteArray.push(obj);
-                                                    }
-                                                } // for j - ejInstances
-                                            } // for i - autoCompleteElems
+                                                for (let i = 0; i < dialogAutoCompleteArray.length; i++) {
+                                                    let ac: AutoComplete = dialogAutoCompleteArray[i];
+                                                    ac.minLength = 999999;
+                                                    ac.noRecordsTemplate = '';
+                                                    if ((ac as any).nexus == true) {
+                                                        // do nothing - already modified
+                                                    } else {
+                                                        ac.filtering = (ev: FilteringEventArgs) => {
+                                                            ac.value = ev.text; // set right away
+                                                        };
+                                                        (ac as any).nexus = true;
+                                                    } // if ( (ac as any).nexus == true)
+                                                }// for
 
+                                            } catch (e) {
+                                                console.error(e);
+                                            }
 
-                                            for (let i = 0; i < dialogAutoCompleteArray.length; i++) {
-                                                let ac: AutoComplete = dialogAutoCompleteArray[i];
-                                                ac.minLength = 999999;
-                                                ac.noRecordsTemplate = '';
-                                                if ((ac as any).nexus == true) {
-                                                    // do nothing - already modified
-                                                } else {
-                                                    ac.filtering = (ev: FilteringEventArgs) => {
-                                                        ac.value = ev.text; // set right away
-                                                    };
-                                                    (ac as any).nexus = true;
-                                                } // if ( (ac as any).nexus == true)
-                                            }// for
+                                            // focus on the first input element
+                                            let inputElems = document.querySelectorAll(`.e-xlflmenu.e-control.e-dialog    .e-xlfl-maindiv .e-xlfl-valuediv .e-control.e-lib.e-input`);
+                                            for (let i = 0; i < inputElems.length; i++) {
+                                                let inputElem = inputElems[i];
+
+                                                    let id:string =  inputElem.id;
+                                                    if ( id) {
+                                                        // Create a MutationObserver with the handler function
+                                                        let observer = new MutationObserver(createDOMInsertionHandler(id));
+                                                        // Start observing the DOM for changes
+                                                        observer.observe(document.body, {
+                                                            childList: true,
+                                                            subtree: true
+                                                        });
+                                                        break; // out of the loop
+                                                    } // if id
+                                            } // for i - inputElems
 
                                         }; // f
 
@@ -949,3 +971,32 @@ function calculateDefaultHeaderWidth(headerText:string) : number{
 }
 
 //-------------------------------------------
+
+/**
+ * Function to handle the DOM insertion and focus
+ *
+ * Listens for the insertion of a DOM element with the specified ID and sets focus on it, then disconnects and destroys the observer.
+ *
+ */
+function createDOMInsertionHandler(tag_id: string) {
+    return function (mutationsList: MutationRecord[], observer: MutationObserver) {
+        mutationsList.forEach((mutation: MutationRecord) => {
+            if (mutation.type === 'childList') {
+                // Check if the input element with the specified ID has been inserted
+                const inputElement = document.getElementById(tag_id) as HTMLInputElement;
+                if (inputElement) {
+                    // Set focus on the input element
+                    setTimeout(() => { // setTimeout not absolutely needed, but it adds a layer of protection against the element not being ready
+                        inputElement.focus();
+                    }, 10);
+
+                    // Disconnect the observer since we don't need it anymore
+                    observer.disconnect();
+
+                    // Remove (destroy) the observer
+                    observer = null;
+                }
+            }
+        });
+    };
+}
