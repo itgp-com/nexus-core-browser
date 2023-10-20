@@ -1,8 +1,5 @@
-import {cssAddSelector} from '../../CoreUtils';
 import {N2Basic, StateN2Basic, StateN2BasicRef} from "../N2Basic";
 import {addN2Class} from '../N2HtmlDecorator';
-import {CSS_VARS_CORE} from '../scss/vars-material';
-import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 
 
 export interface StateN2PanelRef extends StateN2BasicRef {
@@ -31,11 +28,11 @@ export class N2Panel<STATE extends StateN2Panel = StateN2Panel> extends N2Basic<
 
 } // N2Panel
 
-themeChangeListeners().add((ev: ThemeChangeEvent) => {
-    let rules = `
-        background-color: var(--app-color-panel-background); 
-    `;
-    console.log(`N2Panel scss rules:` , rules);
-    cssAddSelector(`.${N2Panel.CLASS_IDENTIFIER}`, rules);
-
-}); // themeChangeListeners().add normal priority
+// themeChangeListeners().add((ev: ThemeChangeEvent) => {
+//     let rules = `
+//         background-color: var(--app-color-panel-background);
+//     `;
+//     console.log(`N2Panel scss rules:` , rules);
+//     cssAddSelector(`.${N2Panel.CLASS_IDENTIFIER}`, rules);
+//
+// }); // themeChangeListeners().add normal priority
