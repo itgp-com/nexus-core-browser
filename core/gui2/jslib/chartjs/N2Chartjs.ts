@@ -1,8 +1,8 @@
-import {Chart,ChartConfiguration} from 'chart.js'
+import {Chart,ChartConfiguration,registerables} from 'chart.js'
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../../ej2/N2EjBasic';
 import {addN2Class} from '../../N2HtmlDecorator';
 
-
+Chart.register(...registerables);
 
 export interface StateN2ChartRef extends StateN2EjBasicRef {
     widget?: N2Chartjs;
