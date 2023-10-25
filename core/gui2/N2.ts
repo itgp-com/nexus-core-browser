@@ -43,7 +43,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         state.ref.widget = this;
         this.state = state;
         this.className = this.constructor.name; // the name of the class
-        if (!state.tagId) state.tagId = getRandomString(this._className);
+        if (!state.tagId) state.tagId = `_${getRandomString(this._className)}`; // in case className gets converted to something starting with $ or another invalid char we always have the '_' as a valid char
     } // _constructor
 
 
