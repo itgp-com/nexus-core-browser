@@ -11,7 +11,7 @@ import {ExceptionEvent} from "../ExceptionEvent";
 import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
 import {addN2Child, removeN2Child} from './ej2/Ej2Utils';
 import {addN2Class, IHtmlUtils} from "./N2HtmlDecorator";
-import {Elem_or_N2, getFirstHTMLElementChild, isN2} from './N2Utils';
+import {Elem_or_N2, getFirstHTMLElementChild, isN2, toProperHtmlId} from './N2Utils';
 import {CSS_VARS_CORE} from './scss/vars-material';
 import {StateN2} from "./StateN2";
 import {ThemeChangeEvent, themeChangeListeners} from './Theming';
@@ -43,7 +43,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         state.ref.widget = this;
         this.state = state;
         this.className = this.constructor.name; // the name of the class
-        if (!state.tagId) state.tagId = `_${getRandomString(this._className)}`; // in case className gets converted to something starting with $ or another invalid char we always have the '_' as a valid char
+        if (!state.tagId) state.tagId = getRandomString( toProperHtmlId( this._className) ); // in case className gets converted to something starting with $ or another invalid char we always have the '_' as a valid char
     } // _constructor
 
 

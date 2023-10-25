@@ -551,3 +551,26 @@ export function findHtmlInputElement(current: HTMLElement | N2,): HTMLInputEleme
     } // if elem.id == this.state.tagId && elem instanceof  HTMLInputElement
     return elemInput;
 } // findHtmlInputElement
+
+/**
+ * The 'id' attribute string the string can contain only the characters [a-zA-Z0-9] and ISO 10646 characters U+00A0 and higher, plus the hyphen (-) and the underscore (_); they cannot start with a digit, two hyphens, or a hyphen followed by a digit. Identifiers can also contain escaped characters and any ISO 10646 character as a numeric code (see next item). The backslash escapes a character, turning it into a valid identifier.
+ *
+ * @param {string} input
+ * @return {string}
+ */
+export function toProperHtmlId(input: string): string {
+    // Remove characters that are not allowed
+    let result = input.replace(/[^a-zA-Z0-9\u00A0-\uFFFF\-_]/g, '');
+
+    // Add underscore prefix if the  first character is a digit
+    if (result.match(/^\d/)) {
+        result = '_' + result;
+    }
+
+    // Handle cases where string starts with two hyphens or a hyphen followed by a digit
+    if (result.match(/^--/) || result.match(/^-[\d]/)) {
+        result = '\\' + result;
+    }
+
+    return result;
+}
