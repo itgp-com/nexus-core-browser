@@ -67,8 +67,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 this.__onStateInitializedInProgress = true; // eliminates infinite recursion if the state.onStateInitialized calls this method
 
                 state.onStateInitialized({widget: this})
-            } catch (ex) {
-                this.handleError(ex);
+            } catch (e) {
+                console.error(e);
+                this.handleError(e);
             } finally {
                 this.__onStateInitializedInProgress = false;
             }
@@ -206,6 +207,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             if (this.resizeSensor)
                 this.resizeSensor.detach();
         } catch (e) {
+            console.error(e);
             this.handleError(e);
         }
 
@@ -305,8 +307,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             //                                      }
             //                                   });
             // } // if
-        } catch (ex) {
-            this.handleUIError(ex);
+        } catch (e) {
+            console.error(e);
+            this.handleUIError(e);
         }
     }
 
@@ -352,6 +355,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 try {
                     actualN2Elem = oldElement.querySelector(`#${this.state.tagId}`);
                 } catch (e) {
+                    console.error(e);
                     actualN2Elem = document.getElementById(this.state.tagId);
                 }
             }
@@ -373,6 +377,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 try {
                     actualN2Elem = value.querySelector(`#${this.state.tagId}`);
                 } catch (e) {
+                    console.error(e);
                     actualN2Elem = document.getElementById(this.state.tagId);
                 }
             }
@@ -423,6 +428,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                     return (elem ? elem : document.getElementById(this.state.tagId));
 
                 } catch (e) {
+                    console.error(e);
                     return document.getElementById(this.state.tagId);
                 }
             } else {
@@ -486,8 +492,8 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             } else {
                 this.onBeforeInitHtml.call(this, {widget: this});
             }
-        } catch (ex) {
-            console.error(ex)
+        } catch (e) {
+            console.error(e)
         }
 
         if (this.state.onHtml) {
@@ -525,6 +531,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             }// if
 
         } catch (e) {
+            console.error(e);
             this.handleError(e);
         }
 
@@ -552,9 +559,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                         this.onAfterInitWidgetOnly.call(this, {widget: this})
                     }
                 }
-            } catch (ex) {
-                console.error(ex);
-                getErrorHandler().displayExceptionToUser(ex)
+            } catch (e) {
+                console.error(e);
+                getErrorHandler().displayExceptionToUser(e)
             }
 
             let atLeastOneChildInitialized: boolean = false;
@@ -579,9 +586,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             if (atLeastOneChildInitialized && state?.onAfterChildrenInit) {
                 try {
                     state.onAfterChildrenInit();
-                } catch (ex) {
-                    console.error(ex);
-                    getErrorHandler().displayExceptionToUser(ex)
+                } catch (e) {
+                    console.error(e);
+                    getErrorHandler().displayExceptionToUser(e)
                 }
             } // atLeastOneChildInitialized
 
@@ -594,8 +601,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             // ------------ After Init Logic Listeners -----------------------
             try {
                 state.onAfterInitLogic({widget: this})
-            } catch (ex) {
-                thisX.handleError(ex);
+            } catch (e) {
+                console.error(e);
+                thisX.handleError(e);
             }
         } else {
 
@@ -607,8 +615,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
 
                 try {
                     this.onAfterInitLogic(args)
-                } catch (ex) {
-                    thisX.handleUIError(ex);
+                } catch (e) {
+                    console.error(e);
+                    thisX.handleUIError(e);
                 }
 
             } // if
@@ -632,8 +641,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 //remove the element from the DOM and also remove all of its event listeners and JavaScript properties, effectively destroying it.
                 this.htmlElement.remove();
             }
-        } catch (ex) {
-            this.handleError(ex);
+        } catch (e) {
+            console.error(e);
+            this.handleError(e);
         }
     } // destroy
 
@@ -664,8 +674,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         try {
             if (!this.initialized)
                 this.initLogic();
-        } catch (ex) {
-            this.handleError(ex);
+        } catch (e) {
+            console.error(e);
+            this.handleError(e);
         }
     } // _initLogicIfNeeded
     /**
@@ -737,6 +748,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             // no parent so do the default error handling
             getErrorHandler().displayExceptionToUser(err);
         } catch (e) {
+            console.error(e);
             this.handleError(e);
         }
         return {isErrorHandled: true};
@@ -768,6 +780,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 this._alreadyInOnStateInitialized = true;
                 this.onStateInitialized(this.state);
             } catch (e) {
+                console.error(e);
                 this.handleError(e);
             } finally {
                 this._alreadyInOnStateInitialized = false;
@@ -959,156 +972,3 @@ textarea.e-input.${N2.CLASS_IDENTIFIER},
 
 
 }); // normal priority
-
-
-// private _refreshInProgress: boolean;
-// get refreshInProgress(): boolean {
-//     return this._refreshInProgress;
-// }
-//
-// /**
-//  * Used by system to set the flag.
-//  * Developers, please do not use this method unless you REALLY, REALLY understand the effects.
-//  * @param value
-//  */
-// set refreshInProgress(value: boolean) {
-//     this._refreshInProgress = value;
-// }
-
-// refresh(args ?: N2Evt_Refresh) {
-//     if (this.initialized) {
-//         try {
-//             this.refreshInProgress = true;
-//
-//             let state = this.state;
-//
-//
-//             args = args || {widget: this};
-//             // args.currentLevelOnly = args.currentLevelOnly || false;
-//             // args.resetUIOnRefresh = args.resetUIOnRefresh || false;
-//             args.ref = args.ref || {};
-//             args.extras = args.extras || {};
-//
-//             let ref = args.ref;
-//             ref.topParent = ref.topParent || this; // if empty, then this is the topContainer parent
-//             ref.widget = this;
-//
-//             // if (!args.currentLevelOnly) {
-//             //     let children: N2[];
-//             //     if (state.children)
-//             //         children = state.children;
-//             //     if (children) {
-//             //         for (const child of children) {
-//             //
-//             //             try {
-//             //                 let childArgs: N2Evt_Refresh = {
-//             //                     widget: child,
-//             //                     // currentLevelOnly: false,
-//             //                     // resetUIOnRefresh: args.resetUIOnRefresh,
-//             //                     ref: {
-//             //                         topParent: ref.topParent,
-//             //                         widget: child,
-//             //                         parent: this,
-//             //                         isAlgoCreated: true,
-//             //                         parentArgument: args,
-//             //                     },
-//             //                 }; // childArgs
-//             //
-//             //                 if (child)
-//             //                     child.refresh(childArgs); // this would trigger a reset in the child if state.resetUIOnRefresh does not override it
-//             //             } catch (e) {
-//             //                 this.handleUIError(e);
-//             //             }
-//             //
-//             //         }
-//             //     } // if ( this.children)
-//             //
-//             // } // if (!refreshParam.currentLevelOnly)
-//
-//             // // noinspection JSUnusedAssignment
-//             // let resetUIOnRefresh: boolean = false;
-//             // if (state.resetUIOnRefresh !== undefined && state.resetUIOnRefresh !== null) {
-//             //     resetUIOnRefresh = state.resetUIOnRefresh;   // functionality on state ALWAYS trumps functionality on widget (state functionality can call widget functionality inside its implementation if need be)
-//             // } else {
-//             //     resetUIOnRefresh = args.resetUIOnRefresh;
-//             // }
-//
-//
-//             // if (resetUIOnRefresh) {
-//             //
-//             //     try {
-//             //         this.reset({
-//             //             widget: this,
-//             //             extras: args.extras,
-//             //             ref: {
-//             //                 topParent: ref.topParent,
-//             //                 widget: this,
-//             //                 parent: args.ref.widget,
-//             //                 parentArgument: null, // no parent argument
-//             //             }
-//             //         });
-//             //     } catch (e) {
-//             //         this.handleError(e);
-//             //     }
-//             // } // if (resetUIOnRefresh)
-//
-//
-//             try {
-//                 if (state.onRefresh) {
-//                     state.onRefresh(args); // functionality on state ALWAYS trumps functionality on widget (state functionality can call widget functionality inside its implementation if need be)
-//                 } else {
-//                     if (this.onRefresh)
-//                         this.onRefresh(args);
-//                 }
-//             } catch (e) {
-//                 this.handleError(e);
-//             }
-//
-//             // if (state?.onAfterRefresh) {
-//             //    try {
-//             //       state.onAfterRefresh({widget: this});
-//             //    } catch (ex) {
-//             //       console.log(ex);
-//             //    }
-//             // } // if (this._args_AbstractWidget?.onAfterRefresh)
-//
-//         } catch (err) {
-//             this.handleError(err);
-//         } finally {
-//             this.refreshInProgress = false;
-//         }
-//     } // if (this.initialized)
-//
-// } // refresh
-
-// reset(args ?: N2Evt_Destroy): void {
-//     /*
-//      Resets the htmlElement and calls initLogic on this widget only.
-//
-//      This method is called from inside the refresh method, when the resetUIOnRefresh flag is set to true.
-//
-//      As such, and because the children are processed first in a refresh, by the time the reset happens here
-//      the children have already been reset.
-//      */
-//     let state = this.state;
-//
-//
-//     args = args || {widget: this}
-//     // args.currentLevelOnly = args.currentLevelOnly || false;
-//     args.ref = args.ref || {};
-//     args.extras = args.extras || {};
-//
-//     let ref = args.ref;
-//     ref.topParent = ref.topParent || this; // if empty, then this is the topContainer parent
-//     ref.widget = this;
-//
-//
-//     let oldHtmlElement = this.htmlElement;
-//     this.htmlElement = null;
-//     this.initialized = false; // to allow initLogic to work properly
-//     let newHtmlElement = this.htmlElement;
-//     this.initLogic();
-//     oldHtmlElement.replaceWith(newHtmlElement);
-//
-//
-// } // reset
