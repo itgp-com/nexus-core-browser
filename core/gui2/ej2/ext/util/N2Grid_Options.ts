@@ -982,19 +982,25 @@ function createDOMInsertionHandler(tag_id: string) {
     return function (mutationsList: MutationRecord[], observer: MutationObserver) {
         mutationsList.forEach((mutation: MutationRecord) => {
             if (mutation.type === 'childList') {
-                // Check if the input element with the specified ID has been inserted
-                const inputElement = document.getElementById(tag_id) as HTMLInputElement;
-                if (inputElement) {
-                    // Set focus on the input element
-                    setTimeout(() => { // setTimeout not absolutely needed, but it adds a layer of protection against the element not being ready
-                        inputElement.focus();
-                    }, 10);
+                try {
+                    // Check if the input element with the specified ID has been inserted
+                    const inputElement = document.getElementById(tag_id) as HTMLInputElement;
+                    if (inputElement) {
+                        // Set focus on the input element
+                        setTimeout(() => { // setTimeout not absolutely needed, but it adds a layer of protection against the element not being ready
+                            inputElement.focus();
+                        }, 10);
 
-                    // Disconnect the observer since we don't need it anymore
-                    observer.disconnect();
+                        if (observer) {
+                            // Disconnect the observer since we don't need it anymore
+                            observer.disconnect();
 
-                    // Remove (destroy) the observer
-                    observer = null;
+                            // Remove (destroy) the observer
+                            observer = null;
+                        } // if (observer)
+                    } // if (inputElement)
+                } catch(e){
+                    console.error(e);
                 }
             }
         });
