@@ -1,4 +1,5 @@
 import {cssAddClass} from '../../CoreUtils';
+import {CssStyle} from '../../gui/AbstractWidget';
 import {nexusMain} from '../../NexusMain';
 import {N2Basic, StateN2Basic} from '../N2Basic';
 import {addN2Class, IHtmlUtils} from '../N2HtmlDecorator';
@@ -116,14 +117,16 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
             state.center_overflow_auto = true;
         }
 
-
+        let userStyle:CssStyle;
 
 
         let topState: StateN2Panel = state.stateTopContainer || {};
         IHtmlUtils.initForN2(topState);
         topState.tagId = state.tagId + '_top';
+        userStyle = topState?.deco?.style || {};
         topState.deco.style = {
             'background-color': 'transparent',
+            ...userStyle,
         };
         addN2Class(topState.deco, CLASS_N2_PANEL_LAYOUT_TOP);
         if (state.top)
@@ -134,8 +137,10 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         let leftState: StateN2Panel = state.stateLeftContainer || {};
         IHtmlUtils.initForN2(leftState);
         leftState.tagId = state.tagId + '_left';
+        userStyle = leftState?.deco?.style || {};
         leftState.deco.style = {
             'background-color': 'transparent',
+            ...userStyle,
         };
         addN2Class(leftState.deco, CLASS_N2_PANEL_LAYOUT_LEFT);
         if (state.left)
@@ -145,8 +150,10 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         let centerState: StateN2Panel = state.stateCenterContainer || {};
         IHtmlUtils.initForN2(centerState);
         centerState.tagId = state.tagId + '_center';
+        userStyle = centerState?.deco?.style || {};
         centerState.deco.style = {
             'background-color': 'transparent',
+            ...userStyle,
         };
         addN2Class(centerState.deco, CLASS_N2_PANEL_LAYOUT_CENTER);
         if (state.center_overflow_auto) {
@@ -161,8 +168,10 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         let rightState: StateN2Panel = state.stateRightContainer || {};
         IHtmlUtils.initForN2(rightState);
         rightState.tagId = state.tagId + '_right';
+        userStyle = rightState?.deco?.style || {};
         rightState.deco.style = {
             'background-color': 'transparent',
+            ...userStyle,
         };
         addN2Class(rightState.deco, CLASS_N2_PANEL_LAYOUT_RIGHT);
         if (state.right)
@@ -173,8 +182,10 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         let bottomState: StateN2Panel = state.stateBottomContainer || {};
         IHtmlUtils.initForN2(bottomState);
         bottomState.tagId = state.tagId + '_bottom';
+        userStyle = bottomState?.deco?.style || {};
         bottomState.deco.style = {
             'background-color': 'transparent',
+            ...userStyle,
         };
         addN2Class(bottomState.deco, CLASS_N2_PANEL_LAYOUT_BOTTOM);
         if (state.bottom)
