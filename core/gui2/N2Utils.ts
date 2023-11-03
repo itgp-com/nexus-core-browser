@@ -72,14 +72,18 @@ export function isN2HtmlElement(elem: HTMLElement): boolean {
  * @returns {N2|null} - The N2 object attached to the element, or null if none exists.
  */
 export function getN2FromHtmlElement(elem: HTMLElement): N2 {
-    if (elem) {
-        if (elem.classList.contains(N2_CLASS)) {
-            let obj: any = elem[N2_CLASS]
-            if (obj && isN2(obj)) {
-                return obj;
-            }  // if obj is N2
-        } // if classList contains N2_CLASS
-    } // if elem exists
+    try {
+        if (elem) {
+            if (elem?.classList?.contains(N2_CLASS)) {
+                let obj: any = elem[N2_CLASS]
+                if (obj && isN2(obj)) {
+                    return obj;
+                }  // if obj is N2
+            } // if classList contains N2_CLASS
+        } // if elem exists
+    } catch (e) {
+        console.error(e);
+    }
     return null;
 }
 
