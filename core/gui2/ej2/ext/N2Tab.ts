@@ -70,7 +70,7 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends N2EjBasic<STAT
         let fCreated = this?.state?.ej?.created;
         this.state.ej.created = (args) => {
             if (fCreated)
-                fCreated.apply(this, args);
+                fCreated.call(this, args);
 
             let index: number = this.state.ej.selectedItem || 0;
             // give the tab container a chance to be added to the DOM
@@ -84,7 +84,7 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends N2EjBasic<STAT
 
             if (fPostCreated) {
                 try {
-                    fPostCreated.apply(this, [{n2: this, args}]);
+                    fPostCreated.call(this, {n2: this, args});
                 } catch (e) {
                     console.error(e, ' fPostCreated ', 'index=', index, `${N2Tab.CLASS_IDENTIFIER}=`, this)
                 }
@@ -102,7 +102,7 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends N2EjBasic<STAT
 
             if (fPreSelected) {
                 try {
-                    fPreSelected.apply(this, [{n2: this, ev}]);
+                    fPreSelected.call(this, {n2: this, ev});
                 } catch (e) {
                     console.error(e, ' preSelected ', 'index=', index, `${N2Tab.CLASS_IDENTIFIER}=`, this)
                 }
@@ -138,7 +138,7 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends N2EjBasic<STAT
             } // try
 
             if (fSelected)
-                fSelected.apply(this, ev);
+                fSelected.call(this, ev);
         }  // selected
 
 
@@ -146,7 +146,7 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends N2EjBasic<STAT
 
         let fAddTo = this.obj.addTab; // addTab(items: TabItemModel[], index?: number): void;
         this.obj.addTab = (items: any, index?: number) => {
-            fAddTo.apply(this.obj, [items, index]);
+            fAddTo.call(this.obj, items, index);
             this.htmlElement.querySelectorAll('.e-tab-text').forEach(el => el.classList.add('app-tab-no-text-transform'));
         }
 
