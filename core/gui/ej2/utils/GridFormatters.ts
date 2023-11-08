@@ -1,13 +1,23 @@
 import {NumberFormatOptions} from "@syncfusion/ej2-base";
 import {Column}              from "@syncfusion/ej2-grids/src/grid/models/column";
-import {isDate}              from "lodash";
+import {isDate, isNumber, isString} from "lodash";
+import {EJ2_INSTANCES_FIELD} from '../../../gui2/ej2/Ej2Utils';
 
 export const DATE_FORMAT:string = 'yyyy-MM-dd';
 export const DATE_FORMAT_US:string = 'MM/dd/yyyy';
 export const DATETIME_FORMAT:string = 'yyyy-MM-dd hh:mm a';
 export const DATE_WITH_WEEKDAY:string = "yyyy-MM-dd' 'E";
 
-export const DATE_FORMATTER_LOCALE = (column: Column, rec: Object) => {
+/**
+ * Represents a formatter function type that takes a `Column` and a record object, then returns a formatted string or any other type.
+ * @callback EJ2_FORMATTER
+ * @param {Column} column - The column definition that contains the field to format.
+ * @param {Record<string, any>} rec - The record object containing the data to format.
+ * @returns {string | any} - The formatted data as a string or any other type.
+ */
+export type EJ2_FORMATTER = (column: Column, rec: Record<string, any>) => string | any;
+
+export const DATE_FORMATTER_LOCALE:EJ2_FORMATTER = (column: Column, rec: Object):string|any => {
    let data = rec[column.field];
    if ( !data ) return '';
    let date:Date = null;
@@ -15,26 +25,65 @@ export const DATE_FORMATTER_LOCALE = (column: Column, rec: Object) => {
       date = data as Date;
    } else {
       try {
-         if (data.indexOf('T') > 0) {
-            data = data.substring(0, data.indexOf('T')); // extract date part
-         }
-         let parts = data.split('-');
-         if (parts.length === 3) {
-            const [year, month, day] = parts.map(Number);
-            date = new Date(year, month - 1, day);
+         if ( isNumber(data)) {
+            // number to date
+            date = new Date(data);
+         } else if (isString(data)) {
+
+            if (data.indexOf('T') > 0) {
+               data = data.substring(0, data.indexOf('T')); // extract date part
+            }
+            let parts = data.split('-');
+            if (parts.length === 3) {
+               const [year, month, day] = parts.map(Number);
+               date = new Date(year, month - 1, day);
+            }
+         } else {
+            console.error('Unknown date for value:', data);
+            date = null; // unknown type
          }
       } catch (e) {
-         console.error('DATE_FORMATTER_US', e);
+         console.error('DATE_FORMATTER_LOCALE', e);
       }
    }
     if ( date ) {
       return date.toLocaleDateString();
    } else {
-       return data;
+       return (data ? data.toString(): '');
     }
 }
 
-export const NUMBER_FORMAT_DECIMAL3 = (column: Column, rec: Object) => {
+/**
+ * Creates a localized number formatter function.
+ * The returned formatter will use the browser's default locale to format a number from a record's field to the specified number of fraction digits.
+ *
+ * @param {number} fractionDigits - The number of decimal places to format the number to.
+ * @returns {EJ2_FORMATTER} - A function conforming to the `EJ2_FORMATTER` type, which formats a number to the specified number of fraction digits using the browser's locale.
+ */
+export const NUMBER_FORMATTER_LOCALE:(fractionDigits:number)=>EJ2_FORMATTER = (fractionDigits:number) => {
+
+   return (column: Column, rec: Record<string, any>):string|any => {
+      let data = rec[column.field];
+      let value:number = 0;
+      if (isString(data)) {
+         try {
+            value = parseFloat(data);
+         } catch (e) {
+            console.error('NUMBER_FORMATTER_LOCALE parsing', data, ' Error is ', e);
+         }
+      }
+      if ( !value ) return '';
+      return new Intl.NumberFormat(navigator.language, {
+         minimumFractionDigits: fractionDigits,
+         maximumFractionDigits: fractionDigits
+      }).format(value);
+   };
+
+
+} // NUMBER_FORMATTER_LOCALE
+
+
+export const NUMBER_FORMAT_DECIMAL3:EJ2_FORMATTER = (column: Column, rec: Object) :string|any => {
    let data = rec[column.field];
    if ( !data ) return '';
    return data.toFixed(3);
