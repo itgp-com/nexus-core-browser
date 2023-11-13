@@ -71,9 +71,10 @@ export class NexusAdaptor extends UrlAdaptor {
      * Used to set the custom header or modify the request options.
      * @param  {DataManager} dm
      * @param  {XMLHttpRequest} request
+     * @param  {any} settings
      * @returns void
      */
-    beforeSend(dm: DataManager, request: Request): void {
+    beforeSend(dm: DataManager, request: Request, settings ?:any): void {
         if (NexusAdaptor.showDebug)
             console.log("beforeSend");
 

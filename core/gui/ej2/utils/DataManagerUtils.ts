@@ -4,20 +4,36 @@ import {NexusEditUrlAdaptor, JsonEventActions} from "../../../data/NexusEditUrlA
 import {NexusAdaptor} from "../../../data/NexusAdaptor";
 import {NexusDataManager} from "../../../data/NexusDataManager";
 
+
+export class DataManager_App_Options {
+    /**
+     *
+     * @type {boolean} false if tablename needs to be wrapped in a URL, true if it's already a URL
+     */
+    tablename_is_url ?: boolean;
+
+    adaptor ?: NexusAdaptor
+
+
+}
+
 /**
  * Creates the default DataManager for most App screens. It's equivalent to
  * <code>
  *    dataManager = new DataManager({
                                         url:         urlTableEj2(tablename),
-                                        adaptor:     new UrlAdaptor(),
+                                        adaptor:     options?.adaptor || new NexusAdaptor(),
                                         crossDomain: true
                                      });
  * </code>
  * @param tablename
  */
-export function dataManager_App(tablename: string, adaptor ?: NexusAdaptor): DataManager {
+export function dataManager_App(tablename: string, options:DataManager_App_Options): DataManager {
+    options = options || {};
+    let adaptor = options.adaptor;
+
     return new NexusDataManager({
-        url: urlTableEj2(tablename),
+        url: (options.tablename_is_url ? tablename : urlTableEj2(tablename)),
         adaptor: (adaptor ? adaptor : new NexusAdaptor()),
         crossDomain: true,
     });
