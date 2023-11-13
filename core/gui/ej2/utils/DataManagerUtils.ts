@@ -14,7 +14,6 @@ export class DataManager_App_Options {
 
     adaptor ?: NexusAdaptor
 
-
 }
 
 /**
@@ -28,7 +27,7 @@ export class DataManager_App_Options {
  * </code>
  * @param tablename
  */
-export function dataManager_App(tablename: string, options:DataManager_App_Options): DataManager {
+export function dataManager_App(tablename: string, options ?:DataManager_App_Options): DataManager {
     options = options || {};
     let adaptor = options.adaptor;
 
@@ -39,11 +38,24 @@ export function dataManager_App(tablename: string, options:DataManager_App_Optio
     });
 }
 
-export function dataManagerCRUD_App(tablename: string, editAdaptor: NexusEditUrlAdaptor): DataManager {
+export class DataManager_CRUDApp_Options {
+    /**
+     *
+     * @type {boolean} false if tablename needs to be wrapped in a URL, true if it's already a URL
+     */
+    tablename_is_url ?: boolean;
+
+    adaptor ?: NexusEditUrlAdaptor
+
+}
+export function dataManagerCRUD_App(tablename: string, options ?:DataManager_CRUDApp_Options): DataManager {
+    options = options || {};
+    let adaptor = options.adaptor;
+
     return new NexusDataManager({
-        url: urlTableEj2(tablename),
-        crudUrl: urlTableEj2Crud(tablename),
-        adaptor: editAdaptor,
+        url: (options.tablename_is_url ? tablename : urlTableEj2(tablename)),
+        crudUrl: (options.tablename_is_url ? tablename : urlTableEj2Crud(tablename)),
+        adaptor: (adaptor ? adaptor : new NexusEditUrlAdaptor()),
         crossDomain: true
     });
 }
