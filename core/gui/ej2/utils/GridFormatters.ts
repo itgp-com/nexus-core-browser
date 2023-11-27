@@ -53,6 +53,37 @@ export const DATE_FORMATTER_LOCALE:EJ2_FORMATTER = (column: Column, rec: Object)
     }
 }
 
+export const DATETIME_FORMATTER_LOCALE: EJ2_FORMATTER = (column: Column, rec: Record<string, any>): string | any => {
+   let data = rec[column.field];
+   if (!data) return '';
+   let dateTime: Date = null;
+
+   try {
+      if (isDate(data)) {
+         // Direct Date object
+         dateTime = data as Date;
+      } else if (isNumber(data)) {
+         // Numeric timestamp to Date
+         dateTime = new Date(data);
+      } else if (isString(data)) {
+         // String to Date
+         dateTime = new Date(data);
+      } else {
+         console.error('Unknown datetime for value:', data);
+         dateTime = null; // unknown type
+      }
+   } catch (e) {
+      console.error('DATETIME_FORMATTER_LOCALE', e);
+   }
+
+   if (dateTime) {
+      // Format to locale-specific date and time
+      return dateTime.toLocaleString();
+   } else {
+      return (data ? data.toString() : '');
+   }
+};
+
 /**
  * Creates a localized number formatter function.
  * The returned formatter will use the browser's default locale to format a number from a record's field to the specified number of fraction digits.
