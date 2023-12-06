@@ -84,26 +84,33 @@ export const DATETIME_FORMATTER_LOCALE: EJ2_FORMATTER = (column: Column, rec: Re
    }
 };
 
+export class Number_Formatter_Locale_Options {
+    fractionDigits ?: number;
+    zero_as_empty_string ?: boolean;
+}
 /**
  * Creates a localized number formatter function.
  * The returned formatter will use the browser's default locale to format a number from a record's field to the specified number of fraction digits.
  *
- * @param {number} fractionDigits - The number of decimal places to format the number to.
  * @returns {EJ2_FORMATTER} - A function conforming to the `EJ2_FORMATTER` type, which formats a number to the specified number of fraction digits using the browser's locale.
+ * @param options
  */
-export const NUMBER_FORMATTER_LOCALE:(fractionDigits:number)=>EJ2_FORMATTER = (fractionDigits:number) => {
-
+export const NUMBER_FORMATTER_LOCALE:(options ?:Number_Formatter_Locale_Options)=>EJ2_FORMATTER = (options ?: Number_Formatter_Locale_Options) => {
+   options = options || {};
+   let fractionDigits:number = options.fractionDigits || 0;
    return (column: Column, rec: Record<string, any>):string|any => {
       let data = rec[column.field];
       let value:number = 0;
-      if (isString(data)) {
+      if (isNumber(data)) {
+         value = data as number;
+      } else if (isString(data)) {
          try {
             value = parseFloat(data);
          } catch (e) {
             console.error('NUMBER_FORMATTER_LOCALE parsing', data, ' Error is ', e);
          }
       }
-      if ( !value ) return '';
+      if (options.zero_as_empty_string && value === 0 || value == null) return '';
       return new Intl.NumberFormat(navigator.language, {
          minimumFractionDigits: fractionDigits,
          maximumFractionDigits: fractionDigits
