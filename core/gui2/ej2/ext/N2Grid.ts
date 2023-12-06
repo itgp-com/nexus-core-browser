@@ -1,6 +1,6 @@
 import {KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
-import {Grid, GridModel, Sort} from '@syncfusion/ej2-grids';
+import {ExcelQueryCellInfoEventArgs, Grid, GridModel, Sort} from '@syncfusion/ej2-grids';
 import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
 import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
 import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
@@ -22,6 +22,7 @@ import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
+import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor} from '../../../CoreUtils';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
@@ -71,6 +72,12 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * Set this to true to disable this feature.
      */
     disableCustomFilter?: boolean;
+    /**
+     * Defaults to false (apply formatter function from column to excel export)
+     * If true, the excelQueryCellInfo event will not call any formatter functions when exporting
+     * If false, the excelQueryCellInfo event will call the formatter function and set the value to the result of the formatter
+     */
+    disableExcelAutoFormater?: boolean;
 }
 
 export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {
@@ -83,8 +90,30 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco, N2Grid.CLASS_IDENTIFIER);
 
-        if ( state.disableCustomFilter == undefined || !state.disableCustomFilter) {
+        if (state.disableCustomFilter == undefined || !state.disableCustomFilter) {
             stateGrid_CustomExcelFilter(state.ej); // Every N2Grid gets an Excel filter from now on unless disabled by state.disableCustomFilter
+        }
+
+        if (state.disableExcelAutoFormater) {
+            // do nothing
+        } else {
+            try {
+                let existingExcelQueryCellInfo = state.ej.excelQueryCellInfo;
+
+                state.ej.excelQueryCellInfo = (args: ExcelQueryCellInfoEventArgs) => {
+                    try {
+                        let formatter: any = args.column.formatter;
+                        if (formatter && isFunction(formatter)) {
+                            args.value = formatter(args.column, args.data);
+                        } // if formatter
+
+                        if (existingExcelQueryCellInfo) {
+                            existingExcelQueryCellInfo.caller(this, args);
+                        } // if existingExcelQueryCellInfo
+
+                    } catch (e) { console.error(e); }
+                } // excelQueryCellInfo
+            } catch (e) { console.error(e); }
         }
 
         super.onStateInitialized(state)
@@ -121,13 +150,12 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
  */
 export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
 
-    let app_custom_excel_filter_width_number:number;
+    let app_custom_excel_filter_width_number: number;
     try {
         app_custom_excel_filter_width_number = Number.parseInt(CSS_VARS_CORE.app_custom_excel_filter_width_number);
     } catch (e) {}
     if (app_custom_excel_filter_width_number == 0)
         app_custom_excel_filter_width_number = 18;
-
 
 
     let accent = CSS_VARS_CORE.material_accent_color;
@@ -257,7 +285,7 @@ font-size: var(--app-font-size-regular);`
         opacity: unset;
     `);
 
-        //--------------- Custom Excel filter --------------------
+    //--------------- Custom Excel filter --------------------
 
     const STYLE_CENTER_VERTICAL: string = `
         position: absolute;
@@ -267,15 +295,14 @@ font-size: var(--app-font-size-regular);`
         height: 16px;`;
 
     // Move the hidden div that the floating dialog opening next to to the left if the menu is on the left side (if text is right justified)
-    cssAddSelector(`.${n2GridClass}.e-control.${eGridClass}  .e-rightalign .e-filtermenudiv`,`
+    cssAddSelector(`.${n2GridClass}.e-control.${eGridClass}  .e-rightalign .e-filtermenudiv`, `
     float: unset;
     width: 40px;
 	`);
 
 
-
     // Reverse the space reservation and reserve 32px to the front of the header cell for the filter and sort icon
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-rightalign.e-fltr-icon .e-headercelldiv`,`
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-rightalign.e-fltr-icon .e-headercelldiv`, `
             margin: -7px -7px -7px 32px;
     `);
 
@@ -321,7 +348,7 @@ font-size: var(--app-font-size-regular);`
     `);
 
     // when right-align the left padding was 1.8em by default. Now it's 17px, exactly 1px less than the size of the sort bubble so things line up
-    cssAddSelector(`.${n2GridClass}.${eGridClass}  .e-gridheader .e-sortfilter .e-rightalign .e-headercelldiv, .${n2GridClass}.${eGridClass} .e-gridheader .e-rightalign .e-stackedheadercelldiv`,`
+    cssAddSelector(`.${n2GridClass}.${eGridClass}  .e-gridheader .e-sortfilter .e-rightalign .e-headercelldiv, .${n2GridClass}.${eGridClass} .e-gridheader .e-rightalign .e-stackedheadercelldiv`, `
         padding: 0 0.6em 0 17px;
     `);
 
@@ -364,7 +391,6 @@ font-size: var(--app-font-size-regular);`
     `);
 
 
-
     //-------------------- sort icons if there's a filter menu IS NOT PRESENT ---------------------------
     // this has right=18px because there's no filter menu present, but there is the filtersort icon
     cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-gridheader .e-sortnumber`, `
@@ -403,10 +429,9 @@ font-size: var(--app-font-size-regular);`
     `);
 
 
-
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-frozenheader > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent .e-virtualtable > .e-table, .${n2GridClass}.${eGridClass} .e-frozenheader .e-virtualtable > .e-table`, `
         border-right-color: var(--grid-header-border-color);
-    ` );
+    `);
     //---------------------
 
     // align sort and menu vertically

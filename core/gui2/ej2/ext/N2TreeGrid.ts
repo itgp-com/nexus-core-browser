@@ -1,5 +1,5 @@
 import {KeyboardEvents} from '@syncfusion/ej2-base';
-import {ColumnChooser, Data} from '@syncfusion/ej2-grids';
+import {ColumnChooser, Data, ExcelQueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
 import {TreeGrid, TreeGridModel} from '@syncfusion/ej2-treegrid';
 import {TreeClipboard} from '@syncfusion/ej2-treegrid/src/treegrid/actions/clipboard';
 import {ColumnMenu} from '@syncfusion/ej2-treegrid/src/treegrid/actions/column-menu';
@@ -19,10 +19,11 @@ import {Selection as TreeGridSelection} from '@syncfusion/ej2-treegrid/src/treeg
 import {Sort} from '@syncfusion/ej2-treegrid/src/treegrid/actions/sort';
 import {Aggregate} from '@syncfusion/ej2-treegrid/src/treegrid/actions/summary';
 import {Toolbar} from '@syncfusion/ej2-treegrid/src/treegrid/actions/toolbar';
+import {isFunction} from 'lodash';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-import {cssForN2Grid, N2Grid} from './N2Grid';
+import {cssForN2Grid} from './N2Grid';
 
 
 TreeGrid.Inject(
@@ -59,6 +60,13 @@ export interface StateN2TreeGrid<WIDGET_LIBRARY_MODEL extends TreeGridModel = Tr
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
     ref?: StateN2TreeGridRef;
+
+    /**
+     * Defaults to false (apply formatter function from column to excel export)
+     * If true, the excelQueryCellInfo event will not call any formatter functions when exporting
+     * If false, the excelQueryCellInfo event will call the formatter function and set the value to the result of the formatter
+     */
+    disableExcelAutoFormater?: boolean;
 }
 
 export class N2TreeGrid<STATE extends StateN2TreeGrid = StateN2TreeGrid> extends N2EjBasic<STATE, TreeGrid> {
@@ -69,7 +77,30 @@ export class N2TreeGrid<STATE extends StateN2TreeGrid = StateN2TreeGrid> extends
     }
 
     protected onStateInitialized(state: STATE) {
-        addN2Class(state.deco,  N2TreeGrid.CLASS_IDENTIFIER);
+        addN2Class(state.deco, N2TreeGrid.CLASS_IDENTIFIER);
+
+        if (state.disableExcelAutoFormater) {
+            // do nothing
+        } else {
+            try {
+                let existingExcelQueryCellInfo = state.ej.excelQueryCellInfo;
+
+                state.ej.excelQueryCellInfo = (args: ExcelQueryCellInfoEventArgs) => {
+                    try {
+                        let formatter: any = args.column.formatter;
+                        if (formatter && isFunction(formatter)) {
+                            args.value = formatter(args.column, args.data);
+                        } // if formatter
+
+                        if (existingExcelQueryCellInfo) {
+                            existingExcelQueryCellInfo.caller(this, args);
+                        } // if existingExcelQueryCellInfo
+
+                    } catch (e) { console.error(e); }
+                } // excelQueryCellInfo
+            } catch (e) { console.error(e); }
+        }
+
         super.onStateInitialized(state)
     }
 
