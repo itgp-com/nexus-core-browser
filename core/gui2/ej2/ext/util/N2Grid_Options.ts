@@ -771,7 +771,7 @@ function getGridFilterMessage(gObj: Grid): string {
                             stringValue = value ? 'true' : 'false';
                             break;
                         default:
-                            stringValue = value.toString();
+                            stringValue = (value == null ? '' : value.toString());
                     }
 
                     if ( stringValue ) {
