@@ -1,7 +1,6 @@
 import {cssForN2Grid} from '../../../gui2/ej2/ext/N2Grid';
-import {stateGrid_CustomExcelFilter} from '../../../gui2/ej2/ext/util/N2Grid_Options';
 import {ThemeChangeEvent, themeChangeListeners} from '../../../gui2/Theming';
-import {addWidgetClass}                  from "../../AbstractWidget";
+import {addWidgetClass} from "../../AbstractWidget";
 import {AbstractGrid, Args_AbstractGrid} from "../abstract/AbstractGrid";
 
 export class Args_WxGrid extends Args_AbstractGrid{}

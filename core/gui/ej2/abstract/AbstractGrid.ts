@@ -1,3 +1,4 @@
+import {isFunction} from 'lodash';
 import {ClassArg, classArgInstanceVal, hget, IArgs_HtmlTag_Utils} from "../../../BaseUtils";
 import {getErrorHandler}                                          from "../../../CoreErrorHandling";
 import {
@@ -8,7 +9,22 @@ import {AbstractWidget, addWidgetClass} from "../../AbstractWidget";
 import {Args_AnyWidget}                                           from "../../AnyWidget";
 import {AnyWidgetStandard}                                        from "../../AnyWidgetStandard";
 import {DataManager}                                              from "@syncfusion/ej2-data";
-import {Aggregate, ColumnMenu, ColumnModel, DataResult, ExcelExport, Filter, Grid, GridModel, Page, Resize, Sort, SortSettingsModel, Toolbar} from "@syncfusion/ej2-grids";
+import {
+   Aggregate,
+   ColumnMenu,
+   ColumnModel,
+   DataResult,
+   ExcelExport,
+   ExcelQueryCellInfoEventArgs,
+   Filter,
+   Grid,
+   GridModel,
+   Page,
+   Resize,
+   Sort,
+   SortSettingsModel,
+   Toolbar
+} from "@syncfusion/ej2-grids";
 
 Grid.Inject(Toolbar, ExcelExport, Page, Resize, ColumnMenu, Aggregate, Sort, Filter);
 
@@ -25,6 +41,13 @@ export class Args_AbstractGrid extends Args_AnyWidget<GridModel> {
     * Optional array of column header template widgets, one for each column that requires a custom header
     */
    columnHeaderTemplates ?: Args_WgtGrid_ColumnHeaderTemplate[];
+
+   /**
+    * Defaults to false (apply formatter function from column to excel export)
+    * If true, the excelQueryCellInfo event will not call any formatter functions when exporting
+    * If false, the excelQueryCellInfo event will call the formatter function and set the value to the result of the formatter
+    */
+   disableExcelAutoFormater?: boolean;
 }
 
 export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args_AnyWidget, T> {
@@ -54,7 +77,6 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
          allowKeyboard:     true,
          width:             "100%",
       };
-
    }
 
    protected async initialize_AbstractGrid(args: Args_AbstractGrid) {
@@ -73,6 +95,28 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
 
       if (args.dataSource)
          this.gridModel.dataSource = classArgInstanceVal(args.dataSource);
+
+      if (args.disableExcelAutoFormater) {
+         // do nothing
+      } else {
+         try {
+            let existingExcelQueryCellInfo = args.ej.excelQueryCellInfo;
+
+            args.ej.excelQueryCellInfo = (args: ExcelQueryCellInfoEventArgs) => {
+               try {
+                  let formatter: any = args.column.formatter;
+                  if (formatter && isFunction(formatter)) {
+                     args.value = formatter(args.column, args.data);
+                  } // if formatter
+
+                  if (existingExcelQueryCellInfo) {
+                     existingExcelQueryCellInfo.call(this, args);
+                  } // if existingExcelQueryCellInfo
+
+               } catch (e) { console.error(e); }
+            } // excelQueryCellInfo
+         } catch (e) { console.error(e); }
+      }
 
       if (args.ej) {
          // if exists, then overwrite default values

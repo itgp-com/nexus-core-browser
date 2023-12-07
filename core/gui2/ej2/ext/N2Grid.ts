@@ -108,7 +108,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                         } // if formatter
 
                         if (existingExcelQueryCellInfo) {
-                            existingExcelQueryCellInfo.caller(this, args);
+                            existingExcelQueryCellInfo.call(this, args);
                         } // if existingExcelQueryCellInfo
 
                     } catch (e) { console.error(e); }

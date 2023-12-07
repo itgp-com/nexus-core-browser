@@ -93,7 +93,7 @@ export class N2TreeGrid<STATE extends StateN2TreeGrid = StateN2TreeGrid> extends
                         } // if formatter
 
                         if (existingExcelQueryCellInfo) {
-                            existingExcelQueryCellInfo.caller(this, args);
+                            existingExcelQueryCellInfo.call(this, args);
                         } // if existingExcelQueryCellInfo
 
                     } catch (e) { console.error(e); }
