@@ -756,25 +756,27 @@ function getGridFilterMessage(gObj: Grid): string {
                     }
                     let column_type = column.type;
                     let value: any = predicate.value;
-                    let stringValue = '';
-                    switch (column_type) {
-                        case 'date':
-                            stringValue = (value as Date).toLocaleDateString();
-                            break;
-                        case 'datetime':
-                            stringValue = (value as Date).toLocaleString(); // contains time
-                            break;
-                        case 'number':
-                            stringValue = value.toLocaleString();
-                            break;
-                        case 'boolean':
-                            stringValue = value ? 'true' : 'false';
-                            break;
-                        default:
-                            stringValue = (value == null ? '' : value.toString());
-                    }
+                    let stringValue = (value == null ? 'null' : '');
+                    if ( value != null) {
+                        switch (column_type) {
+                            case 'date':
+                                stringValue = (value as Date).toLocaleDateString();
+                                break;
+                            case 'datetime':
+                                stringValue = (value as Date).toLocaleString(); // contains time
+                                break;
+                            case 'number':
+                                stringValue = value.toLocaleString();
+                                break;
+                            case 'boolean':
+                                stringValue = value ? 'true' : 'false';
+                                break;
+                            default:
+                                stringValue = (value == null ? '' : value.toString());
+                        }
+                    } // if value != null
 
-                    if ( stringValue ) {
+                    if ( stringValue && value != null) {
                         // surround with single quotes
                         stringValue = `'${stringValue}'`;
                     }
