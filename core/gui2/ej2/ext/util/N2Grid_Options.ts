@@ -682,6 +682,9 @@ function getGridFilterMessage(gObj: Grid): string {
                 if (predicate) {
                     let raw_operator = predicate.operator;
                     let operator: string = '';
+                    let column_type = column.type;
+                    let value: any = predicate.value;
+                    let stringValue ='';
 
                     /*
                      '<': 'lessthan',
@@ -734,18 +737,22 @@ function getGridFilterMessage(gObj: Grid): string {
                             break;
                         case 'isnotnull':
                             operator = 'is not null';
+                            value = null;
                             break;
                         case 'isnull':
                             operator = 'is null';
+                            value = null;
                             break;
                         case 'like':
                             operator = 'like';
                             break;
                         case 'isempty':
                             operator = 'is empty';
+                            value = null;
                             break;
                         case 'isnotempty':
                             operator = 'is not empty';
+                            value = null;
                             break;
                         case 'wildcard':
                             operator = 'wildcard';
@@ -754,9 +761,6 @@ function getGridFilterMessage(gObj: Grid): string {
                             operator = raw_operator;
 
                     }
-                    let column_type = column.type;
-                    let value: any = predicate.value;
-                    let stringValue = (value == null ? 'null' : '');
                     if ( value != null) {
                         switch (column_type) {
                             case 'date':
