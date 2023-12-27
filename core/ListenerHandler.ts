@@ -44,28 +44,30 @@ export class ListenerHandler<E, Listener extends BaseListener<E>> {
     * @param f - The listener function.
     * @param priority - The priority of the listener. Default is 100.
     */
-   add(f: (ev: E) => void, priority: number = 100) {
-      let baseListener: BaseListener<E> = new class BaseListener {
+   add(f: (ev: E) => void, priority: number = 100): Listener {
+      let baseListener: Listener = new class BaseListener {
          eventFired(ev: E): void {
             f(ev);
          }
-      };
+      } as Listener;
       this.xref.push([baseListener, f]);
       this.addListener(baseListener as Listener, priority);
-   }
+      return baseListener;
+   } // add
 
    /**
     * Add a listener object.
     * @param listener - The listener object.
     * @param priority - The priority of the listener. Default is 100.
     */
-   addListener(listener: Listener, priority: number = 100): void {
+   addListener(listener: Listener, priority: number = 100): Listener {
       if (listener) {
          if (!this.listeners.some(item => item.listener === listener)) {
             this.listeners.push({ listener, priority });
             this.listeners.sort((a, b) => a.priority - b.priority);
          }
       }
+      return listener;
    }
 
    /**
