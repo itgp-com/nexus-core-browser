@@ -345,14 +345,17 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
             filterSettings: {type: 'Excel', showFilterBarStatus: true, showFilterBarOperator: true,},
             created: (args) => {
                 try {
-                    for (let i = 0; i < gridModel[EJINSTANCES].length; i++) {
-                        let grid: Grid = gridModel[EJINSTANCES][i];
-                        if (grid) {
-                            if (!grid.element.classList.contains(CSS_CLASS_GRID_FILTER_MENU_PRESENT)) {
-                                grid.element.classList.add(CSS_CLASS_GRID_FILTER_MENU_PRESENT);
-                            } // if not already present
-                        } // if grid
-                    } // for
+                    let ejs:any[] = gridModel[EJINSTANCES];
+                    if (ejs != null) {
+                        for (let i = 0; i < ejs.length; i++) {
+                            let grid: Grid = ejs[i];
+                            if (grid) {
+                                if (!grid.element.classList.contains(CSS_CLASS_GRID_FILTER_MENU_PRESENT)) {
+                                    grid.element.classList.add(CSS_CLASS_GRID_FILTER_MENU_PRESENT);
+                                } // if not already present
+                            } // if grid
+                        } // for
+                    } // if ejs != null
                 } catch (e) {
                     console.error(e);
                 }
@@ -614,11 +617,15 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                 if (args.requestType === 'filtering') {
 
                     try {
-                        for (let i = 0; i < gridModel[EJINSTANCES].length; i++) {
-                            let grid: Grid = gridModel[EJINSTANCES][i];
-                            let message: string = getGridFilterMessage(grid);
-                            grid.updateExternalMessage((message ? `<div style="color:green;">${getGridFilterMessage(grid)}</div>` : null));
-                        }
+
+                        let ejs:any[] = gridModel[EJINSTANCES];
+                        if (ejs != null) {
+                            for (let i = 0; i < ejs.length; i++) {
+                                let grid: Grid = ejs[i];
+                                let message: string = getGridFilterMessage(grid);
+                                grid.updateExternalMessage((message ? `<div style="color:green;">${getGridFilterMessage(grid)}</div>` : null));
+                            } // for
+                        } // if ejs != null
                     } catch (e) {
                         console.error(e);
                     }
