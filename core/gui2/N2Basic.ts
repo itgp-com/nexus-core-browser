@@ -15,7 +15,7 @@ export interface StateN2Basic extends StateN2 {
     ref ?: StateN2BasicRef;
 }
 
-export class N2Basic<STATE extends StateN2Basic = StateN2Basic> extends N2<STATE> {
+export class N2Basic<STATE extends StateN2Basic = StateN2Basic, JS_COMPONENT = any> extends N2<STATE, JS_COMPONENT> {
     static readonly CLASS_IDENTIFIER: string = 'N2Basic';
 
     protected constructor(state?: STATE) {
