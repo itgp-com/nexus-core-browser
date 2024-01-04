@@ -1,8 +1,6 @@
 import {escape} from "lodash";
 import {getRandomString, htmlToElement} from "../BaseUtils";
 import {getErrorHandler} from '../CoreErrorHandling';
-import {N2Dialog} from './ej2/ext/N2Dialog';
-import {N2Dlg} from './jsPanel/N2Dlg';
 import {N2, N2_CLASS} from "./N2";
 import {IHtmlUtils, N2HtmlDecorator} from "./N2HtmlDecorator";
 import {StateN2} from "./StateN2";
@@ -486,17 +484,17 @@ export function findParentHTMLElement(current: HTMLElement, className: string): 
  * @param {HTMLElement | N2} current - The current HTMLElement or N2 component from which the search will start.
  * @returns {N2 | null} The found parent N2 dialog or null if not found.
  */
-export function findParentN2Dialog<T extends N2Dialog = N2Dialog>(current: HTMLElement | N2) : T {
+export function findParentN2Dialog(current: HTMLElement | N2) : any {
     if (!current) return null;
     let htmlElement = current instanceof HTMLElement ? current : current.htmlElement;
-    let parentElement = findParentHTMLElement(htmlElement, N2Dialog.CLASS_IDENTIFIER);
+    let parentElement = findParentHTMLElement(htmlElement, 'N2Dialog');
     if ( !parentElement )
-        parentElement = findParentHTMLElement(htmlElement, N2Dlg.CLASS_IDENTIFIER);
+        parentElement = findParentHTMLElement(htmlElement, 'N2Dlg');
 
     if ( parentElement ) {
         let parent =  getN2FromHtmlElement(parentElement);
         if (parent)
-            return parent as T;
+            return parent;
     }
     return null;
 }

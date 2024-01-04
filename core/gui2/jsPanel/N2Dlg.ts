@@ -1,5 +1,6 @@
 import {N2} from '../N2';
 import {N2Basic, StateN2Basic} from '../N2Basic';
+import {addN2Class} from '../N2HtmlDecorator';
 import {StateN2Ref} from '../StateN2';
 
 export interface N2DlgStateRef extends StateN2Ref {
@@ -20,4 +21,13 @@ export interface N2DlgState<DATA_TYPE = any> extends StateN2Basic {
 
 export class N2Dlg<STATE extends N2DlgState = N2DlgState> extends N2Basic<STATE> {
     static readonly CLASS_IDENTIFIER: string = 'N2Dlg';
+
+    constructor(state: STATE) {
+        super(state);
+    }
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco, N2Dlg.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
 }

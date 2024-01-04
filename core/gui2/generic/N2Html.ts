@@ -1,5 +1,6 @@
-import {escape, isString} from "lodash";
+
 import {N2Basic, StateN2Basic, StateN2BasicRef} from "../N2Basic";
+import {escape, isString} from "lodash";
 import {addN2Class} from '../N2HtmlDecorator';
 import {createN2HtmlBasic} from "../N2Utils";
 import {N2Evt_OnHtml} from "../N2";
