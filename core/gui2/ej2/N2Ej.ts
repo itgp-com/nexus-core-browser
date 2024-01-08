@@ -47,6 +47,7 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
 
 
     protected _constructor(state ?: STATE) {
+        state = state || {} as STATE;
         state.ej = state.ej || {};
         super._constructor(state);
     }
