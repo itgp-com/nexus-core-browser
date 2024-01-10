@@ -89,6 +89,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
         leftState.deco.style = {
             'min-width': '0',
             'background-color': 'transparent',
+            'justify-content': 'left',
         }
         leftState.tagId = state.tagId + '_left';
         addN2Class(leftState.deco, CLASS_N2_PANEL_LAYOUT_LEFT);
@@ -104,6 +105,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
             flex: 1, // expand to take all available space
             'min-width': '0',
             'background-color': 'transparent',
+            'justify-content': 'center',
         }
         centerState.tagId = state.tagId + '_center';
         addN2Class(centerState.deco, CLASS_N2_PANEL_LAYOUT_CENTER);
@@ -117,6 +119,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
         rightState.deco.style = {
             'min-width' : '0',
             'background-color': 'transparent',
+            'justify-content': 'right',
         }
         rightState.tagId = state.tagId + '_right';
         addN2Class(rightState.deco, CLASS_N2_PANEL_LAYOUT_RIGHT);
