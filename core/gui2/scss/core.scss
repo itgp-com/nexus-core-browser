@@ -126,3 +126,8 @@
 .core_row_number_001 {
   color: var(--grid-table-background-color);
 }
+
+.core_horizontal_divider {
+  border-top: 1px solid var(--grid-header-border-color);
+  width: 100%;
+}

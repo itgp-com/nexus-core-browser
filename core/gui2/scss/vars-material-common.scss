@@ -90,6 +90,7 @@ $app_color_yellow_04: #ffd43b !default;
 $app_color_green_01: #087b3e !default;
 $app_color_green_02: #E9FEF3 !default; // very light green for backgrounds
 $app_color_green_03: #92D050 !default; // light green for backgrounds
+$app_color_green_04: #679f2b !default; // 30% darker that app_color_green_03 for text color
 $app_color_blue_01: #2174af !default;
 $app_dialog_header_close_button_size: 18; // integer size of the dialog close (x) button on the upper right of a dialog header
 
@@ -172,6 +173,7 @@ $app_custom_excel_filter_width_number: 18 !default; // size of the filter icon a
   --app-color-green-01: #{$app_color_green_01};
   --app-color-green-02: #{$app_color_green_02};
   --app-color-green-03: #{$app_color_green_03};
+  --app-color-green-04: #{$app_color_green_04};
   --app-color-blue-01: #{$app_color_blue_01};
   --app-dialog-header-close-button-size: #{$app_dialog_header_close_button_size};
   --app-custom-excel-filter-width-number: #{$app_custom_excel_filter_width_number}px;
