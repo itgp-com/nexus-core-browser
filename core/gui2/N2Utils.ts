@@ -521,6 +521,44 @@ export function findParentN2ByClass<T extends N2 = N2>(current: HTMLElement | N2
 }
 
 /**
+ removeAllChildren removes all child N2 components from a given N2 component.
+
+ First it finds all child N2 components at any level using findN2ChildrenAllLevels.
+ It loops through each one and calls destroy() to remove them properly.
+
+ Then it gets the HTML element of the N2 and removes all child elements from it directly using native JS/HTML.
+
+ This completely clears out all children from an N2 component.
+
+ Parameters:
+ - n2: N2 - The N2 component to remove all children from
+
+ Returns:
+ - void
+ */
+export function removeAllChildren(n2: N2): void {
+    if (!n2) return;
+
+    // first destroy all N2 children in a civilized manner
+    try {
+        let n2_children = findN2ChildrenAllLevels(n2);
+        for (let n2_child of n2_children) {
+            try {
+                n2_child.destroy();
+            } catch (e) { console.error(e); }
+        } // for
+    } catch (e) { console.error(e); }
+
+    // Now remove all children from the HTML element
+    let elem: HTMLElement = n2.htmlElement
+    // remove all childen elements from elem using with just Javascript and HTML
+    while (elem.firstChild) {
+        elem.removeChild(elem.firstChild);
+    }
+
+} //  removeAllChildren
+
+/**
  * Finds an HTMLInputElement within the given HTMLElement or N2 object.
  *
  * The function first checks if the provided `current` object is an HTMLInputElement with a matching ID (or `tagId` if `current` is an N2 object).

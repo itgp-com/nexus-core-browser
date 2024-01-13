@@ -38,6 +38,30 @@ export function dataManager_App(tablename: string, options ?:DataManager_App_Opt
     });
 }
 
+/**
+ * Creates a DataManager instance for use with a controller endpoint.
+ *
+ * @param {string} relativeURL - The relative URL path to the controller endpoint.
+ * @param {NexusAdaptor} [adaptor] - Optional custom adaptor instance.
+ *
+ * @returns {DataManager} - The configured DataManager instance.
+ *
+ * The DataManager is configured with the given relative URL, and the default
+ * NexusAdaptor unless a custom one is provided. Cross-domain requests are enabled.
+ *
+ * Example usage:
+ * ```ts
+ * const dataManager = dataManager_Controller('myController');
+ * ```
+*/
+export function dataManager_Controller(relativeURL: string, adaptor ?: NexusAdaptor): DataManager {
+    return new NexusDataManager({
+        url: relativeURL,
+        adaptor: (adaptor ? adaptor : new NexusAdaptor()),
+        crossDomain: true,
+    });
+}
+
 export class DataManager_CRUDApp_Options {
     /**
      *

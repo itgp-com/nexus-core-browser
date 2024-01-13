@@ -10,7 +10,7 @@ import {getErrorHandler} from "./CoreErrorHandling";
 import {EJList} from "./data/Ej2Comm";
 import {NexusAdaptor} from "./data/NexusAdaptor";
 import {CssStyle} from "./gui/AbstractWidget";
-
+import * as _ from "lodash";
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY = 1000;
 
@@ -1270,4 +1270,120 @@ export function htmlToText(html: string, separator: string = ' / ', removeLeadin
     let tempDiv = document.createElement("div");
     tempDiv.innerHTML = inner2;
     return tempDiv.textContent || tempDiv.innerText || "";
+}
+
+/**
+ * Type declaration for an isEqual function that compares two objects of type T.
+ *
+ * @template T - The type of objects to compare.
+ *
+ * @param a - The first object to compare.
+ * @param b - The second object to compare.
+ *
+ * @returns boolean - True if the objects are equal, false otherwise.
+ *
+ * Example usage:
+ * ```ts
+ * const myIsEqual: isEqualFunction<MyType> = (a, b) => {
+ *   // compare a and b
+ *   return a.id === b.id;
+ * }
+ * ```
+ */
+export type isEqualFunction<T = any> = (a: T, b: T) => boolean;
+
+/**
+ * Adds an object or array of objects to an array if they don't already exist inside the array.
+ *
+ * If an isEqualFunction is not supplied, then it uses lodash's isEqual function.
+ * Does nothing if array or object are null
+ * @param {T[]} array
+ * @param {T | T[]} object
+ * @param {isEqualFunction<T>} isEqualFunction
+ */
+export function addToArrayIfNotFound<T = any>(array: T[], object: T | T[], isEqualFunction ?: isEqualFunction<T>): void {
+    if (array == null || object == null)
+        return; // no change
+
+    // internal single add function
+    const addSingleObject = (obj: T) => {
+        if (isEqualFunction == null)
+            isEqualFunction = _.isEqual;
+        try {
+            const exists = _.find(array, currentObject => isEqualFunction(currentObject, obj));
+            if (!exists)
+                array.push(obj);
+        } catch (e) { console.error(e); }
+    };
+
+    if (Array.isArray(object)) {
+        object.forEach(obj => addSingleObject(obj));
+    } else {
+        addSingleObject(object);
+    }
+} // addToArrayIfNotFound
+
+/**
+ * Removes an object or array of objects from an array if they exist inside the array.
+ *
+ * If an isEqualFunction is not supplied, then it uses lodash's isEqual function.
+ * Does nothing if array or object are null
+ * @param {T[]} array
+ * @param {T | T[]} object
+ * @param {isEqualFunction<T>} isEqualFunction
+ */
+export function removeFromArrayIfExists<T = any>(array: T[], object: T | T[], isEqualFunction ?: isEqualFunction<T>): void {
+    if (array == null || object == null)
+        return; // no change
+
+    // internal single remove function
+    const removeSingleObject = (obj: T) => {
+        if (isEqualFunction == null)
+            isEqualFunction = _.isEqual;
+        try {
+            for (let i = 0; i < array.length; i++) {
+                if (isEqualFunction(array[i], obj)) {
+                    array.splice(i, 1);
+                    break; // assuming unique objects, stop after finding the first match
+                }
+            }
+        } catch (e) { console.error(e); }
+    };
+
+    if (Array.isArray(object)) {
+        object.forEach(obj => removeSingleObject(obj));
+    } else {
+        removeSingleObject(object);
+    }
+} // removeFromArrayIfExists
+
+/**
+ * Finds the indices of records that match the existing selection.
+ *
+ * @param {T[]} records - The array of records to search.
+ * @param {T[]} existingSelection - The array of selected records.
+ * @param {isEqualFunction<T>} [isEqualFunction=_.isEqual] - Function to check equality between records and selection.
+ *
+ * @returns {number[]} - Array of indices of the matching records.
+ *
+ * Loops through the records array and checks if each record exists in the selection using the isEqualFunction.
+ * If a match is found, the index is added to the indices array.
+ *
+ * Example usage:
+ * ```ts
+ * const indices = findMatchingIndices(myRecords, mySelection);
+ * ```
+*/
+export function findMatchingIndices<T = any>(records: T[], existingSelection: T[], isEqualFunction: isEqualFunction<T> = _.isEqual): number[] {
+    let indices: number[] = [];
+
+    for (let i = 0; i < records.length; i++) {
+        const record = records[i];
+        const exists = existingSelection.some(selection => isEqualFunction(record, selection));
+        if (exists)
+            indices.push(i);
+
+    } // for
+
+    return indices;
 }

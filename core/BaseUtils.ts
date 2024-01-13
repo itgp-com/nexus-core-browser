@@ -208,6 +208,30 @@ export function nextAll(selector: string, element: HTMLElement): HTMLElement[] {
    return all;
 }
 
+
+/*
+ * Deletes an element from the DOM by its ID.
+ *
+ * @param {string} elementId - The ID of the element to delete.
+ *
+ * Finds the element in the DOM with the provided ID using document.getElementById().
+ * If the element exists, it is removed from the DOM using removeChild().
+ *
+ * Example usage:
+ * ```
+ * deleteElementById('myElement');
+ * ```
+ */
+export function deleteElementById(elementId: string) {
+   // Find the element by its ID
+   var element = document.getElementById(elementId);
+
+   // If the element exists, remove it from the DOM
+   if (element) {
+      element.parentNode.removeChild(element);
+   }
+} // deleteElementById
+
 // noinspection SpellCheckingInspection
 /** Return the document element by it's ID or null if it doesn't exist
  *
