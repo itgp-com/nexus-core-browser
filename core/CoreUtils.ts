@@ -1,6 +1,7 @@
 /// <reference path="./global.d.ts" />
 import {Component} from "@syncfusion/ej2-base";
 import {DataManager, Query} from "@syncfusion/ej2-data";
+import {ColumnModel} from '@syncfusion/ej2-grids';
 import * as CSS from 'csstype';
 import {isArray, isString} from "lodash";
 import tippy, {Props, roundArrow} from "tippy.js";
@@ -1386,4 +1387,39 @@ export function findMatchingIndices<T = any>(records: T[], existingSelection: T[
     } // for
 
     return indices;
+}
+
+/**
+ * Creates an inert column model configuration object.
+ *
+ * @returns {ColumnModel} - The inert column model configuration.
+ *
+ * The returned object has all features disabled and default values set:
+ * - Empty header text
+ * - Width of 30
+ * - Center text alignment
+ * - Filtering, sorting, searching, grouping, reordering, editing disabled
+ * - No column menu
+ *
+ * This is useful for creating placeholder inert columns in a grid.
+ *
+ * Example usage:
+ * ```ts
+ * const inertColumn = inertColumnModel();
+ * ```
+*/
+export function inertColumnModel(): ColumnModel {
+    return     {
+        headerText: '',
+        headerTextAlign: undefined,
+        width: 30,
+        textAlign: 'Center',
+        allowFiltering: false,
+        allowSorting: false,
+        allowSearching: false,
+        allowGrouping: false,
+        allowReordering: false,
+        allowEditing: false,
+        showColumnMenu: false,
+    } as ColumnModel;
 }
