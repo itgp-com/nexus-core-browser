@@ -56,7 +56,8 @@ export enum QUERY_OPERATORS {
    ENDS_WITH             = "endswith",
    CONTAINS              = "contains",
    ISNULL                = "isnull",
-   NOTNULL               = "notnull",
+   NOTNULL               = "isnotnull",
+   // TODO add more operators from node_modules/@syncfusion/ej2-data/dist/es6/ej2-data.es5.js under  DataUtil.fnOperators = {...} line 2514
 
 }
 
