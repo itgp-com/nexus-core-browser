@@ -421,6 +421,18 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
         });
     }
 
+    /**
+     * Refresh the header of the dialog based on the current header in the state property.
+     * Used to change the header AFTER the dialog is rendered already
+     */
+    public headerRefresh() {
+        let header = this._headerN2();
+        if ( this.obj){
+            header.initLogic();
+            this.obj.header = header.htmlElement;
+        }
+    }
+
     public get appendTargetCreatedLocally(): boolean {
         return this._appendTargetCreatedLocally;
     }
