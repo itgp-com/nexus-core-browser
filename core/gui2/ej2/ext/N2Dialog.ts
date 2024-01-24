@@ -1,13 +1,20 @@
 import {Dialog, DialogModel} from '@syncfusion/ej2-popups';
+import {BeforeCloseEventArgs, BeforeOpenEventArgs} from '@syncfusion/ej2-popups/src/dialog/dialog';
 import {isArray, isString} from 'lodash';
 import {cssAddSelector, isHTMLElement} from '../../../CoreUtils';
 import {N2Html} from '../../generic/N2Html';
-import {isN2_Interface_Dialog_Close, isN2_Interface_Dialog_Open} from '../../generic/N2Interface_Dialog';
+import {
+    isN2_Interface_Dialog_BeforeClose,
+    isN2_Interface_Dialog_BeforeOpen,
+    isN2_Interface_Dialog_Close,
+    isN2_Interface_Dialog_Open,
+    N2Evt_Dialog,
+    N2Evt_Dialog_Cancellable,
+} from '../../generic/N2Interface_Dialog';
 import {N2Row} from '../../generic/N2Row';
 import {N2, N2Evt_Destroy, N2Evt_OnLogic} from '../../N2';
 import {addN2Class, decoToHtmlElement} from '../../N2HtmlDecorator';
 import {isN2} from '../../N2Utils';
-import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
@@ -152,10 +159,46 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
         let userOpen = ej.open;
         let userClose = ej.close;
+        let userBeforeClose = ej.beforeClose;
+        let userBeforeOpen = ej.beforeOpen;
+
+        ej.beforeOpen = (args: BeforeOpenEventArgs) => {
+            try {
+                if (isN2_Interface_Dialog_BeforeOpen(this.state.content)) {
+                    try {
+                        let evt: N2Evt_Dialog_Cancellable = {
+                            dialog: this,
+                            widget: this.state.content as any,
+                            native_event: args,
+                            cancel: false
+                        };
+                        this.state.content.onDialogBeforeOpen(evt);
+                        if (evt.cancel) {
+                            args.cancel = true;
+                        }
+                    } catch (e) {
+                        console.error('N2Dialog._headerN2: error calling onDialogBeforeOpen on content', e);
+                    }
+                }
+            } catch (e) {
+                this.handleError(e);
+            }
+            if (args.cancel)
+                return;
+
+            try {
+                if (userBeforeOpen)
+                    userBeforeOpen.call(this, args); // any user open code
+            } catch (e) {
+                this.handleError(e);
+            }
+
+        } // ej.beforeOpen
 
         ej.open = (args: any) => {
             try {
-                n2Header.initLogic(); // initialize header
+                if (isN2(n2Header))
+                    n2Header.initLogic(); // initialize header
             } catch (e) {
                 this.handleError(e);
             }
@@ -165,11 +208,24 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
                     if (this.state.content instanceof HTMLElement) {
                     } else {
                         // if N2, init logic
-                        this.state.content.initLogic(); // initialize content
+                        if (isN2(this.state.content))
+                            this.state.content.initLogic(); // initialize content
                     }
                 }
             } catch (e) {
                 this.handleError(e);
+            }
+            if (isN2_Interface_Dialog_Open(this.state.content)) {
+                try {
+                    let evt: N2Evt_Dialog<N2Dialog, N2> = {
+                        dialog: this,
+                        widget: this.state.content as any,
+                        native_event: args
+                    };
+                    this.state.content.onDialogOpen(evt);
+                } catch (e) {
+                    console.error('N2Dialog._headerN2: error calling onDialogOpen on content', e);
+                }
             }
 
             try {
@@ -179,22 +235,44 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
                 this.handleError(e);
             }
 
-            if (isN2_Interface_Dialog_Open(this.state.content)) {
+        } // ej.open
+
+        ej.beforeClose = (args: BeforeCloseEventArgs) => {
+            if (isN2_Interface_Dialog_BeforeClose(this.state.content)) {
                 try {
-                    this.state.content.onDialogOpen({dialog: this, widget: this.state.content});
+                    let evt: N2Evt_Dialog_Cancellable = {
+                        dialog: this,
+                        widget: this.state.content as any,
+                        native_event: args,
+                        cancel: false
+                    };
+                    this.state.content.onDialogBeforeClose(evt);
+                    if (evt.cancel) {
+                        args.cancel = true;
+                    }
                 } catch (e) {
-                    console.error('N2Dialog._headerN2: error calling onDialogOpen on content', e);
+                    console.error('N2Dialog._headerN2: error calling onDialogBeforeClose on content', e);
                 }
+            } // if (isN2_Interface_Dialog_BeforeClose(this.state.content))
+
+            if (args.cancel)
+                return;
+
+            try {
+                if (userBeforeClose)
+                    userBeforeClose.call(this, args); // any user open code
+            } catch (e) {
+                this.handleError(e);
             }
 
-
-        } // ej.open
+        }
 
         ej.close = (args: any) => {
 
             if (isN2_Interface_Dialog_Close(this.state.content)) {
                 try {
-                    this.state.content.onDialogClose({dialog: this, widget: this.state.content});
+                    let evt: N2Evt_Dialog = {dialog: this, widget: this.state.content as any, native_event: args};
+                    this.state.content.onDialogClose(evt);
                 } catch (e) {
                     console.error('N2Dialog._headerN2: error calling onDialogClose on content', e);
                 }
@@ -373,9 +451,9 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
-    let isDarkTheme:boolean = ev.newState.theme_type == 'dark';
+    let isDarkTheme: boolean = ev.newState.theme_type == 'dark';
 
-    if ( isDarkTheme) {
+    if (isDarkTheme) {
         // dialog itself gets the background color
         cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog`, `
         background-color: var(--app-color-panel-background);
@@ -398,11 +476,10 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
 `);
 
 
-
     // dialog header gets background color
 //noinspection CssReplaceWithShorthandSafely
 
-    let rules:string = `
+    let rules: string = `
         padding: 0 10px 0 2px;
         border-bottom: 5px solid ${CSS_VARS_CORE.app_color_blue};
         background-color: ${CSS_VARS_CORE.app_dialog_header_background_color}; 
@@ -413,7 +490,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     rules = `
         padding: 5px;
     `
-    if ( isDarkTheme) {
+    if (isDarkTheme) {
         rules += `
         background-color: var(--app-color-panel-background); 
         `;
