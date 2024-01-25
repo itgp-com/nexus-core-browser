@@ -1,8 +1,9 @@
 import {Component} from '@syncfusion/ej2-base';
 import {Grid} from "@syncfusion/ej2-grids";
 import {isArray} from 'lodash';
-import {N2} from '../N2';
+import {N2, N2_CLASS} from '../N2';
 import {isN2} from '../N2Utils';
+import {EJINSTANCES} from './N2Ej';
 
 
 /**
@@ -276,31 +277,77 @@ export function getEj2ArrayFromHtmlElement(elem: HTMLElement): (Component<HTMLEl
     return null;
 } // getEj2ArrayFromHtmlElement
 
-// export type EventHandlerFunction = (...args: any[]) => void;
-//
-// export interface WrapEventOptions {
-//     target: any;
-//     originalHandler: EventHandlerFunction | null;
-//     customCode: EventHandlerFunction;
-//     position?: 'prefix' | 'suffix';
-// }
-//
-// export function wrapEvent(options: WrapEventOptions):EventHandlerFunction {
-//     const { target, originalHandler, customCode, position = 'prefix' } = options;
-//
-//     const wrappedHandler = (...args: any[]) => {
-//         if (position === 'prefix') {
-//             customCode.apply(target, args);
-//         }
-//
-//         if (typeof originalHandler === 'function') {
-//             originalHandler.apply(target, args);
-//         }
-//
-//         if (position === 'suffix') {
-//             customCode.apply(target, args);
-//         }
-//     };
-//
-//     return wrappedHandler;
-// }
+/**
+ * Retrieves an array of all Syncfusion EJ2 instances
+ * from a given EJ2 Model that was used to create an EJ2 component.
+ *
+ * For example, retrieves the Grid created from a GridModel instance.
+ *
+ * It's an array in case multiple EJ2 components are created using the same model.
+ *
+ * @param model EJ2 component model
+ * @return {any[]} Array of EJ2 instances, Empty array if none. Never null.
+ */
+export function getEj2FromModel(model: any): any[] {
+    let instances:any[] = [];
+    if (model) {
+       instances.push( ... EJINSTANCES )
+    } // if elem exists
+    return instances;
+} // getEj2FromModel
+
+/**
+ * Retrieves the first Syncfusion EJ2 instance from a given EJ2 Model that was used to create an EJ2 component.
+ * Returns null if none.
+ * @param model EJ2 component model
+ * @return {any} EJ2 instance, null if none.
+ */
+export function getFirstEj2FromModel(model:any):any {
+    let instances:any[] = getEj2FromModel(model);
+    if (instances.length > 0)
+        return instances[0];
+    return null;
+} // getFirstEj2FromModel
+
+/**
+ * Retrieves an array of all N2 instances from a model (by retrieving the EJ2 instances and then the N2 instances from them)
+ * @param model EJ2 component model
+ * @return {N2[]} Array of N2 instances, Empty array if none. Never null.
+ */
+export function getN2FromModel(model:any): N2[] {
+    let instances:N2[] = [];
+    if (model) {
+        let ej2Instances: any[] = getEj2FromModel(model);
+        for (let ej2Instance of ej2Instances) {
+           let n2 = getN2FromEJ2(ej2Instance);
+           if (n2)
+                instances.push(n2);
+        } // for
+    } // if model
+    return instances;
+} // getN2FromModel
+
+/**
+ * Retrieves the first N2 instance from a model (by retrieving the EJ2 instances and then the N2 instances from them)
+ * Returns null if none found.
+ * @param model EJ2 component model
+ * @return {N2 | null} N2 instance, null if none.
+ */
+export function getFirstN2FromModel(model:any): N2|null {
+    let instances:N2[] = getN2FromModel(model);
+    if (instances.length > 0)
+        return instances[0];
+    return null;
+} // getFirstN2FromModel
+
+/**
+ * Retrieves the N2 instance from a given EJ2 instance.
+ * @param ej2Instance
+ * @return {N2 | null}
+ */
+export function getN2FromEJ2(ej2Instance: any): N2 | null {
+    if (ej2Instance && ej2Instance[N2_CLASS]) {
+        return ej2Instance[N2_CLASS];
+    } // if ej2Instance
+    return null;
+} // getN2FromEJ2
