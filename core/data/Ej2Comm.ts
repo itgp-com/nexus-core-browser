@@ -1,5 +1,3 @@
-import {castArray} from "../BaseUtils";
-
 export abstract class EJBase {
 
    i_d: string;
@@ -30,11 +28,11 @@ export class EJList<T = any> extends EJBase {
       this.v_e_r = 1;
    }
 
-   // noinspection JSUnusedGlobalSymbols
-   resultAs(cl: { new(args: any): T }): T[] {
-      this.result = castArray(this.result, cl);
-      return this.result;
-   }
+   // // noinspection JSUnusedGlobalSymbols
+   // resultAs(cl: { new(args: any): T }): T[] {
+   //    this.result = castArray(this.result, cl);
+   //    return this.result;
+   // }
 }
 
 // noinspection JSUnusedGlobalSymbols

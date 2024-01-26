@@ -21,10 +21,10 @@ import {
 } from '@syncfusion/ej2-popups';
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
 import * as _ from 'lodash';
+import {EJINSTANCES} from '../../../../Constants';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../../scss/vars-material';
-import {EJINSTANCES} from '../../N2Ej';
 import {N2Grid, StateN2Grid} from '../N2Grid';
 import {isSpinnerCreated} from './Spinner_Options';
 

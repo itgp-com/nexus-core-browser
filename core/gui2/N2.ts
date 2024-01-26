@@ -4,6 +4,7 @@ import {ResizeSensor} from "css-element-queries";
 import {ResizeSensorCallback} from "css-element-queries/src/ResizeSensor";
 import {debounce, throttle} from "lodash";
 import {getRandomString} from "../BaseUtils";
+import {N2_CLASS} from '../Constants';
 import {Err} from "../Core";
 import {getErrorHandler} from "../CoreErrorHandling";
 import {cssAddSelector, isDev} from '../CoreUtils';
@@ -15,9 +16,6 @@ import {Elem_or_N2, getFirstHTMLElementChild, isN2, toProperHtmlId} from './N2Ut
 import {CSS_VARS_CORE} from './scss/vars-material';
 import {StateN2} from "./StateN2";
 import {ThemeChangeEvent, themeChangeListeners} from './Theming';
-
-
-export let N2_CLASS = '_n2_';
 
 
 export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {

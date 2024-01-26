@@ -1,5 +1,12 @@
-import {getRandomString, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal} from "../../../BaseUtils";
-import {applyHtmlDecoration}                                                                                from "../../../CoreUtils";
+import {
+    applyHtmlDecoration,
+    getRandomString,
+    IArgs_HtmlDecoration,
+    IArgs_HtmlTag,
+    IArgs_HtmlTag_Utils,
+    StringArg,
+    stringArgVal
+} from "../../../BaseUtils";
 import {DataProvider}                                                                                       from "../../../data/DataProvider";
 import {TextBox, TextBoxModel}                                                                              from "@syncfusion/ej2-inputs";
 import {AnyWidget, Args_AnyWidget}                                                                          from "../../AnyWidget";

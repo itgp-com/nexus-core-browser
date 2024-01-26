@@ -10,8 +10,8 @@ import {
    StringArg,
    stringArgVal
 } from "../BaseUtils";
+import {EJINSTANCES} from '../Constants';
 import {DataProvider, DataProviderChangeEvent, IDataProviderSimple} from "../data/DataProvider";
-import {EJINSTANCES} from '../gui2/ej2/N2Ej';
 import {ListenerHandler} from "../ListenerHandler";
 import {
    AbstractWidget,

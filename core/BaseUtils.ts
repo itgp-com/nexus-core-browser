@@ -11,9 +11,9 @@ async function init() {
 init();
 
 
-import {isFunction}       from "lodash";
-import {cssStyleToString} from "./CoreUtils";
-import {CssStyle}         from "./gui/AbstractWidget";
+import {isFunction} from "lodash";
+import {cssStyleToString, removeDoubleSpaces} from "./CoreUtils";
+import {CssStyle} from "./gui/AbstractWidget";
 
 export type StringFunction = () => string;
 export type StringArg = (string | StringFunction);
@@ -360,3 +360,85 @@ export class IArgs_HtmlTag_Utils {
    }
 
 }
+
+/**
+ * Applies decorations (classes, styles, and attributes) to a given HTML element.
+ *
+ * @export
+ * @param {HTMLElement} htmlElement - The target HTML element to which decorations should be applied.
+ * @param {IArgs_HtmlDecoration} decoration - The decoration arguments specifying classes, styles, and attributes.
+ *
+ * @example
+ * const elem = document.getElementById('myDiv');
+ * const decoration = {
+ *   htmlTagClass: 'div',
+ *   htmlTagStyle: { color: 'red', fontSize: '16px' },
+ *   htmlOtherAttr: { 'data-test': 'testValue' }
+ * };
+ * applyHtmlDecoration(elem, decoration);
+ */
+export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_HtmlDecoration): void {
+   if (!htmlElement)
+      return;
+   if (!decoration)
+      return;
+
+   // first append any classes
+   try {
+      let htmlTagClass: string = decoration.htmlTagClass;
+      if (htmlTagClass) {
+         htmlTagClass = removeDoubleSpaces(htmlTagClass);
+         if (htmlTagClass) {
+            let newClasses: string[] = htmlTagClass.split(' ');
+            htmlElement.classList.remove(...newClasses)
+            htmlElement.classList.add(...newClasses);
+         }
+      } // if ( htmlTagClass)
+   } catch (ex) {
+      console.log(ex);
+   }
+
+   // now update the style attribute
+   try {
+      let styleAsString: string = cssStyleToString(decoration.htmlTagStyle);
+      if (styleAsString) {
+         styleAsString = removeDoubleSpaces(styleAsString);
+         if (styleAsString) {
+            let currentStyle: string = htmlElement.getAttribute('style');
+            if (!currentStyle)
+               currentStyle = ''
+            if (currentStyle.length > 0 && (!currentStyle.endsWith(';')))
+               currentStyle += ';'
+
+            currentStyle += styleAsString;
+            htmlElement.setAttribute('style', currentStyle);
+         }
+      } // if (htmlTagStyle)
+   } catch (ex) {
+      console.log(ex);
+   }
+
+   // now add any additional  attributes
+
+   try {
+      let htmlOtherAttr: IKeyValueString = decoration.htmlOtherAttr;
+      if (htmlOtherAttr) {
+         for (let key in htmlOtherAttr) {
+            if (key) {
+               let value: string = htmlOtherAttr[key];
+
+               if (value == null)
+                  value = ''; // empty attribute
+               try {
+                  htmlElement.setAttribute(key, value);
+               } catch (ex) {
+                  console.log(ex);
+               }
+            } // if key
+         } // for
+      } //if (htmlOtherAttr )
+   } catch (ex) {
+      console.log(ex);
+   }
+
+} // applyHtmlDecoration

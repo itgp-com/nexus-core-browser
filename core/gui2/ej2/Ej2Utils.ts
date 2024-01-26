@@ -1,9 +1,9 @@
 import {Component} from '@syncfusion/ej2-base';
 import {Grid} from "@syncfusion/ej2-grids";
 import {isArray} from 'lodash';
-import {N2, N2_CLASS} from '../N2';
+import {EJINSTANCES, N2_CLASS} from '../../Constants';
+import {N2} from '../N2';
 import {isN2} from '../N2Utils';
-import {EJINSTANCES} from './N2Ej';
 
 
 /**

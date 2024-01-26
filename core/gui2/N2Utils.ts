@@ -1,7 +1,8 @@
 import {escape} from "lodash";
 import {getRandomString, htmlToElement} from "../BaseUtils";
+import {N2_CLASS} from '../Constants';
 import {getErrorHandler} from '../CoreErrorHandling';
-import {N2, N2_CLASS} from "./N2";
+import {N2} from "./N2";
 import {IHtmlUtils, N2HtmlDecorator} from "./N2HtmlDecorator";
 import {StateN2} from "./StateN2";
 

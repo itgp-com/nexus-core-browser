@@ -1,12 +1,11 @@
 import {Component} from "@syncfusion/ej2-base";
 import * as _ from 'lodash';
-import {N2, N2_CLASS, N2Evt_Destroy, N2Evt_OnLogic} from "../N2";
+import {EJINSTANCES, N2_CLASS} from '../../Constants';
+import {N2, N2Evt_Destroy, N2Evt_OnLogic} from "../N2";
 import {addN2Class} from '../N2HtmlDecorator';
 import {isN2} from '../N2Utils';
 import {StateN2, StateN2Ref} from "../StateN2";
 import {isEj2HtmlElement} from './Ej2Utils';
-
-export const EJINSTANCES = 'ejInstances';
 
 export interface StateN2EjRef extends StateN2Ref {
     widget?: N2Ej;

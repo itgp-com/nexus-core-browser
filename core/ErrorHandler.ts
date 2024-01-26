@@ -1,11 +1,10 @@
 import {isAxiosError} from 'axios';
-import {getRandomString} from "./BaseUtils";
 import {Err, getRetValErr} from './Core';
 
 export class ErrorHandler {
 
-    private _errorTemplateTagID: string = getRandomString('errorTemplateID');
-    private _errorMessageTagID: string = getRandomString('errorMessage');
+    private _errorTemplateTagID: string = `errorTemplateID_${getRandomInt(1000)}_${getRandomInt(100000)}`;
+    private _errorMessageTagID: string = `errorMessage_${getRandomInt(1000)}_${getRandomInt(100000)}`;
 
 
     documentClickAdded: boolean = false;
@@ -140,3 +139,8 @@ export class ErrorHandler {
         this._errorMessageTagID = value;
     }
 } // class ErrorHandling
+
+
+function getRandomInt(max: number) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
