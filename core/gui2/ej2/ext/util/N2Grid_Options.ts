@@ -41,6 +41,7 @@ export const rowColumn: ColumnModel = {
     allowFiltering: false,
     allowGrouping: false,
     allowSorting: false,
+    showColumnMenu: false,
 }
 
 export function stateN2Grid_applyWx(state: StateN2Grid): void {
