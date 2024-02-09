@@ -40,6 +40,8 @@ static readonly CLASS_IDENTIFIER: string = 'N2Html'
 
       if ( isString(val) ) {
          this.state.deco.text = (this.state.deco.escapeText ? escape(val) : val);
+
+         return createN2HtmlBasic(this.state);
       } else {
          let elem:HTMLElement = this.state.value as HTMLElement;
 
@@ -55,10 +57,9 @@ static readonly CLASS_IDENTIFIER: string = 'N2Html'
 
          //merge attributes
          Object.assign(elem.attributes, this.state.deco.otherAttr);
-         this.htmlElement = elem as HTMLElement;
+         // this.htmlElement = elem as HTMLElement;
+         return elem as HTMLElement;
       }
-
-      return createN2HtmlBasic(this.state);
    } //onHtml
 
 
