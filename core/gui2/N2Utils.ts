@@ -619,3 +619,46 @@ export function toProperHtmlId(input: string): string {
 
     return result;
 }
+
+/**
+ * Observes the DOM for the addition of an element with the specified ID.
+ * Returns a Promise that resolves to the added HTMLElement.
+ *
+ * @param {string} id - The ID of the element to wait for.
+ * @returns {Promise<HTMLElement>} A Promise that resolves with the found element,
+ *    or rejects if an error occurs during observation.
+ */
+export function waitForElementById(id: string): Promise<HTMLElement> {
+    return new Promise((resolve, reject) => {
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                // Check added nodes recursively
+                const foundElement = traverseAddedNodes(mutation.addedNodes, id);
+                if (foundElement) {
+                    observer.disconnect(); // Clean up
+                    resolve(foundElement);
+                }
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        // Helper for recursive search
+        function traverseAddedNodes(nodes: NodeList, targetId: string): HTMLElement | null {
+            for (const node of Array.from(nodes)) {
+                if (node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).id === targetId) {
+                    return node as HTMLElement;
+                }
+                // Recursively check within child nodes
+                const childResult = traverseAddedNodes(node.childNodes, targetId);
+                if (childResult) {
+                    return childResult;
+                }
+            }
+            return null; // Element not found
+        }
+    });
+} // waitForElementById

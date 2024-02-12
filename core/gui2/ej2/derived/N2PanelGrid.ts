@@ -53,6 +53,10 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
         if (state.gridAutoWidth == null)
             state.gridAutoWidth = true; // enable auto width by default
 
+        if ( state.center && state.center instanceof N2Grid) {
+            this.n2Grid = state.center as GRID_TYPE;
+        }
+
         super.onStateInitialized(state);
     }
 
