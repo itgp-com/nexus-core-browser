@@ -1,43 +1,43 @@
-import {IMMEDIATE_MODE_DELAY}            from "../../CoreUtils";
+import {ColumnModel, Grid, GridModel} from "@syncfusion/ej2-grids";
 import {
-   adjustColumnWidthForCustomExcelFilters,
-   stateGrid_CustomExcelFilter
+    adjustColumnWidthForCustomExcelFilters,
+    stateGrid_CustomExcelFilter
 } from '../../gui2/ej2/ext/util/N2Grid_Options';
-import {Args_AbstractGrid, AbstractGrid} from "../ej2/abstract/AbstractGrid";
-import {ColumnModel, Grid} from "@syncfusion/ej2-grids";
+import {AbstractGrid, Args_AbstractGrid} from "../ej2/abstract/AbstractGrid";
 
 export class Args_CoreOnly_Grid_FilterPage extends Args_AbstractGrid {
-   pagingDisabled?: boolean;
-   filteringDisabled?: boolean;
+    pagingDisabled?: boolean;
+    filteringDisabled?: boolean;
 }
 
 export class CoreOnly_Grid_FilterPage<T = any> extends AbstractGrid {
 
-   protected constructor() {
-      super();
-   }
+    protected constructor() {
+        super();
+    }
 
 
-   static async create<T = any>(args?: Args_CoreOnly_Grid_FilterPage): Promise<CoreOnly_Grid_FilterPage<T>> {
-      let instance = new CoreOnly_Grid_FilterPage<T>();
-      await instance.initialize_AbstractGrid(args);
-      return instance;
-   }
+    static async create<T = any>(args?: Args_CoreOnly_Grid_FilterPage): Promise<CoreOnly_Grid_FilterPage<T>> {
+        let instance = new CoreOnly_Grid_FilterPage<T>();
+        await instance.initialize_AbstractGrid(args);
+        return instance;
+    }
 
 
-   async createGridModel() {
-      let thisX      = this;
-      this.gridModel = {
+    async createGridModel() {
+        let thisX = this;
 
-
-
-         allowSorting:      true,
-         allowMultiSorting: true,
-         allowTextWrap:     true,
-         allowResizing:     true,
-         allowSelection:    true,
-         allowKeyboard:     true,
-         dataBound:         () => {
+        let m = this.gridModel as GridModel;
+        //defaults
+        // defaults
+        if (m.allowSorting == null) m.allowSorting = true;
+        if (m.allowMultiSorting == null) m.allowMultiSorting = true;
+        if (m.allowTextWrap == null) m.allowTextWrap = true;
+        if (m.allowResizing == null) m.allowResizing = true;
+        if (m.allowSelection == null) m.allowSelection = true;
+        if (m.allowKeyboard == null) m.allowKeyboard = true;
+        let old_data_bound = m.dataBound;
+        m.dataBound = () => {
             // filtering by contains not startswith
             let _gridAll = (thisX.obj as Grid);
             // replace default operator (startsWith with contains)
@@ -46,50 +46,58 @@ export class CoreOnly_Grid_FilterPage<T = any> extends AbstractGrid {
             //    Object.assign(_gridAll.filterOperators, {startsWith: 'contains'});
             // }
             if (_gridAll.filterModule) {
-               //This is the real deal for operator replacement
-               Object.assign(_gridAll.filterModule["filterOperators"], {startsWith: 'contains'});
+                //This is the real deal for operator replacement
+                Object.assign(_gridAll.filterModule["filterOperators"], {startsWith: 'contains'});
             }
-         },
-      };
+            if (old_data_bound) old_data_bound.call(thisX.obj);
+        }
 
-      let localArgs: Args_CoreOnly_Grid_FilterPage = this.initArgs as Args_CoreOnly_Grid_FilterPage;
+        // this.gridModel = {
+        //
+        //
+        //     allowSorting: true,
+        //     allowMultiSorting: true,
+        //     allowTextWrap: true,
+        //     allowResizing: true,
+        //     allowSelection: true,
+        //     allowKeyboard: true,
+        //     dataBound: () => {
+        //         // filtering by contains not startswith
+        //         let _gridAll = (thisX.obj as Grid);
+        //         // replace default operator (startsWith with contains)
+        //         // if (_gridAll.filterOperators){
+        //         //    //Optional - doesn't do anything, but really should in the future at some point
+        //         //    Object.assign(_gridAll.filterOperators, {startsWith: 'contains'});
+        //         // }
+        //         if (_gridAll.filterModule) {
+        //             //This is the real deal for operator replacement
+        //             Object.assign(_gridAll.filterModule["filterOperators"], {startsWith: 'contains'});
+        //         }
+        //     },
+        // };
 
-      if (!localArgs.filteringDisabled){
-         stateGrid_CustomExcelFilter(this.gridModel); // Every WxGrid gets an Excel filter from now on
-         adjustColumnWidthForCustomExcelFilters(this.gridModel.columns as ColumnModel[]);
-         // this.gridModel = {
-         //    ...this.gridModel,
-         //    ...{
-         //       allowFiltering: true,
-         //       filterSettings: {
-         //          columns:             (thisX.initArgs as any)?.filters, // if filters are set, use them
-         //          showFilterBarStatus: true,
-         //          mode:                "Immediate",
-         //          immediateModeDelay:  IMMEDIATE_MODE_DELAY,
-         //       },
-         //    },
-         // }
-      } // if
+        let localArgs: Args_CoreOnly_Grid_FilterPage = this.initArgs as Args_CoreOnly_Grid_FilterPage;
 
+        if (!localArgs.filteringDisabled) {
+            stateGrid_CustomExcelFilter(this.gridModel); // Every WxGrid gets an Excel filter from now on
+            adjustColumnWidthForCustomExcelFilters(this.gridModel.columns as ColumnModel[]);
 
-      if (!localArgs.pagingDisabled) {
-         this.gridModel = {
-            ...this.gridModel,
-            ...{
-               allowPaging:  true,
-               pageSettings: {
-                  pageSizes: [5, 10, 20, 50, 100],
-                  pageSize:  10,
-                  pageCount: 6,
-               },
-            },
-
-         }
-      }
+        } // if
 
 
+        if (!localArgs.pagingDisabled) {
+            Object.assign(this.gridModel, {
+                allowPaging: true,
+                pageSettings: {
+                    pageSizes: [5, 10, 20, 50, 100],
+                    pageSize: 10,
+                    pageCount: 6,
+                },
+            } as GridModel);
+        }
 
-   } //createGridModel
+
+    } //createGridModel
 
 
 } // main class

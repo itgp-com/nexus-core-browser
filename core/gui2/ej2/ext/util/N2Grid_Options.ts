@@ -25,6 +25,7 @@ import {EJINSTANCES} from '../../../../Constants';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../../scss/vars-material';
+import {N2Ej} from '../../N2Ej';
 import {N2Grid, StateN2Grid} from '../N2Grid';
 import {isSpinnerCreated} from './Spinner_Options';
 
@@ -149,14 +150,17 @@ export function stateN2Grid_RowNumber(gridModel: GridModel, options: Grid_RowNum
     if (!gridModel)
         return; // nothing to do
 
+    const _ROW_NUMNER_APPLIED:string = '__row_num_done__';
+
+    if (gridModel[_ROW_NUMNER_APPLIED])
+        return; // already applied
 
     let pageRowNumberOnly: boolean = options?.pageRowNumberOnly; // false by default
 
     let grid: Grid = null;
     let fnCreated: EmitType<Event> = gridModel.created;
     gridModel.created = (ev: Object) => {
-        if (ev)
-            grid = ev as Grid; // needed for
+        grid = N2Ej.ejInstance(gridModel); // get the first grid
         if (fnCreated)
             fnCreated(ev);
     } // created
@@ -219,6 +223,7 @@ export function stateN2Grid_RowNumber(gridModel: GridModel, options: Grid_RowNum
             fnRowDataBound.call(gridModel, ev);
     } // rowDataBound
 
+    gridModel[_ROW_NUMNER_APPLIED] = true;
 } // stateN2Grid_RowNumber
 /**
  * Interface for defining the options for the stateN2Grid_Spinner function.
