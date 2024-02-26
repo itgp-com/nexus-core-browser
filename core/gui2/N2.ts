@@ -790,6 +790,27 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
 
     get classIdentifier(): string { return N2.CLASS_IDENTIFIER; }
 
+    /**
+     * Return the N2 instances inside this model. Empty array if none. Never null
+     * @param model
+     * @return {N2[]} array of N2 or empty array. Never null
+     */
+    public static instances(model: any): N2[] {
+        return(model && model[N2_CLASS] ||[]) as N2[];
+    }
+
+    /**
+     * Returns the first N2 instance in the model passed in or null if there is none
+     * @param model
+     * @return {N2} the first N2 instance in the model passed in or null if there is none
+     */
+    public static instance(model: any): N2 {
+        let array = N2.instances(model);
+        return (array && array.length > 0 ? array[0] : null) as N2;
+    }
+
+
+
 } // N2
 
 export interface N2Evt<WIDGET extends N2 = N2> {

@@ -166,6 +166,21 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
                 ejInstances.push(ejInstance); // actually add the instance to the array
             }
 
+             // ----------- Now Tag with N2 instances ----------
+
+            let n2Instances: N2[] = ej[N2_CLASS];
+            if (!n2Instances) {
+                n2Instances = [];
+                ej[N2_CLASS] = n2Instances;
+            }
+
+            // At this point state.ej.n2Instances is an array that is guaranteed to exist (empty or not)
+            // Check if the instance is not already in the array
+            if (!n2Instances.includes(this)) {
+                // Only add if not in array already
+                n2Instances.push(this); // actually add the instance to the array
+            }
+
         } catch (e) {
             console.error('Error tagging ej2 component', e);
         }
@@ -187,19 +202,49 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
 
             // Get ejInstances value. Initialize ejInstances in ej if the array doesn't exist
             let ejInstances: EJ2COMPONENT[] = ej[EJINSTANCES];
-            if (!ejInstances)
+            if (ejInstances) {
+
+                // At this point state.ej.ejInstances is an array that is guaranteed to exist (empty or not)
+
+                const index = ejInstances.indexOf(ejInstance);
+                if (index !== -1) {
+                    ejInstances.splice(index, 1); // actually remove the instance from the array
+                }
+            }
+
+            // ----------- Now Untag with N2 instances ----------
+            let n2Instances: N2[] = ej[N2_CLASS];
+            if (!n2Instances)
                 return; // nothing to untag
 
-            // At this point state.ej.ejInstances is an array that is guaranteed to exist (empty or not)
-
-            const index = ejInstances.indexOf(ejInstance);
+            const index = n2Instances.indexOf(this);
             if (index !== -1) {
-                ejInstances.splice(index, 1); // actually remove the instance from the array
+                n2Instances.splice(index, 1); // actually remove the instance from the array
             }
+
 
         } catch (e) {
             console.error('Error tagging ej2 component', e);
         }
     } // untagEjWithEJComponent
 
+
+    /**
+     * Returns an array of all the EJ2 instances in the model passed in as an array
+     * @param ejModel the EJ model instance
+     * @return {EJ2COMPONENT[]} an array of all the EJ2 instances i(or a blank array, never null)
+     */
+    public static ejInstances<EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) >(ejModel:any): EJ2COMPONENT[] {
+        return (ejModel && ejModel[EJINSTANCES] || [] )as EJ2COMPONENT[];
+    }
+
+    /**
+     * Returns the first EJ2 instance in the model passed in or null if there are none
+     * @param ejModel EJ model instance
+     * @return {EJ2COMPONENT} the first EJ2 instance in the model passed in or null if there are none
+     */
+    public static ejInstance<EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) >(ejModel:any): EJ2COMPONENT {
+        let array = N2Ej.ejInstances(ejModel);
+        return (array && array.length > 0 ? array[0] : null) as EJ2COMPONENT;
+    }
 }

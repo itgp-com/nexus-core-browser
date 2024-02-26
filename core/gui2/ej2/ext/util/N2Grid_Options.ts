@@ -31,17 +31,20 @@ import {isSpinnerCreated} from './Spinner_Options';
 export let CHAR_WIDTH_PIXELS: number = 8;
 export const COL_ROW_NUMBER: string = '__gridrownumber__';
 
-export const rowColumn: ColumnModel = {
-    field: COL_ROW_NUMBER,
-    headerText: 'Row#',
-    headerTextAlign: "Center",
-    type: "number",
-    textAlign: "Center",
-    width: 9 * CHAR_WIDTH_PIXELS,
-    allowFiltering: false,
-    allowGrouping: false,
-    allowSorting: false,
-    showColumnMenu: false,
+export function rowNumberCol(): ColumnModel {
+    return {
+        field: COL_ROW_NUMBER,
+        headerText: 'Row#',
+        headerTextAlign: "Center",
+        type: "number",
+        textAlign: "Center",
+        width: 9 * CHAR_WIDTH_PIXELS,
+        allowFiltering: false,
+        allowGrouping: false,
+        allowSorting: false,
+        allowEditing: false,
+        allowSearching: false,
+    } as ColumnModel;
 }
 
 export function stateN2Grid_applyWx(state: StateN2Grid): void {
@@ -138,7 +141,7 @@ export interface Grid_RowNumber_Options {
 }
 
 /**
- * Your grid must have a column with field = COL_ROW_NUMBER
+ * Your grid must have a column with field = COL_ROW_NUMBER otherwise this function will insert one as the first column when called
  * @param {StateN2Grid} state
  * @param {Grid_RowNumber_Options} options
  */
