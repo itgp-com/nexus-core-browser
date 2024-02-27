@@ -522,24 +522,26 @@ export function findParentN2ByClass<T extends N2 = N2>(current: HTMLElement | N2
 }
 
 /**
- removeAllN2Children removes all child N2 components from a given N2 component.
+ removeAllChildren removes all child components (N2 or not) from a given N2 component.
 
- First it finds all child N2 components at any level using findN2ChildrenAllLevels.
+ if destroy_removed_children is true (defaults to true) it finds all child N2 components at any level using findN2ChildrenAllLevels.
  It loops through each one and calls destroy() to remove them properly.
 
- Then it gets the HTML element of the N2 and removes all child elements from it directly using native JS/HTML.
+ Then it gets the HTML element of the N2 and removes all child elements from it directly using native JS/HTML (regardless of whether they were N2 or not)
 
  This completely clears out all children from an N2 component.
 
  Parameters:
  - n2: N2 - The N2 component to remove all children from
+- destroy_removed_children: boolean - If true, calls destroy() on each child N2 component to remove them properly. Default is true.
 
  Returns:
  - void
  */
-export function removeAllN2Children(n2: N2): void {
+export function removeAllChildren(n2: N2, destroy_removed_children = true): void {
     if (!n2) return;
 
+    if ( destroy_removed_children ) {
     // first destroy all N2 children in a civilized manner
     try {
         let n2_children = findN2ChildrenAllLevels(n2);
@@ -549,6 +551,7 @@ export function removeAllN2Children(n2: N2): void {
             } catch (e) { console.error(e); }
         } // for
     } catch (e) { console.error(e); }
+        }
 
     // Now remove all children from the HTML element
     let elem: HTMLElement = n2.htmlElement
