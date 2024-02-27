@@ -522,7 +522,7 @@ export function findParentN2ByClass<T extends N2 = N2>(current: HTMLElement | N2
 }
 
 /**
- removeAllChildren removes all child components (N2 or not) from a given N2 component.
+ removeAllChildrenInN2 removes all child components (N2 or not) from a given N2 component.
 
  if destroy_removed_children is true (defaults to true) it finds all child N2 components at any level using findN2ChildrenAllLevels.
  It loops through each one and calls destroy() to remove them properly.
@@ -538,7 +538,7 @@ export function findParentN2ByClass<T extends N2 = N2>(current: HTMLElement | N2
  Returns:
  - void
  */
-export function removeAllChildren(n2: N2, destroy_removed_children = true): void {
+export function removeAllChildrenInN2(n2: N2, destroy_removed_children = true): void {
     if (!n2) return;
 
     if ( destroy_removed_children ) {
