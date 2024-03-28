@@ -78,6 +78,11 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * If false, the excelQueryCellInfo event will call the formatter function and set the value to the result of the formatter
      */
     disableExcelAutoFormater?: boolean;
+
+    /**
+     * By default the grid will scroll to the first row after paging. Setting this property to true will disable that behavior.
+     */
+    disableScrollToTopAfterPaging?: boolean;
 }
 
 export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {

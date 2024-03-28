@@ -25,6 +25,7 @@ import {EJINSTANCES} from '../../../../Constants';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../../scss/vars-material';
+import {getN2FromEJ2} from '../../Ej2Utils';
 import {N2Ej} from '../../N2Ej';
 import {N2Grid, StateN2Grid} from '../N2Grid';
 import {isSpinnerCreated} from './Spinner_Options';
@@ -612,15 +613,16 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
 
                         } // if dlgContent
                     } // if dlgElem
-
-                    if (prevActionBegin) {
-                        try {
-                            prevActionBegin(args);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    } // if prevActionBegin
                 } // if filterchoicerequest || filtersearchbegin
+
+
+                if (prevActionBegin) {
+                    try {
+                        prevActionBegin(args); //keep the context
+                    } catch (e) {
+                        console.error(e);
+                    }
+                } // if prevActionBegin
             }, // actionBegin
             actionComplete: (args) => {
                 if (args.requestType === 'filtering') {
@@ -638,15 +640,40 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                     } catch (e) {
                         console.error(e);
                     }
-
-                    if (prevActionComplete) {
-                        try {
-                            prevActionComplete(args);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    }
                 } // if filtering
+
+                try {
+                    if (args.requestType == 'paging') {
+                        let ejInstances = gridModel[EJINSTANCES];
+                        if (ejInstances != null && ejInstances.length > 0) {
+                            for (let i = 0; i < ejInstances.length; i++) {
+                                let grid = ejInstances[0];
+
+                                let n2Grid:N2Grid = getN2FromEJ2(grid) as N2Grid;
+                                if (n2Grid?.state?.disableScrollToTopAfterPaging)
+                                    continue; // skip this grid
+
+                                if (grid != null) {
+                                    try {
+                                        grid.getContent().firstElementChild.scrollTop = 0; // scroll to top
+                                    } catch (e) {
+                                        console.error(e);
+                                    }
+                                } // if grid
+                            } // for
+                        } // if ejInstances
+                    } // if paging
+                }catch (e) {
+                    console.error(e);
+                }
+
+                if (prevActionComplete) {
+                    try {
+                        prevActionComplete(args);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
 
             }, // actionComplete
         } as GridModel
