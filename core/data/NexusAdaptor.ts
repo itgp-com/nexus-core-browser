@@ -4,6 +4,7 @@ import {DataResult, PvtOptions, Requests} from "@syncfusion/ej2-data/src/adaptor
 import {ParamOption, Predicate, QueryOptions} from "@syncfusion/ej2-data/src/query";
 import {Aggregates, Group} from "@syncfusion/ej2-data/src/util";
 import {nexusMain} from "../NexusMain";
+import {EJBase} from './Ej2Comm';
 import {HttpRequestEvtAdaptor, HttpResponseEvtAdaptor} from "./NexusComm";
 
 /**
@@ -43,9 +44,6 @@ export class NexusAdaptor extends UrlAdaptor {
         }
         for (let _i = 0, _a = options.params; _i < _a.length; _i++) {
             let tmp = _a[_i];
-            // if (req[tmp.key]) {
-            //     throw new Error('Query() - addParams: Custom Param is conflicting other request arguments');
-            // }
             req[tmp.key] = tmp.value;
             if (tmp.fn) {
                 req[tmp.key] = tmp.fn.call(options.query, tmp.key, options.query, options.dm);
@@ -71,10 +69,9 @@ export class NexusAdaptor extends UrlAdaptor {
      * Used to set the custom header or modify the request options.
      * @param  {DataManager} dm
      * @param  {XMLHttpRequest} request
-     * @param  {any} settings
      * @returns void
      */
-    beforeSend(dm: DataManager, request: Request, settings ?:any): void {
+    beforeSend(dm: DataManager, request: Request): void {
         if (NexusAdaptor.showDebug)
             console.log("beforeSend");
 
@@ -182,6 +179,7 @@ export class NexusAdaptor extends UrlAdaptor {
         if (NexusAdaptor.showDebug)
             console.log("processResponse");
 
+        // give the onHttpResponse first priority
         try {
             nexusMain.ui?.onHttpResponse({
                 type: "ej2Adaptor",
@@ -195,6 +193,21 @@ export class NexusAdaptor extends UrlAdaptor {
         } catch (e) {
             console.error(e);
         }
+
+        // Check for Nexus error messages
+        if ( data && data['i_d'] && data['v_e_r']  ) {
+            let retVal = data as EJBase;
+            let errMsgLog = retVal.errMsgDisplay
+            if ( errMsgLog) {
+                console.error(errMsgLog);
+                console.error('Full data for the above:', data);
+            }
+
+            let errMsgDisplay = retVal.errMsgDisplay;
+            if (errMsgDisplay)
+                throw data;
+
+        } // if nexus EjBase object
 
         return super.processResponse(data, ds, query, xhr, request, changes);
     }
