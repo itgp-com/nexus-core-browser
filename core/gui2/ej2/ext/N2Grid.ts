@@ -83,17 +83,27 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * By default the grid will scroll to the first row after paging. Setting this property to true will disable that behavior.
      */
     disableScrollToTopAfterPaging?: boolean;
+
+    /**
+     * By default the Excel filter will move the 'contains' filter to the top.
+     *
+     * Set this to true to disable that behavior and return the default Syncfusion order of filter operations ('contains' at the end)
+     */
+    disableContainsAtTopOfFilter?: boolean;
 }
 
 export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {
     static readonly CLASS_IDENTIFIER: string = 'N2Grid';
 
-    constructor(state ?: STATE) {
-        super(state);
-    }
+    get classIdentifier(): string { return N2Grid.CLASS_IDENTIFIER; }
+
+    createEjObj(): void {
+        this.obj = new Grid(this.state.ej);
+    } // createEjObj
 
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco, N2Grid.CLASS_IDENTIFIER);
+        let thisX = this;
 
         if (state.disableCustomFilter == undefined || !state.disableCustomFilter) {
             stateGrid_CustomExcelFilter(state.ej); // Every N2Grid gets an Excel filter from now on unless disabled by state.disableCustomFilter
@@ -119,18 +129,90 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     } catch (e) { console.error(e); }
                 } // excelQueryCellInfo
             } catch (e) { console.error(e); }
-        }
+        } // if state.disableExcelAutoFormater
+
+
+        //----------------- start contains at top of filter -----------------
+        if (state.disableContainsAtTopOfFilter) {
+            // do nothing
+        } else {
+            let existingActionBegin = state.ej.actionBegin;
+
+            let filterOperators :any = {
+                string: [
+                    'Contains',
+                    'Starts With',
+                    'Ends With',
+                    'Equal',
+                    'Empty',
+                    '',
+                    'Does Not Start With',
+                    'Does Not End With',
+                    'Does Not Contain',
+                    'Not Equal',
+                    'Not Empty',
+                    '',
+                    'Custom Filter',
+                ],
+                number: [
+                    'Equal',
+                    'Not Equal',
+                    '',
+                    'Greater Than',
+                    'Greater Than Or Equal',
+                    'Less Than',
+                    'Less Than Or Equal',
+                    '',
+                    'Null',
+                    'Not Null',
+                    'Custom Filter',
+                ],
+                boolean: ['Equal', 'Not Equal', '', 'Custom Filter'],
+            };
+            filterOperators = {
+                ...filterOperators,
+                date: filterOperators.number,
+                datetime: filterOperators.number,
+                dateonly: filterOperators.number,
+            };
+
+            state.ej.actionBegin = (args: any) => {
+                let grid = thisX.obj;
+
+                if (args.requestType == 'filterchoicerequest') {
+
+                    // @ts-ignore
+                    let f_getcMenuDS = function getCMenuDS(type) {
+                        let model = [];
+                        for (let i = 0; i < filterOperators[type].length; i++) {
+                            if (filterOperators[type][i].length) {
+                                model.push({
+                                    text: filterOperators[type][i] + '...',
+                                });
+                            } else {
+                                model.push({separator: true});
+                            }
+                        }
+                        return model;
+                    }; // f_getcMenuDS
+
+                    (grid.filterModule.filterModule as any).excelFilterBase.getCMenuDS = f_getcMenuDS;
+
+                } // if filterchoicerequest
+
+                if (existingActionBegin) {
+                    existingActionBegin.call(this, args);
+                } // if existingActionBegin
+            } // actionBegin
+        } // if state.disableContainsAtTopOfFilter
+        //----------------- end contains at top of filter -----------------
 
         super.onStateInitialized(state)
     } // onStateInitialized
 
-
-    createEjObj(): void {
-        this.obj = new Grid(this.state.ej);
-    } // createEjObj
-
-    get classIdentifier(): string { return N2Grid.CLASS_IDENTIFIER; }
-
+    constructor(state ?: STATE) {
+        super(state);
+    }
 
     /**
      * The function is used to generate updated Query from Grid model.

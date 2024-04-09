@@ -22,7 +22,10 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
+
     "suppressImplicitAnyIndexErrors": true,
+    "ignoreDeprecation": true,
+
     "lib": ["es2017","es5", "es6", "dom", "esnext.intl", "es2017.intl", "es2018.intl"],
     "types": ["node", "mocha"],
     // typeRoots option has been previously configured
