@@ -24,6 +24,7 @@ import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
 import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor} from '../../../CoreUtils';
+import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';
@@ -137,6 +138,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             // do nothing
         } else {
             let existingActionBegin = state.ej.actionBegin;
+            let existingCreated = state.ej.created;
+
+
 
             let filterOperators :any = {
                 string: [
@@ -176,6 +180,44 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 dateonly: filterOperators.number,
             };
 
+            // This function prevents the filter dialog from opening for operations that don't require data entry:
+            // Syncfusion ticket https://support.syncfusion.com/support/tickets/578055
+            let customFilterOpen = (args:any) => { // beforeCustomFilterOpen internal event
+                try {
+                    let grid: Grid = this.obj;
+
+                    let filterColumn = args.column; //set the columnname to the global variable
+
+                    (grid.filterModule.filterModule as any).excelFilterBase.dlgObj.beforeOpen = function (args: any) { //bind the beforeOpen to the Dialog component
+
+                        let dropdown_value: string = args.element.querySelector('.e-dropdownlist').value; //get the dropdown value
+
+                        switch (dropdown_value) {
+                            case 'Empty':
+                                args.cancel = true;       //prevent the custom filter dialog open by setting args.cancel as true
+                                grid.filterByColumn(filterColumn, QUERY_OPERATORS.IS_EMPTY, ""); //filter the column by using isempty operator
+                                break;
+                            case 'Not Empty':
+                                args.cancel = true;       //prevent the custom filter dialog open by setting args.cancel as true
+                                grid.filterByColumn(filterColumn, QUERY_OPERATORS.IS_NOT_EMPTY, ""); //filter the column by using isnotnull operator
+                                break;
+                            case 'Null':
+                                args.cancel = true;       //prevent the custom filter dialog open by setting args.cancel as true
+                                grid.filterByColumn(filterColumn, QUERY_OPERATORS.IS_NULL, ""); //filter the column by using isnull operator
+                                break;
+                            case 'Not Null':
+                                args.cancel = true;       //prevent the custom filter dialog open by setting args.cancel as true
+                                grid.filterByColumn(filterColumn, QUERY_OPERATORS.IS_NOT_NULL, ""); //filter the column by using isnotnull operator
+                                break;
+
+                        } // switch
+
+                    } // beforeOpen
+                } catch (e) {
+                    console.error(e);
+                }
+            } // customFilterOpen
+
             state.ej.actionBegin = (args: any) => {
                 let grid = thisX.obj;
 
@@ -201,9 +243,29 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 } // if filterchoicerequest
 
                 if (existingActionBegin) {
-                    existingActionBegin.call(this, args);
+                    existingActionBegin.call(this.obj, args);
                 } // if existingActionBegin
             } // actionBegin
+
+
+            // Enables filter dialog from opening for operations that don't require data entry:
+            // Syncfusion ticket https://support.syncfusion.com/support/tickets/578055
+            state.ej.created = (args: any) => {
+                let grid = thisX.obj;
+                try {
+                    // the beforeCustomFilterOpen event is an internal event, So we need to manually ON that event
+                    grid.on('beforeCustomFilterOpen', customFilterOpen);
+                } catch(e) {
+                    console.error(e);
+                }
+
+                if ( existingCreated ) {
+                    existingCreated.call(this.obj, args);
+                }
+            } // created
+
+
+
         } // if state.disableContainsAtTopOfFilter
         //----------------- end contains at top of filter -----------------
 
