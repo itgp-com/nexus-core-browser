@@ -159,6 +159,8 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     'Custom Filter',
                 ],
                 number: [
+                    'Between',
+                    '',
                     'Equal',
                     'Greater Than',
                     'Less Than',
