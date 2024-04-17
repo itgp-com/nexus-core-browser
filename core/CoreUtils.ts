@@ -750,7 +750,7 @@ export function cssSetSelectorVariable(selector: string, variableName: string, v
 
     // Set the CSS variable for each element
     elements.forEach((element) => {
-        element.style.setProperty(variableName, value);
+        (element as HTMLElement).style.setProperty(variableName, value);
     });
 } // cssSetSelectorVariable
 
