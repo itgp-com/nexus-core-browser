@@ -705,6 +705,55 @@ export function toStringFromMaybeArray(input: (string | string[]), joinUsing: st
 let cachedStyle: HTMLStyleElement;
 let ruleMap: Map<string, number> = new Map<string, number>();
 
+/**
+ * Function to set a CSS variable on the root element
+ *
+ * Example:
+ * ```typescript
+ * cssSetRootVariable('--my-color', 'green');
+ * ```
+ */
+export function cssSetRootCSSVariable(variableName: string, value: string): void {
+    // Access the root element
+    const root = document.documentElement;
+
+    // Set the CSS variable
+    root.style.setProperty(variableName, value);
+} // cssSetRootCSSVariable
+
+/**
+ * Function to set a CSS variable on a specified selector
+ *
+ * Examples of Use
+ *
+ * Example 1 - Setting a variable on a class:
+ *```typescript
+ * cssSetSelectorVariable('.example-class', '--main-bg-color', 'cyan');
+ * ```
+ *
+ * Example 2 - Setting a variable on an ID:
+ *
+ *```typescript
+ * cssSetSelectorVariable('#example-id', '--main-text-color', 'magenta');
+ * ```
+ *
+ * Example 3 - Setting a variable on a complex selector:
+ *
+ * ```typescript
+ * cssSetSelectorVariable('body.dark-mode .content', '--link-color', 'yellow');
+ * ```
+ *
+ */
+export function cssSetSelectorVariable(selector: string, variableName: string, value: string): void {
+    // Access elements by selector
+    const elements = document.querySelectorAll(selector);
+
+    // Set the CSS variable for each element
+    elements.forEach((element) => {
+        element.style.setProperty(variableName, value);
+    });
+} // cssSetSelectorVariable
+
 
 /**
  * Adds a CSS class with specified rules to a cached stylesheet.
