@@ -3,11 +3,11 @@ import {N2Basic, StateN2Basic} from '../N2Basic';
 import {addN2Class} from '../N2HtmlDecorator';
 import {StateN2Ref} from '../StateN2';
 
-export interface N2DlgStateRef extends StateN2Ref {
+interface N2DlgStateRef extends StateN2Ref {
     widget?: N2Dlg;
 }
 
-export interface N2DlgState<DATA_TYPE = any> extends StateN2Basic {
+interface N2DlgState<DATA_TYPE = any> extends StateN2Basic {
     /**
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
@@ -19,7 +19,7 @@ export interface N2DlgState<DATA_TYPE = any> extends StateN2Basic {
 
 } // N2ListPopupState
 
-export class N2Dlg<STATE extends N2DlgState = N2DlgState> extends N2Basic<STATE> {
+class N2Dlg<STATE extends N2DlgState = N2DlgState> extends N2Basic<STATE> {
     static readonly CLASS_IDENTIFIER: string = 'N2Dlg';
 
     constructor(state: STATE) {

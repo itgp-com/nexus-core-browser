@@ -490,7 +490,7 @@ export function findParentN2Dialog(current: HTMLElement | N2) : any {
     let htmlElement = current instanceof HTMLElement ? current : current.htmlElement;
     let parentElement = findParentHTMLElement(htmlElement, 'N2Dialog');
     if ( !parentElement )
-        parentElement = findParentHTMLElement(htmlElement, 'N2Dlg');
+        parentElement = findParentHTMLElement(htmlElement, 'N2Dlg'); // Use N2Dlg CLASS_IDENTIFIER
 
     if ( parentElement ) {
         let parent =  getN2FromHtmlElement(parentElement);
