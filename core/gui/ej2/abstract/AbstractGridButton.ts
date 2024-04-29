@@ -1,10 +1,12 @@
+import {Button} from "@syncfusion/ej2-buttons";
+import {ButtonModel} from "@syncfusion/ej2-buttons/src/button/button-model";
 import {ColumnModel, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
+import {Tooltip} from "@syncfusion/ej2-popups";
+import {throttle} from 'lodash';
 import {CSS_CLASS_grid_btn_font_awesome} from '../../../gui2/scss/core';
-import {GridWidgetCallBack}                  from "../../WidgetUtils";
-import {Button}                              from "@syncfusion/ej2-buttons";
-import {Tooltip}                             from "@syncfusion/ej2-popups";
-import {ButtonModel}                         from "@syncfusion/ej2-buttons/src/button/button-model";
+import {GridWidgetCallBack} from "../../WidgetUtils";
 
+// noinspection SpellCheckingInspection
 export class Args_AbstractGridButton {
    buttonClass: string; // BTN_LINK_CLASS
    iconClassName ?: string //ej2_icon_createlink
@@ -91,13 +93,23 @@ export abstract class AbstractGridButton {
 
          } // if tooltip
 
-         btnLinkElem.onclick = () => {
+         let f_throttled = throttle((_ev:any) => {
             if (tt)
                tt.close();
 
             if (params.callback)
                params.callback(params.args); // trigger the callback function passed in
-         }
+         },
+             2000,
+             {
+                leading: true, // leading: true allows the function to be called immediately on the first trigger within the wait period.
+                trailing: false // trailing: false prevents the function from being called at the end of the wait period as a result of calls that occurred during the wait.
+             }
+         );
+
+         btnLinkElem.onclick = (ev) => {
+               f_throttled.call(ej2ButtonInstance, ev);
+         } // click
       }
       return btnLinkElem;
    } // link

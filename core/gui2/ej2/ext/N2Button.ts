@@ -1,9 +1,9 @@
 import {Button, ButtonModel} from '@syncfusion/ej2-buttons';
+import {throttle} from 'lodash';
 import {StringArg, stringArgVal} from '../../../BaseUtils';
 import {cssAddSelector} from '../../../CoreUtils';
 import {N2Evt_OnLogic} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
-import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
@@ -23,6 +23,22 @@ export interface StateN2Button extends StateN2EjBasic<ButtonModel> {
      * implement the onClick behavior of the button
      */
     onclick?: (ev: MouseEvent) => void;
+
+    /**
+     * User 'onclick' instead
+     */
+    onClick?: never;
+
+    /**
+     * The time in milliseconds to wait before allowing another click event to be processed
+     * Default is 2000 (2000ms=2s)
+     */
+    click_throttle_wait_ms?: number;
+
+    /**
+     * If set to true, the click event will not be throttled
+     */
+    click_throttle_disable?: boolean;
 
     /**
      * Override with specific type used in code completion
@@ -47,17 +63,36 @@ export class N2Button<STATE extends StateN2Button = StateN2Button> extends N2EjB
     }
 
     onLogic(ev: N2Evt_OnLogic) {
+        let thisX = this;
+
         let state = this.state;
         if (state.label)
             state.ej.content = stringArgVal(state.label); // Button content label/ html
 
         super.onLogic(ev);
 
-        // attach the onclick event to the htmlElementAnchor
-        if (this.state.onclick)
-            this.htmlElementAnchor.onclick = this.state.onclick;
+        let wait_ms = this.state.click_throttle_wait_ms || 2000;
+        let f_throttled_click = throttle(() => {
+                this.state.onclick.call(thisX, ev);
+            },
+            wait_ms,
+            {
+                leading: true, // leading: true allows the function to be called immediately on the first trigger within the wait period.
+                trailing: false // trailing: false prevents the function from being called at the end of the wait period as a result of calls that occurred during the wait.
+            }
+        );
 
-    }
+        // attach the onclick event to the htmlElementAnchor
+        if (this.state.onclick) {
+            this.htmlElementAnchor.onclick = (ev) => {
+                if (this.state.click_throttle_disable) {
+                    this.state.onclick.call(thisX, ev);
+                } else {
+                    f_throttled_click.call(thisX);
+                } // if (this.state.click_throttle_disable)
+            } // onclick external function
+        } // if onclick
+    } // onLogic
 
     createEjObj(): void {
         this.obj = new Button(this.state.ej);

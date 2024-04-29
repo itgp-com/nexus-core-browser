@@ -238,7 +238,14 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 } // if (thisX && thisX.obj && thisX.initialized )
             } // if resizeAllowed
         } // function body of debouncedFunction
-        , this.resizeEventMinInterval);
+        ,
+        this.resizeEventMinInterval,
+        {
+            leading: false, //leading: false means the function will not execute on the first call but will start the timer.
+            trailing: true, // trailing: true ensures that the function will execute once at the end of the wait period, provided no new calls are made within the last 500ms of the timer.
+        }
+
+        );
 
 
     //---------------- end resize methods ----------------

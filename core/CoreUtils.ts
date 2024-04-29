@@ -943,7 +943,7 @@ export function cssRemoveSelector(cssSelectorName: string, global: boolean = fal
 
 /**
  * Dynamically adds an @media query to the cached stylesheet.
- * Use {@link cssRemoveMediaQuery} to remove the media query.
+ * Use {@link cssRemoveQuery} to remove the media query.
  *
  * **Example usage:**
  * ```typescript
@@ -955,34 +955,34 @@ export function cssRemoveSelector(cssSelectorName: string, global: boolean = fal
  * `);
  * ```
  *
- * @param {string} mediaQuery
+ * @param {string} cssQuery
  * @param {string} rules
  */
-export function cssAddMediaQuery(mediaQuery: string, rules: string): void {
+export function cssAddQuery(cssQuery: string, rules: string): void {
     const styleSheet = document.createElement('style');
     document.head.appendChild(styleSheet);
-    styleSheet.appendChild(document.createTextNode(`${mediaQuery} { ${rules} }`));
-} // cssAddMediaQuery
+    styleSheet.appendChild(document.createTextNode(`${cssQuery} { ${rules} }`));
+} // cssAddQuery
 
 
 /**
- * Remove a @media rule from the existing CSS
+ * Remove a @media or other @query (ex: @keyframes) rule from the existing CSS
  *
- * Use {@link cssAddMediaQuery} to add a media query.
+ * Use {@link cssAddQuery} to add a  query.
  *
  * Example:
  *  ```typescript
- * cssRemoveMediaQuery('@media (min-width: 992px)', '.o-main-title-row-right');
+ * cssRemoveQuery('@media (min-width: 992px)', '.o-main-title-row-right');
  * ```
  *
- * @param {string} mediaQuery the media string to find the selector under
+ * @param {string} cssQuery the query string to find the selector under
  * @param {string} selector the selector to remove
  */
-function cssRemoveMediaQuery(mediaQuery: string, selector: string): void {
+function cssRemoveQuery(cssQuery: string, selector: string): void {
     const styleSheets = Array.from(document.styleSheets) as CSSStyleSheet[];
     for (const sheet of styleSheets) {
         for (const rule of Array.from(sheet.cssRules)) {
-            if (rule.constructor.name === 'CSSMediaRule' && (rule as CSSMediaRule).media.mediaText === mediaQuery) {
+            if (rule.constructor.name === 'CSSMediaRule' && (rule as CSSMediaRule).media.mediaText === cssQuery) {
                 const mediaRule = rule as CSSMediaRule;
                 const index = Array.from(mediaRule.cssRules).findIndex(r =>
                     r.constructor.name === 'CSSStyleRule' && (r as CSSStyleRule).selectorText === selector
@@ -993,13 +993,13 @@ function cssRemoveMediaQuery(mediaQuery: string, selector: string): void {
             }
         }
     }
-} // cssRemoveMediaQuery
+} // cssRemoveQuery
 
 
 /**
  * Adds or overwrites a rule within a media query
  *
- * Alternative to using {@link cssAddMediaQuery} and {@link cssRemoveMediaQuery}
+ * Alternative to using {@link cssAddQuery} and {@link cssRemoveQuery}
  *
  * **Example Usages:**
  *
@@ -1013,7 +1013,7 @@ function cssRemoveMediaQuery(mediaQuery: string, selector: string): void {
  * manageMediaQuery('@media (min-width: 992px)', '.o-main-title-row-right', 'align-items: flex-start; gap: 10px;', true);
  * ```
  */
-function cssManageMediaQuery(mediaQuery: string, selector: string, rules: string, overwrite: boolean): void {
+function cssManageQuery(cssquery: string, selector: string, rules: string, overwrite: boolean): void {
     const styleSheets = Array.from(document.styleSheets) as CSSStyleSheet[];
     let mediaStyleSheet: CSSStyleSheet | undefined;
     let mediaRule: CSSMediaRule | undefined;
@@ -1021,7 +1021,7 @@ function cssManageMediaQuery(mediaQuery: string, selector: string, rules: string
     // Find existing media query
     for (const sheet of styleSheets) {
         for (const rule of Array.from(sheet.cssRules)) {
-            if (rule.constructor.name === 'CSSMediaRule' && (rule as CSSMediaRule).media.mediaText === mediaQuery) {
+            if (rule.constructor.name === 'CSSMediaRule' && (rule as CSSMediaRule).media.mediaText === cssquery) {
                 mediaStyleSheet = sheet;
                 mediaRule = rule as CSSMediaRule;
                 break;
@@ -1035,7 +1035,7 @@ function cssManageMediaQuery(mediaQuery: string, selector: string, rules: string
         const styleSheet = document.createElement('style');
         document.head.appendChild(styleSheet);
         mediaStyleSheet = styleSheet.sheet as CSSStyleSheet;
-        mediaStyleSheet.insertRule(`${mediaQuery} {}`, mediaStyleSheet.cssRules.length);
+        mediaStyleSheet.insertRule(`${cssquery} {}`, mediaStyleSheet.cssRules.length);
         mediaRule = mediaStyleSheet.cssRules[mediaStyleSheet.cssRules.length - 1] as CSSMediaRule;
     }
 
