@@ -1,6 +1,6 @@
-import {getRandomString} from '../BaseUtils';
-import {isHTMLElement} from '../CoreUtils';
-import {nexusMain} from '../NexusMain';
+import {getRandomString} from './BaseUtils';
+import {isHTMLElement} from './CoreUtils';
+import {nexusMain} from './NexusMain';
 
 /**
  *
