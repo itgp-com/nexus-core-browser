@@ -56,8 +56,13 @@ static readonly CLASS_IDENTIFIER: string = 'N2Html'
 
 
          //merge attributes
-         Object.assign(elem.attributes, this.state.deco.otherAttr);
-         // this.htmlElement = elem as HTMLElement;
+         let otherAttr = this.state.deco.otherAttr;
+         for (const key in otherAttr) {
+            if (otherAttr.hasOwnProperty(key)) {
+               elem.setAttribute(key, otherAttr[key]);
+            } // if hasOwnProperty
+         } // for
+
          return elem as HTMLElement;
       }
    } //onHtml

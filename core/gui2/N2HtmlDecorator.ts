@@ -1,8 +1,9 @@
-import {isEmpty} from "lodash";
+import * as _ from "lodash";
 import {IKeyValueString} from "../BaseUtils";
 import {cssStyleToString} from "../CoreUtils";
 import {CssStyle} from "../gui/AbstractWidget";
 import {StateN2} from "./StateN2";
+
 
 export interface N2HtmlDecorator<STATE extends StateN2 = StateN2> {
     /**
@@ -111,7 +112,7 @@ export class IHtmlUtils {
     static style(decorator: N2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let htmlTagStyle = '';
-        if (decorator.style && !isEmpty(decorator.style))
+        if (decorator.style && !_.isEmpty(decorator.style))
             htmlTagStyle = `style="${cssStyleToString(decorator.style)}"`; // no space prefix
         return htmlTagStyle;
     }
@@ -126,7 +127,7 @@ export class IHtmlUtils {
      */
     static otherAttr(decorator: N2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
-        let otherAttrArray = Object.entries(decorator.otherAttr as any);
+        let otherAttrArray = Object.entries(decorator.otherAttr);
         let htmlAttrs: string = '';
         if (decorator.otherAttr) {
             otherAttrArray.forEach(entry => {
@@ -137,7 +138,7 @@ export class IHtmlUtils {
                 if (value == null) {
                     htmlAttrs += `${spacer}${key}` // attributes like 'required' that don't have an equal something after the name
                 } else {
-                    htmlAttrs += `${spacer}${key}="${value}"`;
+                    htmlAttrs += `${spacer}${key}="${_.escape(value)}"`;
                 }
             });
         }
