@@ -4,7 +4,7 @@ import {
    N2Evt,
    N2Evt_AfterLogic,
    N2Evt_BeforeLogic,
-   N2Evt_Destroy,
+   N2Evt_Destroy, N2Evt_DomAdded, N2Evt_DomRemoved,
    N2Evt_OnHtml,
    N2Evt_OnLogic,
    N2Evt_Resized
@@ -52,6 +52,18 @@ export interface StateN2 {
     * by using the widget instance in the parameter
     */
    onBeforeInitLogic?: (ev ?: N2Evt_BeforeLogic) => (void|Promise<void>);
+
+   /**
+    * If this is specified, it will be called when the html element for this N2 widget is added to the DOM
+    * @param {N2Evt_DomAdded} ev
+    */
+   onDOMAdded ?: (ev: N2Evt_DomAdded) => void;
+
+   /**
+    * If this is specified, it will be called when the html element for this N2 widget is removed from the DOM
+    * @param {N2Evt_DomRemoved} ev
+    */
+   onDOMRemoved ?: (ev: N2Evt_DomRemoved) => void;
 
    /**
     * The HTML decoration for the HTML element that of the widget

@@ -1,6 +1,6 @@
-import {getRandomString} from '../BaseUtils';
-import {isHTMLElement} from '../CoreUtils';
-import {nexusMain} from '../NexusMain';
+import {getRandomString} from './BaseUtils';
+import {isHTMLElement} from './CoreUtils';
+import {nexusMain} from './NexusMain';
 
 /**
  *
@@ -97,6 +97,7 @@ export class ObserverManager {
 
                                     //2. For each callback, see if its identifier is found as a child of node at some level
                                     ObserverManager.mapOnAdded.forEach((argOnAdded, key) => {
+                                        // console.log('ObserverManager elemAdded: checking if contains id', key, node.outerHTML);
                                         let containedElem = node.querySelector(`#${key}`) as Element;
                                         if (containedElem && isHTMLElement(containedElem)) {
                                             if (argOnAdded.onAdded) {

@@ -13,6 +13,7 @@ import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
 import {addN2Child, removeN2Child} from './ej2/Ej2Utils';
 import {addN2Class, IHtmlUtils} from "./N2HtmlDecorator";
 import {Elem_or_N2, getFirstHTMLElementChild, isN2, toProperHtmlId} from './N2Utils';
+import {ObserverManager} from '../ObserverManager';
 import {CSS_VARS_CORE} from './scss/vars-material';
 import {StateN2} from "./StateN2";
 import {ThemeChangeEvent, themeChangeListeners} from './Theming';
@@ -20,6 +21,29 @@ import {ThemeChangeEvent, themeChangeListeners} from './Theming';
 
 export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     static readonly CLASS_IDENTIFIER: string = 'N2';
+
+    /**
+     * A boolean indicating this instance is a N2.
+     * @type {boolean}
+     * @readonly
+     */
+    readonly isN2: boolean = true;
+
+    private _className: string;
+    private _state: STATE;
+    private _obj: JS_COMPONENT;
+    private _parent: N2;
+    private _initialized: boolean = false; // True if initLogic has been invoked already
+    private _initLogicInProgress: boolean;
+    private _resizeSensor: ResizeSensor;
+    private _resizeAllowed: boolean = true;
+    private _resizeEventMinInterval: number; // milliseconds
+
+    private __onStateInitializedInProgress = false;
+    private _initStateCalled: boolean = false;
+    private _alreadyInOnStateInitialized: boolean = false; // flag to prevent infinite recursion
+    private _onDOMAddedProcessed: boolean = false;
+    private _onDOMRemovedProcessed: boolean = false;
 
     protected constructor(state ?: STATE) {
         this._constructor(state);
@@ -41,11 +65,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         state.ref.widget = this;
         this.state = state;
         this.className = this.constructor.name; // the name of the class
-        if (!state.tagId) state.tagId = getRandomString( toProperHtmlId( this._className) ); // in case className gets converted to something starting with $ or another invalid char we always have the '_' as a valid char
+        if (!state.tagId) state.tagId = getRandomString(toProperHtmlId(this._className)); // in case className gets converted to something starting with $ or another invalid char we always have the '_' as a valid char
     } // _constructor
 
-
-    private __onStateInitializedInProgress = false;
 
     /**
      * This method assumes that the state is completely initialized and ready to be used.
@@ -106,15 +128,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     } // onStateInitialized
 
 
-    /**
-     * A boolean indicating this instance is a N2.
-     * @type {boolean}
-     * @readonly
-     */
-    readonly isN2: boolean = true;
-
-    private _state: STATE;
-
     get state(): STATE {
         return this._state;
     } // state
@@ -138,7 +151,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         this._state = state;
     }
 
-    private _className: string;
 
     get className(): string {
         return this._className;
@@ -159,9 +171,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     }
 
 
-    private _resizeSensor: ResizeSensor;
-    private _resizeAllowed: boolean = true;
-
     public get resizeAllowed(): boolean {
         return this._resizeAllowed;
     }
@@ -178,7 +187,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         this._resizeSensor = value;
     }
 
-    private _resizeEventMinInterval: number; // milliseconds
 
     /**
      * Defaults to 400 ms if not set
@@ -244,14 +252,11 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             leading: false, //leading: false means the function will not execute on the first call but will start the timer.
             trailing: true, // trailing: true ensures that the function will execute once at the end of the wait period, provided no new calls are made within the last 500ms of the timer.
         }
-
-        );
+    );
 
 
     //---------------- end resize methods ----------------
 
-
-    private _obj: JS_COMPONENT;
 
     /**
      * Get the JS instance underlying this widget
@@ -270,8 +275,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     }
 
 
-    private _initialized: boolean = false; // True if initLogic has been invoked already
-
     get initialized(): boolean {
         return this._initialized;
     }
@@ -280,7 +283,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         this._initialized = value;
     }
 
-    private _initLogicInProgress: boolean;
 
     get initLogicInProgress(): boolean {
         return this._initLogicInProgress;
@@ -295,7 +297,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         this._initLogicInProgress = value;
     }
 
-    private _parent: N2;
 
     get parent(): N2 {
         return this._parent;
@@ -506,6 +507,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         } else {
             this.htmlElement = this.onHtml.call(this, {widget: this});
         }
+
+        this._registerOnDOMAdded(); // register the onDOMAdded event
+        this._registerOnDOMRemoved(); // register the onDOMRemoved event
     } // initHtml
 
     initLogic(): void {
@@ -674,6 +678,19 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     onAfterInitWidgetOnly(_args: N2Evt_AfterLogic): void {}
 
 
+    /**
+     * If this is specified, it will be called when the html element for this N2 widget is added to the DOM
+     * @param {N2Evt_DomAdded} ev
+     */
+    onDOMAdded ?: (ev: N2Evt_DomAdded) => void;
+
+    /**
+     * If this is specified, it will be called when the html element for this N2 widget is removed from the DOM
+     * @param {N2Evt_DomRemoved} ev
+     */
+    onDOMRemoved ?: (ev: N2Evt_DomRemoved) => void;
+
+
     private _initLogicIfNeeded() {
 
         try {
@@ -774,9 +791,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     }
 
     //---------------------------------------------
-    private _initStateCalled: boolean = false;
-    private _alreadyInOnStateInitialized: boolean = false; // flag to prevent infinite recursion
-
     protected _triggerOnStateInitialized(): void {
         if (this._alreadyInOnStateInitialized)
             return;
@@ -793,6 +807,95 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             }
         }
     } // _triggerOnStateInitialized
+
+    protected _registerOnDOMAdded(): void {
+        if (this._onDOMAddedProcessed)
+            return;
+
+        this._onDOMAddedProcessed = true; // so it cannot be called again
+
+        try {
+            if (this.state.onDOMAdded) {
+                try {
+                    ObserverManager.addOnAdded({
+                        identifier: this.state.tagId,
+                        onAdded: (element: HTMLElement) => {
+                            try {
+                                this.state.onDOMAdded.call(this, {widget: this, element: element});
+                            } catch (e) { console.error('Error calling this.state.onDOMAdded(...)', e, element, this); }
+                        },
+                        autoRemove: true,
+                    });
+                } catch (e) {
+                    console.error(e);
+                    this.handleError(e);
+                }
+
+            } else if (this.onDOMAdded) {
+                try {
+                    ObserverManager.addOnAdded({
+                        identifier: this.state.tagId,
+                        onAdded: (element: HTMLElement) => {
+                            try {
+                                this.onDOMAdded.call(this, {widget: this, element: element});
+                            } catch (e) { console.error('Error calling this.onDOMAdded(...)', e, element, this); }
+                        },
+                        autoRemove: true,
+                    });
+                } catch (e) {
+                    console.error(e);
+                    this.handleError(e);
+                }
+            }
+        } catch (e) { console.error(e); }
+
+    } // _registerOnDOMAdded
+    //--------------------------------------------
+
+
+    protected _registerOnDOMRemoved(): void {
+        if (this._onDOMRemovedProcessed)
+            return;
+
+        this._onDOMRemovedProcessed = true; // so it cannot be called again
+
+        try {
+            if (this.state.onDOMRemoved) {
+                try {
+                    ObserverManager.addOnRemoved({
+                        identifier: this.state.tagId,
+                        onRemoved: (element: HTMLElement) => {
+                            try {
+                                this.state.onDOMRemoved.call(this, {widget: this, element: element});
+                            } catch (e) { console.error('Error calling this.state.onDOMRemoved(...)', e, element, this); }
+                        },
+                        autoRemove: true,
+                    });
+                } catch (e) {
+                    console.error(e);
+                    this.handleError(e);
+                }
+
+            } else if (this.onDOMRemoved) {
+                try {
+                    ObserverManager.addOnRemoved({
+                        identifier: this.state.tagId,
+                        onRemoved: (element: HTMLElement) => {
+                            try {
+                                this.onDOMRemoved.call(this, {widget: this, element: element});
+                            } catch (e) { console.error('Error calling this.onDOMRemoved(...)', e, element, this); }
+                        },
+                        autoRemove: true,
+                    });
+                } catch (e) {
+                    console.error(e);
+                    this.handleError(e);
+                }
+            }
+
+        } catch (e) { console.error(e); }
+
+    } // _registerOnDOMRemoved
     //--------------------------------------------
 
     get classIdentifier(): string { return N2.CLASS_IDENTIFIER; }
@@ -803,7 +906,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
      * @return {N2[]} array of N2 or empty array. Never null
      */
     public static instances(model: any): N2[] {
-        return(model && model[N2_CLASS] ||[]) as N2[];
+        return (model && model[N2_CLASS] || []) as N2[];
     }
 
     /**
@@ -815,7 +918,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         let array = N2.instances(model);
         return (array && array.length > 0 ? array[0] : null) as N2;
     }
-
 
 
 } // N2
@@ -891,6 +993,21 @@ export interface N2Evt_AfterLogic extends N2Evt {
 
 export interface N2Evt_Resized extends N2Evt {
     size?: { width: number; height: number; }
+}
+
+
+export interface N2Evt_DomAdded<WIDGET extends N2 = N2> extends N2Evt<WIDGET> {
+    /**
+     * The HTMLElement of this widget that was added to the DOM
+     */
+    element: HTMLElement;
+}
+
+export interface N2Evt_DomRemoved<WIDGET extends N2 = N2> extends N2Evt<WIDGET> {
+    /**
+     * The HTMLElement of this widget that was removed from the DOM
+     */
+    element: HTMLElement;
 }
 
 
