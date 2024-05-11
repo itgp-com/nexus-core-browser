@@ -137,7 +137,11 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
 
         let gridDecoratorsHeight: number = getGridDecoratorsHeight(grid);
 
-        let totalHeight = this.centerContainer.htmlElement.offsetHeight;
+        let parentElem = grid.element?.parentElement;
+        if (!parentElem)
+            parentElem = this.centerContainer.htmlElement;
+
+        let totalHeight = parentElem.offsetHeight;
 
 
         // the grid has this extra height that we need to subtract between offset and client somewhere
@@ -158,7 +162,11 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
         if (!grid)
             return 0;
 
-        let totalWidth: number = this.centerContainer.htmlElement.offsetWidth;
+        let parentElem = grid.element?.parentElement;
+        if (!parentElem)
+            parentElem = this.centerContainer.htmlElement;
+
+        let totalWidth: number = parentElem.offsetWidth;
 
         let gridWidth: number = totalWidth - 1;
         return gridWidth;
