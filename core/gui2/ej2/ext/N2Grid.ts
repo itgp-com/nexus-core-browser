@@ -91,6 +91,15 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * Set this to true to disable that behavior and return the default Syncfusion order of filter operations ('contains' at the end)
      */
     disableContainsAtTopOfFilter?: boolean;
+
+    /**
+     * If left empty, the column menu is displayed for each column (except the ones where it explicitly disabled in the ColumnModel).
+     *
+     * The Column Menu is displayed by default for each column in an N2Grid.
+     *
+     * Set this to **true** to disable the column menu for all columns (Note: might display filters if custom filters not disabled).
+     */
+    disableShowColumnMenu?: boolean;
 }
 
 export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {
@@ -105,6 +114,11 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco, N2Grid.CLASS_IDENTIFIER);
         let thisX = this;
+
+        if ( state.disableShowColumnMenu == undefined || !state.disableShowColumnMenu ) {
+            state.ej.showColumnMenu = true;
+        } // if state.disableShowColumnMenu
+
 
         if (state.disableCustomFilter == undefined || !state.disableCustomFilter) {
             stateGrid_CustomExcelFilter(state.ej); // Every N2Grid gets an Excel filter from now on unless disabled by state.disableCustomFilter
@@ -418,9 +432,14 @@ font-size: var(--app-font-size-regular);`
     `);
 
     // group area background color
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-groupdroparea.e-grouped`, `
-  background-color: var(--app-color-panel-background);     
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-groupdroparea`, `
+            background-color: var(--app-filter-text-background-color);     
+            color: #000;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-top-color: #e0e0e0;
     `);
+
 // This is here for the grid cell to not wrap on <br>
     cssAddSelector(`.${n2GridClass} td.e-rowcell br`, `
      display: none;
