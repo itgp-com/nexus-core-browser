@@ -1,4 +1,6 @@
 import {Splitter, SplitterModel} from '@syncfusion/ej2-layouts';
+import {cssAddSelector} from '../../../CoreUtils';
+import {nexusMain} from '../../../NexusMain';
 import {N2, N2Evt_OnLogic} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {getN2FromHtmlElement, isN2HtmlElement} from '../../N2Utils';
@@ -89,3 +91,17 @@ export class N2Splitter<STATE extends StateN2Splitter = StateN2Splitter> extends
     get classIdentifier(): string { return N2Splitter.CLASS_IDENTIFIER; }
 
 } // main class
+
+nexusMain.UIStartedListeners.add(()=>{
+
+    // if the static pane is also resizable, it will actually not resize with the default css
+    // this will allow it to resize, and it doesn't affect anything since if the pane is not
+    // resizable, there are no handles available (we can also manually make it not grow)
+    cssAddSelector(`
+    .${N2Splitter.CLASS_IDENTIFIER}.e-splitter.e-splitter-horizontal .e-pane.e-static-pane, 
+    .${N2Splitter.CLASS_IDENTIFIER}.e-splitter.e-splitter-vertical .e-pane.e-static-pane
+    `,`
+     flex-grow: unset; 
+     flex-shrink: unset;
+    `);
+}, 10);
