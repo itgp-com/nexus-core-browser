@@ -1,4 +1,6 @@
 import {Grid, GridModel} from '@syncfusion/ej2-grids';
+import {toInteger} from 'lodash';
+import {getClientHeight, getClientWidth, getOffsetHeight, getOffsetWidth} from '../../../BaseUtils';
 import {CSS_FLEX_MAX_XY} from '../../scss/core';
 import {N2PanelLayout, StateN2PanelLayout} from '../../generic/N2PanelLayout';
 import {EnumPanelLayout} from '../../generic/N2PanelLayoutFlex';
@@ -141,7 +143,7 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
         if (!parentElem)
             parentElem = this.centerContainer.htmlElement;
 
-        let totalHeight = parentElem.offsetHeight;
+        let totalHeight = getOffsetHeight(parentElem);
 
 
         // the grid has this extra height that we need to subtract between offset and client somewhere
@@ -166,9 +168,10 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
         if (!parentElem)
             parentElem = this.centerContainer.htmlElement;
 
-        let totalWidth: number = parentElem.offsetWidth;
+        let innerWidth = getOffsetWidth(parentElem);
 
-        let gridWidth: number = totalWidth - 1;
+        // noinspection ES6ConvertLetToConst,UnnecessaryLocalVariableJS
+        let gridWidth: number = (innerWidth > 1 ? innerWidth - 1: innerWidth);
         return gridWidth;
     }
 

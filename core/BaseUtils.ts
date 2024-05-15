@@ -442,3 +442,91 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
    }
 
 } // applyHtmlDecoration
+
+
+/**
+ * Gets the inner width of an HTMLElement, including padding but excluding borders and margins.
+ * Handles elements with any display type, including inline elements.
+ *
+ * @param {HTMLElement} element - The HTMLElement to measure.
+ * @returns {number} The client width of the element in pixels.
+ */
+export function getClientWidth(element: HTMLElement): number {
+   // Temporarily change display to inline-block to measure width if needed
+   const originalDisplay = element.style.display;
+   if (window.getComputedStyle(element).display === 'inline') {
+      element.style.display = 'inline-block';
+   }
+
+   const width = element.clientWidth;
+
+   // Restore the original display value
+   element.style.display = originalDisplay;
+
+   return width;
+} // getClientWidth
+/**
+ * Gets the inner height of an HTMLElement, including padding but excluding borders and margins.
+ * Handles elements with any display type, including inline elements.
+ *
+ * @param {HTMLElement} element - The HTMLElement to measure.
+ * @returns {number} The client height of the element in pixels.
+ */
+export function getClientHeight(element: HTMLElement): number {
+   // Temporarily change display to inline-block to measure height if needed
+   const originalDisplay = element.style.display;
+   if (window.getComputedStyle(element).display === 'inline') {
+      element.style.display = 'inline-block';
+   }
+
+   const height = element.clientHeight;
+
+   // Restore the original display value
+   element.style.display = originalDisplay;
+
+   return height;
+} // getClientHeight
+
+/**
+ * Gets the offset width of an HTMLElement, including padding, borders, and vertical scrollbars, but excluding margins.
+ * Handles elements with any display type, including inline elements.
+ *
+ * @param {HTMLElement} element - The HTMLElement to measure.
+ * @returns {number} The offset width of the element in pixels.
+ */
+export function getOffsetWidth(element: HTMLElement): number {
+   // Temporarily change display to inline-block to measure width if needed
+   const originalDisplay = element.style.display;
+   if (window.getComputedStyle(element).display === 'inline') {
+      element.style.display = 'inline-block';
+   }
+
+   const width = element.offsetWidth;
+
+   // Restore the original display value
+   element.style.display = originalDisplay;
+
+   return width;
+} // getOffsetWidth
+
+/**
+ * Gets the offset height of an HTMLElement, including padding, borders, and horizontal scrollbars, but excluding margins.
+ * Handles elements with any display type, including inline elements.
+ *
+ * @param {HTMLElement} element - The HTMLElement to measure.
+ * @returns {number} The offset height of the element in pixels.
+ */
+export function getOffsetHeight(element: HTMLElement): number {
+   // Temporarily change display to inline-block to measure height if needed
+   const originalDisplay = element.style.display;
+   if (window.getComputedStyle(element).display === 'inline') {
+      element.style.display = 'inline-block';
+   }
+
+   const height = element.offsetHeight;
+
+   // Restore the original display value
+   element.style.display = originalDisplay;
+
+   return height;
+} // getOffsetHeight

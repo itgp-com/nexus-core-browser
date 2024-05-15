@@ -679,16 +679,16 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
 
 
     /**
-     * If this is specified, it will be called when the html element for this N2 widget is added to the DOM
+     * If this is overridden in a child class, it will be called when the html element for this N2 widget is added to the DOM
      * @param {N2Evt_DomAdded} ev
      */
-    onDOMAdded ?: (ev: N2Evt_DomAdded) => void;
+    onDOMAdded(ev: N2Evt_DomAdded) : void {}
 
     /**
-     * If this is specified, it will be called when the html element for this N2 widget is removed from the DOM
+     * If this is overridden in a child class, it will be called when the html element for this N2 widget is removed from the DOM
      * @param {N2Evt_DomRemoved} ev
      */
-    onDOMRemoved ?: (ev: N2Evt_DomRemoved) => void;
+    onDOMRemoved(ev: N2Evt_DomRemoved): void{}
 
 
     private _initLogicIfNeeded() {
@@ -830,8 +830,8 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                     console.error(e);
                     this.handleError(e);
                 }
-
-            } else if (this.onDOMAdded) {
+            } else if ( !(N2.prototype.onDOMAdded === this.onDOMAdded) ) {
+                // if the base method from N2 is DIFFERENT than the current method
                 try {
                     ObserverManager.addOnAdded({
                         identifier: this.state.tagId,
@@ -876,7 +876,8 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                     this.handleError(e);
                 }
 
-            } else if (this.onDOMRemoved) {
+            } else if ( !(N2.prototype.onDOMRemoved === this.onDOMRemoved) ){
+                // if the base method from N2 is DIFFERENT than the current method
                 try {
                     ObserverManager.addOnRemoved({
                         identifier: this.state.tagId,
