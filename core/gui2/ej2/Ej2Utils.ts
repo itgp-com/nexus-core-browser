@@ -290,8 +290,8 @@ export function getEj2ArrayFromHtmlElement(elem: HTMLElement): (Component<HTMLEl
  */
 export function getEj2FromModel(model: any): any[] {
     let instances:any[] = [];
-    if (model) {
-       instances.push( ... EJINSTANCES )
+    if (model && model[EJINSTANCES]) {
+       instances.push( ... model[EJINSTANCES] )
     } // if elem exists
     return instances;
 } // getEj2FromModel

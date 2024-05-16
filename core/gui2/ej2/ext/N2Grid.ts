@@ -22,6 +22,7 @@ import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
+import {ColumnMenuOpenEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
 import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor} from '../../../CoreUtils';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
@@ -29,6 +30,7 @@ import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
+import {getFirstEj2FromModel} from '../Ej2Utils';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 import {stateGrid_CustomExcelFilter} from './util/N2Grid_Options';
 
@@ -100,6 +102,13 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * Set this to **true** to disable the column menu for all columns (Note: might display filters if custom filters not disabled).
      */
     disableShowColumnMenu?: boolean;
+
+    /**
+     * By default, in an N2Grid, the Autofit All option in a column menu is disabled.
+     * Set this to **true** to enable the Autofit All option in the column menu.
+     */
+    enableColumnMenuAutofitAll?: boolean;
+
 }
 
 export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {
@@ -114,10 +123,36 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco, N2Grid.CLASS_IDENTIFIER);
         let thisX = this;
+        state.ej = state.ej || {};
+        let gridModel: GridModel = state.ej;
 
-        if ( state.disableShowColumnMenu == undefined || !state.disableShowColumnMenu ) {
+        if (state.disableShowColumnMenu == undefined || !state.disableShowColumnMenu) {
             state.ej.showColumnMenu = true;
         } // if state.disableShowColumnMenu
+
+        if (!state.enableColumnMenuAutofitAll) {
+
+            try {
+                let f_user_columnMenuOpen = gridModel.columnMenuOpen;
+                gridModel.columnMenuOpen = (ev: ColumnMenuOpenEventArgs) => {
+                    let grid: Grid = getFirstEj2FromModel(gridModel);
+
+                    for (let i = 0; i < ev.items.length; i++) {
+                        if (ev.items[i].id.endsWith('_colmenu_AutoFitAll')) {
+                            let elem = document.getElementById(ev.items[i].id);
+                            if (elem) {
+                                elem.style.display = 'none';
+                            }
+                        }
+                    } // for
+
+                    if (f_user_columnMenuOpen != null) {
+                        f_user_columnMenuOpen.call(grid, ev);
+                    }
+
+                } // columnMenuOpen
+            } catch (e) { console.error(e); }
+        } // if ! state.enableColumnMenuAutofitAll
 
 
         if (state.disableCustomFilter == undefined || !state.disableCustomFilter) {
@@ -155,8 +190,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             let existingCreated = state.ej.created;
 
 
-
-            let filterOperators :any = {
+            let filterOperators: any = {
                 string: [
                     'Contains',
                     'Starts With',
@@ -198,7 +232,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
             // This function prevents the filter dialog from opening for operations that don't require data entry:
             // Syncfusion ticket https://support.syncfusion.com/support/tickets/578055
-            let customFilterOpen = (args:any) => { // beforeCustomFilterOpen internal event
+            let customFilterOpen = (args: any) => { // beforeCustomFilterOpen internal event
                 try {
                     let grid: Grid = this.obj;
 
@@ -271,15 +305,14 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 try {
                     // the beforeCustomFilterOpen event is an internal event, So we need to manually ON that event
                     grid.on('beforeCustomFilterOpen', customFilterOpen);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
-                if ( existingCreated ) {
+                if (existingCreated) {
                     existingCreated.call(this.obj, args);
                 }
             } // created
-
 
 
         } // if state.disableContainsAtTopOfFilter
@@ -618,6 +651,19 @@ font-size: var(--app-font-size-regular);`
     .${n2GridClass}.${eGridClass} .e-grid-menu .e-icon-filter.e-filtered::before`, `
 line-height: 8px;
 `);
+
+
+    // disable excel sort menu items in the filter menu specific to excel filters (the sort exists on the main column already)
+    // .e-excel-ascending,
+    // .e-excel-descending,
+    // .e-separator.e-excel-separator {
+    //   display: none;
+    // }
+    cssAddSelector(`
+    .${n2GridClass}.${eGridClass} .e-menu-item.e-excel-ascending, 
+    .${n2GridClass}.${eGridClass} .e-menu-item.e-excel-descending, 
+    .${n2GridClass}.${eGridClass} .e-menu-item.e-separator.e-excel-separator`,
+        `display: none;`);
 
 } // cssForN2Grid
 
