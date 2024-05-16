@@ -22,7 +22,9 @@ import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
-import {ColumnMenuOpenEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
+import {ColumnMenuItemModel, ColumnMenuOpenEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
+import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
+import {MenuEventArgs} from '@syncfusion/ej2-navigations';
 import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor} from '../../../CoreUtils';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
@@ -130,13 +132,50 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             state.ej.showColumnMenu = true;
         } // if state.disableShowColumnMenu
 
-        if (!state.enableColumnMenuAutofitAll) {
 
-            try {
-                let f_user_columnMenuOpen = gridModel.columnMenuOpen;
-                gridModel.columnMenuOpen = (ev: ColumnMenuOpenEventArgs) => {
-                    let grid: Grid = getFirstEj2FromModel(gridModel);
+        //---------------- Column Menu start ---------------------
+        const clearSortSuffix = '_colmenu_clearSort';
+        if (!gridModel.columnMenuItems) {
 
+            gridModel.columnMenuItems = [
+                'AutoFitAll', 'AutoFit', 'SortAscending', 'SortDescending',
+                {
+                    "text": "Clear Sort",
+                    "id": state.tagId + clearSortSuffix,
+                    "iconCss": ""
+                } as ColumnMenuItemModel,
+                'Group', 'Ungroup', 'ColumnChooser', 'Filter'] as any[];
+        } // if ! gridModel.columnMenuItems
+
+
+        try {
+            let f_user_columnMenuOpen = gridModel.columnMenuOpen;
+            gridModel.columnMenuOpen = (ev: ColumnMenuOpenEventArgs) => {
+                let grid: Grid = getFirstEj2FromModel(gridModel);
+
+
+                let clearSortItem = ev.items.find((elem) => elem.id.endsWith(clearSortSuffix));
+                let clearSortElem = document.getElementById(clearSortItem.id);
+                if ( clearSortElem  ) {
+                    if (ev.column.allowSorting) {
+                        let index = grid.sortSettings.columns.findIndex((col) => col.field == ev.column.field); // -1 means not found
+                        if ( index < 0) {
+                            // not sorted currently, so remove clear sort option
+                            clearSortElem.style.display = 'none';
+                        } else {
+                            // make it visible again if it was hidden by style.display = 'none' previously
+                            clearSortElem.style.display = ''; //
+                        }
+
+                    } else {
+                        // sorting not allowed, so remove clear sort option
+                        clearSortElem.style.display = 'none';
+                    }
+                } // if clearSortElem
+
+
+
+                if (!state.enableColumnMenuAutofitAll) {
                     for (let i = 0; i < ev.items.length; i++) {
                         if (ev.items[i].id.endsWith('_colmenu_AutoFitAll')) {
                             let elem = document.getElementById(ev.items[i].id);
@@ -146,13 +185,37 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                         }
                     } // for
 
-                    if (f_user_columnMenuOpen != null) {
-                        f_user_columnMenuOpen.call(grid, ev);
-                    }
+                } // if ! state.enableColumnMenuAutofitAll
+                if (f_user_columnMenuOpen != null) {
+                    f_user_columnMenuOpen.call(grid, ev);
+                }
 
-                } // columnMenuOpen
+            } // columnMenuOpen
+        } catch (e) { console.error(e); }
+
+
+        let f_user_columnMenuClick = gridModel.columnMenuClick;
+        gridModel.columnMenuClick = (ev: MenuEventArgs) => {
+            let grid: Grid = getFirstEj2FromModel(gridModel);
+            try {
+                if (ev.item.id.endsWith(clearSortSuffix)) {
+                    // handle Clear Sort
+                    let column = (ev as any).column as Column;
+                    if (column) {
+                        grid.removeSortColumn(column.field);
+                    } // if column
+                }
             } catch (e) { console.error(e); }
-        } // if ! state.enableColumnMenuAutofitAll
+
+            try {
+                if (f_user_columnMenuClick != null) {
+                    f_user_columnMenuClick.call(grid, ev);
+                }
+            } catch (e) { console.error(e); }
+        } // columnMenuClick
+
+        //------------------ Column Menu end ---------------------
+
 
 
         if (state.disableCustomFilter == undefined || !state.disableCustomFilter) {
