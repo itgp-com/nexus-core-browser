@@ -155,23 +155,26 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
                 let clearSortItem = ev.items.find((elem) => elem.id.endsWith(clearSortSuffix));
-                let clearSortElem = document.getElementById(clearSortItem.id);
-                if ( clearSortElem  ) {
-                    if (ev.column.allowSorting) {
-                        let index = grid.sortSettings.columns.findIndex((col) => col.field == ev.column.field); // -1 means not found
-                        if ( index < 0) {
-                            // not sorted currently, so remove clear sort option
-                            clearSortElem.style.display = 'none';
-                        } else {
-                            // make it visible again if it was hidden by style.display = 'none' previously
-                            clearSortElem.style.display = ''; //
-                        }
+                if ( clearSortItem ) {
+                    // only exists in main menu, in column or filter sub menus it's blank
+                    let clearSortElem = document.getElementById(clearSortItem.id);
+                    if (clearSortElem) {
+                        if (ev.column.allowSorting) {
+                            let index = grid.sortSettings.columns.findIndex((col) => col.field == ev.column.field); // -1 means not found
+                            if (index < 0) {
+                                // not sorted currently, so remove clear sort option
+                                clearSortElem.style.display = 'none';
+                            } else {
+                                // make it visible again if it was hidden by style.display = 'none' previously
+                                clearSortElem.style.display = ''; //
+                            }
 
-                    } else {
-                        // sorting not allowed, so remove clear sort option
-                        clearSortElem.style.display = 'none';
-                    }
-                } // if clearSortElem
+                        } else {
+                            // sorting not allowed, so remove clear sort option
+                            clearSortElem.style.display = 'none';
+                        }
+                    } // if clearSortElem
+                } // if clearSortItem
 
 
 
