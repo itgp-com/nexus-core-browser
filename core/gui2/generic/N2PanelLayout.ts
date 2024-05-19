@@ -2,7 +2,7 @@ import {cssAddClass} from '../../CoreUtils';
 import {CssStyle} from '../../gui/AbstractWidget';
 import {nexusMain} from '../../NexusMain';
 import {N2Basic, StateN2Basic} from '../N2Basic';
-import {addN2Class, IHtmlUtils} from '../N2HtmlDecorator';
+import {addN2Class, decoToCssStyle, IHtmlUtils} from '../N2HtmlDecorator';
 import {Elem_or_N2} from '../N2Utils';
 import {N2Panel, StateN2Panel} from './N2Panel';
 
@@ -117,7 +117,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
             state.center_overflow_auto = true;
         }
 
-        let userStyle:CssStyle;
+        let userStyle:CssStyle|string;
 
 
         let topState: StateN2Panel = state.stateTopContainer || {};
@@ -126,7 +126,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         userStyle = topState?.deco?.style || {};
         topState.deco.style = {
             'background-color': 'transparent',
-            ...userStyle,
+            ...decoToCssStyle(userStyle),
         };
         addN2Class(topState.deco, CLASS_N2_PANEL_LAYOUT_TOP);
         if (state.top)
@@ -140,7 +140,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         userStyle = leftState?.deco?.style || {};
         leftState.deco.style = {
             'background-color': 'transparent',
-            ...userStyle,
+            ...decoToCssStyle(userStyle),
         };
         addN2Class(leftState.deco, CLASS_N2_PANEL_LAYOUT_LEFT);
         if (state.left)
@@ -153,7 +153,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         userStyle = centerState?.deco?.style || {};
         centerState.deco.style = {
             'background-color': 'transparent',
-            ...userStyle,
+            ...decoToCssStyle(userStyle),
         };
         addN2Class(centerState.deco, CLASS_N2_PANEL_LAYOUT_CENTER);
         if (state.center_overflow_auto) {
@@ -171,7 +171,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         userStyle = rightState?.deco?.style || {};
         rightState.deco.style = {
             'background-color': 'transparent',
-            ...userStyle,
+            ...decoToCssStyle(userStyle),
         };
         addN2Class(rightState.deco, CLASS_N2_PANEL_LAYOUT_RIGHT);
         if (state.right)
@@ -185,7 +185,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         userStyle = bottomState?.deco?.style || {};
         bottomState.deco.style = {
             'background-color': 'transparent',
-            ...userStyle,
+            ...decoToCssStyle(userStyle),
         };
         addN2Class(bottomState.deco, CLASS_N2_PANEL_LAYOUT_BOTTOM);
         if (state.bottom)

@@ -1,5 +1,5 @@
 import {N2Basic, StateN2Basic, StateN2BasicRef} from '../N2Basic';
-import {addN2Class, IHtmlUtils} from '../N2HtmlDecorator';
+import {addN2Class, decoMergeStyles, decoToCssStyle, IHtmlUtils} from '../N2HtmlDecorator';
 import {Elem_or_N2} from '../N2Utils';
 import {CSS_VARS_CORE} from '../scss/vars-material';
 import {N2Panel, StateN2Panel} from './N2Panel';
@@ -78,7 +78,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
             'flex-direction': 'row',
             'justify-content': 'space-between',
             'background-color': 'var(--app-color-panel-background)',
-            ...style
+            ...decoToCssStyle( style )
         }
         state.deco.style = style;
 

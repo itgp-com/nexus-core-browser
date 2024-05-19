@@ -1,7 +1,7 @@
 import {escape, isFunction, isString} from "lodash";
 import {N2Evt_OnHtml} from "../N2";
 import {N2Basic, StateN2Basic, StateN2BasicRef} from "../N2Basic";
-import {addN2Class} from '../N2HtmlDecorator';
+import {addN2Class, applyCssToElement} from '../N2HtmlDecorator';
 import {createN2HtmlBasic} from "../N2Utils";
 
 export interface StateN2HtmlRef extends StateN2BasicRef {
@@ -70,8 +70,7 @@ export class N2Html<STATE extends StateN2Html = StateN2Html> extends N2Basic<STA
             }
             // merge styles
             if (this.state.deco.style != null)
-                Object.assign(elem.style, this.state.deco.style);
-
+                applyCssToElement(elem, this.state.deco.style); //  was: Object.assign(elem.style, this.state.deco.style);
 
             //merge attributes
             let otherAttr = this.state.deco.otherAttr;

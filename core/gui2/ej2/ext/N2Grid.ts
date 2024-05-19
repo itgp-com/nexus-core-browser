@@ -1,4 +1,5 @@
 import {KeyboardEvents} from '@syncfusion/ej2-base';
+import {SpeedDialItemEventArgs} from '@syncfusion/ej2-buttons/src/speed-dial/speed-dial';
 import {Query} from '@syncfusion/ej2-data';
 import {ExcelQueryCellInfoEventArgs, Grid, GridModel, Sort} from '@syncfusion/ej2-grids';
 import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
@@ -28,12 +29,14 @@ import {MenuEventArgs} from '@syncfusion/ej2-navigations';
 import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor} from '../../../CoreUtils';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
+import {N2Evt_DomAdded} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {getFirstEj2FromModel} from '../Ej2Utils';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {N2SpeedDial} from './N2SpeedDial';
 import {stateGrid_CustomExcelFilter} from './util/N2Grid_Options';
 
 Grid.Inject(
@@ -117,6 +120,10 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     static readonly CLASS_IDENTIFIER: string = 'N2Grid';
 
     get classIdentifier(): string { return N2Grid.CLASS_IDENTIFIER; }
+
+    constructor(state ?: STATE) {
+        super(state);
+    }
 
     createEjObj(): void {
         this.obj = new Grid(this.state.ej);
@@ -340,6 +347,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 if (args.requestType == 'filterchoicerequest') {
 
                     // @ts-ignore
+                    // noinspection UnnecessaryLocalVariableJS
                     let f_getcMenuDS = function getCMenuDS(type) {
                         let model = [];
                         for (let i = 0; i < filterOperators[type].length; i++) {
@@ -387,9 +395,41 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         super.onStateInitialized(state)
     } // onStateInitialized
 
-    constructor(state ?: STATE) {
-        super(state);
-    }
+
+    // public onDOMAdded(ev: N2Evt_DomAdded): void {
+    //
+    //     let grid = this.obj;
+    //     let n2SpeedDial = new N2SpeedDial({
+    //         ej: {
+    //             target: grid.element,
+    //             position: 'TopRight',
+    //             opensOnHover: true,
+    //
+    //             items: [
+    //                 {
+    //                     id: 'refresh',
+    //                     text: 'Refresh',
+    //                     title: 'Title of Refresh'
+    //                 }
+    //             ],
+    //             clicked: (ev: SpeedDialItemEventArgs) => {
+    //                 switch (ev.item?.id){
+    //                     case 'refresh':
+    //                         grid.refresh();
+    //                         break;
+    //                 } // switch
+    //             }, // clicked
+    //             content: `<i class="fa-solid fa-square-caret-down fa-xs"></i>`,
+    //             // popupTemplate: `<i class="fa-solid fa-square-caret-down fa-xs"></i>`,
+    //
+    //         }, // ej
+    //     });
+    //
+    //
+    //     n2SpeedDial.initLogic();
+    //
+    //     super.onDOMAdded(ev);
+    // }
 
     /**
      * The function is used to generate updated Query from Grid model.
@@ -424,9 +464,6 @@ export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
 
     let accent = CSS_VARS_CORE.material_accent_color;
     let accentContrastColor = 'white'; // fontColor(accent); // dynamically calculated based on theme color
-
-    const rootStyle = getComputedStyle(document.documentElement);
-
 
     let gridHoverBgColor = CSS_VARS_EJ2.grid_hover_bg_color;
     let gridHoverFontColor = fontColor(gridHoverBgColor); // the contrast color to the current background
@@ -733,6 +770,6 @@ line-height: 8px;
 
 } // cssForN2Grid
 
-themeChangeListeners().add((ev: ThemeChangeEvent) => {
+themeChangeListeners().add((_ev: ThemeChangeEvent) => {
     cssForN2Grid(N2Grid.CLASS_IDENTIFIER, 'e-grid');
 }); // normal priority

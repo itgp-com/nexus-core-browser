@@ -16,9 +16,9 @@ export interface N2HtmlDecorator<STATE extends StateN2 = StateN2> {
     classes?: string | string[];
 
     /**
-     * the style assigned to this HTMLElement
+     * the style assigned to this HTMLElement (can be CssStyle or string as of 3.9.9)
      */
-    style?: CssStyle;
+    style?: CssStyle | string;
 
     /**
      * other attributes assigned to this HTMLElement
@@ -112,8 +112,14 @@ export class IHtmlUtils {
     static style(decorator: N2HtmlDecorator): string {
         decorator = IHtmlUtils.init(decorator);
         let htmlTagStyle = '';
-        if (decorator.style && !_.isEmpty(decorator.style))
-            htmlTagStyle = `style="${cssStyleToString(decorator.style)}"`; // no space prefix
+        if (decorator.style) {
+            if (typeof decorator.style === 'string') {
+                const normalizedStyle = decorator.style.replace(/\s+/g, ' ').trim();
+                htmlTagStyle = `style="${normalizedStyle}"`;
+            } else if (!_.isEmpty(decorator.style)) {
+                htmlTagStyle = `style="${cssStyleToString(decorator.style)}"`;
+            }
+        }
         return htmlTagStyle;
     }
 
@@ -236,6 +242,20 @@ export function removeN2Class(args:N2HtmlDecorator, ...classesToRemove: string[]
     return args;
 } // removeN2Class
 
+// Extend applyCssToElement to handle CssStyle or string
+export function applyCssToElement(element: HTMLElement, css: CssStyle | string): void {
+    if (typeof css === 'string') {
+        const styles = parseCssString(css);
+        Object.keys(styles).forEach(property => {
+            element.style.setProperty(property, styles[property]);
+        });
+    } else {
+        Object.keys(css).forEach(property => {
+            element.style.setProperty(property, css[property]);
+        });
+    }
+}
+
 
 
 /**
@@ -337,20 +357,154 @@ export function decoToHtmlElement(source: N2HtmlDecorator, target: HTMLElement, 
     }
 
     // Transfer classes
-    let classArray = (source.classes ? Array.isArray(source.classes) ? source.classes : [source.classes]: []);
-    if (classArray && classArray.length > 0) {
+    let classArray = source.classes ? (Array.isArray(source.classes) ? source.classes : [source.classes]) : [];
+    if (classArray.length > 0) {
         target.classList.add(...classArray);
     }
 
     // Transfer style
     if (source.style) {
-        Object.assign(target.style, source.style);
+        if (typeof source.style === 'string') {
+            const styles = parseCssString(source.style);
+            Object.keys(styles).forEach(property => {
+                target.style.setProperty(property, styles[property]);
+            });
+        } else {
+            Object.assign(target.style, source.style);
+        }
     }
 
-    // Transfer other attributes as attributes
+    // Transfer other attributes
     if (source.otherAttr) {
         for (const [attrName, attrValue] of Object.entries(source.otherAttr)) {
             target.setAttribute(attrName, attrValue);
         }
     }
-} // transferN2HtmlDecorator
+} // decoToHtmlElement
+
+/**
+ * Parses a CSS string into an object.
+ *
+ * This utility function takes a CSS string, typically containing multiple CSS declarations,
+ * and converts it into an object where each key is a CSS property and each value is the corresponding CSS value.
+ * It handles comments and trims whitespace from properties and values.
+ *
+ * @param {string} css - The CSS string to be parsed.
+ * @returns {Record<string, string>} - An object representing the CSS properties and values.
+ *
+ * @example
+ * const cssString = "min-width: 20px; height: 20px;";
+ * const styleObject = parseCssString(cssString);
+ * console.log(styleObject); // { min-width: '20px', height: '20px' }
+ */
+export function parseCssString(css: string): Record<string, string> {
+    const styleObject: Record<string, string> = {};
+    const declarations = css.split(';')
+        .map(decl => decl.trim())
+        .filter(decl => decl.length > 0 && !decl.startsWith('/*') && !decl.endsWith('*/'));
+
+    declarations.forEach(declaration => {
+        const [property, value] = declaration.split(':').map(part => part.trim());
+        if (property && value) {
+            styleObject[property] = value;
+        }
+    });
+
+    return styleObject;
+} // parseCssString
+
+/**
+ * Merges two styles into one.
+ *
+ * This function takes two styles, which can be either CSS strings or `CssStyle` objects,
+ * and merges them into a single style. If either style is a string, the merged style is returned as a string.
+ * Otherwise, it returns the merged `CssStyle` object.
+ *
+ * @param {CssStyle | string} style1 - The first style to be merged.
+ * @param {CssStyle | string} style2 - The second style to be merged.
+ * @returns {CssStyle | string} - The merged style, in the same format as the input styles.
+ *
+ * @example
+ * const style1 = "min-width: 20px; height: 20px;";
+ * const style2 = { width: "30px", height: "40px" };
+ * const mergedStyle = decoMergeStyles(style1, style2);
+ * console.log(mergedStyle); // "min-width: 20px; height: 40px; width: 30px;"
+ */
+export  function decoMergeStyles(style1: CssStyle | string, style2: CssStyle | string): CssStyle | string {
+    let styleObj1: Record<string, string> = {};
+    let styleObj2: Record<string, string> = {};
+
+    // Convert style1 to an object if it's a string
+    if (typeof style1 === 'string') {
+        styleObj1 = parseCssString(style1);
+    } else {
+        styleObj1 = convertCssStyleToStringMap(style1);
+    }
+
+    // Convert style2 to an object if it's a string
+    if (typeof style2 === 'string') {
+        styleObj2 = parseCssString(style2);
+    } else {
+        styleObj2 = convertCssStyleToStringMap(style2);
+    }
+
+    // Merge the two style objects
+    const mergedStyleObj = { ...styleObj1, ...styleObj2 };
+
+    // Return the merged styles in the appropriate format
+    if (typeof style1 === 'string' || typeof style2 === 'string') {
+        return Object.entries(mergedStyleObj)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join('; ');
+    } else {
+        return mergedStyleObj;
+    }
+}
+
+function convertCssStyleToStringMap(cssStyle: CssStyle): Record<string, string> {
+    const styleMap: Record<string, string> = {};
+    Object.keys(cssStyle).forEach(key => {
+        const value = (cssStyle as any)[key];
+        styleMap[key] = typeof value === 'string' ? value : String(value);
+    });
+    return styleMap;
+}
+
+function toCamelCase(property: string): string {
+    return property.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
+}
+
+/**
+ * Transforms a style into a `CssStyle` object.
+ *
+ * This function takes a style, which can be either a CSS string or a `CssStyle` object,
+ * and converts it into a `CssStyle` object. It handles both hyphenated and camelCase property names.
+ *
+ * @param {CssStyle | string} style - The style to be converted.
+ * @returns {CssStyle} - The converted `CssStyle` object.
+ *
+ * @example
+ * const style1 = "min-width: 20px; height: 20px;";
+ * const cssStyle1 = decoToCssStyle(style1);
+ * console.log(cssStyle1); // { minWidth: '20px', height: '20px' }
+ *
+ * const style2 = { minWidth: "20px", height: "20px" };
+ * const cssStyle2 = decoToCssStyle(style2);
+ * console.log(cssStyle2); // { minWidth: '20px', height: '20px' }
+ */
+export function decoToCssStyle(style: CssStyle | string): CssStyle {
+    const cssStyle: CssStyle = {};
+
+    if (typeof style === 'string') {
+        const parsedStyle = parseCssString(style);
+        Object.keys(parsedStyle).forEach(key => {
+            const camelCaseKey = toCamelCase(key);
+            cssStyle[camelCaseKey] = parsedStyle[key];
+        });
+    } else {
+        // Directly return the original CssStyle object
+        return style;
+    }
+
+    return cssStyle;
+} // decoToCssStyle
