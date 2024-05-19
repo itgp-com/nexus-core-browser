@@ -1,4 +1,5 @@
-import {DropDownButton} from '@syncfusion/ej2-splitbuttons';
+import {DropDownButton, MenuEventArgs, BeforeOpenCloseMenuEventArgs, OpenCloseMenuEventArgs, DropDownButtonModel} from '@syncfusion/ej2-splitbuttons';
+import {ItemModel} from '@syncfusion/ej2-splitbuttons/src/common/common-model';
 import {isString} from 'lodash';
 import {voidFunction} from '../../../BaseUtils';
 import {cssAddSelector, isDev} from '../../../CoreUtils';
@@ -50,7 +51,7 @@ export interface StateN2DropDownMenu extends StateN2Basic {
      */
     anchor_default_fa_deco?: N2HtmlDecorator;
 
-    dropdown_state ?: StateN2DropDownButton;
+    dropdown_state ?: StateN2DropDownButton_Extension1;
 
     /**
      * By default, the DropDownButton appends itself to the target (only mandatory property) as soon
@@ -199,14 +200,19 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
 
         // let dropdown_deco = state.dropdown_deco || {};
         state.dropdown_state = state.dropdown_state || {};
-        let dropdown_state : StateN2DropDownButton = state.dropdown_state;
+        let dropdown_state : StateN2DropDownButton_Extension1 = state.dropdown_state;
         dropdown_state.skipAppendEjToHtmlElement = true; // needed so we can append to the anchor element with the correct timing
 
         try {
             this.beforeDropDownCreated({widget: this, dropdown_state: dropdown_state});
         } catch(e) { console.error('Error in beforeDropDownCreated', e)}
 
+        this.addItemMethodCalls(dropdown_state);
+
+        let items_before = [...dropdown_state.ej.items]; // different array, but same order and same items
+
         let n2DropDownButton = new N2DropDownButton(dropdown_state);
+
 
         let ev_afterDropDownCreated = {
             widget: this,
@@ -223,16 +229,56 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
 
         if ( ev_afterDropDownCreated.override_custom_init_append_to_anchor == null) {
             // if no override
-            n2DropDownButton.initLogic();
-            let ejDropDownButton = n2DropDownButton.obj;
-            n2DropDownButton.obj.appendTo(this.n2Anchor.htmlElement);
+            try {
+                n2DropDownButton.initLogic();
+                let ejDropDownButton = n2DropDownButton.obj;
+                if (ejDropDownButton)
+                    ejDropDownButton.appendTo(this.n2Anchor.htmlElement);
+            } catch (e) { console.error('Error in n2DropDownButton.initLogic', e)}
+        } else {
+            ev_afterDropDownCreated.override_custom_init_append_to_anchor.call(this);
         } // if no override
 
         if ( ev_afterDropDownCreated.override_disable_removal_of_e_btn_icon !== true) {
             // if no override, remove default ej2 drop down button content
             let ejDropDownButton = n2DropDownButton.obj;
-            ejDropDownButton.element.querySelector('.e-btn-icon').remove(); // remove default ej2 drop down button content
+            if ( ejDropDownButton)
+                ejDropDownButton.element.querySelector('.e-btn-icon').remove(); // remove default ej2 drop down button content
         } // if no override
+
+
+
+        // now copy all the implemented functions from the beforeItemRender, beforeOpen, beforeClose, close, open, select into the actual items
+        let ejDropDownButton: DropDownButton = n2DropDownButton.obj;
+        if ( ejDropDownButton) {
+            let items_current = ejDropDownButton.items; // these have been transformed to Item from ItemModel (actual instances)
+            for (let i = 0; i < items_current.length; i++) {
+                let current_item = items_current[i];
+                let before_item = items_before[i];
+
+                // copy only the properties of the ItemModel_N2DropDownMenu that are not null
+                let itemState = current_item as ItemModel_N2DropDownMenu;
+                let beforeItem = before_item as ItemModel_N2DropDownMenu;
+                if (beforeItem.beforeItemRender) {
+                    itemState.beforeItemRender = beforeItem.beforeItemRender;
+                }
+                if (beforeItem.beforeOpen) {
+                    itemState.beforeOpen = beforeItem.beforeOpen;
+                }
+                if (beforeItem.beforeClose) {
+                    itemState.beforeClose = beforeItem.beforeClose;
+                }
+                if (beforeItem.close) {
+                    itemState.close = beforeItem.close;
+                }
+                if (beforeItem.open) {
+                    itemState.open = beforeItem.open;
+                }
+                if (beforeItem.select) {
+                    itemState.select = beforeItem.select;
+                }
+            } // for items_current
+        }
 
         this._n2DropDownButton = n2DropDownButton;
     } // createN2DropDownButton
@@ -302,7 +348,220 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
             this._alreadyShownInTarget = true; // only do this once
         }
     } // showInTarget
+
+
+    protected addItemMethodCalls(dropdown_state: StateN2DropDownButton_Extension1): void {
+        if (!dropdown_state)
+            return;
+
+        dropdown_state.ej = dropdown_state.ej || {};
+
+        let thisX = this;
+
+        let existing_beforeItemRender = dropdown_state.ej.beforeItemRender;
+        dropdown_state.ej.beforeItemRender = (args:MenuEventArgs) => {
+
+            let ev = {n2ddm: thisX, args: args, cancelDefault: false};
+            let item = args.item as ItemModel_N2DropDownMenu;
+            if (item.beforeItemRender) {
+                try {
+                    item.beforeItemRender.call(thisX.obj, ev);
+                } catch(e) { console.error('Error in beforeItemRender', e)}
+            }
+
+            if (!ev.cancelDefault) {
+                if (existing_beforeItemRender) {
+                    try {
+                        existing_beforeItemRender.call(thisX.obj, args);
+                    } catch(e) { console.error('Error in existing_beforeItemRender', e)}
+                }
+            }
+        } // beforeItemRender
+
+        let existing_beforeOpen = dropdown_state.ej.beforeOpen;
+        dropdown_state.ej.beforeOpen = (args:BeforeOpenCloseMenuEventArgs) => {
+            let ev = {n2ddm: thisX, args: args, cancelDefault: false};
+            if (existing_beforeOpen) {
+                try {
+                    existing_beforeOpen.call(thisX.obj, args);
+                } catch(e) { console.error('Error in existing_beforeOpen', e)}
+            }
+            if (!ev.cancelDefault) {
+                let items = args.items;
+                for (let item of items) {
+                    let itemState = item as ItemModel_N2DropDownMenu;
+                    if (itemState.beforeOpen) {
+                        try {
+                            itemState.beforeOpen.call(thisX.obj, ev);
+                        } catch(e) { console.error('Error in beforeOpen', e)}
+                    }
+                } // for items
+            }
+        } // beforeOpen
+
+        let existing_beforeClose = dropdown_state.ej.beforeClose;
+        dropdown_state.ej.beforeClose = (args:BeforeOpenCloseMenuEventArgs) => {
+            let ev = {n2ddm: thisX, args: args, cancelDefault: false};
+            if (existing_beforeClose) {
+                try {
+                    existing_beforeClose.call(thisX.obj, args);
+                } catch(e) { console.error('Error in existing_beforeClose', e)}
+            }
+            if (!ev.cancelDefault) {
+                let items = args.items;
+                for (let item of items) {
+                    let itemState = item as ItemModel_N2DropDownMenu;
+                    if (itemState.beforeClose) {
+                        try {
+                            itemState.beforeClose.call(thisX.obj, ev);
+                        } catch(e) { console.error('Error in beforeClose', e)}
+                    }
+                } // for items
+            }
+        } // beforeClose
+
+        let existing_close = dropdown_state.ej.close;
+        dropdown_state.ej.close = (args:OpenCloseMenuEventArgs) => {
+            let ev = {n2ddm: thisX, args: args, cancelDefault: false};
+            if (existing_close) {
+                try {
+                    existing_close.call(thisX.obj, args);
+                } catch(e) { console.error('Error in existing_close', e)}
+            }
+            if (!ev.cancelDefault) {
+                let items = args.items;
+                for (let item of items) {
+                    let itemState = item as ItemModel_N2DropDownMenu;
+                    if (itemState.close) {
+                        try {
+                            itemState.close.call(thisX.obj, ev);
+                        } catch(e) { console.error('Error in close', e)}
+                    }
+                } // for items
+            }
+        } // close
+
+        let existing_open = dropdown_state.ej.open;
+        dropdown_state.ej.open = (args:OpenCloseMenuEventArgs) => {
+            let ev = {n2ddm: thisX, args: args, cancelDefault: false};
+            if (existing_open) {
+                try {
+                    existing_open.call(thisX.obj, args);
+                } catch(e) { console.error('Error in existing_open', e)}
+            }
+            if (!ev.cancelDefault) {
+                let items = args.items;
+                for (let item of items) {
+                    let itemState = item as ItemModel_N2DropDownMenu;
+                    if (itemState.open) {
+                        try {
+                            itemState.open.call(thisX.obj, ev);
+                        } catch(e) { console.error('Error in open', e)}
+                    }
+                } // for items
+            }
+        } // open
+
+        let existing_select = dropdown_state.ej.select;
+        dropdown_state.ej.select = (args:MenuEventArgs) => {
+            let ev = {n2ddm: thisX, args: args, cancelDefault: false};
+            if (existing_select) {
+                try {
+                    existing_select.call(thisX.obj, args);
+                } catch(e) { console.error('Error in existing_select', e)}
+            }
+            if (!ev.cancelDefault) {
+                let item = args.item as ItemModel_N2DropDownMenu;
+                if (item.select) {
+                    try {
+                        item.select.call(thisX.obj, ev);
+                    } catch(e) { console.error('Error in select', e)}
+                }
+            }
+        } // select
+
+    } // addItemMethodCalls
+
 }// class N2DropDownMenu
+
+/**
+ * Extends the DropDownButtonModel to allow items to be of type ItemModel or ItemModel_N2DropDownMenu.
+ *
+ * @interface DropDownButtonModel_Extention1
+ * @extends {DropDownButtonModel}
+ */
+interface DropDownButtonModel_Extention1 extends DropDownButtonModel {
+    /**
+     * Array of items in the DropDownButton, which can be of type ItemModel or ItemModel_N2DropDownMenu.
+     *
+     * @type {(ItemModel | ItemModel_N2DropDownMenu)[]}
+     * @memberof DropDownButtonModel_Extention1
+     */
+    items ?: (ItemModel | ItemModel_N2DropDownMenu)[];
+}
+
+/**
+ * Extends the StateN2DropDownButton to redefine the ej property with the extended DropDownButtonModel.
+ *
+ * @interface StateN2DropDownButton_Extension1
+ * @extends {Omit<StateN2DropDownButton, 'ej'>}
+ */
+interface StateN2DropDownButton_Extension1 extends Omit<StateN2DropDownButton, 'ej'> {
+    /**
+     * Extended DropDownButton model which allows items to be of type ItemModel or ItemModel_N2DropDownMenu.
+     *
+     * @type {DropDownButtonModel_Extention1}
+     * @memberof StateN2DropDownButton_Extension1
+     */
+    ej ?: DropDownButtonModel_Extention1;
+}
+
+export interface ItemModel_N2DropDownMenu extends ItemModel {
+    /**
+     * Triggers while rendering each Popup item of DropDownButton.
+     *
+     * @event beforeItemRender
+     */
+    beforeItemRender?: ( ev:{n2ddm: N2DropDownMenu, args:MenuEventArgs, cancelDefault?:boolean}, )=>void;
+
+    /**
+     * Triggers before opening the DropDownButton popup.
+     *
+     * @event beforeOpen
+     */
+    beforeOpen?: (  ev:{n2ddm: N2DropDownMenu, args:BeforeOpenCloseMenuEventArgs, cancelDefault?:boolean})=>void;
+
+    /**
+     * Triggers before closing the DropDownButton popup.
+     *
+     * @event beforeClose
+     */
+    beforeClose?: (  ev:{n2ddm: N2DropDownMenu, args:BeforeOpenCloseMenuEventArgs, cancelDefault?:boolean})=>void;
+
+    /**
+     * Triggers while closing the DropDownButton popup.
+     *
+     * @event close
+     */
+    close?: (  ev:{n2ddm: N2DropDownMenu, args:OpenCloseMenuEventArgs, cancelDefault?:boolean})=>void;
+
+    /**
+     * Triggers while opening the DropDownButton popup.
+     *
+     * @event open
+     */
+    open?: (  ev:{n2ddm: N2DropDownMenu, args:OpenCloseMenuEventArgs, cancelDefault?:boolean})=>void;
+    /**
+     * Triggers while selecting action item in DropDownButton popup.
+     *
+     * @event select
+     */
+    select?: (  ev:{n2ddm: N2DropDownMenu, args:MenuEventArgs, cancelDefault?:boolean})=>void;
+
+} // ItemModel_N2DropDownMenu
+
+
+//---------------------- Events ----------------------------
 
 export interface Ev_afterDropDownCreated {
     widget: N2DropDownMenu,
@@ -323,9 +582,10 @@ export interface Ev_afterDropDownCreated {
      * }
      */
     override_custom_init_append_to_anchor ?: voidFunction,
-}
+} // Ev_afterDropDownCreated
 
-//----------------------------------------------
+
+//------------------------ SizeSettings ----------------------
 
 interface SizeSettings {
     /**
