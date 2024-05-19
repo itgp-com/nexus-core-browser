@@ -2,6 +2,8 @@ import {escape} from "lodash";
 import {getRandomString, htmlToElement} from "../BaseUtils";
 import {N2_CLASS} from '../Constants';
 import {getErrorHandler} from '../CoreErrorHandling';
+import {ClientVersion, getClientVersion} from '../gui/ClientVersion';
+import {DialogInfo} from '../gui/ej2/abstract/DialogInfo';
 import {N2} from "./N2";
 import {IHtmlUtils, N2HtmlDecorator} from "./N2HtmlDecorator";
 import {StateN2} from "./StateN2";
@@ -665,3 +667,40 @@ export function waitForElementById(id: string): Promise<HTMLElement> {
         }
     });
 } // waitForElementById
+
+
+export function showN2PanelInfoDialog(container: HTMLElement) : void {
+
+
+    let n2 = getN2FromHtmlElement(container);
+                let x                            = `
+<div class="flex-full-height">
+        <div><b>Panel class:</b> ${(n2 ? (n2.className ? n2.className : n2.constructor.name) : 'n/a')}</div>
+        <div style="margin-bottom: 30px"></div>
+        <p style="flex-grow: 1"></p>
+`;
+                let clientVersion: ClientVersion = getClientVersion();
+                if (clientVersion) {
+                    x += `<div style="color:darkgray;"><b>Version:</b> `
+                    x += `${clientVersion.major}.${clientVersion.minor}.${clientVersion.build}`
+                    x += `</div>`
+                }
+                x += `</div>`;
+
+
+                let dialogTagId: string    = getRandomString('registerInfoTag');
+                let dialogTag: HTMLElement = htmlToElement(`<div id="${dialogTagId}"></div>`);
+                container.appendChild(dialogTag);
+                let infoDialog: DialogInfo = new DialogInfo({
+                    element: dialogTag,
+                    width:   "50%",
+                    height:  "90%",
+                    content: x,
+                    onClose: () => {
+                        container.removeChild(dialogTag);
+                    }
+                });
+
+                infoDialog.call();
+
+} //

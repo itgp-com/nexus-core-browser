@@ -1,9 +1,11 @@
-import {cssAddClass} from '../../CoreUtils';
+import {N2_CLASS} from '../../Constants';
+import {cssAddClass, isDev} from '../../CoreUtils';
 import {CssStyle} from '../../gui/AbstractWidget';
 import {nexusMain} from '../../NexusMain';
+import {N2Evt_OnHtml} from '../N2';
 import {N2Basic, StateN2Basic} from '../N2Basic';
 import {addN2Class, decoToCssStyle, IHtmlUtils} from '../N2HtmlDecorator';
-import {Elem_or_N2} from '../N2Utils';
+import {Elem_or_N2, showN2PanelInfoDialog} from '../N2Utils';
 import {N2Panel, StateN2Panel} from './N2Panel';
 
 
@@ -201,6 +203,34 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
         ];
 
         super.onStateInitialized(state);
+    } // onStateInitialized
+
+
+    public onHtml(args: N2Evt_OnHtml): HTMLElement {
+        let elem =  super.onHtml(args);
+
+        //Register info panel for Ctrl-Alt-DoubleClick
+        if ( isDev() && elem) {
+            let old_dblclick_event = elem[N2_CLASS + 'register_info'];
+            if (old_dblclick_event) {
+                try {
+                    elem.removeEventListener('dblclick', old_dblclick_event);
+                } catch (e) { console.error(e); }
+            } // if old_dblclick_event
+
+            // Register for Ctrl-Alt-DoubleClick
+            let evt_dblclick = (evt:MouseEvent) => {
+                if (evt.altKey && evt.ctrlKey) {
+                    showN2PanelInfoDialog( elem);
+                }
+                evt.stopPropagation();
+            } // evt_dblclick
+
+            elem.addEventListener('dblclick', evt_dblclick);
+
+        } // if ( isDev() && elem)
+
+        return elem;
     }
 
     public get topContainer(): N2Panel {
