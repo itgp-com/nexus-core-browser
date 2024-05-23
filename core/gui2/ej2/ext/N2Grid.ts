@@ -124,7 +124,59 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         try {
             let f_user_columnMenuOpen = gridModel.columnMenuOpen;
             gridModel.columnMenuOpen = (ev: ColumnMenuOpenEventArgs) => {
+
+
                 let grid: Grid = getFirstEj2FromModel(gridModel);
+
+
+                // //--------------------- Syncfusion suggested hack to move the filter items to the main column menu (no more filter sub-menu) ---------------------
+                // let args = ev;
+                // args.items[5].text = args.column.type.replace(/\w+/g,
+                //     function (w) {
+                //         return w[0].toUpperCase() + w.slice(1).toLowerCase();
+                //     }) + ' Filters';
+                // args.element.querySelectorAll('li')[5].classList.add('e-submenu');
+                // args.items[5].iconCss = 'e-submenu';
+                // grid.filterModule.setFilterModel(args.column);
+                // let options: IFilterArgs = grid.filterModule.createOptions(args.column, args.element) as IFilterArgs;
+                // let excelFilterModule: ExcelFilterBase = grid.filterModule.filterModule['excelFilterBase'];
+                // const filterLength: number = (excelFilterModule['existingPredicate'][options.field] && excelFilterModule['existingPredicate'][options.field].length) ||
+                //     options.filteredColumns.filter((col: Predicate) => {
+                //         return options.field === col.field;
+                //     }).length;
+                // if (filterLength === 0) {
+                //     grid.columnMenuModule['disableItems'].push('Clear Filter');
+                // }
+                // excelFilterModule['updateModel'](options);
+                // excelFilterModule['menu'] = args.element;
+                // excelFilterModule['dlg'] = args.element;
+                // excelFilterModule['cmenu'] = grid.createElement('ul', {className: 'e-excel-menu'}) as HTMLUListElement;
+                // EventHandler.add(args.element, 'mouseover', (e: any) => {
+                //     setTimeout(() => {
+                //         if (!e.target || e.target.id !== 'gridcustomfilter') {
+                //             if (excelFilterModule['isCMenuOpen']) {
+                //                 const submenu: Element = excelFilterModule['menu'].querySelector('.e-submenu');
+                //                 if (!isNullOrUndefined(submenu)) {
+                //                     submenu.classList.remove('e-selected');
+                //                 }
+                //                 excelFilterModule['destroyCMenu']();
+                //             }
+                //             return;
+                //         } else {
+                //             if (!e.target.classList.contains('e-selected')) {
+                //                 excelFilterModule['hoverHandler'](e);
+                //             }
+                //             // else {
+                //             //     const submenu: Element = args.element.querySelector('.e-submenu');
+                //             //     if (!isNullOrUndefined(submenu)) {
+                //             //         submenu.classList.remove('e-selected');
+                //             //     }
+                //             //     excelFilterModule['destroyCMenu']();
+                //             // }
+                //         }
+                //     }, 0);
+                // }, grid.filterModule.filterModule['excelFilterBase']);
+                // //-------------------- end Syncfusion suggested hack ---------------------
 
 
                 let clearSortItem = ev.items.find((elem) => elem.id.endsWith(clearSortSuffix));
@@ -161,6 +213,8 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     } // for
 
                 } // if ! state.enableColumnMenuAutofitAll
+
+
                 if (f_user_columnMenuOpen != null) {
                     f_user_columnMenuOpen.call(grid, ev);
                 }
@@ -365,7 +419,12 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     public onDOMAdded(ev: N2Evt_DomAdded): void {
         try {
             if (!this.state.disableDropDownMenu)
-                this.createDropDownMenu(); // not guaranteed that this.obj grid is created yet. TODO Might want to call this from onAfterInitLogic again and add a semaphore that it was not called twice
+                if (this.obj) {
+                    this.createDropDownMenu(); // not guaranteed that this.obj grid is created yet. TODO Might want to call this from onAfterInitLogic again and add a semaphore that it was not called twice
+                } else {
+                    if (isDev())
+                        console.error('N2Grid.onDOMAdded: this.obj is not initialized yet');
+                }
         } catch (e) { console.error(e); }
 
         super.onDOMAdded(ev);
@@ -425,7 +484,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             menu_items.push({separator: true,});
         } // if ! this.state.disableDefaultGroupingInDropDownMenu
 
-        if (N2GridAuth.allowExcelExport({state: this.state}) && this.state?.ej?.allowExcelExport ) {
+        if (N2GridAuth.allowExcelExport({state: this.state}) && this.state?.ej?.allowExcelExport) {
             menu_items.push(N2Grid_DropDownMenu.item_excel_export({n2Grid: this}));
         }
         return menu_items;
@@ -767,9 +826,10 @@ line-height: 8px;
 
 } // cssForN2Grid
 
-import {KeyboardEvents} from '@syncfusion/ej2-base';
+import {EventHandler, isNullOrUndefined, KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
-import {ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, Sort} from '@syncfusion/ej2-grids';
+import {Predicate} from '@syncfusion/ej2-data/src/query';
+import {ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, IFilterArgs, Sort} from '@syncfusion/ej2-grids';
 import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
 import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
 import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
@@ -792,10 +852,11 @@ import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
 import {ColumnMenuItemModel, ColumnMenuOpenEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
+import {ExcelFilterBase} from '@syncfusion/ej2-grids/src/grid/common/excel-filter-base';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
 import {isFunction} from 'lodash';
-import {cssAddSelector, fontColor} from '../../../CoreUtils';
+import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {N2Evt_DomAdded} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';
