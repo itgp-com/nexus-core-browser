@@ -80,7 +80,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
     protected _constructor(state ?: STATE): void {
         super._constructor(state);
-        state.maxExcelRowsExported = state.maxExcelRowsExported || 1000; // default to 1000;
+        state.maxExcelRowsExported = state.maxExcelRowsExported || 10000; // default to 1000;
     }
 
     createEjObj(): void {
