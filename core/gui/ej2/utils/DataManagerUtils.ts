@@ -1,8 +1,8 @@
-import {DataManager, UrlAdaptor} from "@syncfusion/ej2-data";
+import {DataManager} from "@syncfusion/ej2-data";
 import {urlTableEj2, urlTableEj2Crud, urlTableList} from "../../../AppPathUtils";
-import {NexusEditUrlAdaptor, JsonEventActions} from "../../../data/NexusEditUrlAdaptor";
 import {NexusAdaptor} from "../../../data/NexusAdaptor";
 import {NexusDataManager} from "../../../data/NexusDataManager";
+import {JsonEventActions, NexusEditUrlAdaptor} from "../../../data/NexusEditUrlAdaptor";
 
 
 export class DataManager_App_Options {
@@ -26,16 +26,25 @@ export class DataManager_App_Options {
                                      });
  * </code>
  * @param tablename
+ * @param options
  */
-export function dataManager_App(tablename: string, options ?:DataManager_App_Options): DataManager {
-    options = options || {};
-    let adaptor = options.adaptor;
+export function dataManager_App(tablename: string, options ?:DataManager_App_Options): NexusDataManager {
+    let optionsInternal:DataManager_App_Options = options || {};
+    let adaptor = optionsInternal.adaptor;
 
-    return new NexusDataManager({
-        url: (options.tablename_is_url ? tablename : urlTableEj2(tablename)),
+    let dm = new NexusDataManager({
+        url: (optionsInternal.tablename_is_url ? tablename : urlTableEj2(tablename)),
         adaptor: (adaptor ? adaptor : new NexusAdaptor()),
         crossDomain: true,
     });
+
+    dm.nexus_settings.type = 'datamanager_App';
+    dm.nexus_settings.tablename = tablename;
+    dm.nexus_settings.tablename_is_url = optionsInternal.tablename_is_url;
+    dm.nexus_settings.clone_for_excel_export = () => {
+        return dataManager_App(tablename, options);
+    }
+    return dm;
 }
 
 /**
@@ -54,12 +63,20 @@ export function dataManager_App(tablename: string, options ?:DataManager_App_Opt
  * const dataManager = dataManager_Controller('myController');
  * ```
 */
-export function dataManager_Controller(relativeURL: string, adaptor ?: NexusAdaptor): DataManager {
-    return new NexusDataManager({
+export function dataManager_Controller(relativeURL: string, adaptor ?: NexusAdaptor): NexusDataManager {
+    let dm = new NexusDataManager({
         url: relativeURL,
         adaptor: (adaptor ? adaptor : new NexusAdaptor()),
         crossDomain: true,
     });
+
+    dm.nexus_settings.type = 'datamanager_Controller';
+    dm.nexus_settings.tablename = relativeURL;
+    dm.nexus_settings.tablename_is_url = true;
+    dm.nexus_settings.clone_for_excel_export = () => {
+        return dataManager_Controller(relativeURL , adaptor);
+    }
+    return dm;
 }
 
 export class DataManager_CRUDApp_Options {
@@ -72,16 +89,25 @@ export class DataManager_CRUDApp_Options {
     adaptor ?: NexusEditUrlAdaptor
 
 }
-export function dataManagerCRUD_App(tablename: string, options ?:DataManager_CRUDApp_Options): DataManager {
+export function dataManagerCRUD_App(tablename: string, options ?:DataManager_CRUDApp_Options): NexusDataManager {
     options = options || {};
     let adaptor = options.adaptor;
 
-    return new NexusDataManager({
+    let dm =  new NexusDataManager({
         url: (options.tablename_is_url ? tablename : urlTableEj2(tablename)),
         crudUrl: (options.tablename_is_url ? tablename : urlTableEj2Crud(tablename)),
         adaptor: (adaptor ? adaptor : new NexusEditUrlAdaptor()),
         crossDomain: true
     });
+
+    dm.nexus_settings.type = 'datamanagerCRUD_App';
+    dm.nexus_settings.tablename = tablename;
+    dm.nexus_settings.tablename_is_url = options.tablename_is_url;
+    dm.nexus_settings.clone_for_excel_export = () => {
+        return dataManagerCRUD_App(tablename, options);
+    }
+
+    return dm;
 }
 
 /**
@@ -103,9 +129,10 @@ export function dataManagerCRUD_App(tablename: string, options ?:DataManager_CRU
  * @param pkColumn
  * @param crudURL
  */
-export function dataManagerEditable_App(tablename: string, pkColumn: string, crudURL ?: string): DataManager {
-    if (crudURL == null)
-        crudURL = urlTableEj2Crud(tablename);
+export function dataManagerEditable_App(tablename: string, pkColumn: string, crudURL ?: string): NexusDataManager {
+    let crudURLInternal = crudURL;
+    if (crudURLInternal == null)
+        crudURLInternal = urlTableEj2Crud(tablename);
 
     let editAdaptor: NexusEditUrlAdaptor = new NexusEditUrlAdaptor();
     editAdaptor.addJsonListener((obj) => {
@@ -115,12 +142,20 @@ export function dataManagerEditable_App(tablename: string, pkColumn: string, cru
         }
     });
 
-    return new NexusDataManager({
+    let dm = new NexusDataManager({
         url: urlTableEj2(tablename),
-        crudUrl: crudURL,
+        crudUrl: crudURLInternal,
         adaptor: editAdaptor,
         crossDomain: true
     });
+
+    dm.nexus_settings.type = 'datamanagerEditable_App';
+    dm.nexus_settings.tablename = tablename;
+    dm.nexus_settings.clone_for_excel_export = () => {
+        return dataManagerEditable_App(tablename, pkColumn, crudURL);
+    }
+
+    return dm;
 }
 
 /**
@@ -134,10 +169,18 @@ export function dataManagerEditable_App(tablename: string, pkColumn: string, cru
  * </code>
  * @param tablename
  */
-export function dataManagerList_App(tablename: string): DataManager {
-    return new NexusDataManager({
+export function dataManagerList_App(tablename: string): NexusDataManager {
+    let dm = new NexusDataManager({
         url: urlTableList(tablename),
-        adaptor: new UrlAdaptor(),
+        adaptor: new NexusAdaptor(),
         crossDomain: true
     });
+
+    dm.nexus_settings.type = 'datamanagerList_App';
+    dm.nexus_settings.tablename = tablename;
+    dm.nexus_settings.clone_for_excel_export = () => {
+        return dataManagerList_App(tablename);
+    }
+
+    return dm;
 }

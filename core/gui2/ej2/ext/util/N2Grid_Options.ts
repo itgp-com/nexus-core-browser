@@ -4,7 +4,7 @@ import {DataResult} from '@syncfusion/ej2-data/src/adaptors';
 import {Predicate} from '@syncfusion/ej2-data/src/query';
 import {AutoComplete} from '@syncfusion/ej2-dropdowns';
 import {FilteringEventArgs} from '@syncfusion/ej2-dropdowns/src/drop-down-base/drop-down-base';
-import {ColumnModel, Filter, Grid, GridModel, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
+import {ColumnModel, Data, Filter, Grid, GridModel, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
 import * as events from '@syncfusion/ej2-grids/src/grid/base/constant';
 import {ToolbarItem, ToolbarItems} from '@syncfusion/ej2-grids/src/grid/base/enum';
 import {RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
@@ -20,8 +20,11 @@ import {
     SpinnerArgs
 } from '@syncfusion/ej2-popups';
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
+import {isArray} from 'lodash';
 import * as _ from 'lodash';
+import {removeSlashPrefix} from '../../../../BaseUtils';
 import {EJINSTANCES} from '../../../../Constants';
+import {DataManager_App_Options} from '../../../../gui/ej2/utils/DataManagerUtils';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../../scss/vars-material';
@@ -32,6 +35,7 @@ import {isSpinnerCreated} from './Spinner_Options';
 
 export let CHAR_WIDTH_PIXELS: number = 8;
 export const COL_ROW_NUMBER: string = '__gridrownumber__';
+export const EXCEL_TABLE_SUFFIX: string = '_~~xlsx~~_';
 
 export function rowNumberCol(): ColumnModel {
     return {
@@ -86,7 +90,7 @@ export function stateN2Grid_applyWx(state: StateN2Grid): void {
 } // stateN2Grid_applyWx
 
 
-export function stateN2Grid_excelExport(state: StateN2Grid, fnExcelExport: EmitType<ClickEventArgs>): void {
+export function stateN2Grid_excelExport(state: StateN2Grid, fnExcelExport ?: EmitType<ClickEventArgs>): void {
     _.merge(state, {
         ej: {
             allowExcelExport: true,
@@ -97,7 +101,7 @@ export function stateN2Grid_excelExport(state: StateN2Grid, fnExcelExport: EmitT
     if (!toolbar) {
         state.ej.toolbar = ['ExcelExport']; // always show the Excel Export button
     } else {
-        if (_.isArray(toolbar)) {
+        if (isArray(toolbar)) {
             if (toolbar.indexOf('ExcelExport') === -1) {
                 toolbar = toolbar.insert(0, 'ExcelExport'); // always show the Excel Export button first
                 state.ej.toolbar = toolbar;
@@ -1054,4 +1058,22 @@ function createDOMInsertionHandler(tag_id: string) {
             }
         });
     };
+} // createDOMInsertionHandler
+
+
+
+
+
+export class  ExcelExportNexus {
+    public static async doExcelExport(args: Args_DoExcelExport): Promise<any> {
+        try {
+            let grid: Grid = args.grid;
+            if ( grid && grid.allowExcelExport)
+                return grid.excelExport();
+        } catch (e) { console.error(e); }
+    } // doExcelExport
+}
+
+export interface Args_DoExcelExport {
+    grid: Grid;
 }

@@ -1,68 +1,6 @@
-import {KeyboardEvents} from '@syncfusion/ej2-base';
-import {SpeedDialItemEventArgs} from '@syncfusion/ej2-buttons/src/speed-dial/speed-dial';
-import {Query} from '@syncfusion/ej2-data';
-import {ExcelQueryCellInfoEventArgs, Grid, GridModel, Sort} from '@syncfusion/ej2-grids';
-import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
-import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
-import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
-import {ContextMenu} from '@syncfusion/ej2-grids/src/grid/actions/context-menu';
-import {Data} from '@syncfusion/ej2-grids/src/grid/actions/data';
-import {DetailRow} from '@syncfusion/ej2-grids/src/grid/actions/detail-row';
-import {Edit} from '@syncfusion/ej2-grids/src/grid/actions/edit';
-import {ExcelExport} from '@syncfusion/ej2-grids/src/grid/actions/excel-export';
-import {Filter} from '@syncfusion/ej2-grids/src/grid/actions/filter';
-import {Group} from '@syncfusion/ej2-grids/src/grid/actions/group';
-import {InfiniteScroll} from '@syncfusion/ej2-grids/src/grid/actions/infinite-scroll';
-import {Page} from '@syncfusion/ej2-grids/src/grid/actions/page';
-import {PdfExport} from '@syncfusion/ej2-grids/src/grid/actions/pdf-export';
-import {Print} from '@syncfusion/ej2-grids/src/grid/actions/print';
-import {Reorder} from '@syncfusion/ej2-grids/src/grid/actions/reorder';
-import {Resize} from '@syncfusion/ej2-grids/src/grid/actions/resize';
-import {RowDD} from '@syncfusion/ej2-grids/src/grid/actions/row-reorder';
-import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
-import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
-import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
-import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
-import {ColumnMenuItemModel, ColumnMenuOpenEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
-import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
-import {MenuEventArgs} from '@syncfusion/ej2-navigations';
-import {isFunction} from 'lodash';
-import {cssAddSelector, fontColor} from '../../../CoreUtils';
-import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
-import {N2Evt_DomAdded} from '../../N2';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
-import {CSS_VARS_CORE} from '../../scss/vars-material';
-import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
-import {getFirstEj2FromModel} from '../Ej2Utils';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-import {N2SpeedDial} from './N2SpeedDial';
-import {stateGrid_CustomExcelFilter} from './util/N2Grid_Options';
-
-Grid.Inject(
-    Clipboard,
-    ColumnChooser,
-    ColumnMenu,
-    ContextMenu,
-    DetailRow,
-    Edit,
-    ExcelExport,
-    Filter,
-    Group,
-    InfiniteScroll,
-    KeyboardEvents,
-    Page,
-    PdfExport,
-    Print,
-    Reorder,
-    Resize,
-    RowDD,
-    Scroll,
-    Sort,
-    Search,
-    Selection,
-    Toolbar,
-);
+themeChangeListeners().add((_ev: ThemeChangeEvent) => {
+    cssForN2Grid(N2Grid.CLASS_IDENTIFIER, 'e-grid');
+}); // normal priority
 
 export interface StateN2GridRef<N2_GRID extends N2Grid = N2Grid> extends StateN2EjBasicRef {
     widget?: N2_GRID;
@@ -114,15 +52,35 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      */
     enableColumnMenuAutofitAll?: boolean;
 
-}
+    /**
+     * By default, the grid will show the column menu for each column.
+     * Defaults to 1000 max rows.
+     */
+    maxExcelRowsExported?: number;
+
+    disableDropDownMenu?: boolean;
+
+    disableDefaultGroupingInDropDownMenu?: boolean;
+
+    disableDefaultRefreshInDropDownMenu?: boolean;
+
+
+} //
 
 export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {
     static readonly CLASS_IDENTIFIER: string = 'N2Grid';
 
     get classIdentifier(): string { return N2Grid.CLASS_IDENTIFIER; }
 
+    private _ddmenu: N2DropDownMenu;
+
     constructor(state ?: STATE) {
         super(state);
+    }
+
+    protected _constructor(state ?: STATE): void {
+        super._constructor(state);
+        state.maxExcelRowsExported = state.maxExcelRowsExported || 1000; // default to 1000;
     }
 
     createEjObj(): void {
@@ -138,6 +96,14 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         if (state.disableShowColumnMenu == undefined || !state.disableShowColumnMenu) {
             state.ej.showColumnMenu = true;
         } // if state.disableShowColumnMenu
+
+
+        // Default group settings for the grid, but respect the user set ones
+        let _groupSettings = gridModel.groupSettings || {}
+        gridModel.groupSettings = {
+            ...this.defaultGroupSettings(),
+            ..._groupSettings,
+        };
 
 
         //---------------- Column Menu start ---------------------
@@ -162,7 +128,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
                 let clearSortItem = ev.items.find((elem) => elem.id.endsWith(clearSortSuffix));
-                if ( clearSortItem ) {
+                if (clearSortItem) {
                     // only exists in main menu, in column or filter sub menus it's blank
                     let clearSortElem = document.getElementById(clearSortItem.id);
                     if (clearSortElem) {
@@ -182,7 +148,6 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                         }
                     } // if clearSortElem
                 } // if clearSortItem
-
 
 
                 if (!state.enableColumnMenuAutofitAll) {
@@ -225,7 +190,6 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } // columnMenuClick
 
         //------------------ Column Menu end ---------------------
-
 
 
         if (state.disableCustomFilter == undefined || !state.disableCustomFilter) {
@@ -390,46 +354,23 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
         } // if state.disableContainsAtTopOfFilter
+
+
         //----------------- end contains at top of filter -----------------
 
         super.onStateInitialized(state)
     } // onStateInitialized
 
 
-    // public onDOMAdded(ev: N2Evt_DomAdded): void {
-    //
-    //     let grid = this.obj;
-    //     let n2SpeedDial = new N2SpeedDial({
-    //         ej: {
-    //             target: grid.element,
-    //             position: 'TopRight',
-    //             opensOnHover: true,
-    //
-    //             items: [
-    //                 {
-    //                     id: 'refresh',
-    //                     text: 'Refresh',
-    //                     title: 'Title of Refresh'
-    //                 }
-    //             ],
-    //             clicked: (ev: SpeedDialItemEventArgs) => {
-    //                 switch (ev.item?.id){
-    //                     case 'refresh':
-    //                         grid.refresh();
-    //                         break;
-    //                 } // switch
-    //             }, // clicked
-    //             content: `<i class="fa-solid fa-square-caret-down fa-xs"></i>`,
-    //             // popupTemplate: `<i class="fa-solid fa-square-caret-down fa-xs"></i>`,
-    //
-    //         }, // ej
-    //     });
-    //
-    //
-    //     n2SpeedDial.initLogic();
-    //
-    //     super.onDOMAdded(ev);
-    // }
+    public onDOMAdded(ev: N2Evt_DomAdded): void {
+        try {
+            if (!this.state.disableDropDownMenu)
+                this.createDropDownMenu(); // not guaranteed that this.obj grid is created yet. TODO Might want to call this from onAfterInitLogic again and add a semaphore that it was not called twice
+        } catch (e) { console.error(e); }
+
+        super.onDOMAdded(ev);
+    } // onDOMAdded
+
 
     /**
      * The function is used to generate updated Query from Grid model.
@@ -438,11 +379,67 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
      * @param {boolean} isAutoCompleteCall - specifies for auto complete call
      * @returns {Query} returns the Query or null if not initialized
      */
-    generateQuery(skipPage?: boolean, isAutoCompleteCall?: boolean): Query {
+    public generateQuery(skipPage?: boolean, isAutoCompleteCall?: boolean): Query {
         if (!this.obj)
             return null;
         return new Data(this.obj).generateQuery(skipPage, isAutoCompleteCall);
     } // generateQuery
+
+    protected createDropDownMenu(): void {
+        if (this._ddmenu)
+            return;
+
+        this._ddmenu = new N2DropDownMenu(this.dropDownMenuState());
+    } // createDropDownMenu
+
+    protected dropDownMenuState(): StateN2DropDownMenu {
+
+        let menu_items = this.defaultDropDownMenuItems();
+        let menu_target = this.dropDownMenuTarget();
+        return {
+            target: menu_target,
+            dropdown_state: {
+                ej: {
+                    items: menu_items,
+                }, // ej
+            }
+        } as StateN2DropDownMenu;
+    } // dropDownMenuState
+
+    protected dropDownMenuTarget(): HTMLElement {
+        return this.obj.element as HTMLElement;
+    }
+
+    protected defaultDropDownMenuItems(): ItemModel_N2DropDownMenu[] {
+        let grid = this.obj;
+        let menu_items: ItemModel_N2DropDownMenu[] = [];
+
+        if (!this.state.disableDefaultRefreshInDropDownMenu) {
+            menu_items.push(N2Grid_DropDownMenu.item_refresh({n2Grid: this}));
+            menu_items.push({separator: true,});
+        } // if ! this.state.disableDefaultRefreshInDropDownMenu
+
+        if (!this.state.disableDefaultGroupingInDropDownMenu) {
+            menu_items.push(N2Grid_DropDownMenu.item_enable_grouping({n2Grid: this}));
+            menu_items.push(N2Grid_DropDownMenu.item_disable_grouping({n2Grid: this}));
+            menu_items.push({separator: true,});
+        } // if ! this.state.disableDefaultGroupingInDropDownMenu
+
+        if (N2GridAuth.allowExcelExport({state: this.state}) && grid.allowExcelExport && grid.excelExportModule) {
+            menu_items.push(N2Grid_DropDownMenu.item_excel_export({n2Grid: this}));
+        }
+        return menu_items;
+    } // defaultDropDownMenuItems
+
+    protected defaultGroupSettings(): GroupSettingsModel {
+        return {
+            allowReordering: true,
+            showDropArea: true,
+            showToggleButton: true,
+            showGroupedColumn: true,
+            showUngroupButton: true,
+        };
+    } // defaultGroupSettings
 } // N2Grid
 
 /**
@@ -770,6 +767,69 @@ line-height: 8px;
 
 } // cssForN2Grid
 
-themeChangeListeners().add((_ev: ThemeChangeEvent) => {
-    cssForN2Grid(N2Grid.CLASS_IDENTIFIER, 'e-grid');
-}); // normal priority
+import {KeyboardEvents} from '@syncfusion/ej2-base';
+import {Query} from '@syncfusion/ej2-data';
+import {ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, Sort} from '@syncfusion/ej2-grids';
+import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
+import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
+import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
+import {ContextMenu} from '@syncfusion/ej2-grids/src/grid/actions/context-menu';
+import {Data} from '@syncfusion/ej2-grids/src/grid/actions/data';
+import {DetailRow} from '@syncfusion/ej2-grids/src/grid/actions/detail-row';
+import {Edit} from '@syncfusion/ej2-grids/src/grid/actions/edit';
+import {ExcelExport} from '@syncfusion/ej2-grids/src/grid/actions/excel-export';
+import {Filter} from '@syncfusion/ej2-grids/src/grid/actions/filter';
+import {Group} from '@syncfusion/ej2-grids/src/grid/actions/group';
+import {InfiniteScroll} from '@syncfusion/ej2-grids/src/grid/actions/infinite-scroll';
+import {Page} from '@syncfusion/ej2-grids/src/grid/actions/page';
+import {PdfExport} from '@syncfusion/ej2-grids/src/grid/actions/pdf-export';
+import {Print} from '@syncfusion/ej2-grids/src/grid/actions/print';
+import {Reorder} from '@syncfusion/ej2-grids/src/grid/actions/reorder';
+import {Resize} from '@syncfusion/ej2-grids/src/grid/actions/resize';
+import {RowDD} from '@syncfusion/ej2-grids/src/grid/actions/row-reorder';
+import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
+import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
+import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
+import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
+import {ColumnMenuItemModel, ColumnMenuOpenEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
+import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
+import {MenuEventArgs} from '@syncfusion/ej2-navigations';
+import {isFunction} from 'lodash';
+import {cssAddSelector, fontColor} from '../../../CoreUtils';
+import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
+import {N2Evt_DomAdded} from '../../N2';
+import {N2GridAuth} from '../../N2Auth';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
+import {CSS_VARS_CORE} from '../../scss/vars-material';
+import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
+import {ItemModel_N2DropDownMenu, N2DropDownMenu, StateN2DropDownMenu} from '../derived/N2DropDownMenu';
+import {getFirstEj2FromModel} from '../Ej2Utils';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {N2Grid_DropDownMenu} from './util/N2Grid_DropDownMenu';
+import {stateGrid_CustomExcelFilter} from './util/N2Grid_Options';
+
+Grid.Inject(
+    Clipboard,
+    ColumnChooser,
+    ColumnMenu,
+    ContextMenu,
+    DetailRow,
+    Edit,
+    ExcelExport,
+    Filter,
+    Group,
+    InfiniteScroll,
+    KeyboardEvents,
+    Page,
+    PdfExport,
+    Print,
+    Reorder,
+    Resize,
+    RowDD,
+    Scroll,
+    Sort,
+    Search,
+    Selection,
+    Toolbar,
+);

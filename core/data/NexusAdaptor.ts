@@ -6,6 +6,7 @@ import {Aggregates, Group} from "@syncfusion/ej2-data/src/util";
 import {nexusMain} from "../NexusMain";
 import {EJBase} from './Ej2Comm';
 import {HttpRequestEvtAdaptor, HttpResponseEvtAdaptor} from "./NexusComm";
+import {NexusDataManager} from './NexusDataManager';
 
 /**
  * Nexus specific URLAdaptor that allows to intercept the HTTP request and response.
@@ -14,6 +15,7 @@ import {HttpRequestEvtAdaptor, HttpResponseEvtAdaptor} from "./NexusComm";
 export class NexusAdaptor extends UrlAdaptor {
 
     static showDebug: boolean;
+    readonly isNexusAdaptor: boolean = true;
 
     /**
      * Constructor for Adaptor class
@@ -231,4 +233,8 @@ export class NexusAdaptor extends UrlAdaptor {
     }
 
 
+} // NexusAdaptor
+
+export function isNexusAdaptor(adaptor: any): adaptor is NexusAdaptor {
+    return adaptor && adaptor.isNexusAdaptor === true;
 }

@@ -1,6 +1,7 @@
 import {DataManager, Query} from '@syncfusion/ej2-data';
 import {AdaptorOptions, DataOptions} from "@syncfusion/ej2-data/src/manager";
 import {nexusMain} from "../NexusMain";
+import {DataManagerNexus} from './DataManagerNexus';
 import {HttpRequestEvtDataManager, HttpResponseEvtDataManager} from "./NexusComm";
 
 
@@ -25,10 +26,22 @@ export interface ExecuteQueryDoneEvent extends ExecuteQueryCommon {
 export interface ExecuteQueryAlwaysEvent extends ExecuteQueryDoneEvent, ExecuteQueryFailEvent {
 }
 
+export interface NexusDataManager_Settings {
+    type ?: string;
+    type_group ?: string;
+    tablename?: string;
+    tablename_is_url ?: boolean;
+    clone_for_excel_export ?: ()=> NexusDataManager;
+    // [key: string] : any; // Index signature to allow additional properties
+} // NexusDataManager_Settings
+
 
 export class NexusDataManager extends DataManager {
 
     static DEBUG_ON: boolean = false;
+    readonly isNexusDataManager: boolean = true;
+
+    readonly nexus_settings: NexusDataManager_Settings = {};
 
     /**
      * Constructor for DataManager class
@@ -183,4 +196,9 @@ export class NexusDataManager extends DataManager {
             console.log("update");
         return super.update(keyField, value, tableName, query, original);
     }
-}
+} // NexusDataManager
+
+
+export function isNexusDataManager(obj: any): obj is NexusDataManager {
+    return obj && obj.isNexusDataManager == true;
+} // isNexusDataManager

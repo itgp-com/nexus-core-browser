@@ -530,3 +530,13 @@ export function getOffsetHeight(element: HTMLElement): number {
 
    return height;
 } // getOffsetHeight
+
+/**
+ * Removes leading forward slashes from a given string.
+ *
+ * @param {string} input - The string from which to remove leading slashes.
+ * @returns {string} - The modified string with leading slashes removed.
+ */
+export function removeSlashPrefix(input: string): string {
+   return input.replace(/^\/+/, "");
+}

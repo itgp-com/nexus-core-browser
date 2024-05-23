@@ -506,9 +506,10 @@ interface DropDownButtonModel_Extention1 extends DropDownButtonModel {
  * @interface StateN2DropDownButton_Extension1
  * @extends {Omit<StateN2DropDownButton, 'ej'>}
  */
-interface StateN2DropDownButton_Extension1 extends Omit<StateN2DropDownButton, 'ej'> {
+interface StateN2DropDownButton_Extension1 extends Omit< Omit<StateN2DropDownButton, 'ej'>, 'children'> {
     /**
      * Extended DropDownButton model which allows items to be of type ItemModel or ItemModel_N2DropDownMenu.
+     * Remove the 'children' property that doesn't apply here
      *
      * @type {DropDownButtonModel_Extention1}
      * @memberof StateN2DropDownButton_Extension1
