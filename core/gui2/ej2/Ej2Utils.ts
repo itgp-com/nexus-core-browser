@@ -55,6 +55,7 @@ export function getGridDecoratorsHeight(grid: Grid): number {
                 gridDecoratorHeightVal += gridfooter.offsetHeight;
             }
         } //  if gridfooterArray
+        gridDecoratorHeightVal += 2; // border height
 
     } // if gridElem
     return gridDecoratorHeightVal;

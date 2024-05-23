@@ -111,13 +111,22 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         if (!gridModel.columnMenuItems) {
 
             gridModel.columnMenuItems = [
-                'AutoFitAll', 'AutoFit', 'SortAscending', 'SortDescending',
+                'AutoFitAll',
+                'AutoFit',
+                'SortAscending',
+                'SortDescending',
+                // { text: 'Clear Filter', id: 'gridclearfiltering' },
+                // { text: 'Custom Filter', id: 'gridcustomfilter' },
                 {
                     "text": "Clear Sort",
                     "id": state.tagId + clearSortSuffix,
                     "iconCss": ""
                 } as ColumnMenuItemModel,
-                'Group', 'Ungroup', 'ColumnChooser', 'Filter'] as any[];
+                'Group',
+                'Ungroup',
+                'ColumnChooser',
+                'Filter'
+            ] as any[];
         } // if ! gridModel.columnMenuItems
 
 
@@ -144,8 +153,14 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 //     options.filteredColumns.filter((col: Predicate) => {
                 //         return options.field === col.field;
                 //     }).length;
+                //
                 // if (filterLength === 0) {
                 //     grid.columnMenuModule['disableItems'].push('Clear Filter');
+                // } else {
+                //     // remove the clear filter option from the column menu
+                //     grid.columnMenuModule['disableItems'] = grid.columnMenuModule['disableItems'].filter((item: string) => {
+                //         return item !== 'Clear Filter';
+                //     });
                 // }
                 // excelFilterModule['updateModel'](options);
                 // excelFilterModule['menu'] = args.element;
@@ -400,6 +415,25 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 } catch (e) {
                     console.error(e);
                 }
+
+                // //---------------- start hack to move the filter items to the main column menu (no more filter sub-menu) ---------------------
+                // let columnMenuModule: ColumnMenu = grid.columnMenuModule;
+                // columnMenuModule['columnMenu']['beforeItemRender'] = (
+                //     args: MenuEventArgs
+                // ) => {
+                //     if (args.item.id === 'gridcustomfilter') {
+                //         args.element.classList.add('e-submenu');
+                //     }
+                // };
+                // columnMenuModule['columnMenu']['onClose'] = (
+                //     args: OpenCloseMenuEventArgs
+                // ) => {
+                //     debugger;
+                //     grid.filterModule.filterModule['excelFilterBase']['destroyCMenu']();
+                // };
+                // //-------------------- end hack ---------------------
+
+
 
                 if (existingCreated) {
                     existingCreated.call(this.obj, args);
@@ -855,6 +889,7 @@ import {ColumnMenuItemModel, ColumnMenuOpenEventArgs} from '@syncfusion/ej2-grid
 import {ExcelFilterBase} from '@syncfusion/ej2-grids/src/grid/common/excel-filter-base';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
+import {OpenCloseMenuEventArgs} from '@syncfusion/ej2-splitbuttons';
 import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
