@@ -411,7 +411,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     }
 
     protected defaultDropDownMenuItems(): ItemModel_N2DropDownMenu[] {
-        let grid = this.obj;
+        // not guaranteed that this.obj grid is created yet. TODO Might want to call this from onAfterInitLogic again and add a semaphore that it was not called twice
         let menu_items: ItemModel_N2DropDownMenu[] = [];
 
         if (!this.state.disableDefaultRefreshInDropDownMenu) {
@@ -425,7 +425,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             menu_items.push({separator: true,});
         } // if ! this.state.disableDefaultGroupingInDropDownMenu
 
-        if (N2GridAuth.allowExcelExport({state: this.state}) && grid.allowExcelExport && grid.excelExportModule) {
+        if (N2GridAuth.allowExcelExport({state: this.state}) && this.state?.ej?.allowExcelExport ) {
             menu_items.push(N2Grid_DropDownMenu.item_excel_export({n2Grid: this}));
         }
         return menu_items;
