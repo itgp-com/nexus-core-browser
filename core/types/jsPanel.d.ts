@@ -6725,11 +6725,7 @@ declare global {
          * ```
          * @link https://jspanel.de/#options/panelSize
          */
-        panelSize?: string |
-            {
-                width: number | string | ((panel: JsPanel) => number | string),
-                height: number | string | ((panel: JsPanel) => number | string)
-            };
+        panelSize?: ContentSize;
 
         /**
          * By default all standard panels get a class name composed of'jsPanel-' concatenated with the setting of this option.
