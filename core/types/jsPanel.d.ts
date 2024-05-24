@@ -5370,10 +5370,7 @@ declare global {
          *          height: '200px'
          *     }
          */
-        contentSize?: string | {
-            width: number | string | ((panel: JsPanel) => number | string),
-            height: number | string | ((panel: JsPanel) => number | string)
-        };
+        contentSize ?: ContentSize;
 
         /**
          * Applies custom CSS classes to selected elements of the panel HTML template.
