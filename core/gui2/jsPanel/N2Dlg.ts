@@ -546,8 +546,8 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
         if (options.panelSize == null) {
             options.panelSize = {
-                width: 'min(99%,800px)',
-                height: 'min(99%, 600px)',
+               width: '99%', // width: 'min(99%,800px)',
+               height: '99%',  // height: 'min(99%, 600px)',
             }
         }
 
