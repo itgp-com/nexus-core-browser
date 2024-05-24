@@ -1,4 +1,4 @@
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols,GrazieInspection,SpellCheckingInspection
 
 declare global {
 
@@ -1171,7 +1171,7 @@ declare global {
          * @return {{rgb: {css: string, r: string, g: string, b: string}, hex: string, hsl: {css: string, h: string, s: string, l: string}}}
          * @link https://jspanel.de/#global/color
          */
-        color: (string) => {
+        color: (val: string) => {
             rgb:
                 {
                     css: string,
@@ -1360,10 +1360,10 @@ declare global {
          *
          * @link https://jspanel.de/#global/getPanels
          *
-         * @param {JSPanel} panel
+         * @param {JsPanel} panel
          * @return {JsPanel[]}
          */
-        getPanels: (panel: JSPanel) => JsPanel[];
+        getPanels: (panel: JsPanel) => JsPanel[];
 
         /**
          * This method returns the value stored in a css custom property/variable.
@@ -1998,7 +1998,7 @@ declare global {
          *     console.log(panel, index, list.length);
          * }));
          */
-        getChildpanels(callback ?: (panel: JsPanel, index: number, list: NodeList<Element>) => void): NodeList<Element>;
+        getChildpanels(callback ?: (panel: JsPanel, index: number, list: NodeList) => void): NodeList;
 
         /**
          * Determines if the panel on which this method is called is a child panel, and optionally executes a callback.
@@ -2036,7 +2036,7 @@ declare global {
          *     console.log(panel, status);
          * });
          */
-        maximize(callback ?: (panel: JsStatus, status: string) => void): JsPanel;
+        maximize(callback ?: (panel: JsPanel, status: string) => void): JsPanel;
 
 
         /**
@@ -2053,7 +2053,7 @@ declare global {
          *     console.log(panel, status);
          * });
          */
-        minimize(callback ?: (panel: JsStatus, status: string) => void): JsPanel;
+        minimize(callback ?: (panel: JsPanel, status: string) => void): JsPanel;
 
 
         /**
@@ -2220,7 +2220,7 @@ declare global {
          *         .resizeit('enable')
          *         .setTheme('#38a169');
          */
-        resizeit(action: string): JSPanel;
+        resizeit(action: string): JsPanel;
 
 
         /**
@@ -3068,22 +3068,41 @@ declare global {
     }
 
     /**
-     * Sets the dimensions of the content section of a panel. Use the `resize()` method to resize an existing panel.
+     * Sets the dimensions of the content section of the panel whereas option.panelSize sets the dimensions of the complete panel.
      *
+     * ``` text
+     *Info:  To resize an existing panel use the panel method resize()
+     *```
      *
-     * @property {string | number | ((panel: JsPanel) => string | number)} width - Width of the content section.
-     *   Can be a number (assumed to be in pixels), a string with any CSS length unit, or a function returning a number or string.
-     *   The function receives the panel as an argument, and `this` inside the function refers to the panel.
-     * @property {string | number | ((panel: JsPanel) => string | number)} height - Height of the content section.
-     *   Follows the same rules as the width property.
+     * **Type:**
+     *  - Object or String
+     * *Default:*
+     *  - {width: '99%', height: '99%'}
+     * Supported values:
      *
-     * @example
-     * // String notation
+     *  **Object**
+     *  - a plain object should have the 2 properties width and height. Each property may have a Number, String or Function as value where:
+     *  - a Number is assumed to be a pixel value.
+     *  - a String may be unit-less or with one of the css length units.
+     *  - a Function has to return a Number or String according to the rules above. The function receives the panel as argument and the keyword this inside the function also refers to the panel.
+     *
+     * If the object supplies only one property (width or height) the missing one is used with the same value as the one provided
+     *
+     * **String**
+     *-  a string should contain 2 values separated by a single space. The first value for width and the second value for height.
+     * - if only one value is set it's used for both width and height.
+     * - values may have all css length units.
+     * - a unit-less value is assumed to be in pixels.
+     *
+     * ``` text
+     *  1. option panelSize overrides a setting of option contentSize.
+     *  2. css calc() works in object only
+     *  ```
+     * Example
+     *``` javascript
      * jsPanel.create({
      *     contentSize: '450 300'
      * });
-     *
-     * // Object notation with function and string
      * jsPanel.create({
      *     contentSize: {
      *         width: () => window.innerWidth * 0.3,
@@ -3091,22 +3110,13 @@ declare global {
      *     },
      *     position: 'center 0 80'
      * });
-     *
-     * Note:
-     * - A string should contain two values separated by a space: the first for width, the second for height.
-     *   A single value is used for both width and height.
-     *   A unit-less value is assumed to be in pixels.
-     * - An object may have both 'width' and 'height' properties. If only one is provided, the other assumes the same value.
-     * - The 'panelSize' option overrides the 'contentSize' setting.
-     * - CSS 'calc()' works in the object notation.
-     *
-     * Default: {width: '400px', height: '200px'}
+     * ```
      */
     type ContentSize = string | IContentSize;
 
     interface IContentSize {
-        width: number | string | ((panel: JsPanel) => number | string);
-        height: number | string | ((panel: JsPanel) => number | string);
+        width ?: number | string | ((panel: JsPanel) => number | string);
+        height ?: number | string | ((panel: JsPanel) => number | string);
     }
 
 
@@ -7243,7 +7253,7 @@ declare global {
 
     } // jsPanelOptions
 
-    export interface JsPanelOptions_PanelData { left: number, top: number, width: number, height: number };
+    export interface JsPanelOptions_PanelData { left: number, top: number, width: number, height: number }
 
     /**
      * - **panel** returns the panel triggering the event
