@@ -434,7 +434,6 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 // //-------------------- end hack ---------------------
 
 
-
                 if (existingCreated) {
                     existingCreated.call(this.obj, args);
                 }
@@ -864,7 +863,7 @@ line-height: 8px;
         `display: none;`);
 
 
-    let cridClasslist:string[]
+    let cridClasslist: string[]
 
     cssAddSelector(
         `.${n2GridClass}.${eGridClass}.e-control.e-lib`,
@@ -897,22 +896,24 @@ line-height: 8px;
   background-color: var(--app-color-panel-background);
   `);
 
-  //   cssAddSelector(
-  //       `.${n2GridClass}.${eGridClass} .e-columnheader .e-headercelldiv span`,
-  //       `
-  // font-weight: bold;
-  // `);
+    //   cssAddSelector(
+    //       `.${n2GridClass}.${eGridClass} .e-columnheader .e-headercelldiv span`,
+    //       `
+    // font-weight: bold;
+    // `);
 
+    /* Ensure positioning context for the span in e-headertext below */
     cssAddSelector(
-        `.${n2GridClass}.${eGridClass} .e-headercelldiv`,
-        `
-  line-height: 1.1;
+        `.${n2GridClass}.${eGridClass} .e-headercelldiv`, `
+         position:relative; 
+            line-height: 1.1;
   `);
 
     // this applies to regular text header cells so they center vertically
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-headercelldiv:has(.e-headertext)`,`
-    display: flex;
-    align-items: center;
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-headercelldiv .e-headertext`, `
+        display: inline-flex; /* Use inline-flex to make it work with text-align */
+        align-items: center; /* Vertically center content inside the span */
+        height: 100%; /* Ensure it takes the full height of the parent */
     `);
 
 
