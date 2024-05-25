@@ -122,7 +122,7 @@ export abstract class AbstractAccordion extends AnyWidgetStandard<Accordion, Arg
          // Get all the properties of the AccordionItemModel item (all except for the widget property)
          for (const key in accordionChild) {
             if (key != AccordionChild.WIDGET_KEY) {
-               item[key] = accordionChild[key];
+               (item as any)[key] = (accordionChild as any)[key];
             } // if key
          }// for
 

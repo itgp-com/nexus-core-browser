@@ -1,9 +1,9 @@
-import {IArgs_HtmlTag_Utils, StringArg, stringArgVal}                                                from "../../../BaseUtils";
-import {DataProvider}                                                                                from "../../../data/DataProvider";
-import {Args_AnyWidget}                                                                              from "../../AnyWidget";
-import {ChangeEventArgs}                                                                             from "@syncfusion/ej2-richtexteditor/src/rich-text-editor/base/interface";
 import {HtmlEditor, Image, Link, QuickToolbar, Resize, RichTextEditor, RichTextEditorModel, Toolbar} from '@syncfusion/ej2-richtexteditor';
-import {AnyWidgetStandard}                                                                           from "../../AnyWidgetStandard";
+import {ChangeEventArgs} from "@syncfusion/ej2-richtexteditor/src/rich-text-editor/base/interface";
+import {IArgs_HtmlTag_Utils, StringArg, stringArgVal} from "../../../BaseUtils";
+import {DataProvider} from "../../../data/DataProvider";
+import {Args_AnyWidget} from "../../AnyWidget";
+import {AnyWidgetStandard} from "../../AnyWidgetStandard";
 
 
 RichTextEditor.Inject(Toolbar, Link, Image, HtmlEditor, QuickToolbar, Resize);
@@ -90,7 +90,7 @@ export abstract class AbstractRichTextEditor extends AnyWidgetStandard<RichTextE
          let value: string    = '';
          let enabled: boolean = false;
          if (data) {
-            value   = data[args.propertyName];
+            value   = (data as any)[args.propertyName];
             enabled = true; // there is data so it's enabled
          }
 

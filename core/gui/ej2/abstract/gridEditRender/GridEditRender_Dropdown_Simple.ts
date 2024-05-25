@@ -44,8 +44,8 @@ export class GridEditRender_Dropdown_Simple extends GridEditRender_Dropdown_Abst
             let modelValue = argsSimple.model_array[i];
 
             let row             = {};
-            row[VIEW_COL_NAME]  = viewValue;
-            row[MODEL_COL_NAME] = modelValue;
+            (row as any)[VIEW_COL_NAME]  = viewValue;
+            (row as any)[MODEL_COL_NAME] = modelValue;
             data[i]             = row;
          } // for
       } // if
@@ -84,8 +84,7 @@ export class GridEditRender_Dropdown_Simple extends GridEditRender_Dropdown_Abst
          dropdown_options.itemTemplate = itemTemplate;
 
       this.dropDownInstance       = new DropDownList(dropdown_options);
-      let currentValue            = queryCellInfoEventArgs.data[this.grid_value_column_name];
-      this.dropDownInstance.value = currentValue; // set the initial value in the dropdown to whatever is in the record
+      this.dropDownInstance.value = (queryCellInfoEventArgs.data  as any)[this.grid_value_column_name]; // set the initial value in the dropdown to whatever is in the record
       this.dropDownInstance.appendTo(anchor);
 
 

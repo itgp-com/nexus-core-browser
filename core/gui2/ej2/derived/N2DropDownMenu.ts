@@ -4,7 +4,7 @@ import {isString} from 'lodash';
 import {voidFunction} from '../../../BaseUtils';
 import {cssAddSelector, isDev} from '../../../CoreUtils';
 import {N2Html} from '../../generic/N2Html';
-import {N2, N2Evt_OnHtml, N2Evt_OnLogic} from '../../N2';
+import {N2, N2Evt_OnHtml} from '../../N2';
 import {N2Basic, StateN2Basic} from '../../N2Basic';
 import {addClassesToClassList, addN2Class, decoMergeStyles, decoToCssStyle, decoToHtmlElement, IHtmlUtils, N2HtmlDecorator} from '../../N2HtmlDecorator';
 import {isN2} from '../../N2Utils';

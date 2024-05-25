@@ -19,7 +19,7 @@ export class GridCellEditor_NumericCheckbox implements IEditCell {
       let disabled:boolean = (!( args.column.allowEditing));
 
       try {
-         let value: number = args.rowData[args.column.field] + 0;
+         let value: number = (args as any).rowData[args.column.field] + 0;
          checked           = (value == 0 ? false : true);
          if (checked)
             this.innerValue = 1;

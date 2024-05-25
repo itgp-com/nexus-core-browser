@@ -1,6 +1,4 @@
 import {Splitter, SplitterModel} from '@syncfusion/ej2-layouts';
-import {cssAddSelector} from '../../../CoreUtils';
-import {nexusMain} from '../../../NexusMain';
 import {N2, N2Evt_OnLogic} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {getN2FromHtmlElement, isN2HtmlElement} from '../../N2Utils';

@@ -1,7 +1,6 @@
 import {NumberFormatOptions} from "@syncfusion/ej2-base";
 import {Column}              from "@syncfusion/ej2-grids/src/grid/models/column";
 import {isDate, isNumber, isString} from "lodash";
-import {EJ2_INSTANCES_FIELD} from '../../../gui2/ej2/Ej2Utils';
 
 export const DATE_FORMAT:string = 'yyyy-MM-dd';
 export const DATE_FORMAT_US:string = 'MM/dd/yyyy';
@@ -18,7 +17,7 @@ export const DATE_WITH_WEEKDAY:string = "yyyy-MM-dd' 'E";
 export type EJ2_FORMATTER = (column: Column, rec: Record<string, any>) => string | any;
 
 export const DATE_FORMATTER_LOCALE:EJ2_FORMATTER = (column: Column, rec: Object):string|any => {
-   let data = rec[column.field];
+   let data = (rec as any)[column.field];
    if ( !data ) return '';
    let date:Date = null;
    if ( isDate(data)){
@@ -122,7 +121,7 @@ export const NUMBER_FORMATTER_LOCALE:(options ?:Number_Formatter_Locale_Options)
 
 
 export const NUMBER_FORMAT_DECIMAL3:EJ2_FORMATTER = (column: Column, rec: Object) :string|any => {
-   let data = rec[column.field];
+   let data = (rec as any)[column.field];
    if ( !data ) return '';
    return data.toFixed(3);
 }

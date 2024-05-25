@@ -53,7 +53,7 @@ export function isN2(obj: any): obj is N2 {
 export function isN2HtmlElement(elem: HTMLElement): boolean {
     if (elem) {
         if (elem.classList.contains(N2_CLASS)) {
-            let obj: any = elem[N2_CLASS]
+            let obj: any = (elem as any)[N2_CLASS]
             if (obj && isN2(obj)) {
                 return true;
             }  // if obj is N2
@@ -77,7 +77,7 @@ export function getN2FromHtmlElement(elem: HTMLElement): N2 {
     try {
         if (elem) {
             if (elem?.classList?.contains(N2_CLASS)) {
-                let obj: any = elem[N2_CLASS]
+                let obj: any = (elem as any)[N2_CLASS]
                 if (obj && isN2(obj)) {
                     return obj;
                 }  // if obj is N2
@@ -322,7 +322,7 @@ export function findN2ChildrenFirstLevel(parent: HTMLElement | N2): N2[] {
     //traverse and extract the N2_CLASS elements
     for (let i = 0; i < n2ElementsHtml.length; i++) {
         let n2ElementHtml = n2ElementsHtml[i];
-        let n2Element: any = n2ElementHtml[N2_CLASS];
+        let n2Element: any = (n2ElementHtml as any)[N2_CLASS];
         if (n2Element) {
             n2Elements.push(n2Element);
         } // if (n2Element)
@@ -389,7 +389,7 @@ export function findN2ChildrenAllLevels(parent: HTMLElement | N2): N2[] {
     //traverse and extract the N2_CLASS elements
     for (let i = 0; i < n2ElementsHtml.length; i++) {
         let n2ElementHtml = n2ElementsHtml[i];
-        let n2Element = n2ElementHtml[N2_CLASS];
+        let n2Element = (n2ElementHtml as any)[N2_CLASS];
         if (n2Element) {
             n2Elements.push(n2Element);
         } // if (n2Element)

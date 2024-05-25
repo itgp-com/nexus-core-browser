@@ -368,7 +368,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
 
             if (actualN2Elem) {
                 actualN2Elem.classList.remove(N2_CLASS); // untag the element
-                actualN2Elem[N2_CLASS] = null; // remove the reference to this object
+                (actualN2Elem as any)[N2_CLASS] = null; // remove the reference to this object
             }
 
         }
@@ -390,7 +390,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             if (actualN2Elem) {
                 actualN2Elem.classList.remove(N2_CLASS); // just in case
                 actualN2Elem.classList.add(N2_CLASS); // tag the element
-                actualN2Elem[N2_CLASS] = this; // tag the element with the widget itself
+                (actualN2Elem as any)[N2_CLASS] = this; // tag the element with the widget itself
             }
 
             if (state.resizeTracked) {
@@ -555,9 +555,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             // run this component's logic BEFORE the children
 
             if (state.onLogic) {
-                state.onLogic({widget: this}); // state widgetLogic second
+                state.onLogic({widget: this} as N2Evt_OnLogic); // state widgetLogic second
             } else {
-                this.onLogic({widget: this}); // widget localLogicImplementation third
+                this.onLogic({widget: this} as N2Evt_OnLogic); // widget localLogicImplementation third
             }
 
             try {

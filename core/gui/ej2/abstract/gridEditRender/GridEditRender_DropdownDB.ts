@@ -128,8 +128,7 @@ export class GridEditRender_DropdownDB {
          dataProvider.children    = [wgtDD];
 
          this.dropDownInstance       = wgtDD.obj; //new DropDownList(dropdown_options);
-         let currentValue            = record[this.grid_value_column_name];
-         this.dropDownInstance.value = currentValue; // set the initial value in the dropdown to whatever is in the record
+         this.dropDownInstance.value = (record as any)[this.grid_value_column_name]; // set the initial value in the dropdown to whatever is in the record
 
          this.dropDownInstance.appendTo(anchor);
 

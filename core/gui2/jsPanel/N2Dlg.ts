@@ -287,7 +287,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         } // if ohl
 
 
-        let headerLogoElem: HTMLElement = null;
+        let headerLogoElem: HTMLElement;
 
         if (existingElem) {
             let logoRow = new N2Row({children: [backArrow, existingElem]});
@@ -437,7 +437,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 try {
                     if (isN2_Interface_Dialog_BeforeClose(this.state.content)) {
                         try {
-                            let evt: N2Evt_Dialog_Cancellable<N2Dlg, N2> = {
+                            let evt: N2Evt_Dialog_Cancellable<N2Dlg> = {
                                 dialog: this,
                                 widget: this.state.content as any,
                                 native_event: null,
@@ -458,7 +458,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 //--------------- try the onDialogBeforeClose event in the N2Dlg state event itself ----------------
                 try {
                     if (thisX.state.onDialogBeforeClose) {
-                        let evt: N2Evt_Dialog_Cancellable<N2Dlg, N2> = {
+                        let evt: N2Evt_Dialog_Cancellable<N2Dlg> = {
                             dialog: this,
                             widget: this.state.content as any,
                             native_event: null,
@@ -573,7 +573,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 try {
                     if (content && isN2_Interface_Dialog_Open(content)) {
                         try {
-                            let evt: N2Evt_Dialog<N2Dlg, N2> = {
+                            let evt: N2Evt_Dialog<N2Dlg> = {
                                 dialog: this,
                                 widget: content as any,
                                 native_event: ev
@@ -619,7 +619,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 } catch (e) { console.error(e); }
             } // if this.state.deco && this.obj instanceof HTMLElement
 
-            this.obj[N2_CLASS] = this; // stamp the N2 object on the jsPanel object
+            (this.obj as any)[N2_CLASS] = this; // stamp the N2 object on the jsPanel object
         } // if this.obj
 
 
@@ -704,7 +704,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
     public onDestroy(args: N2Evt_Destroy): void {
         try {
             if (this.obj) {
-                this.obj[N2_CLASS] = null; // remove the stamp
+                (this.obj as any)[N2_CLASS] = null; // remove the stamp
                 this.obj = null; // remove the reference
             }
         } catch (e) { console.error(e); }

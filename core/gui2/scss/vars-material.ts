@@ -153,7 +153,7 @@ function updateThemeVariables (ev: ThemeChangeEvent) {
     CoreMaterialCssFieldNames.forEach(key => {
         const cssVarName = `--${key.replace(/_/g, '-')}`;
         // console.log('Assigning value for ', cssVarName);
-        CSS_VARS_CORE[key] = rootStyle.getPropertyValue(cssVarName).trim();
+        (CSS_VARS_CORE as any)[key] = rootStyle.getPropertyValue(cssVarName).trim();
     });
 }
 

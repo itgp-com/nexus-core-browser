@@ -99,7 +99,7 @@ export abstract class AbstractRadioButtonGroup<ARG_CLASS extends Args_AbstractRa
          let data             = DataProvider.byName(this, this.initArgs.dataProviderName);
          let value: string    = '';
          if (data)
-            value   = data[this.initArgs.propertyName];
+            value   = (data as any)[this.initArgs.propertyName];
 
          this.value         = value;
          this.previousValue = value;

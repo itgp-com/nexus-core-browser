@@ -1,8 +1,8 @@
 import {StringArg, stringArgVal} from "../../../BaseUtils";
-import {AnyWidgetStandard}       from "../../AnyWidgetStandard";
-import {Args_AnyWidget}          from "../../AnyWidget";
-import {addWidgetClass}          from "../../AbstractWidget";
-import {DataProvider}            from "../../../data/DataProvider";
+import {DataProvider} from "../../../data/DataProvider";
+import {addWidgetClass} from "../../AbstractWidget";
+import {Args_AnyWidget} from "../../AnyWidget";
+import {AnyWidgetStandard} from "../../AnyWidgetStandard";
 
 export class Args_WxLabel extends Args_AnyWidget {
    /**
@@ -48,7 +48,7 @@ export class WxLabel extends AnyWidgetStandard {
          let value: string    = '';
          let enabled: boolean = false;
          if (data) {
-            value   = data[this.initArgs.propertyName];
+            value   = (data as any)[this.initArgs.propertyName];
             enabled = true; // there is data so it's enabled
          }
 

@@ -11,7 +11,7 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * Override with specific type used in code completion
      * Contains all the fields that have references to this instance and are usually created by the widget initialization code
      */
-    ref?: StateN2GridRef<N2Grid>;
+    ref?: StateN2GridRef;
 
     /**
      * By default this component implements a custom Excel filter on every filterable column.
@@ -601,7 +601,12 @@ font-size: var(--app-font-size-regular);`
 
     // Reduce the padding of the header grid cells from 1.8em default
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-headercelldiv, .${eGridClass} .e-gridheader .e-stackedheadercelldiv,
-.${n2GridClass}.${eGridClass} .e-gridheader .e-headercell .e-headercelldiv.e-headerchkcelldiv`, `
+.${n2GridClass}.${eGridClass} .e-gridheader .e-headercell .e-headercelldiv.e-headerchkcelldiv,
+.${n2GridClass}.${eGridClass} .${n2GridClass}.${eGridClass}header .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-headercelldiv, 
+.${n2GridClass}.${eGridClass} .${n2GridClass}.${eGridClass}header .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-stackedheadercelldiv, 
+.${n2GridClass}.${eGridClass} .${n2GridClass}.${eGridClass}header .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-headercelldiv, 
+.${n2GridClass}.${eGridClass} .${n2GridClass}.${eGridClass}header .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-stackedheadercelldiv
+`, `
     padding-right: 0.5em;
     `);
 
@@ -858,12 +863,68 @@ line-height: 8px;
     .${n2GridClass}.${eGridClass} .e-menu-item.e-separator.e-excel-separator`,
         `display: none;`);
 
+
+    let cridClasslist:string[]
+
+    cssAddSelector(
+        `.${n2GridClass}.${eGridClass}.e-control.e-lib`,
+        `
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        border-bottom-left-radius:10px;
+        border-bottom-right-radius:10px;
+        `);
+
+    // this needs to match the grid above
+    cssAddSelector(
+        `.${n2GridClass}.${eGridClass}.e-control.e-lib .e-gridpager.e-pager`,
+        `
+  border-bottom-left-radius:10px; 
+  border-bottom-right-radius:10px;
+  `);
+
+    cssAddSelector(
+        `.${n2GridClass}.${eGridClass} .e-gridheader.e-lib, .${n2GridClass} .e-columnheader`,
+        `
+  background-color: var(--app-color-panel-background);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  `);
+
+    cssAddSelector(
+        `.${n2GridClass}.${eGridClass} .e-columnheader .e-headercell`,
+        `
+  background-color: var(--app-color-panel-background);
+  `);
+
+  //   cssAddSelector(
+  //       `.${n2GridClass}.${eGridClass} .e-columnheader .e-headercelldiv span`,
+  //       `
+  // font-weight: bold;
+  // `);
+
+    cssAddSelector(
+        `.${n2GridClass}.${eGridClass} .e-headercelldiv`,
+        `
+  line-height: 1.1;
+  `);
+
+    // this applies to regular text header cells so they center vertically
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-headercelldiv:has(.e-headertext)`,`
+    display: flex;
+    align-items: center;
+    `);
+
+
+    // cssAddSelector(
+    //     ``,
+    //     ``);
+
 } // cssForN2Grid
 
-import {EventHandler, isNullOrUndefined, KeyboardEvents} from '@syncfusion/ej2-base';
+import {KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
-import {Predicate} from '@syncfusion/ej2-data/src/query';
-import {ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, IFilterArgs, Sort} from '@syncfusion/ej2-grids';
+import {ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, Sort} from '@syncfusion/ej2-grids';
 import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
 import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
 import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
@@ -886,10 +947,8 @@ import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
 import {ColumnMenuItemModel, ColumnMenuOpenEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
-import {ExcelFilterBase} from '@syncfusion/ej2-grids/src/grid/common/excel-filter-base';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
-import {OpenCloseMenuEventArgs} from '@syncfusion/ej2-splitbuttons';
 import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';

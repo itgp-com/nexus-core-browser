@@ -216,7 +216,7 @@ export function fullWidth(element: HTMLElement) {
  */
 export function getNexusWidget<T extends AbstractWidget = AbstractWidget>(element: HTMLElement): T {
     if (!element) return null;
-    let rawWidget = element[PROPERTY_NEXUS_WIDGET];
+    let rawWidget = (element as any)[PROPERTY_NEXUS_WIDGET];
     if (rawWidget) {
         if (rawWidget instanceof AbstractWidget) {
             return rawWidget as T;

@@ -1,7 +1,6 @@
 import {DataManager, Query} from '@syncfusion/ej2-data';
 import {AdaptorOptions, DataOptions} from "@syncfusion/ej2-data/src/manager";
 import {nexusMain} from "../NexusMain";
-import {DataManagerNexus} from './DataManagerNexus';
 import {HttpRequestEvtDataManager, HttpResponseEvtDataManager} from "./NexusComm";
 
 

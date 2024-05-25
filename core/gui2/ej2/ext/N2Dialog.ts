@@ -217,7 +217,7 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
             }
             if (isN2_Interface_Dialog_Open(this.state.content)) {
                 try {
-                    let evt: N2Evt_Dialog<N2Dialog, N2> = {
+                    let evt: N2Evt_Dialog<N2Dialog> = {
                         dialog: this,
                         widget: this.state.content as any,
                         native_event: args
@@ -549,6 +549,11 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     //changed
     cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close`, `
         font-size: 10px;
+    `);
+
+    // by default the N2Dialog has 5px padding
+    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog.no-padding .e-dlg-content`, `
+    padding: 0;
     `);
 
 }); // normal priority

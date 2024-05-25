@@ -26,7 +26,7 @@ export function getAtWindowPath(...pathElements: string[]): any {
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 
 export function getWindowNexusRoot(): object {
-   let current = window;
+   let current = window as any;
 
    if (!current[NEXUS_WINDOW_ROOT_PATH]) {
       current[NEXUS_WINDOW_ROOT_PATH] = {}
@@ -46,7 +46,7 @@ export function getWindowNexusRoot(): object {
  * @param pathElements
  */
 export function getAtWindowPath2(pathElements: string[]): any {
-   let current = getWindowNexusRoot();
+   let current = getWindowNexusRoot() as any;
 
 
    for (let i = 0; i < pathElements.length; i++) {
@@ -67,7 +67,7 @@ export function setAtWindowPath(pathElements: string[], value: any): void {
    if (pathElements.length == 0)
       return; // empty path
 
-   let current = getWindowNexusRoot();
+   let current = getWindowNexusRoot() as any;
 
 
    for (let i = 0; i < pathElements.length - 1; i++) {
@@ -107,8 +107,9 @@ export function getOrInitialize<T>(existingObject: Object, pathName: string, ins
       throw new Error(`Was asked to get property "${pathName}" from an undefined object!`);
    }
 
-   if (!existingObject[pathName]) {
-      existingObject[pathName] = instantiateNewFunction();
+   let current = existingObject as any;
+   if (!current[pathName]) {
+      current[pathName] = instantiateNewFunction();
    }
-   return existingObject[pathName]
+   return current[pathName]
 }

@@ -550,7 +550,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
             await this.localLogicImplementation();
 
             if (this.obj) {
-               this.hget[PROPERTY_NEXUS_WIDGET] = this; // tag this HTMLElement with the widget
+               (this.hget as any)[PROPERTY_NEXUS_WIDGET] = this; // tag this HTMLElement with the widget
             }
 
             // assign fully instantiated instance to a variable
@@ -640,7 +640,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
          await this.localDestroyImplementation(); // this will take care of this.obj
 
          if (htmlElement)
-            htmlElement[PROPERTY_NEXUS_WIDGET] = null; // remove the tag
+            (htmlElement as any)[PROPERTY_NEXUS_WIDGET] = null; // remove the tag
 
       } finally {
          this.destroyInProgress = false;

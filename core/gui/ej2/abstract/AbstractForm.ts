@@ -36,7 +36,7 @@ export abstract class AbstractForm extends AnyWidgetStandard<any, Args_AnyWidget
 
       this.hget.querySelectorAll('input:not(textarea)').forEach((input: HTMLInputElement) => {
          const nexusCoreKeydownEvent = '__nexusKeydown__';
-         let previousEvent = input[nexusCoreKeydownEvent];
+         let previousEvent = (input as any)[nexusCoreKeydownEvent];
          if ( !previousEvent){
             let eventListener:EventListener = (event:KeyboardEvent) => {
                if (event.key === 'Enter') {
@@ -44,7 +44,7 @@ export abstract class AbstractForm extends AnyWidgetStandard<any, Args_AnyWidget
                }
             };
             input.addEventListener('keydown', eventListener);
-            input[nexusCoreKeydownEvent] = eventListener;
+            (input as any)[nexusCoreKeydownEvent] = eventListener;
          } // if ( !previousEvent)
 
       });

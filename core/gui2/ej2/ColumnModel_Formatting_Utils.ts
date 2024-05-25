@@ -102,7 +102,7 @@ export function date_Ej2Formatter(args ?: Args_DateTime_Formatter): Ej2Formatter
 
      // formatterFunction
     return (column: Column, rec: Object) => {
-        let data = rec[column.field];
+        let data = (rec as any)[column.field];
         if (!data) return '';
         let date: Date = null;
         if (isDate(data)) {
@@ -231,7 +231,7 @@ export function dateTime_Ej2Formatter(args ?: Args_DateTime_Formatter): Ej2Forma
 
      // formatterFunction
     return (column: Column, rec: Object) => {
-        let data = rec[column.field];
+        let data = (rec as any)[column.field];
         if (!data) return '';
         let date: Date = null;
         if (isDate(data)) {

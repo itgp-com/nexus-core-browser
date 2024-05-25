@@ -4,7 +4,7 @@ import {DataResult} from '@syncfusion/ej2-data/src/adaptors';
 import {Predicate} from '@syncfusion/ej2-data/src/query';
 import {AutoComplete} from '@syncfusion/ej2-dropdowns';
 import {FilteringEventArgs} from '@syncfusion/ej2-dropdowns/src/drop-down-base/drop-down-base';
-import {ColumnModel, Data, Filter, Grid, GridModel, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
+import {ColumnModel, Filter, Grid, GridModel, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
 import * as events from '@syncfusion/ej2-grids/src/grid/base/constant';
 import {ToolbarItem, ToolbarItems} from '@syncfusion/ej2-grids/src/grid/base/enum';
 import {RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
@@ -22,9 +22,7 @@ import {
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
 import {isArray} from 'lodash';
 import * as _ from 'lodash';
-import {removeSlashPrefix} from '../../../../BaseUtils';
 import {EJINSTANCES} from '../../../../Constants';
-import {DataManager_App_Options} from '../../../../gui/ej2/utils/DataManagerUtils';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../../scss/vars-material';
@@ -157,7 +155,7 @@ export function stateN2Grid_RowNumber(gridModel: GridModel, options: Grid_RowNum
 
     const _ROW_NUMNER_APPLIED:string = '__row_num_done__';
 
-    if (gridModel[_ROW_NUMNER_APPLIED])
+    if ((gridModel as any)[_ROW_NUMNER_APPLIED])
         return; // already applied
 
     let pageRowNumberOnly: boolean = options?.pageRowNumberOnly; // false by default
@@ -228,7 +226,7 @@ export function stateN2Grid_RowNumber(gridModel: GridModel, options: Grid_RowNum
             fnRowDataBound.call(gridModel, ev);
     } // rowDataBound
 
-    gridModel[_ROW_NUMNER_APPLIED] = true;
+    (gridModel as any)[_ROW_NUMNER_APPLIED] = true;
 } // stateN2Grid_RowNumber
 /**
  * Interface for defining the options for the stateN2Grid_Spinner function.
@@ -359,7 +357,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
             filterSettings: {type: 'Excel', showFilterBarStatus: true, showFilterBarOperator: true,},
             created: (args) => {
                 try {
-                    let ejs:any[] = gridModel[EJINSTANCES];
+                    let ejs:any[] = (gridModel as any)[EJINSTANCES];
                     if (ejs != null) {
                         for (let i = 0; i < ejs.length; i++) {
                             let grid: Grid = ejs[i];
@@ -462,7 +460,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                                                 let autoCompleteElems = document.querySelectorAll(`.e-xlflmenu.e-control.e-dialog    .e-xlfl-maindiv .e-xlfl-valuediv .e-control.e-autocomplete.e-lib.e-input`);
                                                 for (let i = 0; i < autoCompleteElems.length; i++) {
                                                     let autoCompleteElem = autoCompleteElems[i];
-                                                    let ejInstances = autoCompleteElem['ej2_instances'];
+                                                    let ejInstances = (autoCompleteElem as any)['ej2_instances'];
                                                     for (let j = 0; j < ejInstances.length; j++) {
                                                         let obj = ejInstances[j];
                                                         if (obj instanceof AutoComplete) {
@@ -525,7 +523,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                             }
 
                             try {
-                                if (excelFilterBase['getAllDataReplaced'] == true) {
+                                if ((excelFilterBase as any)['getAllDataReplaced'] == true) {
                                     //don't do it twice, go to the next grid in the for loop
                                 } else {
                                     excelFilterBase['getAllData'] = () => {
@@ -537,7 +535,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                                             filterChoiceCount: null as any
                                         };
                                         var filterModel = 'filterModel';
-                                        args["" + filterModel] = _this;
+                                        (args as any)["" + filterModel] = _this;
                                         (_this as any).parent.trigger(events.actionBegin, args, function (args: any) {
                                             // args.filterChoiceCount = !isNullOrUndefined(args.filterChoiceCount) ? args.filterChoiceCount : 1000;
                                             // query.take(args.filterChoiceCount);
@@ -556,7 +554,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                                             // }
                                         });
                                     }; // remove this function so it doesn't trigger any request to the back-end whatsoever
-                                    excelFilterBase['getAllDataReplaced'] = true;
+                                    (excelFilterBase as any)['getAllDataReplaced'] = true;
                                 }
                             } catch (e) {
                                 console.error(e);
@@ -564,7 +562,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
 
 
                             try {
-                                if (excelFilterBase['selectHandlerReplaced'] == true) {
+                                if ((excelFilterBase as any)['selectHandlerReplaced'] == true) {
                                     // don't do it twice, go to the next grid in the for loop
                                 } else {
                                     let prevSelectHandler = excelFilterBase['selectHandler'];
@@ -587,7 +585,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                                             console.error(ex);
                                         }
                                     }; // excelFilterBase['selectHandler'] = ...
-                                    excelFilterBase['selectHandlerReplaced'] = true; // mark it as replaced
+                                    (excelFilterBase as any)['selectHandlerReplaced'] = true; // mark it as replaced
                                 } // if excelFilterBase['selectHandlerReplaced'] == true
                             } catch (e) {
                                 console.error(e);
@@ -633,7 +631,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
 
                     try {
 
-                        let ejs:any[] = gridModel[EJINSTANCES];
+                        let ejs:any[] = (gridModel as any)[EJINSTANCES];
                         if (ejs != null) {
                             for (let i = 0; i < ejs.length; i++) {
                                 let grid: Grid = ejs[i];
@@ -648,7 +646,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
 
                 try {
                     if (args.requestType == 'paging') {
-                        let ejInstances = gridModel[EJINSTANCES];
+                        let ejInstances = (gridModel as any)[EJINSTANCES];
                         if (ejInstances != null && ejInstances.length > 0) {
                             for (let i = 0; i < ejInstances.length; i++) {
                                 let grid = ejInstances[0];
@@ -700,6 +698,10 @@ function getGridFilterMessage(gObj: Grid): string {
     let filterModule = gObj.filterModule;
     let l10n: any = filterModule.serviceLocator.getService('localization');
     let valueFormatter: any = filterModule.serviceLocator.getService('valueFormatter');
+
+    if (gObj.pagerModule){
+        filterStatusMsg = gObj.pagerModule?.pagerObj?.externalMessage
+    }
 
     let thisX: any = filterModule as any
 
@@ -914,7 +916,7 @@ export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
 
     if (columns) {
         for (const column of columns) {
-            if ( column[COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS] == true)
+            if ( (column as any)[COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS] == true)
                 continue; // already adjusted
 
 
@@ -979,7 +981,7 @@ export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
 
 
                         column.width = defaultWidth + extra;
-                        column[COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS] = true;
+                        (column as any)[COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS] = true;
 
                     } // if ( defaultWidth + extra < width)
 

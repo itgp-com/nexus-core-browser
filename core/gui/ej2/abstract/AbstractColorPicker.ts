@@ -122,7 +122,7 @@ export abstract class AbstractColorPicker extends AnyWidget<ColorPicker, Args_An
          let data             = await DataProvider.byName(this, this.initArgs.dataProviderName);
          let value: string    = null;
          if (data) {
-            value   = data[this.initArgs.propertyName];
+            value   = (data as any)[this.initArgs.propertyName];
          }
 
          this.value         = value;

@@ -1,6 +1,5 @@
 import {ListBox, ListBoxModel} from '@syncfusion/ej2-dropdowns';
 import {cssAddSelector} from '../../../CoreUtils';
-import {N2Evt_AfterLogic} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';

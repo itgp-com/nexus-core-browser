@@ -125,7 +125,7 @@ export abstract class AbstractDateTimePicker extends AnyWidget<DateTimePicker, A
          let value: Date      = null;
          let enabled: boolean = false;
          if (data) {
-            value   = data[this.initArgs.propertyName];
+            value   = (data as any)[this.initArgs.propertyName];
             enabled = true; // there is data so it's enabled
          }
 

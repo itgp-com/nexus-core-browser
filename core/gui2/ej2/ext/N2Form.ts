@@ -165,7 +165,7 @@ export function attachValidation(n2State: StateN2) : void {
     if (!n2Form)
         return; // if no form, nothing to attach
 
-    let widgetName: string = n2State['name'];
+    let widgetName: string = (n2State as any)['name'];
     if (!widgetName)
         return; // if no name, there's nothing to validate here
 

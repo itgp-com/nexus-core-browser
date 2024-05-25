@@ -1,7 +1,6 @@
 /// <reference path="./global.d.ts" />
 
 import {AxiosError} from 'axios';
-import {isObject} from 'lodash';
 
 export class VersionedBase {
     i_d:string

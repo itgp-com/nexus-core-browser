@@ -55,7 +55,7 @@ export class CoreLabel extends AnyWidgetStandard<any, Args_AnyWidget, StringArg>
          let value: string    = '';
          let enabled: boolean = false;
          if (data) {
-            value   = data[this.initArgs.propertyName];
+            value   = (data as any)[this.initArgs.propertyName];
             enabled = true; // there is data so it's enabled
          }
 

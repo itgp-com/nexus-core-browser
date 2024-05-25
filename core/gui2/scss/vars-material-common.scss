@@ -1,9 +1,10 @@
 // declare EJ2 variables common to both light and dark themes (no changes just variable declarations)
 // included here so the scss is compiled and available to vards-ej2-common.ts to create CSS_VARS_EJ2 values
 
-// current folder is 'css' so we need to back up one folder first
+// current folder is 'css' so we need to back up one folder first (in application that extends nexus-code-browser, and compiles with vitejs)
 @font-face {
   font-family: 'Roboto-Regular';
+  //noinspection CssUnknownTarget
   src: url('../fonts/Roboto/Roboto-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;

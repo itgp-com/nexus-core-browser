@@ -251,7 +251,7 @@ export function applyCssToElement(element: HTMLElement, css: CssStyle | string):
         });
     } else {
         Object.keys(css).forEach(property => {
-            element.style.setProperty(property, css[property]);
+            element.style.setProperty(property, (css as any)[property]);
         });
     }
 }
@@ -499,7 +499,7 @@ export function decoToCssStyle(style: CssStyle | string): CssStyle {
         const parsedStyle = parseCssString(style);
         Object.keys(parsedStyle).forEach(key => {
             const camelCaseKey = toCamelCase(key);
-            cssStyle[camelCaseKey] = parsedStyle[key];
+            (cssStyle as any)[camelCaseKey] = parsedStyle[key];
         });
     } else {
         // Directly return the original CssStyle object

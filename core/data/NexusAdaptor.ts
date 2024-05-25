@@ -6,7 +6,6 @@ import {Aggregates, Group} from "@syncfusion/ej2-data/src/util";
 import {nexusMain} from "../NexusMain";
 import {EJBase} from './Ej2Comm';
 import {HttpRequestEvtAdaptor, HttpResponseEvtAdaptor} from "./NexusComm";
-import {NexusDataManager} from './NexusDataManager';
 
 /**
  * Nexus specific URLAdaptor that allows to intercept the HTTP request and response.
@@ -50,7 +49,7 @@ export class NexusAdaptor extends UrlAdaptor {
             if (tmp.fn) {
                 req[tmp.key] = tmp.fn.call(options.query, tmp.key, options.query, options.dm);
             }
-            req.params[tmp.key] = req[tmp.key];
+            (req.params as any)[tmp.key] = req[tmp.key];
         } // for
         //----------------
 
@@ -197,7 +196,7 @@ export class NexusAdaptor extends UrlAdaptor {
         }
 
         // Check for Nexus error messages
-        if ( data && data['i_d'] && data['v_e_r']  ) {
+        if ( data && (data as any)['i_d'] && (data as any)['v_e_r']  ) {
             let retVal = data as EJBase;
             let errMsgLog = retVal.errMsgDisplay
             if ( errMsgLog) {

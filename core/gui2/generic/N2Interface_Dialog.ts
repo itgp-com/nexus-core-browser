@@ -60,22 +60,22 @@ export interface N2Evt_Dialog_Cancellable<DIALOG extends N2=N2, WIDGET extends N
     cancel?: boolean;
 }
 
-export function isN2_Interface_Dialog(obj: any): obj is N2Interface_Dialog<any, any> {
+export function isN2_Interface_Dialog(obj: any): obj is N2Interface_Dialog {
     return isN2_Interface_Dialog_Open(obj) && isN2_Interface_Dialog_Close(obj) && isN2_Interface_Dialog_BeforeClose(obj) && isN2_Interface_Dialog_BeforeOpen(obj);
 }
 
-export function isN2_Interface_Dialog_Open(obj: any): obj is N2Interface_Dialog_Open<any, any> {
+export function isN2_Interface_Dialog_Open(obj: any): obj is N2Interface_Dialog_Open {
     return obj && obj.onDialogOpen;
 }
 
-export function isN2_Interface_Dialog_BeforeOpen(obj: any): obj is N2Interface_Dialog_BeforeOpen<any, any> {
+export function isN2_Interface_Dialog_BeforeOpen(obj: any): obj is N2Interface_Dialog_BeforeOpen {
     return obj && obj.onDialogBeforeOpen;
 }
 
-export function isN2_Interface_Dialog_Close(obj: any): obj is N2Interface_Dialog_Close<any, any> {
+export function isN2_Interface_Dialog_Close(obj: any): obj is N2Interface_Dialog_Close {
     return obj && obj.onDialogClose;
 }
 
-export function isN2_Interface_Dialog_BeforeClose(obj: any): obj is N2Interface_Dialog_BeforeClose<any, any> {
+export function isN2_Interface_Dialog_BeforeClose(obj: any): obj is N2Interface_Dialog_BeforeClose {
     return obj && obj.onDialogBeforeClose;
 }

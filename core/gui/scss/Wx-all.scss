@@ -56,8 +56,8 @@ $WxDialogWindow: 'WxDialogWindow';
 
 //noinspection CssReplaceWithShorthandSafely
 .#{$WxDialogWindow}.e-lib.e-dialog .e-dlg-header-content {
-  padding-top: 0px;
-  padding-bottom: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
   padding-left: 2px;
   padding-right: 10px;
   border-bottom: 5px solid $app_color_blue;
@@ -100,7 +100,7 @@ $WxDialogWindow: 'WxDialogWindow';
 }
 
 .#{$WxDialogWindow}.e-dialog .e-btn .e-btn-icon {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 .#{$WxDialogWindow}.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close {

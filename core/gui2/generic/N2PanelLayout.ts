@@ -211,7 +211,7 @@ export class N2PanelLayout<STATE extends StateN2PanelLayout = StateN2PanelLayout
 
         //Register info panel for Ctrl-Alt-DoubleClick
         if ( isDev() && elem) {
-            let old_dblclick_event = elem[N2_CLASS + 'register_info'];
+            let old_dblclick_event = (elem as any)[N2_CLASS + 'register_info'];
             if (old_dblclick_event) {
                 try {
                     elem.removeEventListener('dblclick', old_dblclick_event);

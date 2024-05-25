@@ -8,7 +8,7 @@ import {isN2} from '../N2Utils';
 
 /**
  * Calculate the total height of all the padding that the heading, filters and bottomContainer paging controls take in a grid
- * @param wgtGrid
+ * @param grid
  */
 export function getGridDecoratorsHeight(grid: Grid): number {
     let gridDecoratorHeightVal: number = 0;
@@ -64,7 +64,7 @@ export function getGridDecoratorsHeight(grid: Grid): number {
 /**
  * Add a child N2 or HTMLElement to a anchor N2 or HTMLElement
  * @param {N2 | HTMLElement} anchor
- * @param {N2 | HTMLElement | N2[] | HTMLElement[]} child
+ * @param children
  * @return {boolean} true if successful, false if error
  */
 export function addN2Child(anchor: N2 | HTMLElement, ...children: Array<N2 | HTMLElement>): boolean {
@@ -73,7 +73,7 @@ export function addN2Child(anchor: N2 | HTMLElement, ...children: Array<N2 | HTM
 
     try {
 
-        let anchorHtmlElement: HTMLElement = null;
+        let anchorHtmlElement: HTMLElement;
         if (isN2(anchor)) {
             // N2
             anchorHtmlElement = anchor.htmlElementAnchorInitialized;
@@ -117,7 +117,7 @@ export function removeN2Child(anchor: N2 | HTMLElement, ...children: Array<N2 | 
     if (!anchor) return false;
     if (!children || children.length === 0) return false;
     try {
-        let anchorHtmlElement: HTMLElement = null;
+        let anchorHtmlElement: HTMLElement;
         if (isN2(anchor)) {
             anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
@@ -158,14 +158,14 @@ export function addN2BeforeAnchor(anchor: N2 | HTMLElement, newSibling: N2 | HTM
     if (!anchor) return false;
     if (!newSibling) return false;
     try {
-        let anchorHtmlElement: HTMLElement = null;
+        let anchorHtmlElement: HTMLElement;
         if (isN2(anchor)) {
             anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             anchorHtmlElement = anchor as HTMLElement;
         }
 
-        let newSiblingHtmlElement: HTMLElement = null;
+        let newSiblingHtmlElement: HTMLElement;
         if (isN2(newSibling)) {
             newSiblingHtmlElement = newSibling.htmlElementAnchorInitialized;
         } else {
@@ -196,14 +196,14 @@ export function addN2AfterAnchor(anchor: N2 | HTMLElement, newSibling: N2 | HTML
     if (!anchor) return false;
     if (!newSibling) return false;
     try {
-        let anchorHtmlElement: HTMLElement = null;
+        let anchorHtmlElement: HTMLElement;
         if (isN2(anchor)) {
             anchorHtmlElement = anchor.htmlElementAnchorInitialized;
         } else {
             anchorHtmlElement = anchor as HTMLElement;
         }
 
-        let newSiblingHtmlElement: HTMLElement = null;
+        let newSiblingHtmlElement: HTMLElement;
         if (isN2(newSibling)) {
             newSiblingHtmlElement = newSibling.htmlElementAnchorInitialized;
         } else {
@@ -234,7 +234,7 @@ export const EJ2_INSTANCES_FIELD = 'ej2_instances';
  */
 export function isEj2HtmlElement(elem: HTMLElement): boolean {
     if (elem) {
-        let obj: any = elem[EJ2_INSTANCES_FIELD]
+        let obj: any = (elem as any)[EJ2_INSTANCES_FIELD]
         if (obj && isArray(obj)) {
             let ej2Aray: any[] = obj as any[];
             return (ej2Aray.length > 0);
@@ -251,7 +251,7 @@ export function isEj2HtmlElement(elem: HTMLElement): boolean {
  */
 export function getFirstEj2FromHtmlElement(elem: HTMLElement): (Component<HTMLElement> | HTMLElement | any) {
     if (elem) {
-        let obj: any = elem[EJ2_INSTANCES_FIELD]
+        let obj: any = (elem as any)[EJ2_INSTANCES_FIELD]
         if (obj && isArray(obj)) {
             let ej2Array: any[] = obj as (Component<HTMLElement> | HTMLElement | any)[];
             if (ej2Array.length > 0)
@@ -269,10 +269,9 @@ export function getFirstEj2FromHtmlElement(elem: HTMLElement): (Component<HTMLEl
  */
 export function getEj2ArrayFromHtmlElement(elem: HTMLElement): (Component<HTMLElement> | HTMLElement | any)[] {
     if (elem) {
-        let obj: any = elem[EJ2_INSTANCES_FIELD]
+        let obj: any = (elem as any)[EJ2_INSTANCES_FIELD]
         if (obj && isArray(obj)) {
-            let ej2Array: any[] = obj as (Component<HTMLElement> | HTMLElement | any)[];
-            return ej2Array;
+            return obj as (Component<HTMLElement> | HTMLElement | any)[];
         }  // if obj is N2
     } // if elem exists
     return null;

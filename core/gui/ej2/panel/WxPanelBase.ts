@@ -1,6 +1,6 @@
 import {ResizeSensor} from "css-element-queries";
 import {ResizeSensorCallback} from "css-element-queries/src/ResizeSensor";
-import {debounce, throttle} from "lodash";
+import {debounce} from "lodash";
 import {AbstractWidget, addWidgetClass} from "../../AbstractWidget";
 import {AnyScreen, Args_AnyScreen} from "../../AnyScreen";
 import {resolveWidgetArray} from "../../WidgetUtils";

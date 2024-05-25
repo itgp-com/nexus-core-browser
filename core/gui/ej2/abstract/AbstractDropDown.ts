@@ -86,10 +86,10 @@ export abstract class AbstractDropDown<ARG_CLASS extends Args_AbstractDropDown =
                   let record = dataProvider.dataValue;
 
                   if (record != null) {
-                     let previousDataValue = record[this.initArgs.propertyName];
+                     let previousDataValue = (record as any)[this.initArgs.propertyName];
 
                      // make the change
-                     record[this.initArgs.propertyName] = currentValue;
+                     (record as any)[this.initArgs.propertyName] = currentValue;
 
                      if (currentValue != previousDataValue) {
                         // trigger the change event
@@ -125,7 +125,7 @@ export abstract class AbstractDropDown<ARG_CLASS extends Args_AbstractDropDown =
          let value: string    = '';
          let enabled: boolean = false;
          if (data) {
-            value   = data[this.initArgs.propertyName];
+            value   = (data as any)[this.initArgs.propertyName];
             enabled = true; // there is data so it's enabled
          }
 

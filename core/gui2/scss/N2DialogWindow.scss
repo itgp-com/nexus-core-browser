@@ -19,8 +19,8 @@ $N2DialogWindow: 'N2DialogWindow';
 
 //noinspection CssReplaceWithShorthandSafely
 .#{$N2DialogWindow}.e-lib.e-dialog .e-dlg-header-content {
-  padding-top: 0px;
-  padding-bottom: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
   padding-left: 2px;
   padding-right: 10px;
   border-bottom: 5px solid $app_color_blue;
@@ -63,7 +63,7 @@ $N2DialogWindow: 'N2DialogWindow';
 }
 
 .#{$N2DialogWindow}.e-dialog .e-btn .e-btn-icon {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 .#{$N2DialogWindow}.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close {

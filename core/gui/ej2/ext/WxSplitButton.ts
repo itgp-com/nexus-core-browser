@@ -1,4 +1,4 @@
-import {SplitButton, SplitButtonModel, ItemModel, MenuEventArgs} from '@syncfusion/ej2-splitbuttons';
+import {SplitButton, SplitButtonModel} from '@syncfusion/ej2-splitbuttons';
 import {AnyWidgetStandard}                                       from "../../AnyWidgetStandard";
 import {Args_AnyWidget}                                          from "../../AnyWidget";
 import {addWidgetClass}                                          from "../../AbstractWidget";

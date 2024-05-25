@@ -6,7 +6,7 @@ function customizeUrlAdaptor(dataSource: DataOptions | JSON[] | Object[]): (Data
    if (dataSource && !Array.isArray(dataSource)) {
       let adaptor = (dataSource as DataOptions).adaptor;
       if (adaptor) {
-         if (!(adaptor['__beforeSendNexus'])) {
+         if (!((adaptor as any)['__beforeSendNexus'])) {
             let originalBeforeSend       = adaptor.beforeSend;
             adaptor.beforeSend           = (dm: DataManager, request: XMLHttpRequest, settings?: Ajax): void => {
 
@@ -16,7 +16,7 @@ function customizeUrlAdaptor(dataSource: DataOptions | JSON[] | Object[]): (Data
                   originalBeforeSend.call(this, [dm, request, settings]);
                }
             };
-            adaptor['__beforeSendNexus'] = true; // mark it as customized already
+            (adaptor as any)['__beforeSendNexus'] = true; // mark it as customized already
          }
       } // if adaptor
    } // if datasource is DataOptions

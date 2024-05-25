@@ -53,7 +53,7 @@ export  class WxDropDownDB<ARG_CLASS extends Args_WxDropDownDB = Args_WxDropDown
                }
             }
 
-            let row = {};
+            let row = {} as any;
             row[args.textColumn] = (args.blankEntryName!= null ? args.blankEntryName : '');
             row[args.valueColumn] = (args.blankEntryValue != null ? args.blankEntryValue : null);
 

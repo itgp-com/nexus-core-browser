@@ -15,7 +15,6 @@ import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-import {N2Grid} from './N2Grid';
 
 RichTextEditor.Inject(
     Audio,

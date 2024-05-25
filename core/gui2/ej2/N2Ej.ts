@@ -57,7 +57,7 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
     onLogic(args: N2Evt_OnLogic): void {
         this.createEjObj();
         if (this.obj)
-            this.obj[N2_CLASS] = this; // tag the object with the N2 instance
+            (this.obj as any)[N2_CLASS] = this; // tag the object with the N2 instance
         if (!this.state.skipAppendEjToHtmlElement) {
             this.appendEjToHtmlElement();
         }
@@ -100,7 +100,7 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
         if (this.obj && this.state.ej) {
             try {
                 this.untagEjWithEJComponent(this.obj); // all exceptions are caught inside untagEjWithEJComponent but just in case it's overridden we add the try/catch
-                this.obj[N2_CLASS] = null; // untag the object with the N2 instance
+                (this.obj as any)[N2_CLASS] = null; // untag the object with the N2 instance
             } catch (_ignore) { }
             try {
                 if ((this.obj as any).destroy && typeof (this.obj as any).destroy === 'function')

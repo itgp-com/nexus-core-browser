@@ -1,4 +1,3 @@
-import {Grid, GridModel} from '@syncfusion/ej2-grids';
 import {StateN2Grid} from './ej2/ext/N2Grid';
 
 /**

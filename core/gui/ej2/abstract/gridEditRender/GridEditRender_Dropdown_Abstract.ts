@@ -124,7 +124,7 @@ export abstract class GridEditRender_Dropdown_Abstract {
 
    changeLogic(thisX: GridEditRender_Dropdown_Abstract, evt: ChangeEventArgs, args: QueryCellInfoEventArgs) {
       let cell = evt.element.closest(".e-rowcell"); // find first parent that's a row cell
-      let id   = evt.itemData[thisX.args.grid_value_column_name];
+      let id   = (evt as any).itemData[thisX.args.grid_value_column_name];
       thisX.decorateCell(id, cell as HTMLElement, evt.element);
       try {
          if (thisX.changeListener)

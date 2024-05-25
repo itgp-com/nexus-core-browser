@@ -27,7 +27,7 @@ function updateThemeVariables (ev: ThemeChangeEvent) {
     TippyCssFieldNames.forEach(key => {
         const cssVarName = `--${key.replace(/_/g, '-')}`;
         // console.log('Assigning value for ', cssVarName);
-        TIPPY[key] = rootStyle.getPropertyValue(cssVarName).trim();
+        (TIPPY as any)[key] = rootStyle.getPropertyValue(cssVarName).trim();
     });
 }
 

@@ -57,10 +57,9 @@ export class N2Tab<STATE extends StateN2Tab = StateN2Tab> extends N2EjBasic<STAT
     }
 
     protected onStateInitialized(state: STATE) {
-        addN2Class(state.deco,  N2Tab.CLASS_IDENTIFIER);
+        addN2Class(state.deco, N2Tab.CLASS_IDENTIFIER);
         super.onStateInitialized(state)
     }
-
 
 
     onLogic(args: N2Evt_OnLogic) {
@@ -202,13 +201,13 @@ export function addN2Tab_Deselected_Listener(elem: HTMLElement, listener: N2Tab_
     if (!listener) return;
 
     addClassesToElement(elem, N2TAB_DESELECTED_EVENT);
-    elem[N2TAB_DESELECTED_EVENT] = listener; // tag the element with the listener
+    (elem as any)[N2TAB_DESELECTED_EVENT] = listener; // tag the element with the listener
 } // addN2Tab_Deselected_Listener
 
 export function removeN2Tab_Deselected_Listener(elem: HTMLElement) {
     if (!elem) return;
     removeClassesFromElement(elem, N2TAB_DESELECTED_EVENT);
-    elem[N2TAB_DESELECTED_EVENT] = undefined;
+    (elem as any)[N2TAB_DESELECTED_EVENT] = undefined;
 } // removeN2Tab_Deselected_Listener
 
 
@@ -246,9 +245,31 @@ export const TabOption_FillContent: TabModel = {
 }
 
 
-
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
-    cssAddSelector(`app-tab-no-text-transform`,`
-    text-transform: unset !important;`);
+    cssAddSelector(`app-tab-no-text-transform`, `
+    text-transform: unset !important;`
+    );
+
+    // rounded light gray borders for the top left and right of the tab
+    cssAddSelector(
+        `.${N2Tab.CLASS_IDENTIFIER}.e-tab.e-fill .e-tab-header .e-toolbar-item .e-tab-wrap`,
+        `
+        border: solid 0.1px var(--app-color-gray-200);
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        `);
+
+    // active tab rounded borders for the top left and right of the tab
+    cssAddSelector(
+        `.${N2Tab.CLASS_IDENTIFIER}.e-tab.e-fill .e-tab-header .e-toolbar-item.e-active .e-tab-wrap `,
+        `        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        border-color: unset;`);
+
+    // cssAddSelector(
+    //     ``,
+    //     ``);
+
+
 }); // normal priority

@@ -152,10 +152,10 @@ export abstract class AbstractGrid<T = any> extends AnyWidgetStandard<Grid, Args
         try {
             this.obj = new Grid(this.gridModel);
 
-            let ejInstances: any[] = this.gridModel[EJINSTANCES];
+            let ejInstances: any[] = (this.gridModel as any)[EJINSTANCES];
             if (!ejInstances) {
                 ejInstances = [];
-                this.gridModel[EJINSTANCES] = ejInstances;
+                (this.gridModel as any)[EJINSTANCES] = ejInstances;
             }
 
             // At this point state.ej.ejInstances is an array that is guaranteed to exist (empty or not)

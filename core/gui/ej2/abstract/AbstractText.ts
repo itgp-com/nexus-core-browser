@@ -1,16 +1,8 @@
-import {
-    applyHtmlDecoration,
-    getRandomString,
-    IArgs_HtmlDecoration,
-    IArgs_HtmlTag,
-    IArgs_HtmlTag_Utils,
-    StringArg,
-    stringArgVal
-} from "../../../BaseUtils";
-import {DataProvider}                                                                                       from "../../../data/DataProvider";
-import {TextBox, TextBoxModel}                                                                              from "@syncfusion/ej2-inputs";
-import {AnyWidget, Args_AnyWidget}                                                                          from "../../AnyWidget";
-import {ChangedEventArgs}                                                                                   from "@syncfusion/ej2-inputs/src/textbox/textbox";
+import {TextBox, TextBoxModel} from "@syncfusion/ej2-inputs";
+import {ChangedEventArgs} from "@syncfusion/ej2-inputs/src/textbox/textbox";
+import {applyHtmlDecoration, getRandomString, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils, StringArg, stringArgVal} from "../../../BaseUtils";
+import {DataProvider} from "../../../data/DataProvider";
+import {AnyWidget, Args_AnyWidget} from "../../AnyWidget";
 
 export class Args_AbstractText_Multiline {
    /**
@@ -397,7 +389,7 @@ export abstract class AbstractText extends AnyWidget<TextBox, Args_AnyWidget, st
          let value: string    = '';
          let enabled: boolean = false;
          if (data) {
-            value   = data[this.initArgs.propertyName];
+            value   = (data as any)[this.initArgs.propertyName];
             enabled = true; // there is data so it's enabled
          }
 
