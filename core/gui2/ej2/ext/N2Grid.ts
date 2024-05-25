@@ -602,10 +602,10 @@ font-size: var(--app-font-size-regular);`
     // Reduce the padding of the header grid cells from 1.8em default
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-headercelldiv, .${eGridClass} .e-gridheader .e-stackedheadercelldiv,
 .${n2GridClass}.${eGridClass} .e-gridheader .e-headercell .e-headercelldiv.e-headerchkcelldiv,
-.${n2GridClass}.${eGridClass} .${n2GridClass}.${eGridClass}header .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-headercelldiv, 
-.${n2GridClass}.${eGridClass} .${n2GridClass}.${eGridClass}header .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-stackedheadercelldiv, 
-.${n2GridClass}.${eGridClass} .${n2GridClass}.${eGridClass}header .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-headercelldiv, 
-.${n2GridClass}.${eGridClass} .${n2GridClass}.${eGridClass}header .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-stackedheadercelldiv
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-headercelldiv, 
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-stackedheadercelldiv, 
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-headercelldiv, 
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-stackedheadercelldiv
 `, `
     padding-right: 0.5em;
     `);
