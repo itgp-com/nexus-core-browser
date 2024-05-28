@@ -37,14 +37,6 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      */
     disableContainsAtTopOfFilter?: boolean;
 
-    /**
-     * If left empty, the column menu is displayed for each column (except the ones where it explicitly disabled in the ColumnModel).
-     *
-     * The Column Menu is displayed by default for each column in an N2Grid.
-     *
-     * Set this to **true** to disable the column menu for all columns (Note: might display filters if custom filters not disabled).
-     */
-    disableShowColumnMenu?: boolean;
 
     /**
      * By default, in an N2Grid, the Autofit All option in a column menu is disabled.
@@ -93,9 +85,10 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         state.ej = state.ej || {};
         let gridModel: GridModel = state.ej;
 
-        if (state.disableShowColumnMenu == undefined || !state.disableShowColumnMenu) {
+        // only add the column menu if it's not disabled
+        if (state.ej?.showColumnMenu == undefined) {
             state.ej.showColumnMenu = true;
-        } // if state.disableShowColumnMenu
+        } // if state.ej?.disableShowColumnMenu
 
 
         // Default group settings for the grid, but respect the user set ones
