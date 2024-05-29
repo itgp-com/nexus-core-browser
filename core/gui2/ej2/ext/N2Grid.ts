@@ -636,8 +636,7 @@ font-size: var(--app-font-size-regular);`
 
     // Controls the left/right padding in grid cells
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-rowcell, .${eGridClass} .e-filterbarcell, .${eGridClass} .e-filterbarcelldisabled, .${eGridClass} .e-headercell, .${eGridClass} .e-detailheadercell`, `
-      padding-left: 5px !important;
-      padding-right: 5px !important;
+      padding: 5px;
     `);
 
     // this selector is used to denote a disabled row in the grid

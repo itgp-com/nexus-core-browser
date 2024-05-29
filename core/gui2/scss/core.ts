@@ -43,24 +43,33 @@ export const CSS_CLASS_horizontal_divider: string = 'core_horizontal_divider';
  *   height: 100%;
  */
 export const CSS_CORE_FLEX_FULL_WIDTH: string = 'css_core_flex_full_width';
-
+/**
+ *    display: flex;
+ *  justify-content: center; // Centers horizontally
+ *  align-items: center; // Centers vertically
+ *  height: 100%; // Takes full height of the parent
+ *  width: 100%; // Takes full width of the parent
+ */
+export const CSS_CORE_FLEX_CENTER_ALL_FULL: string = 'css_core_flex_center_all_full';
 
 /**
  * display: flex;
  * justify-content: centerContainer;
  */
-export const CSS_CORE_CENTER_SELF: string = 'css_core_center_self';
 
 
 nexusMain.UIStartedListeners.add(async () => {
 
     cssAddClass(CSS_CORE_FLEX_FULL_WIDTH, `  display: flex;  flex-direction: row;  height: 100%;`);
 
-    cssAddClass(CSS_CORE_CENTER_SELF, {
-        display: "flex",
-        "justify-content": "center",
-    });
 
+    cssAddClass(CSS_CORE_FLEX_CENTER_ALL_FULL, ` 
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100%; 
+    width: 100%; 
+    `);
 
 // remove ugly extra space from tooltip if we have more than one html element. HTML will handle itself
     cssAddSelector(`.tippy-box .tippy-content`,
@@ -71,7 +80,6 @@ nexusMain.UIStartedListeners.add(async () => {
     // cssAddSelector(
     //     ``,
     //     ``);
-
 
 
 }) // regular priority
