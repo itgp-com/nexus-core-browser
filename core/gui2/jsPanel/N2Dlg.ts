@@ -118,6 +118,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
      */
     private _opacity_user_defined: number;
 
+
     constructor(state ?: STATE) { super(state); }
 
     get classIdentifier() { return N2Dlg.CLASS_IDENTIFIER; }
@@ -260,91 +261,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         } // if state.autoContainment
 
 
-        // ----------------- header logo (back error) ------------
 
-        /*
-         The back arrow is always the first element in the logo and its cursor is a pointer.
-         Any headerLogo specified in the
-         */
-        let backArrow = new N2DlgBackArrow({value: null, dialog: this});
-
-        let ohl: string | HTMLElement = state.options.headerLogo;
-        let existingElem: HTMLElement = null;
-        if (ohl) {
-            if (isString(ohl)) {
-                if (!ohl.startsWith('<')) {
-                    // documentations says that if it starts with '<' it's HTML, otherwise it's a image url
-                    let imgElem = document.createElement('img');
-                    imgElem.src = ohl;
-                    existingElem = imgElem;
-                } else {
-                    existingElem = htmlToElement(ohl as string)
-                }
-            } else {
-                // HTMLElement
-                existingElem = ohl as HTMLElement;
-            } // if isString(ohl)
-        } // if ohl
-
-
-        let headerLogoElem: HTMLElement;
-
-        if (existingElem) {
-            let logoRow = new N2Row({children: [backArrow, existingElem]});
-            logoRow.initLogic();
-            headerLogoElem = logoRow.htmlElement;
-        } else {
-            backArrow.initLogic();
-            headerLogoElem = backArrow.htmlElement;
-        }
-
-        state.options.headerLogo = headerLogoElem;
-
-        // -------  state header overrides options.headerTitle ----------------
-
-        let headerArray: Elem_or_N2[] = [];
-
-        if (state.header != null) {
-            if (state.header == '') {
-                // do nothing
-            } else if (typeof state.header === 'string') {
-                headerArray.push(new N2Html({value: state.header}));
-            } else if (state.header instanceof HTMLElement) {
-                headerArray.push(new N2Html({value: state.header}));
-            } else if (isArray(state.header)) {
-                headerArray.push(...(state.header as N2[]));
-            } else {
-                // only choice is N2
-                let n2: N2 = (state.header as N2);
-                headerArray.push(n2);
-            } // if header is N2
-        } // if state.header != null
-
-        if (state.options.headerTitle) {
-            if (isFunction(state.options.headerTitle)) {
-                let val = null;
-                try {
-                    val = state.options.headerTitle.call(this);
-                } catch (e) {
-                    console.error(e);
-                }
-                if (val) {
-                    headerArray.push(new N2Html({value: val}));
-                }
-            } else if (isHTMLElement(state.options.headerTitle)) {
-                headerArray.push(new N2Html({value: state.options.headerTitle as HTMLElement}));
-            } else if (isString(state.options.headerTitle)) {
-                headerArray.push(new N2Html({value: state.options.headerTitle as string}));
-            }
-        } else {
-            let filler = document.createElement('div');
-            filler.innerHTML = '&nbsp;'; // space so it has a height when rendered
-            headerArray.push(filler);
-        } // if state.options.headerTitle
-
-        let headerRow = new N2Row({children: headerArray});
-        headerRow.initLogic();
-        state.options.headerTitle = headerRow.htmlElement;
 
 
         //--------------- content -----------------
@@ -546,8 +463,8 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
         if (options.panelSize == null) {
             options.panelSize = {
-               width: '99%', // width: 'min(99%,800px)',
-               height: '99%',  // height: 'min(99%, 600px)',
+                width: '99%', // width: 'min(99%,800px)',
+                height: '99%',  // height: 'min(99%, 600px)',
             }
         }
 
@@ -563,7 +480,6 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
         document.addEventListener("jspanelloaded", _ev => {
                 let ev: JsPanel_DocumentEvent = _ev as any as JsPanel_DocumentEvent;
-
 
                 let content = this.state.content as any;
                 if (content == null) {
@@ -601,6 +517,8 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         );
 
         this.createJsPanel.call(this);
+        this.refreshHeaderLogo(); // set the header logo
+        this.refreshHeaderTitle(); // set the header
 
         let state = this.state;
 
@@ -608,6 +526,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         let options = state.options; // update the options with the ACTUAL options used by the JsPanel object
 
         let panel: JsPanel = this.jsPanel;
+
 
         if (state.callFront)
             this.obj.front();
@@ -623,7 +542,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         } // if this.obj
 
 
-        super.onStateInitialized(state);
+        // super.onStateInitialized(state);
+
+        super.onLogic(args);
 
         //------- First try the onDialogBeforeOpen event in the content ----------------
         try {
@@ -751,6 +672,106 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         return `.jsPanel-headerlogo, .jsPanel-titlebar, .jsPanel-ftr, .${CSS_CLASS_N2DLG_HEADERBAR_FRONT_SPACER}, .${CSS_CLASS_N2DLG_HEADERBAR_END_SPACER}`;
     }
 
+    /**
+     * Refresh the header of the dialog based on the contents of state.options.headerTitle
+     */
+    refreshHeaderTitle(): void {
+        let state = this.state;
+
+        // -------  state header overrides options.headerTitle ----------------
+
+        let headerArray: Elem_or_N2[] = [];
+
+        if (state.header != null) {
+            if (state.header == '') {
+                // do nothing
+            } else if (typeof state.header === 'string') {
+                headerArray.push(new N2Html({value: state.header}));
+            } else if (state.header instanceof HTMLElement) {
+                headerArray.push(new N2Html({value: state.header}));
+            } else if (isArray(state.header)) {
+                headerArray.push(...(state.header as N2[]));
+            } else {
+                // only choice is N2
+                let n2: N2 = (state.header as N2);
+                headerArray.push(n2);
+            } // if header is N2
+        } // if state.header != null
+
+        if (state.options.headerTitle) {
+            if (isFunction(state.options.headerTitle)) {
+                let val = null;
+                try {
+                    val = state.options.headerTitle.call(this);
+                } catch (e) {
+                    console.error(e);
+                }
+                if (val) {
+                    headerArray.push(new N2Html({value: val}));
+                }
+            } else if (isHTMLElement(state.options.headerTitle)) {
+                headerArray.push(new N2Html({value: state.options.headerTitle as HTMLElement}));
+            } else if (isString(state.options.headerTitle)) {
+                headerArray.push(new N2Html({value: state.options.headerTitle as string}));
+            }
+        } else {
+            let filler = document.createElement('div');
+            filler.classList.add(CSS_CLASS_N2Dlg_empty_header);
+            filler.innerHTML = '&nbsp;'; // space so it has a height when rendered
+            headerArray.push(filler);
+        } // if state.options.headerTitle
+
+        let headerRow = new N2Row({children: headerArray});
+        headerRow.initLogic();
+        this.jsPanel.setHeaderTitle(headerRow.htmlElement);
+    }// refreshHeaderTitle
+
+    refreshHeaderLogo(): void {
+        // ----------------- header logo (back arrow) ------------
+
+        let state = this.state;
+        /*
+         The back arrow is always the first element in the logo and its cursor is a pointer.
+         Any headerLogo specified in the
+         */
+        let backArrow = new N2DlgBackArrow({value: null, dialog: this});
+
+        let ohl: string | HTMLElement = state.options.headerLogo;
+        let existingElem: HTMLElement = null;
+        if (ohl) {
+            if (isString(ohl)) {
+                if (!ohl.startsWith('<')) {
+                    // documentations says that if it starts with '<' it's HTML, otherwise it's a image url
+                    let imgElem = document.createElement('img');
+                    imgElem.src = ohl;
+                    existingElem = imgElem;
+                } else {
+                    existingElem = htmlToElement(ohl as string)
+                }
+            } else {
+                // HTMLElement
+                existingElem = ohl as HTMLElement;
+            } // if isString(ohl)
+        } // if ohl
+
+
+        let headerLogoElem: HTMLElement;
+
+        if (existingElem) {
+            let logoRow = new N2Row({children: [backArrow, existingElem]});
+            logoRow.initLogic();
+            headerLogoElem = logoRow.htmlElement;
+        } else {
+            backArrow.initLogic();
+            headerLogoElem = backArrow.htmlElement;
+        }
+
+        // state.options.headerLogo = ;
+        this.jsPanel.setHeaderLogo(headerLogoElem);
+    } //    refreshHeaderLogo
+
+
+
 } // class N2Dlg
 
 export function isN2Dlg(n2dlg: any): n2dlg is N2Dlg {
@@ -857,8 +878,9 @@ nexusMain.UIStartedListeners.add(() => {
 
 import {isArray, isFunction, isObject, isString} from 'lodash';
 import {htmlToElement} from '../../BaseUtils';
-import {N2_CLASS} from '../../Constants';
+import {CSS_CLASS_N2Dlg_empty_header, N2_CLASS} from '../../Constants';
 import {cssAddSelector, cssSetRootCSSVariable, isHTMLElement} from '../../CoreUtils';
+import {nexusMain} from '../../NexusMain';
 import {N2Html} from '../generic/N2Html';
 import {
     isN2_Interface_Dialog_BeforeClose,
@@ -873,6 +895,5 @@ import {N2, N2Evt_Destroy, N2Evt_OnLogic} from '../N2';
 import {N2Basic, StateN2Basic, StateN2BasicRef} from '../N2Basic';
 import {addN2Class, decoToHtmlElement} from '../N2HtmlDecorator';
 import {Elem_or_N2, isN2} from '../N2Utils';
-import {nexusMain} from '../../NexusMain';
 import {jsPanel} from './jsPanelLib';
 import {N2DlgBackArrow} from './N2DlgBackArrow';

@@ -128,6 +128,10 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     } // onStateInitialized
 
 
+    protected get alreadyInOnStateInitialized(): boolean {
+        return this._alreadyInOnStateInitialized;
+    }
+
     get state(): STATE {
         return this._state;
     } // state

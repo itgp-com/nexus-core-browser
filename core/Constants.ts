@@ -19,3 +19,5 @@ export const CSS_CLASS_o_detail_icon_up: string = 'fa-chevron-up';
 export const CSS_CLASS_o_detail_icon_down: string = 'fa-chevron-down';
 export const CSS_CLASS_o_detail_icon_solid: string = 'fa-solid';
 export const CSS_ATTR_data_col_field: string = 'data-col-field';
+
+export const CSS_CLASS_N2Dlg_empty_header: string = 'n2-dlg-empty-header';
