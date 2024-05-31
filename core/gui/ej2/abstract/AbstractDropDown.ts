@@ -142,7 +142,7 @@ export abstract class AbstractDropDown<ARG_CLASS extends Args_AbstractDropDown =
 
    get value(): WgtDropDownDataType {
       if (this.obj)
-         return this.obj.value;
+         return this.obj.value as any;
       return null;
    }
 

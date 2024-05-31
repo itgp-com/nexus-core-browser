@@ -1,5 +1,5 @@
 // noinspection UnnecessaryLocalVariableJS
-import {ChartTheme} from '@syncfusion/ej2-charts/src/chart/utils/enum'
+import {ChartTheme} from '@syncfusion/ej2-charts/src/common/utils/enum'
 import {BaseListener} from '../BaseListener';
 import {ListenerHandler} from '../ListenerHandler';
 import * as _ from 'lodash';
