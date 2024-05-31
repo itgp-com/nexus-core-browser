@@ -16,7 +16,7 @@ export interface StateN2Html<T extends N2Html = any> extends StateN2Basic {
      * If true, first creates an element from the text passed in (surrounded by div if not html already)
      * and then proceeds as if the value was an HTMLElement to start with
      */
-    noWrapperWhenStringValue?: boolean;
+    noStringWrapper?: boolean;
 
     /**
      * If this is declared, this event will be triggered when the element is clicked
@@ -76,7 +76,7 @@ export class N2Html<STATE extends StateN2Html = StateN2Html> extends N2Basic<STA
             return null;
 
 
-        if (isString(val) && this.state.noWrapperWhenStringValue) {
+        if (isString(val) && this.state.noStringWrapper) {
             // make sure we have an HTMLElement
             let test = htmlToElement(val); // test if we can actually make an element from the string
             if (test == null) {

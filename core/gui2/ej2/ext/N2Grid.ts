@@ -65,6 +65,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     get classIdentifier(): string { return N2Grid.CLASS_IDENTIFIER; }
 
     private _ddmenu: N2DropDownMenu;
+    private _f_existing_actionFailure: (args: FailureEventArgs) => void;
 
     constructor(state ?: STATE) {
         super(state);
@@ -97,6 +98,12 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             ...this.defaultGroupSettings(),
             ..._groupSettings,
         };
+
+
+        //---------------------------------
+        this._f_existing_actionFailure = gridModel.actionFailure; // existing function in place
+        gridModel.actionFailure = this.actionFailure;
+        //---------------------------------
 
 
         //---------------- Column Menu start ---------------------
@@ -455,6 +462,42 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
         super.onDOMAdded(ev);
     } // onDOMAdded
+
+
+    protected actionFailure = (args: FailureEventArgs) => {
+        let retVal: EJBase = (args?.error as any)?.error as EJBase
+        if (retVal.i_d && retVal.v_e_r) {
+            if (retVal) {
+                console.error('Server Error: ' ,retVal, ' Grid:' , this, ' actionFailure args:', args)
+
+                let dlg = new N2Dlg_Modal({
+                    noStringWrapper: true,
+                    content: new N2Html({
+                        deco: {style: {padding: '2em'}},
+                        value: retVal.errMsgDisplay,
+                    }),
+                    options: {
+                        headerTitle: 'Server Error',
+                        panelSize: {
+                            width: 'auto',
+                            height: 'auto',
+                        },
+                        closeOnEscape: true,
+                        closeOnBackdrop: true,
+                    }, // options
+                }); // dlg
+                dlg.show();
+            }
+        } else {
+            console.error(args?.error);
+        }
+
+        if (this._f_existing_actionFailure && this.obj) {
+            try {
+                this._f_existing_actionFailure.call(this?.obj, args);
+            } catch (e) { console.error(e); }
+        } // if if (f_actionFailure && this.obj)
+    } // actionFailure
 
 
     /**
@@ -939,12 +982,15 @@ import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
-import {ColumnMenuItemModel, ColumnMenuOpenEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
+import {ColumnMenuItemModel, ColumnMenuOpenEventArgs, FailureEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
 import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
+import {EJBase} from '../../../data/Ej2Comm';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
+import {N2Html} from '../../generic/N2Html';
+import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';
 import {addN2Class} from '../../N2HtmlDecorator';
