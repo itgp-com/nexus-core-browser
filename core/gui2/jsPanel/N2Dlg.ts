@@ -95,9 +95,12 @@ export interface StateN2Dlg<DATA_TYPE = any> extends StateN2Basic {
      */
     onDialogBeforeClose?: (evt ?: N2Evt_Dialog_Cancellable<N2Dlg, N2 | HTMLElement>) => void;
 
+    /**
+     * Defaults to false. If set, this dialog will not be included in the open dialogs list
+     */
+    excludeFromOpenDialogs?: boolean;
 
 } // N2DlgState
-
 
 // noinspection JSMismatchedCollectionQueryUpdate
 export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE, JsPanel> {
@@ -161,6 +164,99 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             options.closeOnEscape = true;
         if (!options.content)
             options.content = '<p>No content to display</p>';
+
+
+        //---------------- add openDialogs header control ------------------
+
+        if (options.headerControls == null)
+            options.headerControls = {}; // make sure it exists so we can add add to it
+        let headerControls = options.headerControls
+        if ( !isString(headerControls)) {
+            // it;s an object
+
+            if  (headerControls.add == null)
+                headerControls.add = [];
+            let addProperty = headerControls.add;
+
+            let addArray:JsPanelHeaderControlsAdd[] = isArray(addProperty) ? addProperty : [addProperty];
+
+            // now we add the openDialogs control as the first control
+
+            let openDialogsControl: JsPanelHeaderControlsAdd = {
+                html: '<i class="fa-regular fa-window-restore fa-lg" style="margin: 0 5px;"></i>',
+                name: 'openDialogs',
+                position: 1,
+                handler: (panel: JsPanel, control: HTMLElement) => {
+
+                    let od:N2Dlg;
+
+                    let open_list:OpenN2DlgRow[] = openDialogsList();
+
+                    let rows:any[] = open_list.map((row:OpenN2DlgRow) => {
+                        let value = '';
+                        let dlg = row.dialog;
+                        let jsTitle = dlg.jsPanel.headertitle
+                        if ( jsTitle){
+                            value = jsTitle.innerHTML;
+                        } // if jsTitle
+
+                        let elem =  document.createElement('div');
+                        elem.innerHTML = value;
+                        elem.style.cursor = 'pointer';
+                        elem.style.padding = '5px 15px';
+                        elem.style.border = `solid 1px var(--app-color-gray-300)`;
+                        elem.addEventListener('click', () => {
+                            let panel = dlg.jsPanel;
+                            if ( panel) {
+                                if (panel.status === 'minimized' || panel.status === 'smallified') {
+                                    panel.normalize();
+                                }
+                                panel.front();
+
+                                od.close();
+                            } // if panel
+                        });
+                        return elem;
+                    });
+
+                    let content = new N2Column({
+                        children : rows,
+                    });
+                    content.initLogic();
+
+
+                    setTimeout(async() => {
+
+                        const {N2Dlg_Modal} = await import('./N2Dlg_Modal'); // lazy loading avoids circular dependency
+                        od = new N2Dlg_Modal({
+                            header: 'Open Dialogs',
+                            excludeFromOpenDialogs: true,
+                            options: {
+                                content: content.htmlElement,
+                                panelSize: {
+                                    height: 'auto',
+                                    width: 'auto'
+                                },
+                                closeOnEscape: true,
+                                closeOnBackdrop: true,
+
+                            }
+                        });
+                        od.show();
+                    });
+
+
+                },
+                afterInsert : (control: any) => {},
+            };
+            addArray.unshift(openDialogsControl); // add first
+
+
+            headerControls.add = addArray;
+
+
+        } // if !isString(headerControls)
+
 
 
         //----------------------- Custom N2Dlg dragit options that include the whole headerbar ---------------
@@ -261,9 +357,6 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         } // if state.autoContainment
 
 
-
-
-
         //--------------- content -----------------
         let n2: N2;
         if (state.content) {
@@ -288,7 +381,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
         let f_callbacks: JsPanelCallback[] = options.callback as any as JsPanelCallback[]; // higher code ensured it would be null or an array
         options.callback = (panel: JsPanel) => {
-
+            // this is the earliest we can get to the panel object
             thisX.obj = panel; // this will execute before the jsPanel.create returns
 
             if (n2) {
@@ -426,6 +519,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 }
             }// if x
         } catch (e) { console.error(e); }
+
         options.onclosed = onclose_user_defined;
 
         // add the onDialogClose call as the very first function (it's always reached) and return **true** to allow the rest
@@ -436,7 +530,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             try {
                 if (isN2_Interface_Dialog_Close(state.options.content)) {
                     try {
-                        let evt: N2Evt_Dialog = {dialog: thisX, widget: this.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}};
+                        let evt: N2Evt_Dialog = {dialog: thisX, widget: thisX.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}};
                         state.options.content.onDialogClose(evt);
                     } catch (e) {
                         console.error('N2Dlg.options.onclosed: error calling onDialogClose on content', e);
@@ -451,9 +545,11 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 }
             } catch (e) { console.error(e); }
 
+            openDialogsRemove(thisX); // remove this dialog from the list of open dialogs
+
             //------------ Trigger the onDialogClose event in the N2Dlg state event itself ----------------
             try {
-                this.destroy();
+                thisX.destroy();
             } catch (e) {
                 console.error('N2Dialog._headerN2: error destroying N2Dialog', e);
             }
@@ -476,14 +572,14 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
     onLogic(args: N2Evt_OnLogic): void {
         let thisX = this;
 
-        let opacity_user_defined = this._opacity_user_defined;
+        let opacity_user_defined = thisX._opacity_user_defined;
 
         document.addEventListener("jspanelloaded", _ev => {
                 let ev: JsPanel_DocumentEvent = _ev as any as JsPanel_DocumentEvent;
 
-                let content = this.state.content as any;
+                let content = thisX.state.content as any;
                 if (content == null) {
-                    content = this.state.options.content as any;
+                    content = thisX.state.options.content as any;
                 }
 
                 try {
@@ -504,8 +600,8 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 }
 
 
-                if (this.state.onDialogOpen) {
-                    this.state.onDialogOpen({dialog: this, widget: content as any, native_event: ev});
+                if (thisX.state.onDialogOpen) {
+                    thisX.state.onDialogOpen({dialog: this, widget: content as any, native_event: ev});
                 }
 
 
@@ -516,29 +612,40 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             }, //options
         );
 
-        this.createJsPanel.call(this);
-        this.refreshHeaderLogo(); // set the header logo
-        this.refreshHeaderTitle(); // set the header
+        thisX.createJsPanel.call(this);
+        // at this point this.obj is set to jsPanel
 
-        let state = this.state;
+        if ( thisX.state?.excludeFromOpenDialogs !== true)
+            openDialogsAdd(thisX); // add this dialog to the list of open dialogs (if not already there)
 
-        state.options = this.obj.options; // update the options with the ACTUAL options used by the JsPanel object
+        try {
+            thisX.refreshHeaderLogo(); // set the header logo
+        } catch (e) { console.error(e); }
+
+        try {
+            thisX.refreshHeaderTitle(); // set the header
+        } catch (e) { console.error(e); }
+
+
+        let state = thisX.state;
+
+        state.options = thisX.obj.options; // update the options with the ACTUAL options used by the JsPanel object
         let options = state.options; // update the options with the ACTUAL options used by the JsPanel object
 
-        let panel: JsPanel = this.jsPanel;
+        let panel: JsPanel = thisX.jsPanel;
 
 
         if (state.callFront)
-            this.obj.front();
+            thisX.obj.front();
 
-        if (this.obj) {
-            if (this.state.deco && this.obj instanceof HTMLElement) {
+        if (thisX.obj) {
+            if (thisX.state.deco && thisX.obj instanceof HTMLElement) {
                 try {
-                    decoToHtmlElement(this.state.deco, this.obj as HTMLElement);
+                    decoToHtmlElement(thisX.state.deco, thisX.obj as HTMLElement); // thisX.obj is HTMLElement because JsPanel is an HTMLElement
                 } catch (e) { console.error(e); }
-            } // if this.state.deco && this.obj instanceof HTMLElement
+            } // if thisX.state.deco && this.obj instanceof HTMLElement
 
-            (this.obj as any)[N2_CLASS] = this; // stamp the N2 object on the jsPanel object
+            (thisX.obj as any)[N2_CLASS] = this; // stamp the N2 object on the jsPanel object
         } // if this.obj
 
 
@@ -548,9 +655,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
         //------- First try the onDialogBeforeOpen event in the content ----------------
         try {
-            let content: any = this.state.content as any;
+            let content: any = thisX.state.content as any;
             if (!content) {
-                content = this.state.options.content as any;
+                content = thisX.state.options.content as any;
             }
 
 
@@ -564,27 +671,27 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                     };
                     content.onDialogBeforeOpen(evt);
                     if (evt.cancel) {
-                        this.state.options.opacity = opacity_user_defined; // restore the original opacity even though it does not matter (in case user reuses that object)
-                        this._onDialogBeforeCloseAllowed = false;
-                        this.obj.close(); // immediately close the dialog
-                        this._onDialogBeforeCloseAllowed = true; // just in case the object is reused
+                        thisX.state.options.opacity = opacity_user_defined; // restore the original opacity even though it does not matter (in case user reuses that object)
+                        thisX._onDialogBeforeCloseAllowed = false;
+                        thisX.obj.close(); // immediately close the dialog
+                        thisX._onDialogBeforeCloseAllowed = true; // just in case the object is reused
                         return;
                     }
                 } catch (e) {
-                    console.error('N2Dialog.onStateInitialized: error calling this.state.content.onDialogBeforeOpen on this.state.content', e);
+                    console.error('N2Dialog.onStateInitialized: error calling thisX.state.content.onDialogBeforeOpen on this.state.content', e);
                 }
             }
         } catch (e) {
-            this.handleError(e);
+            thisX.handleError(e);
         }
         //------------------ try the onDialogBeforeOpen event in the content ----------------
         try {
-            if (this.state.onDialogBeforeOpen) {
+            if (thisX.state.onDialogBeforeOpen) {
                 try {
 
-                    let content: any = this.state.content as any;
+                    let content: any = thisX.state.content as any;
                     if (!content) {
-                        content = this.state.options.content as any;
+                        content = thisX.state.options.content as any;
                     }
 
                     let evt: N2Evt_Dialog_Cancellable<N2Dlg, N2 | HTMLElement> = {
@@ -593,26 +700,26 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                         native_event: {panel: panel},
                         cancel: false
                     };
-                    this.state.onDialogBeforeOpen(evt);
+                    thisX.state.onDialogBeforeOpen(evt);
                     if (evt.cancel) {
-                        this.state.options.opacity = opacity_user_defined; // restore the original opacity even though it does not matter (in case user reuses that object)
-                        this._onDialogBeforeCloseAllowed = false;
-                        this.obj.close(); // immediately close the dialog
-                        this._onDialogBeforeCloseAllowed = true; // just in case the object is reused
+                        thisX.state.options.opacity = opacity_user_defined; // restore the original opacity even though it does not matter (in case user reuses that object)
+                        thisX._onDialogBeforeCloseAllowed = false;
+                        thisX.obj.close(); // immediately close the dialog
+                        thisX._onDialogBeforeCloseAllowed = true; // just in case the object is reused
                         return;
                     }
                 } catch (e) {
-                    console.error('N2Dialog.onStateInitialized: error calling this.state.onDialogBeforeOpen on content', e);
+                    console.error('N2Dialog.onStateInitialized: error calling thisX.state.onDialogBeforeOpen on content', e);
                 }
             }
         } catch (e) {
-            this.handleError(e);
+            thisX.handleError(e);
         }
 
 
-        this.state.options.opacity = opacity_user_defined; // restore the original opacity even though it does not matter (in case user reuses that object)
+        thisX.state.options.opacity = opacity_user_defined; // restore the original opacity even though it does not matter (in case user reuses that object)
         // the JsPanel object is really an HTMLElement with extra properties
-        (this.obj as any as HTMLElement).style.opacity = (opacity_user_defined == null ? '1.0' : '' + opacity_user_defined); // make the panel visible (or whatever the user initially specified)
+        (thisX.obj as any as HTMLElement).style.opacity = (opacity_user_defined == null ? '1.0' : '' + opacity_user_defined); // make the panel visible (or whatever the user initially specified)
 
     } // onLogic
 
@@ -623,6 +730,8 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
 
     public onDestroy(args: N2Evt_Destroy): void {
+        let id = this.state.tagId;
+
         try {
             if (this.obj) {
                 (this.obj as any)[N2_CLASS] = null; // remove the stamp
@@ -631,6 +740,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         } catch (e) { console.error(e); }
 
         super.onDestroy(args);
+
 
         try {
             if (this.state.destroyN2ContentOnClose && isN2(this.state.content)) {
@@ -771,7 +881,6 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
     } //    refreshHeaderLogo
 
 
-
 } // class N2Dlg
 
 export function isN2Dlg(n2dlg: any): n2dlg is N2Dlg {
@@ -797,7 +906,7 @@ export const CSS_CLASS_N2DLG_HEADERBAR: string = `${N2Dlg.CLASS_IDENTIFIER}_head
 export const CSS_CLASS_N2DLG_HEADERBAR_FRONT_SPACER: string = `${N2Dlg.CLASS_IDENTIFIER}_headerbar_front_spacer`;
 export const CSS_CLASS_N2DLG_HEADERBAR_END_SPACER: string = `${N2Dlg.CLASS_IDENTIFIER}_headerbar_end_spacer`;
 
-nexusMain.UIStartedListeners.add(() => {
+themeChangeListeners().add((ev) => {
     // document.documentElement.style.fontSize = 'var(--app-font-size-regular)';
     window.jsPanel.ziBase = 1000; // Syncfusion components start at 1000 so this must match
 
@@ -873,14 +982,56 @@ nexusMain.UIStartedListeners.add(() => {
         border: solid 0.1px var(--app-color-gray-600);
     `);
 
-}, 10); // nexusMain.UIStartedListeners.add
+}, 10); // themeChangeListeners().add
+
+
+//------------------------ OpenDialogs ----------------------------
+
+
+interface OpenN2DlgRow {
+    dialog: N2Dlg;
+    timestamp: Date;
+}
+
+const openDialogs: OpenN2DlgRow[] = [];
+
+
+function openDialogsExists(n2Dlg: N2Dlg): boolean {
+    return openDialogs.some(row => row?.dialog === n2Dlg);
+}
+
+function openDialogsAdd(n2Dlg: N2Dlg): void {
+    try {
+        if (!openDialogsExists(n2Dlg))
+            openDialogs.push({dialog: n2Dlg, timestamp: new Date()});
+    } catch (e) { console.error(e); }
+} // add
+
+function openDialogsRemove(n2Dlg: N2Dlg): void {
+    try {
+        let index = openDialogs.findIndex(row => row.dialog === n2Dlg);
+        if (index >= 0)
+            openDialogs.splice(index, 1);
+    } catch (e) { console.error(e); }
+} // remove
+
+// parameter is optional comparator function that uses OpenN2DlgDialog to sort the openDialogs List
+function openDialogsList(comparator?: (a: OpenN2DlgRow, b: OpenN2DlgRow) => number): OpenN2DlgRow[] {
+
+    if (comparator) {
+        openDialogs.sort(comparator);
+    }
+    return openDialogs;
+} // openDialogsList
+
+// ------------------ end OpenDialogs ----------------------------
 
 
 import {isArray, isFunction, isObject, isString} from 'lodash';
 import {htmlToElement} from '../../BaseUtils';
 import {CSS_CLASS_N2Dlg_empty_header, N2_CLASS} from '../../Constants';
 import {cssAddSelector, cssSetRootCSSVariable, isHTMLElement} from '../../CoreUtils';
-import {nexusMain} from '../../NexusMain';
+import {N2Column} from '../generic/N2Column';
 import {N2Html} from '../generic/N2Html';
 import {
     isN2_Interface_Dialog_BeforeClose,
@@ -895,5 +1046,6 @@ import {N2, N2Evt_Destroy, N2Evt_OnLogic} from '../N2';
 import {N2Basic, StateN2Basic, StateN2BasicRef} from '../N2Basic';
 import {addN2Class, decoToHtmlElement} from '../N2HtmlDecorator';
 import {Elem_or_N2, isN2} from '../N2Utils';
+import {themeChangeListeners} from '../Theming';
 import {jsPanel} from './jsPanelLib';
 import {N2DlgBackArrow} from './N2DlgBackArrow';

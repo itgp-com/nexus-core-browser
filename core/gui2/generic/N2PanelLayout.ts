@@ -1,13 +1,12 @@
 import {N2_CLASS} from '../../Constants';
 import {cssAddClass, isDev} from '../../CoreUtils';
 import {CssStyle} from '../../gui/AbstractWidget';
-import {nexusMain} from '../../NexusMain';
 import {N2Evt_OnHtml} from '../N2';
 import {N2Basic, StateN2Basic} from '../N2Basic';
 import {addN2Class, decoToCssStyle, IHtmlUtils} from '../N2HtmlDecorator';
 import {Elem_or_N2, showN2PanelInfoDialog} from '../N2Utils';
+import {themeChangeListeners} from '../Theming';
 import {N2Panel, StateN2Panel} from './N2Panel';
-
 
 
 export interface StateN2PanelLayout extends StateN2Basic {
@@ -261,7 +260,7 @@ export const CLASS_N2_PANEL_LAYOUT_CENTER = N2PanelLayout.CLASS_IDENTIFIER + '_c
 export const CLASS_N2_PANEL_LAYOUT_RIGHT = N2PanelLayout.CLASS_IDENTIFIER + '_right';
 export const CLASS_N2_PANEL_LAYOUT_BOTTOM = N2PanelLayout.CLASS_IDENTIFIER + '_bottom';
 
-nexusMain.UIStartedListeners.add(async () => {
+themeChangeListeners().add((ev) => {
     cssAddClass(N2PanelLayout.CLASS_IDENTIFIER, {
         display: 'grid',
         'grid-template-rows': 'auto 1fr auto',

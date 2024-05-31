@@ -89,6 +89,3 @@ export class N2Splitter<STATE extends StateN2Splitter = StateN2Splitter> extends
     get classIdentifier(): string { return N2Splitter.CLASS_IDENTIFIER; }
 
 } // main class
-
-// nexusMain.UIStartedListeners.add(()=>{
-// }, 10);

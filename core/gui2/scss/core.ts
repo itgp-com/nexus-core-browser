@@ -1,5 +1,5 @@
 import {cssAddClass, cssAddSelector} from "../../CoreUtils";
-import {nexusMain} from '../../NexusMain';
+import {themeChangeListeners} from '../Theming';
 
 export const CSS_FLEX_MAX_XY: string = "flex-component-max flex-full-height";
 export const CSS_FLEX_MAX_HEIGHT: string = "flex-full-height";
@@ -58,7 +58,7 @@ export const CSS_CORE_FLEX_CENTER_ALL_FULL: string = 'css_core_flex_center_all_f
  */
 
 
-nexusMain.UIStartedListeners.add(async () => {
+themeChangeListeners().add((ev) => {
 
     cssAddClass(CSS_CORE_FLEX_FULL_WIDTH, `  display: flex;  flex-direction: row;  height: 100%;`);
 

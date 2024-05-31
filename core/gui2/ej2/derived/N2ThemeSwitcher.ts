@@ -1,7 +1,6 @@
 import {ChangeEventArgs} from '@syncfusion/ej2-buttons/src/common/common';
 import {cssAddClass} from '../../../CoreUtils';
 import {ChartTheme, switchTheme, themeChangeListeners} from '../../../gui2/Theming';
-import {nexusMain} from '../../../NexusMain';
 import {N2Html} from '../../generic/N2Html';
 import {N2Panel, StateN2Panel} from '../../generic/N2Panel';
 import {N2Switch} from '../ext/N2Switch';
@@ -11,7 +10,7 @@ const CLASS_N2ThemeSwitcher_cssClass = 'N2ThemeSwitcher_cssClass';
 /**
  * On start add a custom class used in the cssClass
  */
-nexusMain.UIStartedListeners.add((ev) => {
+themeChangeListeners().add((ev) => {
     // group area background color
     cssAddClass(CLASS_N2ThemeSwitcher_cssClass, {
         'align-self': 'stretch',

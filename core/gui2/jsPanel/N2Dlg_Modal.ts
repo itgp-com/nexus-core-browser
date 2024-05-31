@@ -1,6 +1,6 @@
 import {cssAddQuery, cssAddSelector} from '../../CoreUtils';
 import {addClassesToElement, addN2Class} from '../N2HtmlDecorator';
-import {nexusMain} from '../../NexusMain';
+import {themeChangeListeners} from '../Theming';
 import {jsPanel} from './jsPanelLib';
 import {N2Dlg, StateN2Dlg, StateN2DlgRef} from './N2Dlg';
 
@@ -83,7 +83,7 @@ export class N2Dlg_Modal<STATE extends StateN2Dlg_Modal = StateN2Dlg_Modal> exte
 
 export const CSS_CLASS_N2DLG_MODAL_BACKDROP: string = `${N2Dlg_Modal.CLASS_IDENTIFIER}_backdrop`;
 
-nexusMain.UIStartedListeners.add(() => {
+themeChangeListeners().add((ev) => {
 
     const modal_opacity:number = 0.5
     // modify the modal backdrop to be more transparent
