@@ -106,6 +106,9 @@ export interface StateN2Dlg<DATA_TYPE = any> extends StateN2Basic {
 export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE, JsPanel> {
     static readonly CLASS_IDENTIFIER: string = 'N2Dlg';
 
+    static newN2Dlg_Modal(state ?: StateN2Dlg):N2Dlg {
+        return null; // will be overridden by the N2Dlg_Modal class
+    }
 
     /**
      * True by default but will be set to false if the close needs to be called by the onBeforeOpen event
@@ -227,8 +230,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
                     setTimeout(async() => {
 
-                        const {N2Dlg_Modal} = await import('./N2Dlg_Modal'); // lazy loading avoids circular dependency
-                        od = new N2Dlg_Modal({
+                        od = N2Dlg.newN2Dlg_Modal({
                             header: 'Open Dialogs',
                             excludeFromOpenDialogs: true,
                             options: {
@@ -239,8 +241,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                                 },
                                 closeOnEscape: true,
                                 closeOnBackdrop: true,
-
-                            }
+                            } as any
                         });
                         od.show();
                     });

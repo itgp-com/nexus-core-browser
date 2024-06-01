@@ -85,6 +85,12 @@ export const CSS_CLASS_N2DLG_MODAL_BACKDROP: string = `${N2Dlg_Modal.CLASS_IDENT
 
 themeChangeListeners().add((ev) => {
 
+    // overwrite the static newN2Dlg_Modal method to eliminate importing this class in the parent. Eliminates cyclical dependency like that
+    N2Dlg.newN2Dlg_Modal = (state: StateN2Dlg_Modal): N2Dlg_Modal =>{
+        return new N2Dlg_Modal(state);
+    }
+
+
     const modal_opacity:number = 0.5
     // modify the modal backdrop to be more transparent
     let f_addBackdrop_default = jsPanel.modal.addBackdrop;
@@ -128,46 +134,5 @@ themeChangeListeners().add((ev) => {
     cssAddSelector(`.jsPanel-modal-backdrop.jsPanel-modal-backdrop-multi.${CSS_CLASS_N2DLG_MODAL_BACKDROP}`, `
             background: rgba(0,0,0,${modal_opacity});
         `);
-
-    /*
-
-
-     .jsPanel-modal-backdrop {
-     animation: modalBackdropFadeIn ease-in 1;
-     animation-fill-mode: forwards;
-     animation-duration: 750ms;
-     background: #000;
-     position: fixed;
-     top: 0;
-     left: 0;
-     width: 100%;
-     height: 100%
-     }
-
-
-
-     @keyframes modalBackdropFadeOut {
-     from {
-     opacity: .65
-     }
-
-     to {
-     opacity: 0
-     }
-     }
-
-     .jsPanel-modal-backdrop-out {
-     animation: modalBackdropFadeOut ease-in 1;
-     animation-fill-mode: forwards;
-     animation-duration: .4s
-     }
-
-     .jsPanel-modal-backdrop-multi {
-     background: rgba(0,0,0,.15)
-     }
-
-
-     */
-
 
 }, 20);
