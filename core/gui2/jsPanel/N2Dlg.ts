@@ -100,6 +100,11 @@ export interface StateN2Dlg<DATA_TYPE = any> extends StateN2Basic {
      */
     excludeFromOpenDialogs?: boolean;
 
+    /**
+     * Defaults to false. If **true**, the open dialogs icon will be hidden (used by the open dialogs dialog itself for example so you cannot open another oped dialogs window when you're already in one)
+     */
+    hideOpenDialogsIcon?: boolean;
+
 } // N2DlgState
 
 // noinspection JSMismatchedCollectionQueryUpdate
@@ -182,79 +187,81 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             let addProperty = headerControls.add;
 
             let addArray:JsPanelHeaderControlsAdd[] = isArray(addProperty) ? addProperty : [addProperty];
-
-            // now we add the openDialogs control as the first control
-
-            let openDialogsControl: JsPanelHeaderControlsAdd = {
-                html: '<i class="fa-regular fa-window-restore fa-lg" style="margin: 0 5px;"></i>',
-                name: 'openDialogs',
-                position: 1,
-                handler: (panel: JsPanel, control: HTMLElement) => {
-
-                    let od:N2Dlg;
-
-                    let open_list:OpenN2DlgRow[] = openDialogsList();
-
-                    let rows:any[] = open_list.map((row:OpenN2DlgRow) => {
-                        let value = '';
-                        let dlg = row.dialog;
-                        let jsTitle = dlg.jsPanel.headertitle
-                        if ( jsTitle){
-                            value = jsTitle.innerHTML;
-                        } // if jsTitle
-
-                        let elem =  document.createElement('div');
-                        elem.innerHTML = value;
-                        elem.style.cursor = 'pointer';
-                        elem.style.padding = '5px 15px';
-                        elem.style.border = `solid 1px var(--app-color-gray-300)`;
-                        elem.addEventListener('click', () => {
-                            let panel = dlg.jsPanel;
-                            if ( panel) {
-                                if (panel.status === 'minimized' || panel.status === 'smallified') {
-                                    panel.normalize();
-                                }
-                                panel.front();
-
-                                od.close();
-                            } // if panel
-                        });
-                        return elem;
-                    });
-
-                    let content = new N2Column({
-                        children : rows,
-                    });
-                    content.initLogic();
-
-
-                    setTimeout(async() => {
-
-                        od = N2Dlg.newN2Dlg_Modal({
-                            header: 'Open Dialogs',
-                            excludeFromOpenDialogs: true,
-                            options: {
-                                content: content.htmlElement,
-                                panelSize: {
-                                    height: 'auto',
-                                    width: 'auto'
-                                },
-                                closeOnEscape: true,
-                                closeOnBackdrop: true,
-                            } as any
-                        });
-                        od.show();
-                    });
-
-
-                },
-                afterInsert : (control: any) => {},
-            };
-            addArray.unshift(openDialogsControl); // add first
-
-
             headerControls.add = addArray;
 
+            if ( !state.hideOpenDialogsIcon) {
+                // now we add the openDialogs control as the first control (addArray is already added to headerControls so we just modify it here)
+
+                let openDialogsControl: JsPanelHeaderControlsAdd = {
+                    html: '<i class="fa-regular fa-window-restore fa-lg" style="margin: 0 5px;"></i>',
+                    name: 'openDialogs',
+                    position: 1,
+                    handler: (panel: JsPanel, control: HTMLElement) => {
+
+                        let od: N2Dlg;
+
+                        let open_list: OpenN2DlgRow[] = openDialogsList();
+
+                        let rows: any[] = open_list.map((row: OpenN2DlgRow) => {
+                            let value = '';
+                            let dlg = row.dialog;
+                            let jsTitle = dlg.jsPanel.headertitle
+                            if (jsTitle) {
+                                value = jsTitle.innerHTML;
+                            } // if jsTitle
+
+                            let elem = document.createElement('div');
+                            elem.innerHTML = value;
+                            elem.style.cursor = 'pointer';
+                            elem.style.padding = '5px 15px';
+                            elem.style.border = `solid 1px var(--app-color-gray-300)`;
+                            elem.addEventListener('click', () => {
+                                let panel = dlg.jsPanel;
+                                if (panel) {
+                                    if (panel.status === 'minimized' || panel.status === 'smallified') {
+                                        panel.normalize();
+                                    }
+                                    panel.front();
+
+                                    od.close();
+                                } // if panel
+                            });
+                            return elem;
+                        });
+
+                        let content = new N2Column({
+                            children: rows,
+                        });
+                        content.initLogic();
+
+
+                        setTimeout(async () => {
+
+                            od = N2Dlg.newN2Dlg_Modal({
+                                header: 'Open Dialogs',
+                                excludeFromOpenDialogs: true, // don't include this dialog in the open dialogs list
+                                hideOpenDialogsIcon: true, // don't show the open dialogs icon in this dialog
+                                options: {
+                                    content: content.htmlElement,
+                                    panelSize: {
+                                        height: 'auto',
+                                        width: 'auto'
+                                    },
+                                    closeOnEscape: true,
+                                    closeOnBackdrop: true,
+                                } as any
+                            });
+                            od.show();
+                        });
+
+
+                    },
+                    afterInsert: (control: any) => {},
+                };
+                addArray.unshift(openDialogsControl); // add first
+
+
+            } // if !state.hideOpenDialogsIcon
 
         } // if !isString(headerControls)
 
