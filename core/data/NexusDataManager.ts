@@ -1,29 +1,9 @@
 import {DataManager, Query} from '@syncfusion/ej2-data';
 import {AdaptorOptions, DataOptions} from "@syncfusion/ej2-data/src/manager";
 import {nexusMain} from "../NexusMain";
+import {ExecuteQueryAlwaysEvent} from './Ej2Comm';
 import {HttpRequestEvtDataManager, HttpResponseEvtDataManager} from "./NexusComm";
 
-
-interface ExecuteQueryCommon {
-    query?: Query;
-}
-
-export interface ExecuteQueryFailEvent extends ExecuteQueryCommon {
-    error?: XMLHttpRequest;
-}
-
-export interface ExecuteQueryDoneEvent extends ExecuteQueryCommon {
-    actual: any;
-    aggregates?: any;
-    count: number;
-    request?: string;
-    result?: any | any[];
-    virtualSelectRecords?: any;
-    xhr: XMLHttpRequest;
-}
-
-export interface ExecuteQueryAlwaysEvent extends ExecuteQueryDoneEvent, ExecuteQueryFailEvent {
-}
 
 export interface NexusDataManager_Settings {
     type ?: string;

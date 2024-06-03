@@ -1,7 +1,7 @@
 import {CrudOptions, DataManager, DataOptions, Query} from "@syncfusion/ej2-data";
 import {DataResult} from "@syncfusion/ej2-data/src/adaptors";
 import {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
-import {ExecuteQueryAlwaysEvent} from "./NexusDataManager";
+import {ExecuteQueryAlwaysEvent} from './Ej2Comm';
 
 export interface NexusCommEvt {
     type: "ej2Adaptor"|"axios"|"ej2DataManager";

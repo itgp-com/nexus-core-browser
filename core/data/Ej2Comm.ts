@@ -1,3 +1,5 @@
+import {Query} from '@syncfusion/ej2-data';
+
 export abstract class EJBase {
 
    i_d: string;
@@ -61,4 +63,25 @@ export class EJSingle<T> extends EJBase {
       this.i_d   = EJSINGLE_CLASS_NAME;
       this.v_e_r = 1;
    }
+}
+
+interface ExecuteQueryCommon {
+   query?: Query;
+}
+
+export interface ExecuteQueryFailEvent extends ExecuteQueryCommon {
+   error?: XMLHttpRequest;
+}
+
+export interface ExecuteQueryDoneEvent extends ExecuteQueryCommon {
+   actual: any;
+   aggregates?: any;
+   count: number;
+   request?: string;
+   result?: any | any[];
+   virtualSelectRecords?: any;
+   xhr: XMLHttpRequest;
+}
+
+export interface ExecuteQueryAlwaysEvent extends ExecuteQueryDoneEvent, ExecuteQueryFailEvent {
 }
