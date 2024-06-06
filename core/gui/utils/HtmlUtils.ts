@@ -2,12 +2,22 @@ import {escape, isArray, throttle} from "lodash";
 import {Props} from "tippy.js";
 import {getRandomString, voidFunction} from "../../BaseUtils";
 import {htmlElement_addTooltip_CoreOnly} from "../../CoreUtils";
+import {HIGHLIGHT_TAG_CLOSE, HIGHLIGHT_TAG_OPEN} from '../../gui2/highlight/N2HighlightConstants';
 import {nexusMain} from "../../NexusMain";
 
 
 export let htmlElement_html_link = (elem: HTMLElement, cellValue: string, linkValue: string) => {
-    if (elem)
-        elem.innerHTML = `<a href="${linkValue}" target="_blank" >${cellValue}</a>`;
+    if (elem) {
+
+        let realLinkValue = linkValue;
+        if (realLinkValue == null)
+            realLinkValue = ''
+        // replace prefix and suffix with empty string for link creation
+        realLinkValue = realLinkValue.replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), '')
+            .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), '');
+
+        elem.innerHTML = `<a href="${realLinkValue}" target="_blank" >${cellValue}</a>`;
+    }
 }
 
 export let htmlElement_link_clickFunction = (elem: HTMLElement, clickFunction: (evt: any) => (void | Promise<void>), options ?: { throttle_disable?: boolean, throttle_wait_ms?: number }) => {
