@@ -66,6 +66,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
     private _ddmenu: N2DropDownMenu;
     private _f_existing_actionFailure: (args: FailureEventArgs) => void;
+    private _f_existing_queryCellInfo: (args: ExcelQueryCellInfoEventArgs) => void;
 
     constructor(state ?: STATE) {
         super(state);
@@ -101,9 +102,19 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
         //---------------------------------
-        this._f_existing_actionFailure = gridModel.actionFailure; // existing function in place
+
+        if (state?.ej?.actionFailure)
+            this._f_existing_actionFailure = state.ej.actionFailure; //this takes precedence over the gridModel standard implementation
+        if (!this._f_existing_actionFailure)
+            this._f_existing_actionFailure = gridModel.actionFailure; // existing function in place
         gridModel.actionFailure = this.actionFailure;
         //---------------------------------
+
+        if (state?.ej?.queryCellInfo)
+            this._f_existing_queryCellInfo = state.ej.queryCellInfo; //this takes precedence over the gridModel standard implementation
+        if (!this._f_existing_queryCellInfo)
+            this._f_existing_queryCellInfo = gridModel.queryCellInfo; // existing function in place
+        gridModel.queryCellInfo = this.queryCellInfo;
 
 
         //---------------- Column Menu start ---------------------
@@ -468,7 +479,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         let retVal: EJBase = (args?.error as any)?.error as EJBase
         if (retVal.i_d && retVal.v_e_r) {
             if (retVal) {
-                console.error('Server Error: ' ,retVal, ' Grid:' , this, ' actionFailure args:', args)
+                console.error('Server Error: ', retVal, ' Grid:', this, ' actionFailure args:', args)
 
                 let dlg = new N2Dlg_Modal({
                     noStringWrapper: true,
@@ -498,6 +509,49 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             } catch (e) { console.error(e); }
         } // if if (f_actionFailure && this.obj)
     } // actionFailure
+
+    protected queryCellInfo = (args: QueryCellInfoEventArgs) => {
+
+        try {
+            this.pre_existing_QueryCellInfo(args);
+        } catch (e) { console.error(e); }
+
+        if (this._f_existing_queryCellInfo) {
+            try {
+                this._f_existing_queryCellInfo.call(this.obj, args);
+            } catch (e) { console.error(e); }
+        } // if this._f_existing_queryCellInfo
+
+        try {
+            this.post_existing_QueryCellInfo(args);
+        } catch (e) { console.error(e); }
+
+    } // queryCellInfo
+
+    protected pre_existing_QueryCellInfo = (args: QueryCellInfoEventArgs) => {
+
+
+    } // queryCellInfo
+
+
+    protected post_existing_QueryCellInfo = (args: QueryCellInfoEventArgs) => {
+        let field = args.column.field;
+        if (!field)
+            return;
+        let rec: any = args.data;
+        if (!rec)
+            return;
+        let highlighted_fields = rec[highlight_record_column_name];
+        if (!highlighted_fields || !isArray(highlighted_fields || highlighted_fields.length == 0))
+            return;
+
+        if ( highlighted_fields.includes(field) ){
+            let innerHTML = args.cell.innerHTML;
+            if (innerHTML)
+               args.cell.innerHTML = highlight_apply(innerHTML);
+        } // if highlighted_fields.includes(field)
+
+    } // queryCellInfo
 
 
     /**
@@ -960,7 +1014,7 @@ line-height: 8px;
 
 import {KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
-import {ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, Sort} from '@syncfusion/ej2-grids';
+import {ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, QueryCellInfoEventArgs, Sort} from '@syncfusion/ej2-grids';
 import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
 import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
 import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
@@ -985,11 +1039,12 @@ import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
 import {ColumnMenuItemModel, ColumnMenuOpenEventArgs, FailureEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
-import {isFunction} from 'lodash';
+import {isArray, isFunction} from 'lodash';
 import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
 import {EJBase} from '../../../data/Ej2Comm';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {N2Html} from '../../generic/N2Html';
+import {highlight_apply, highlight_record_column_name} from '../../highlight/N2HighlightConstants';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';
