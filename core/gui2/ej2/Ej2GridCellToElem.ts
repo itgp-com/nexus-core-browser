@@ -1,7 +1,10 @@
-import {ColumnModel, Grid} from '@syncfusion/ej2-grids';
-import {QueryCellInfoEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
+
+import {doesImplementInterface} from '@syncfusion/ej2-grids/src/grid/base/util';
+import {isNullOrUndefined} from '@syncfusion/ej2-base';
+import {ColumnModel, Grid, CellRenderer} from '@syncfusion/ej2-grids';
+import {QueryCellInfoEventArgs, RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
-import {isNumber} from 'lodash';
+import {isFunction, isNumber, isString, template} from 'lodash';
 import {htmlToElement} from '../../BaseUtils';
 import {
     CSS_ATTR_data_col_field,
@@ -33,8 +36,16 @@ import {isN2} from '../N2Utils';
 const _cellAttributesToRemove = ['tabindex', 'aria-label', 'aria-expanded', 'aria-selected']
 
 export class Args_detailElemsFromGridRow {
+
     grid: Grid;
+
     rowIndex: number;
+
+    /**
+     * If present, it will be used instead of the grid row at rowIndex (it will probably contain highlights)
+     */
+    rec ?:any;
+
     specific_columns ?: Column[] | ColumnModel[];
 
     /**
@@ -100,7 +111,10 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
     if (args.rowIndex >= gridRecords.length) {
         return result;
     }
-    let rec = grid.getCurrentViewRecords()[args.rowIndex];
+
+    // if args.rec is present, use that record instead of the one in the grid
+    let is_custom_rec = (args.rec != null);
+    let rec = (args.rec ? args.rec :  grid.getCurrentViewRecords()[args.rowIndex]);
 
     let colList: Column[] | ColumnModel[] = args.specific_columns;
     if (!colList) {
@@ -113,8 +127,16 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
 
         let col: Column = grid.getColumnByField(col_raw.field); // actual Column class with active functions and methods (if needed)
 
-        // Hardcoded row number
+        // Get the cell element. It's ok to do that even if we might have a different row than the one in the grid, because we only keep the cell shell
         let gridCell = grid.getMovableCellFromIndex(args.rowIndex, colIndex) as HTMLElement;
+
+        let gridRowElement = gridCell.parentElement;
+
+        let rowElem = document.createElement('tr');
+        // Copy all attributes from the old element to the new one
+        Array.from(gridRowElement.attributes).forEach(attr => {
+            rowElem.setAttribute(attr.name, attr.value);
+        });
 
         gridCell = gridCell.cloneNode(true) as HTMLElement;
         // don't give the cell by reference, give it by value
@@ -124,9 +146,40 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
             cell.setAttribute(attr.name, attr.value);
         });
 
-        // Move all children from the old element to the new one
-        while (gridCell.firstChild) {
-            cell.appendChild(gridCell.firstChild);
+
+        if ( is_custom_rec) {
+            // cell.textContent = rec[col.field]; // initialize content from record
+
+            // let cell = new CellRenderer(grid, grid.serviceLocator);
+            if (col.template ) {
+                let templateHTML:string;
+
+                if (  isFunction(col.template)){
+                    try {
+                      templateHTML = col.template.call(grid, rec); // call the template passing in the record (row data)
+                    } catch(e) {
+                        templateHTML = '';
+                        console.error(e);}
+                } else {
+                    // if template is string
+                    let template = col.template as string;
+                    if (template.startsWith('#')) {
+                        // get template from the document
+                        templateHTML = document.querySelector(template).outerHTML;
+                    } else {
+                        templateHTML = template;
+                    }
+                }// if template is function
+                cell.innerHTML = templateHTML;
+            } else {
+                renderCell(cell, grid, col, rec);
+            }
+
+        } else {
+            // Move all children from the old element to the new one
+            while (gridCell.firstChild) {
+                cell.appendChild(gridCell.firstChild);
+            }
         }
 
         addClassesToElement(cell, CSS_CLASS_grid_cell_detail);
@@ -149,7 +202,8 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
 
 
                 // modify the cell
-                grid.queryCellInfo(qev);
+                // grid.queryCellInfo(qev);
+                grid.trigger('queryCellInfo', qev);
 
             } // if
 
@@ -184,6 +238,28 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
             if (textAlign) {
                 cell.style.textAlign = textAlign;
             }
+
+            // now Call the RowDataBound event
+            let rowDataBound: RowDataBoundEventArgs = {
+                /** Defines the current row data.
+                 *
+                 * @isGenericType true
+                 */
+                data : rec,
+                /** Defines the row element.
+                 *
+                 * @blazorType CellDOM
+                 */
+                row : rowElem,
+                /** Defines the row height */
+                rowHeight : grid.getRowHeight(),
+                /** Defines whether the row should be select or not */
+                isSelectable: false,
+            } // RowDataBoundEventArgs
+            grid.trigger('rowDataBound', rowDataBound);
+
+
+
 
 
             //--------------- Clean up the cell of all unnecessary classes and attributes ----------------
@@ -527,3 +603,111 @@ export function collapsibleLongTextUpdateTogglePosition(toggle: Element, content
     //     toggle.classList.remove(CSS_CLASS_o_detail_absolute);
     // }
 } //
+
+
+
+
+//---------------------------------------
+function renderCell(cell: HTMLElement, grid: Grid, column: Column, data: any): void {
+    // from cell-renderer.js
+
+
+    let localizer: any = grid.serviceLocator.getService('localization');
+
+    var innerHtml = '';
+    var value = data[column.field];
+    if (column.valueAccessor && !isString(column.valueAccessor))
+        value = column.valueAccessor(column.field, data, column);
+    if ((column.type === 'date' || column.type === 'datetime' || column.type === 'dateonly') && !isNullOrUndefined(value)) {
+        value = new Date(value as string);
+    }
+
+    value = _format(column, grid, value, data);
+    innerHtml = value.toString();
+    if (column.type === 'boolean' && !column.displayAsCheckBox) {
+        var localeStr = (value !== 'true' && value !== 'false') ? null : value === 'true' ? 'True' : 'False';
+
+        innerHtml = localeStr ? localizer.getConstant(localeStr) : innerHtml;
+    }
+    let fromFormatter = _invokeFormatter(column, value, data);
+    innerHtml = !isNullOrUndefined(column.formatter) ? isNullOrUndefined(fromFormatter) ? '' : fromFormatter.toString() : innerHtml;
+    cell.setAttribute('aria-label', innerHtml + localizer.getConstant('ColumnHeader') + column.headerText);
+
+    // cell.innerHTML = _grid.sanitize(innerHtml);
+
+
+    cell.innerHTML = innerHtml;
+
+    // if (this.evaluate(node, cell, data, attributes, fData, isEdit) && column.type !== 'checkbox') {
+    //     this.appendHtml(node, this.parent.sanitize(innerHtml), column.getDomSetter ? column.getDomSetter() : 'innerHTML');
+    // }
+    // else if (column.type === 'checkbox') {
+    //     node.classList.add(literals.gridChkBox);
+    //     node.setAttribute('aria-label', this.localizer.getConstant('CheckBoxLabel'));
+    //     if (this.parent.selectionSettings.persistSelection) {
+    //         value = value === 'true';
+    //     }
+    //     else {
+    //         value = false;
+    //     }
+    //     var checkWrap = createCheckBox(this.parent.createElement, false, { checked: value, label: ' ' });
+    //     if (this.parent.cssClass) {
+    //         addClass([checkWrap], [this.parent.cssClass]);
+    //     }
+    //     this.rowChkBox.id = 'checkbox-' + cell.rowID;
+    //     checkWrap.insertBefore(this.rowChkBox.cloneNode(), checkWrap.firstChild);
+    //     node.appendChild(checkWrap);
+    // }
+    // if (this.parent.checkAllRows === 'Check' && this.parent.enableVirtualization) {
+    //     cell.isSelected = true;
+    // }
+    // this.setAttributes(node, cell, attributes);
+    // if (column.type === 'boolean' && column.displayAsCheckBox) {
+    //     var checked = isNaN(parseInt(value.toString(), 10)) ? value === 'true' : parseInt(value.toString(), 10) > 0;
+    //     var checkWrap = createCheckBox(this.parent.createElement, false, { checked: checked, label: ' ' });
+    //     node.innerHTML = '';
+    //     node.classList.add('e-gridchkbox-cell');
+    //     checkWrap.classList.add('e-checkbox-disabled');
+    //     if (this.parent.cssClass) {
+    //         addClass([checkWrap], [this.parent.cssClass]);
+    //     }
+    //     node.appendChild(checkWrap);
+    //     node.setAttribute('aria-label', checked + this.localizer.getConstant('ColumnHeader') + cell.column.headerText);
+    // }
+    // if (node.classList.contains('e-summarycell') && !data.key) {
+    //     var uid = node.getAttribute('e-mappinguid');
+    //     column = this.parent.getColumnByUid(uid);
+    // }
+    // if (this.parent.isFrozenGrid() && (!data || (data && !data.key))) {
+    //     addStickyColumnPosition(this.parent, column, node);
+    // }
+    // return node;
+
+} //renderCell
+
+function _format(column: Column, grid: Grid, value: any, data: any): string {
+    if (!isNullOrUndefined(column.format)) {
+        if (column.type === 'number' && isNaN(parseInt(value, 10))) {
+            value = null;
+        }
+
+
+        let formatter: any = grid.serviceLocator.getService('valueFormatter');
+        value = formatter.toView(value, column.getFormatter());
+    }
+    return isNullOrUndefined(value) ? '' : value.toString();
+}
+
+function _invokeFormatter(column: Column, value: any, data: any) {
+    if (!isNullOrUndefined(column.formatter)) {
+        if (doesImplementInterface(column.formatter, 'getValue')) {
+            let formatter = column.formatter as any;
+            value = new formatter().getValue(column, data);
+        } else if (typeof column.formatter === 'function') {
+            value = (column.formatter as Function)(column, data);
+        } else {
+            value = column.formatter.getValue(column as Column, data);
+        }
+    }
+    return value;
+}
