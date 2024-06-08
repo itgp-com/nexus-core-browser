@@ -1,3 +1,4 @@
+import {CSS_CLASS_grid_cell_detail_container, CSS_CLASS_grid_cell_detail_value} from '../../Constants';
 import {cssAddSelector} from '../../CoreUtils';
 import {IHtmlUtils, N2HtmlDecorator} from '../N2HtmlDecorator';
 import {CSS_VARS_CORE} from '../scss/vars-material';
@@ -6,6 +7,7 @@ import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 export const HIGHLIGHT_TAG_OPEN:string  = '::{' ;
 export const HIGHLIGHT_TAG_CLOSE:string  = '}::'
 export const CSS_CLASS_N2_HIGHLIGHT_STRONG:string = 'n2-highlight-strong';
+export const CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS:string = 'n2-highlight-surroundings';
 
 //----------  Variables below are public so they can be overwritten if needed  ---------------
 
@@ -66,4 +68,33 @@ themeChangeListeners().add((ev:ThemeChangeEvent) => {
     font-weight: bold;
     `
     );
+
+
+    cssAddSelector(`.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
+        border: 4px dashed var(--app-color-yellow-01);
+    `
+    );
+
+    // cssAddSelector(`.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
+    //     position: relative;
+    // `
+    // );
+    //
+    // cssAddSelector(`.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
+    //     border: 2px dashed var(--app-color-blue-01);
+    //     position: relative;
+    // `
+    // );
+    //
+    // cssAddSelector(`.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}::before`, `
+    //   content: '';
+    //   position: absolute;
+    //   top: -4px;
+    //   left: -4px;
+    //   right: -4px;
+    //   bottom: -4px;
+    //   box-shadow: 0 0 0 4px var(--app-color-yellow-01), 0 0 10px 4px var(--app-color-yellow-01, 0.5);
+    //   pointer-events: none;
+    // `
+    // );
 });

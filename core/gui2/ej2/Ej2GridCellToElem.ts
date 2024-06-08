@@ -28,6 +28,7 @@ import {N2Column} from '../generic/N2Column';
 import {N2Html} from '../generic/N2Html';
 import {N2Panel} from '../generic/N2Panel';
 import {N2Row} from '../generic/N2Row';
+import {CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS} from '../highlight/N2HighlightConstants';
 import {N2, N2Evt_AfterLogic} from '../N2';
 import {addClassesToElement, addN2Class} from '../N2HtmlDecorator';
 import {isN2} from '../N2Utils';
@@ -115,6 +116,7 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
     // if args.rec is present, use that record instead of the one in the grid
     let is_custom_rec = (args.rec != null);
     let rec = (args.rec ? args.rec :  grid.getCurrentViewRecords()[args.rowIndex]);
+    args.rec = rec; // fill in the args so we have it later when we create the panel
 
     let colList: Column[] | ColumnModel[] = args.specific_columns;
     if (!colList) {
@@ -291,7 +293,7 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
 
     return result;
 
-} // gridCellsForDetail
+} // detailElemsFromGridRow
 
 
 export function detailPanelFromGrid_2Columns_Style01(args: Args_detailPanelFromGrid_2Columns_Style01): N2 {
@@ -310,6 +312,9 @@ export function detailPanelFromGrid_2Columns_Style01(args: Args_detailPanelFromG
 
     let grid:Grid = args.grid;
     let columnWidgets: any[] = [];
+    let highlighted_fields :string[] = (args?.rec['___highlights___']  || [] ) as string[]
+
+
     //for widgets create N2Rows with the column headerText and N2HTML label and widget as value
     for (let i = 0; i < gridCellDetails.length; i++) {
         let detail: GridCellDetail = gridCellDetails[i];
@@ -381,6 +386,11 @@ export function detailPanelFromGrid_2Columns_Style01(args: Args_detailPanelFromG
         if (isHTMLElement(detail_elem)) {
 
 
+            let is_highlighted :boolean = highlighted_fields.includes(col.field);
+
+
+
+
             let isCollapsibleLongText: boolean = detail_elem.classList.contains(CSS_CLASS_detail_long_text);
 
             if (isCollapsibleLongText) {
@@ -388,9 +398,13 @@ export function detailPanelFromGrid_2Columns_Style01(args: Args_detailPanelFromG
                 let toggle_row = ` <i class="${CSS_CLASS_o_detail_icon_solid} ${CSS_CLASS_o_detail_icon_down} ${CSS_CLASS_o_detail_toggle} ${CSS_CLASS_o_detail_toggle} ${CSS_CLASS_o_detail_absolute}"></i>`;
                 let elem_toggle_row = htmlToElement(toggle_row);
 
+                let classes:string[] = ['col-8', CSS_CLASS_grid_cell_detail_value, CSS_CLASS_o_detail_text_collapsible, CSS_CLASS_o_detail_collapsed];//collapsible outer
+                if (is_highlighted) {
+                    classes.push(CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS); // highlight the whole cell
+                }
                 widget2 = new N2Panel({
                     deco: {
-                        classes: ['col-8', CSS_CLASS_grid_cell_detail_value, CSS_CLASS_o_detail_text_collapsible, CSS_CLASS_o_detail_collapsed], //collapsible outer
+                        classes: classes,
                     },
                     children: [
                         detail_elem,
@@ -417,9 +431,14 @@ export function detailPanelFromGrid_2Columns_Style01(args: Args_detailPanelFromG
 
             } else {
                 // regular field
+
+                let classes:string[] =  ['col-8', CSS_CLASS_grid_cell_detail_value];
+                if (is_highlighted) {
+                    classes.push(CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS); // highlight the whole cell
+                }
                 widget2 = new N2Panel({
                     deco: {
-                        classes: ['col-8', CSS_CLASS_grid_cell_detail_value], //collapsible outer
+                        classes: classes
                     },
                     children: [
                         detail_elem,
@@ -546,7 +565,7 @@ export function detailPanelFromGrid_2Columns_Style01(args: Args_detailPanelFromG
 
     return n2Container;
 
-} // gridCellDetailPanel_Style01
+} // detailPanelFromGrid_2Columns_Style01
 
 export function collapsibleLongTextUpdateTogglePosition(toggle: Element, content: Element, container: Element) {
 
