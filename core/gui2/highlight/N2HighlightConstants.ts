@@ -4,22 +4,23 @@ import {IHtmlUtils, N2HtmlDecorator} from '../N2HtmlDecorator';
 import {CSS_VARS_CORE} from '../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 
-export const HIGHLIGHT_TAG_OPEN:string  = '::{' ;
-export const HIGHLIGHT_TAG_CLOSE:string  = '}::'
-export const CSS_CLASS_N2_HIGHLIGHT_STRONG:string = 'n2-highlight-strong';
-export const CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS:string = 'n2-highlight-surroundings';
-export const CSS_VAR_APP_COLOR_YELLOW_01:string = '--app-color-yellow-01';
-export const CSS_VAR_APP_COLOR_YELLOW_01_50PCT:string = '--app-color-yellow-01-50pct';
+export const HIGHLIGHT_TAG_OPEN: string = '::{';
+export const HIGHLIGHT_TAG_CLOSE: string = '}::'
+export const CSS_CLASS_N2_HIGHLIGHT_STRONG: string = 'n2-highlight-strong';
+export const CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS: string = 'n2-highlight-surroundings';
+export const CSS_VAR_APP_COLOR_YELLOW_01: string = '--app-color-yellow-01';
+export const CSS_VAR_APP_COLOR_YELLOW_01_50PCT: string = '--app-color-yellow-01-50pct';
 
 //----------  Variables below are public so they can be overwritten if needed  ---------------
 
-export const highlight_deco:N2HtmlDecorator = {
+export const highlight_deco: N2HtmlDecorator = {
     tag: 'span',
-    classes : [CSS_CLASS_N2_HIGHLIGHT_STRONG]
+    classes: [CSS_CLASS_N2_HIGHLIGHT_STRONG]
 }
 
-export let highlight_record_column_name:string = '___highlights___';
-export let highlight_record_column_nls_text_matches:string = '___nls_text_matches___';
+export let highlight_record_column_name: string = '___highlights___';
+export let highlight_record_column_nls_text_matches: string = '___nls_text_matches___';
+export let highlight_record_column_values: string = '___highlight_values___';
 
 /**
  * Overwritable function to get the HTML for the opening highlight tag.
@@ -37,40 +38,7 @@ export function getHighlightTagCloseHtml() {
     return `</${highlight_deco.tag}>`;
 }
 
-/**
- * The highlight_apply function uses new RegExp(HIGHLIGHT_TAG_OPEN, 'g') and new RegExp(HIGHLIGHT_TAG_CLOSE, 'g') to create global regular expressions.
- *
- * In JavaScript, { and } have special meanings in regex (denoting quantifiers), but they are not active unless they follow a digit and are properly formatted as quantifiers (e.g., {3} or {1,4}). Since we are using them as part of a larger string (:: as prefix and suffix), they are treated as literal characters.
- *
- * Example:
- * ```typescript
- * const example = "This is a ::{highlighted}:: text.";
- * const result = highlight_apply(example);
- * console.log(result);
- * // Output: This is a <span class="n2-highlight-strong">highlighted</span> text.
- * ```
- *
- * @param {string} innerHTML - The input string containing the text to be highlighted.
- * @return {string} - The processed string with highlight tags replaced by HTML span elements.
- */
-export function highlight_apply(innerHTML:string) {
-    let highlight_tag_open_html = getHighlightTagOpenHtml();
-    let highlight_tag_close_html = getHighlightTagCloseHtml();
-    return innerHTML.replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), highlight_tag_open_html)
-        .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), highlight_tag_close_html);
-}
-
-themeChangeListeners().add((ev:ThemeChangeEvent) => {
-    // cssAddSelector(`.${CSS_CLASS_N2_HIGHLIGHT_STRONG}`, `
-    // background-color: ${(ev.newState.theme_type === 'dark' ? CSS_VARS_CORE.app_color_yellow_02 : CSS_VARS_CORE.app_color_yellow_01)};
-    // color: black;
-    // padding: 1px 4px;
-    // border: 1px dashed var(--app-color-gray-400);
-    // border-radius: 10px;
-    // font-weight: bold;
-    // `
-    // );
-
+themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
 
     cssAdd(`
@@ -133,12 +101,6 @@ themeChangeListeners().add((ev:ThemeChangeEvent) => {
     // );
 
 
-
-
-
-
-
-
     // cssAddSelector(`.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
     //     position: relative;
     // `
@@ -162,3 +124,48 @@ themeChangeListeners().add((ev:ThemeChangeEvent) => {
     // `
     // );
 });
+
+/**
+ * The highlight_apply function uses new RegExp(HIGHLIGHT_TAG_OPEN, 'g') and new RegExp(HIGHLIGHT_TAG_CLOSE, 'g') to create global regular expressions.
+ *
+ * In JavaScript, { and } have special meanings in regex (denoting quantifiers), but they are not active unless they follow a digit and are properly formatted as quantifiers (e.g., {3} or {1,4}). Since we are using them as part of a larger string (:: as prefix and suffix), they are treated as literal characters.
+ *
+ * Example:
+ * ```typescript
+ * const example = "This is a ::{highlighted}:: text.";
+ * const result = highlight_apply(example);
+ * console.log(result);
+ * // Output: This is a <span class="n2-highlight-strong">highlighted</span> text.
+ * ```
+ *
+ * @param {string} innerHTML - The input string containing the text to be highlighted.
+ * @return {string} - The processed string with highlight tags replaced by HTML span elements.
+ */
+export function highlight_apply(innerHTML: string) {
+    let highlight_tag_open_html = getHighlightTagOpenHtml();
+    let highlight_tag_close_html = getHighlightTagCloseHtml();
+    return innerHTML.replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), highlight_tag_open_html)
+        .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), highlight_tag_close_html);
+}
+
+/**
+ * Retrieves the highlighted value for a specified field from a record.
+ * If there is no highlighted value, it returns the original value from the record.
+ *
+ * @param {any} record - The record containing field values and optionally highlighted values.
+ * @param {string} field - The field name to retrieve the value for.
+ * @returns {string} - The highlighted value or the original value if no highlight exists. Returns null if the record is invalid.
+ */
+export function highlight_value(record: any, field: string): any {
+    if (!record)
+        return null;
+    let highlights = record[highlight_record_column_values];
+    if (!highlights)
+        return  record[field]; // return actual value when no highlighting
+    let value = highlights[field];
+    if (value)
+        value = highlight_apply(value); // expand placeholders to HTML
+    else
+        value = record[field]; // if no highlight, use the original value
+    return value;
+}

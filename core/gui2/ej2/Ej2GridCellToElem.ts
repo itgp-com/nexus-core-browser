@@ -28,7 +28,7 @@ import {N2Column} from '../generic/N2Column';
 import {N2Html} from '../generic/N2Html';
 import {N2Panel} from '../generic/N2Panel';
 import {N2Row} from '../generic/N2Row';
-import {CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS} from '../highlight/N2HighlightConstants';
+import {CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS, highlight_record_column_values} from '../highlight/N2HighlightConstants';
 import {N2, N2Evt_AfterLogic} from '../N2';
 import {addClassesToElement, addN2Class} from '../N2HtmlDecorator';
 import {isN2} from '../N2Utils';
@@ -152,13 +152,22 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
         if ( is_custom_rec) {
             // cell.textContent = rec[col.field]; // initialize content from record
 
-            // let cell = new CellRenderer(grid, grid.serviceLocator);
+            let rec_highlighted = Object.assign({}, rec);
+            // copy from fields in rec[highlight_record_column_values] to fields in rec
+            if (rec[highlight_record_column_values]) {
+                let highlight_values = rec[highlight_record_column_values]; // the highlighted text values
+                for (let key in highlight_values) {
+                    rec_highlighted[key] = highlight_values[key];
+                }
+            }
+
+            // create the HTML cell using the highlighted value of the fields
             if (col.template ) {
                 let templateHTML:string;
 
                 if (  isFunction(col.template)){
                     try {
-                      templateHTML = col.template.call(grid, rec); // call the template passing in the record (row data)
+                      templateHTML = col.template.call(grid, rec_highlighted); // call the template passing in the record (row data)
                     } catch(e) {
                         templateHTML = '';
                         console.error(e);}
@@ -174,7 +183,7 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
                 }// if template is function
                 cell.innerHTML = templateHTML;
             } else {
-                renderCell(cell, grid, col, rec);
+                renderCell(cell, grid, col, rec_highlighted);
             }
 
         } else {
@@ -188,6 +197,7 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
 
 
         // At this point we have a div with the same content as the grid cell
+        // Do the queryCellInfo and rowDataBound events using the non-highlighted (real) record
 
         try {
             if (grid && col && rec) {
