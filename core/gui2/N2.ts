@@ -8,6 +8,7 @@ import {N2_CLASS} from '../Constants';
 import {Err} from "../Core";
 import {getErrorHandler} from "../CoreErrorHandling";
 import {cssAddSelector, isDev} from '../CoreUtils';
+import {cssAdd} from '../CssUtils';
 import {ExceptionEvent} from "../ExceptionEvent";
 import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
 import {addN2Child, removeN2Child} from './ej2/Ej2Utils';
@@ -1019,104 +1020,72 @@ export interface N2Evt_DomRemoved<WIDGET extends N2 = N2> extends N2Evt<WIDGET> 
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
 
-    /* Targets .e-control elements that also have the .${N2.CLASS_IDENTIFIER} class */
-    /* Targets .e-control elements that are descendants of an element with the .${N2.CLASS_IDENTIFIER} class */
-    cssAddSelector(`.e-control.${N2.CLASS_IDENTIFIER}, .${N2.CLASS_IDENTIFIER} .e-control`, `
+    /* Targets .e-control elements that also have the N2.CLASS_IDENTIFIER class */
+    /* Targets .e-control elements that are descendants of an element with the N2.CLASS_IDENTIFIER class */
+    let cssContent = `
+.e-control.${N2.CLASS_IDENTIFIER}, .${N2.CLASS_IDENTIFIER} .e-control {
     font-family: var(--app-font-family);    
-    `);
-
-
-    //--------------- the following deals with N2 input components ----------
-
-    let keys: string[] = [];
-    let vals: string[] = [];
-    let key, val;
-
-    key = `.${N2.CLASS_IDENTIFIER} .e-input-group input.e-input,
+}
+`
+//--------------- the following deals with N2 input components ----------
+        cssContent += `
+.${N2.CLASS_IDENTIFIER} .e-input-group input.e-input,
 .${N2.CLASS_IDENTIFIER} .e-input-group.e-control-wrapper input.e-input,
 .${N2.CLASS_IDENTIFIER} .e-input-group textarea.e-input,
 .${N2.CLASS_IDENTIFIER} .e-input-group.e-control-wrapper textarea.e-input,
 .e-input-group.${N2.CLASS_IDENTIFIER} input.e-input,
 .e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} input.e-input,
 .e-input-group.${N2.CLASS_IDENTIFIER} textarea.e-input,
-.e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} textarea.e-input`;
+.e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} textarea.e-input {
+    font-family: var(--app-font-family) !important;
+}
 
-    val = `  font-family: var(--app-font-family) !important;`;
-    keys.push(key);
-    vals.push(val);
-    //------------
-
-
-    /* For input elements and for textarea elements */
-    key = `
+ /* For input elements and for textarea elements */
 .${N2.CLASS_IDENTIFIER} input.e-input,
 .${N2.CLASS_IDENTIFIER} .e-input-group input.e-input,
 .${N2.CLASS_IDENTIFIER} .e-input-group.e-control-wrapper input.e-input,
 input.e-input.${N2.CLASS_IDENTIFIER},
 .e-input-group.${N2.CLASS_IDENTIFIER} input.e-input,
 .e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} input.e-input,
-  
 .${N2.CLASS_IDENTIFIER} textarea.e-input,
 .${N2.CLASS_IDENTIFIER} .e-input-group textarea.e-input,
 .${N2.CLASS_IDENTIFIER} .e-input-group.e-control-wrapper textarea.e-input,
 textarea.e-input.${N2.CLASS_IDENTIFIER},
 .e-input-group.${N2.CLASS_IDENTIFIER} textarea.e-input,
-.e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} textarea.e-input`;
+.e-input-group.e-control-wrapper.${N2.CLASS_IDENTIFIER} textarea.e-input {
+    padding-bottom: 1px;
+}
 
-    val = `padding-bottom: 1px;`
-    keys.push(key);
-    vals.push(val);
-    //------------
+/* float label inside the input element */
+.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top),
+.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top) {
+    color: ${CSS_VARS_CORE.app_label_color_coolgray} !important;
+}
 
-
-    /* float label inside the input element */
-
-    key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top),
-.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top)`;
-
-    val = `color: ${CSS_VARS_CORE.app_label_color_coolgray} !important;`
-    keys.push(key);
-    vals.push(val);
-    //------------
-
-
-    /* change the border color while focus the input element */
-    key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-group) .e-float-line::before,
+/* change the border color while focus the input element */
+.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-group) .e-float-line::before,
 .${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-group) .e-float-line::after,
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-group) .e-float-line::before,
-.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-group) .e-float-line::after`;
-    val = `background: ${CSS_VARS_CORE.app_label_color_coolgray} !important;`
-    keys.push(key);
-    vals.push(val);
-    //------------
+.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-group) .e-float-line::after {
+    background: ${CSS_VARS_CORE.app_label_color_coolgray} !important;
+}
 
+/* float label color on top of the input element while focus the input */
+.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-error) input:focus ~ label.e-float-text,
+.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-error) input:focus ~ label.e-float-text {
+    color: ${CSS_VARS_CORE.app_label_color_coolgray} !important;
+    font-size: ${CSS_VARS_CORE.app_font_size_plus_2}px !important;
+}
 
-    /* float label color on top of the input element while focus the input */
-    key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-error) input:focus ~ label.e-float-text,
-.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-error) input:focus ~ label.e-float-text`
-    val = `
-        color: ${CSS_VARS_CORE.app_label_color_coolgray} !important;
-        font-size: ${CSS_VARS_CORE.app_font_size_plus_2}px !important;` // 14px from 12px regular
+/* float label color on top of the input element */
+.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-error) input:valid ~ label.e-float-text,
+.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-error) input:valid ~ label.e-float-text {
+    color: ${CSS_VARS_CORE.app_label_color_coolgray};
+}
+`;
 
-    keys.push(key);
-    vals.push(val);
-    //------------
-
-    /* float label color on top of the input element */
-    key = `.${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-error) input:valid ~ label.e-float-text,
-.e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-error) input:valid ~ label.e-float-text`;
-    val = `color: $app-label-color-coolgray;`;
-
-    keys.push(key);
-    vals.push(val);
-    //------------
-
-
-    for (let i = 0; i < keys.length; i++) {
-        let key = keys[i];
-        let val = vals[i];
-        cssAddSelector(key, val);
-    } // for
+// Add the CSS content to the default style element
+    cssAdd(cssContent);
 
 
 }); // normal priority

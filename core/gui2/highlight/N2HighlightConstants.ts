@@ -1,5 +1,5 @@
 import {CSS_CLASS_grid_cell_detail_container, CSS_CLASS_grid_cell_detail_value} from '../../Constants';
-import {cssAddSelector} from '../../CoreUtils';
+import {cssAdd} from '../../CssUtils';
 import {IHtmlUtils, N2HtmlDecorator} from '../N2HtmlDecorator';
 import {CSS_VARS_CORE} from '../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
@@ -8,6 +8,8 @@ export const HIGHLIGHT_TAG_OPEN:string  = '::{' ;
 export const HIGHLIGHT_TAG_CLOSE:string  = '}::'
 export const CSS_CLASS_N2_HIGHLIGHT_STRONG:string = 'n2-highlight-strong';
 export const CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS:string = 'n2-highlight-surroundings';
+export const CSS_VAR_APP_COLOR_YELLOW_01:string = '--app-color-yellow-01';
+export const CSS_VAR_APP_COLOR_YELLOW_01_50PCT:string = '--app-color-yellow-01-50pct';
 
 //----------  Variables below are public so they can be overwritten if needed  ---------------
 
@@ -59,21 +61,83 @@ export function highlight_apply(innerHTML:string) {
 }
 
 themeChangeListeners().add((ev:ThemeChangeEvent) => {
-    cssAddSelector(`.${CSS_CLASS_N2_HIGHLIGHT_STRONG}`, `
+    // cssAddSelector(`.${CSS_CLASS_N2_HIGHLIGHT_STRONG}`, `
+    // background-color: ${(ev.newState.theme_type === 'dark' ? CSS_VARS_CORE.app_color_yellow_02 : CSS_VARS_CORE.app_color_yellow_01)};
+    // color: black;
+    // padding: 1px 4px;
+    // border: 1px dashed var(--app-color-gray-400);
+    // border-radius: 10px;
+    // font-weight: bold;
+    // `
+    // );
+
+
+
+    cssAdd(`
+    
+.${CSS_CLASS_N2_HIGHLIGHT_STRONG} {
     background-color: ${(ev.newState.theme_type === 'dark' ? CSS_VARS_CORE.app_color_yellow_02 : CSS_VARS_CORE.app_color_yellow_01)};
     color: black;
     padding: 1px 4px;
     border: 1px dashed var(--app-color-gray-400);
     border-radius: 10px;
-    font-weight: bold;
-    `
-    );
+    font-weight: bold;    
+}
+    
+:root {
+    ${CSS_VAR_APP_COLOR_YELLOW_01_50PCT}: rgba(254, 254, 78, 0.5);
+}
+
+.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS} {
+        position: relative;
+        border: 2px dashed var(--app-color-gray-500);
+        border-radius: 10px;
+} 
+
+.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}::before {
+      content: '';
+      position: absolute;
+      // top: -6px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border: 6px solid var(${CSS_VAR_APP_COLOR_YELLOW_01_50PCT});
+      border-radius: 10px;
+      pointer-events: none;
+      box-sizing: border-box;
+}    
+
+    `); // end cssAdd
 
 
-    cssAddSelector(`.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
-        border: 4px dashed var(--app-color-yellow-01);
-    `
-    );
+    //
+    // cssAddSelector(`.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
+    //     position: relative;
+    //     border: 2px dashed var(--app-color-gray-500);
+    //     border-radius: 10px;
+    // `
+    // );
+    //
+    // cssAddSelector(`.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}::before`, `
+    //   content: '';
+    //   position: absolute;
+    //   top: -6px;
+    //   left: -4px;
+    //   right: -4px;
+    //   bottom: -4px;
+    //   border: 6px solid var(${CSS_VAR_APP_COLOR_YELLOW_01_50PCT});
+    //   border-radius: 10px;
+    //   pointer-events: none;
+    //   box-sizing: border-box;
+    // `
+    // );
+
+
+
+
+
+
+
 
     // cssAddSelector(`.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
     //     position: relative;

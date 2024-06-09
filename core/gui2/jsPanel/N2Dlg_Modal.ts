@@ -1,4 +1,4 @@
-import {cssAddQuery, cssAddSelector} from '../../CoreUtils';
+import {cssAdd} from '../../CssUtils';
 import {addClassesToElement, addN2Class} from '../N2HtmlDecorator';
 import {themeChangeListeners} from '../Theming';
 import {jsPanel} from './jsPanelLib';
@@ -100,39 +100,42 @@ themeChangeListeners().add((ev) => {
         return backdrop;
     }
 
-    cssAddQuery(`@keyframes N2DLG_modalBackdropFadeIn`, `
-        from {
-            opacity: 0
-        }
-    
-        to {
-            opacity: ${modal_opacity}
-        }
-    `);
+    cssAdd(`
+@keyframes N2DLG_modalBackdropFadeIn {
+    from {
+        opacity: 0
+    }
 
-    cssAddSelector(`.jsPanel-modal-backdrop.${CSS_CLASS_N2DLG_MODAL_BACKDROP}`, `
+    to {
+        opacity: ${modal_opacity}
+    }
+ }
+ 
+ .jsPanel-modal-backdrop.${CSS_CLASS_N2DLG_MODAL_BACKDROP} {
         animation:N2DLG_modalBackdropFadeIn ease-in 1;
         animation-fill-mode: forwards;
         animation-duration: 100ms;
-    `);
-
-    cssAddQuery(`@keyframes N2DLG_modalBackdropFadeOut`, `
+ }
+ 
+ @keyframes N2DLG_modalBackdropFadeOut {
           from {
             opacity: ${modal_opacity};
           }
           to {
             opacity: 0;
           }
-    `);
-
-    cssAddSelector(`.jsPanel-modal-backdrop-out.${CSS_CLASS_N2DLG_MODAL_BACKDROP}`, `
+ }
+ 
+.jsPanel-modal-backdrop-out.${CSS_CLASS_N2DLG_MODAL_BACKDROP} {
           animation: N2DLG_modalBackdropFadeOut ease-in 1;
           animation-fill-mode: forwards;
           animation-duration: 100ms;
-    `);
+}
+.jsPanel-modal-backdrop.jsPanel-modal-backdrop-multi.${CSS_CLASS_N2DLG_MODAL_BACKDROP} {
+    background: rgba(0,0,0,${modal_opacity});
+}   
+   
+    `); // end cssAdd
 
-    cssAddSelector(`.jsPanel-modal-backdrop.jsPanel-modal-backdrop-multi.${CSS_CLASS_N2DLG_MODAL_BACKDROP}`, `
-            background: rgba(0,0,0,${modal_opacity});
-        `);
 
 }, 20);

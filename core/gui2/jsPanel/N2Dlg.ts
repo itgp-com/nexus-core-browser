@@ -892,8 +892,8 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 } // class N2Dlg
 
 export function isN2Dlg(n2dlg: any): n2dlg is N2Dlg {
-    return n2dlg &&
-        n2dlg[N2_CLASS] === N2Dlg.CLASS_IDENTIFIER
+    return typeof n2dlg === 'object' && n2dlg !== null &&
+        n2dlg?.classIdentifier === N2Dlg.CLASS_IDENTIFIER;
 } // isN2Dlg
 
 /**
