@@ -97,7 +97,7 @@ themeChangeListeners().add((ev:ThemeChangeEvent) => {
 .${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}::before {
       content: '';
       position: absolute;
-      // top: -6px;
+      top: -6px;
       left: -4px;
       right: -4px;
       bottom: -4px;
