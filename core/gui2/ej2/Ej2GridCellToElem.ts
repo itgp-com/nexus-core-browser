@@ -28,7 +28,7 @@ import {N2Column} from '../generic/N2Column';
 import {N2Html} from '../generic/N2Html';
 import {N2Panel} from '../generic/N2Panel';
 import {N2Row} from '../generic/N2Row';
-import {CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS, highlight_record_column_values} from '../highlight/N2HighlightConstants';
+import {CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS, highlight_record_column_values} from '../highlight/N2Highlight';
 import {N2, N2Evt_AfterLogic} from '../N2';
 import {addClassesToElement, addN2Class} from '../N2HtmlDecorator';
 import {isN2} from '../N2Utils';
@@ -114,7 +114,6 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
     }
 
     // if args.rec is present, use that record instead of the one in the grid
-    let is_custom_rec = (args.rec != null);
     let rec = (args.rec ? args.rec :  grid.getCurrentViewRecords()[args.rowIndex]);
     args.rec = rec; // fill in the args so we have it later when we create the panel
 
@@ -122,6 +121,10 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
     if (!colList) {
         colList = args.grid.getColumns();
     }
+
+
+    let highlighted_fields :string[] = (args?.rec['___highlights___']  || [] ) as string[]
+    let is_highlighted_record:boolean = highlighted_fields.length > 0;
 
     // loop through columns
     for (let colIndex = 0; colIndex < colList.length; colIndex++) {
@@ -149,17 +152,17 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
         });
 
 
-        if ( is_custom_rec) {
-            // cell.textContent = rec[col.field]; // initialize content from record
-
+        if ( is_highlighted_record) {
+            // Create new record for overwriting the highlighted fields with marked up value instead of the original value
             let rec_highlighted = Object.assign({}, rec);
+
             // copy from fields in rec[highlight_record_column_values] to fields in rec
             if (rec[highlight_record_column_values]) {
                 let highlight_values = rec[highlight_record_column_values]; // the highlighted text values
                 for (let key in highlight_values) {
                     rec_highlighted[key] = highlight_values[key];
-                }
-            }
+                } // for key
+            } // if rec[highlight_record_column_values]
 
             // create the HTML cell using the highlighted value of the fields
             if (col.template ) {
@@ -179,19 +182,19 @@ export function detailElemsFromGridRow(args: Args_detailElemsFromGridRow): Recor
                         templateHTML = document.querySelector(template).outerHTML;
                     } else {
                         templateHTML = template;
-                    }
+                    } // if template is function
                 }// if template is function
                 cell.innerHTML = templateHTML;
             } else {
                 renderCell(cell, grid, col, rec_highlighted);
-            }
+            } //    if (col.template )
 
         } else {
             // Move all children from the old element to the new one
             while (gridCell.firstChild) {
                 cell.appendChild(gridCell.firstChild);
             }
-        }
+        } // if is_highlighted_record
 
         addClassesToElement(cell, CSS_CLASS_grid_cell_detail);
 

@@ -2,21 +2,25 @@ import {escape, isArray, throttle} from "lodash";
 import {Props} from "tippy.js";
 import {getRandomString, voidFunction} from "../../BaseUtils";
 import {htmlElement_addTooltip_CoreOnly} from "../../CoreUtils";
-import {HIGHLIGHT_TAG_CLOSE, HIGHLIGHT_TAG_OPEN} from '../../gui2/highlight/N2HighlightConstants';
+import {isRecFieldVal, RecFieldVal} from '../../gui2/highlight/N2Highlight';
 import {nexusMain} from "../../NexusMain";
 
 
-export let htmlElement_html_link = (elem: HTMLElement, cellValue: string, linkValue: string) => {
+export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFieldVal, linkValue: string) => {
     if (elem) {
 
         let realLinkValue = linkValue;
         if (realLinkValue == null)
             realLinkValue = ''
-        //// replace prefix and suffix with empty string for link creation
-        // realLinkValue = realLinkValue.replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), '')
-        //     .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), '');
 
-        elem.innerHTML = `<a href="${realLinkValue}" target="_blank" >${cellValue}</a>`;
+        let visualValue:string; // default to the cellValue like it's a string
+        if ( isRecFieldVal(cellValue)) {
+            visualValue = cellValue.value_visible;
+        } else {
+            visualValue = cellValue as string;
+        }
+
+        elem.innerHTML = `<a href="${realLinkValue}" target="_blank" >${visualValue}</a>`;
     }
 }
 
@@ -282,7 +286,7 @@ export async function sizeHtmlElementFragment(
 
 export class Args_SkinnyTooltip {
     htmlElement: HTMLElement;
-    text: string;
+    text: string | RecFieldVal;
     maxWidth: number;
     tippyProps ?: Partial<Props>;
     /**
@@ -295,22 +299,134 @@ export class Args_SkinnyTooltip {
 export function skinnyHtmlElementTooltip(args: Args_SkinnyTooltip): string {
 
     let htmlElement: HTMLElement = args.htmlElement;
-    let text: string = args.text;
+    let text: string | RecFieldVal = args.text;
     let maxWidth: number = args.maxWidth || 40;
     let tippyProps: Partial<Props> = args.tippyProps || {};
 
-    let retVal = text;
-    if (text) {
-        if (text.length > maxWidth - 2) {
+    let isHTML = false;
+    let content:string;
+    if ( isRecFieldVal(text)) {
+        if ( text.is_highlighted ) {
+            content = text.value_visible;
+            isHTML = true;
+        } else {
+            content = escape(text.value); // same as text.value_visible actually
+        }
+    } else {
+        content = escape(text);
+    }
+
+
+    let retVal = content;
+    if (content) {
+        if (countDisplayableCharacters(content) > maxWidth - 2) {
             let cell = htmlElement as HTMLElement
 
             htmlElement_addTooltip_CoreOnly(cell, {
                 ...tippyProps,
-                content: escape(text),   // overwrite the content no matter what
+                content: content, // escape(text),   // overwrite the content no matter what
             });
-            retVal = text.substring(0, (maxWidth - 1)) + '..';
-            cell.innerText = retVal;
+
+            if( isHTML) {
+                retVal = truncateHtml(content, maxWidth) + '..';
+                cell.innerHTML = retVal;
+            } else {
+                retVal = content.substring(0, (maxWidth - 1)) + '..';
+                cell.innerText = retVal;
+            }
+
         } // if (text.length > 80)
     } //if (text)
     return retVal;
 } // skinnyHtmlElementWithTooltipOverflow
+
+/**
+ * Truncates an HTML string without breaking tags.
+ *
+ * This function ensures that the HTML string is truncated to a specified length
+ * without cutting off in the middle of a tag. It also appends ellipsis (`..`)
+ * if the string is truncated and closes any open tags properly.
+ *
+ * @param {string} html - The HTML string to be truncated.
+ * @param {number} maxLength - The maximum length of the text content.
+ * @returns {string} - The truncated HTML string with tags properly closed.
+ */
+export function truncateHtml(html: string, maxLength: number): string {
+    let truncated = '';
+    let inTag = false;
+    let currentLength = 0;
+    const tags = [];
+
+    for (let i = 0; i < html.length; i++) {
+        const char = html[i];
+
+        if (char === '<') {
+            inTag = true;
+            const tagMatch = html.slice(i).match(/^<\/?[\w\s="/.':;#-\/\?]+>/);
+            if (tagMatch) {
+                const tag = tagMatch[0];
+                truncated += tag;
+                i += tag.length - 1;
+
+                if (!tag.startsWith('</')) {
+                    const tagName = tag.match(/<\s*([a-zA-Z0-9]+)/)?.[1];
+                    if (tagName) tags.push(tagName);
+                } else {
+                    tags.pop();
+                }
+
+                continue;
+            }
+        }
+
+        if (char === '>') {
+            inTag = false;
+            continue;
+        }
+
+        if (!inTag) {
+            if (currentLength < maxLength) {
+                truncated += char;
+                currentLength++;
+            } else {
+                while (tags.length > 0) {
+                    truncated += `</${tags.pop()}>`;
+                }
+                truncated += '..';
+                break;
+            }
+        } else {
+            truncated += char;
+        }
+    }
+
+    return truncated;
+} // truncateHtml
+
+/**
+ * Counts the displayable characters in an HTML string, excluding tags and their contents.
+ *
+ * This function iterates through an HTML string and counts only the characters that are
+ * part of the displayable text, ignoring tags and their contents.
+ *
+ * @param {string} html - The HTML string to be analyzed.
+ * @returns {number} - The count of displayable characters in the HTML string.
+ */
+export function countDisplayableCharacters(html: string): number {
+    let inTag = false;
+    let displayableLength = 0;
+
+    for (let i = 0; i < html.length; i++) {
+        const char = html[i];
+
+        if (char === '<') {
+            inTag = true;
+        } else if (char === '>') {
+            inTag = false;
+        } else if (!inTag) {
+            displayableLength++;
+        }
+    }
+
+    return displayableLength;
+}

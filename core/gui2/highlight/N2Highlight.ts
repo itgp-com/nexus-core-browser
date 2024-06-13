@@ -1,5 +1,7 @@
-import {CSS_CLASS_grid_cell_detail_container, CSS_CLASS_grid_cell_detail_value} from '../../Constants';
+import {isString} from 'lodash';
+import {CSS_CLASS_grid_cell_detail_container, CSS_CLASS_grid_cell_detail_value, CSS_CLASS_grid_cell_highlight_container} from '../../Constants';
 import {cssAdd} from '../../CssUtils';
+import {N2Grid} from '../ej2/ext/N2Grid';
 import {IHtmlUtils, N2HtmlDecorator} from '../N2HtmlDecorator';
 import {CSS_VARS_CORE} from '../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
@@ -75,55 +77,40 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
       box-sizing: border-box;
 }    
 
+
+.${N2Grid.CLASS_IDENTIFIER} .${CSS_CLASS_grid_cell_highlight_container}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS} {
+        position: relative;
+        border: 2px dashed var(--app-color-gray-500);
+        border-radius: 6px;
+        padding: 0 3px;
+}
+
+.${N2Grid.CLASS_IDENTIFIER} .${CSS_CLASS_grid_cell_highlight_container}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border: 6px solid var(${CSS_VAR_APP_COLOR_YELLOW_01_50PCT});
+      border-radius: 6px;
+      pointer-events: none;
+      box-sizing: border-box;
+}  
+
+
     `); // end cssAdd
 
-
-    //
-    // cssAddSelector(`.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
-    //     position: relative;
-    //     border: 2px dashed var(--app-color-gray-500);
-    //     border-radius: 10px;
-    // `
-    // );
-    //
-    // cssAddSelector(`.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}::before`, `
-    //   content: '';
-    //   position: absolute;
-    //   top: -6px;
-    //   left: -4px;
-    //   right: -4px;
-    //   bottom: -4px;
-    //   border: 6px solid var(${CSS_VAR_APP_COLOR_YELLOW_01_50PCT});
-    //   border-radius: 10px;
-    //   pointer-events: none;
-    //   box-sizing: border-box;
-    // `
-    // );
-
-
-    // cssAddSelector(`.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
-    //     position: relative;
-    // `
-    // );
-    //
-    // cssAddSelector(`.${CSS_CLASS_grid_cell_detail_container} .${CSS_CLASS_grid_cell_detail_value}.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`, `
-    //     border: 2px dashed var(--app-color-blue-01);
-    //     position: relative;
-    // `
-    // );
-    //
-    // cssAddSelector(`.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}::before`, `
-    //   content: '';
-    //   position: absolute;
-    //   top: -4px;
-    //   left: -4px;
-    //   right: -4px;
-    //   bottom: -4px;
-    //   box-shadow: 0 0 0 4px var(--app-color-yellow-01), 0 0 10px 4px var(--app-color-yellow-01, 0.5);
-    //   pointer-events: none;
-    // `
-    // );
 });
+
+/**
+ * Checks if a record contains highlighting.
+ * @param record
+ * @return {any}
+ */
+export function containsHighlighing(record:any) {
+    return record && record[highlight_record_column_values];
+}
 
 /**
  * The highlight_apply function uses new RegExp(HIGHLIGHT_TAG_OPEN, 'g') and new RegExp(HIGHLIGHT_TAG_CLOSE, 'g') to create global regular expressions.
@@ -142,11 +129,25 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
  * @return {string} - The processed string with highlight tags replaced by HTML span elements.
  */
 export function highlight_apply(innerHTML: string) {
+    if ( !(innerHTML && isString(innerHTML) ) ) {
+        // null, empty string, or non-string input
+        return innerHTML;
+    }
+
+    // from here on it's a real string
     let highlight_tag_open_html = getHighlightTagOpenHtml();
     let highlight_tag_close_html = getHighlightTagCloseHtml();
-    return innerHTML.replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), highlight_tag_open_html)
-        .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), highlight_tag_close_html);
-}
+    try {
+        return innerHTML.replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), highlight_tag_open_html)
+            .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), highlight_tag_close_html);
+    } catch (e) {
+        console.error('Error in highlight_apply', e);
+        return innerHTML;
+    }
+
+} // highlight_apply
+
+
 
 /**
  * Retrieves the highlighted value for a specified field from a record.
@@ -157,15 +158,62 @@ export function highlight_apply(innerHTML: string) {
  * @returns {string} - The highlighted value or the original value if no highlight exists. Returns null if the record is invalid.
  */
 export function highlight_value(record: any, field: string): any {
-    if (!record)
-        return null;
-    let highlights = record[highlight_record_column_values];
-    if (!highlights)
-        return  record[field]; // return actual value when no highlighting
-    let value = highlights[field];
+    let value = highlighted_raw_value(record, field);
     if (value)
         value = highlight_apply(value); // expand placeholders to HTML
     else
         value = record[field]; // if no highlight, use the original value
     return value;
+}
+
+export function highlighted_raw_value(record:any, field:string) : any {
+    if (!record)
+        return null;
+    let highlights = record[highlight_record_column_values];
+    if (!highlights)
+        return record[field]; // return actual value when no highlighting
+    return highlights[field]; // could be null
+}
+
+
+export interface RecFieldVal {
+    /**
+     * the internal value for the field as straight record[field]
+     */
+    value: any;
+    /**
+     * if highlighted, the value will have the HTML highlighting tags
+     * If not highlighted, this will be the same as value (internal value as rec[field]
+     */
+    value_visible: any;
+    /**
+     * true if the value is highlighted, false if not
+     */
+    is_highlighted: boolean;
+}
+
+export function rec_field_value(record: any, field: string): RecFieldVal {
+    let recFieldVal: RecFieldVal = {value: null, value_visible: null, is_highlighted: false};
+
+    if (record) {
+        recFieldVal.value = record[field]; // return actual value when no highlighting
+        recFieldVal.value_visible = recFieldVal.value; // start here
+
+        let highlights = record[highlight_record_column_values];
+        if (!highlights) {
+            recFieldVal.value_visible = record[field];
+        } else {
+            if ( highlights.hasOwnProperty(field) ) {
+                recFieldVal.value_visible = highlights[field];
+                if (recFieldVal.value_visible)
+                    recFieldVal.value_visible = highlight_apply(recFieldVal.value_visible); // expand placeholders to HTML
+                recFieldVal.is_highlighted = true;
+            }
+        }
+    } // if record
+    return recFieldVal;
+} // rec_field_value
+
+export function isRecFieldVal(obj: any): obj is RecFieldVal {
+    return obj && obj.value !== undefined && obj.value_visible !== undefined && obj.is_highlighted !== undefined;
 }

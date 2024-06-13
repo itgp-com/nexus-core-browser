@@ -658,6 +658,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                                 if (grid != null) {
                                     try {
                                         grid.getContent().firstElementChild.scrollTop = 0; // scroll to top
+                                        // grid.getContent().firstElementChild.scrollLeft = 0; // scroll to left
                                     } catch (e) {
                                         console.error(e);
                                     }

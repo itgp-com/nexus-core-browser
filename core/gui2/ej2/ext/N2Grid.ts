@@ -451,6 +451,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             } // created
 
 
+
         } // if state.disableContainsAtTopOfFilter
 
 
@@ -529,29 +530,31 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     } // queryCellInfo
 
     protected pre_existing_QueryCellInfo = (args: QueryCellInfoEventArgs) => {
+            let  rec:any = args.data;
+            let field:string = args.column.field;
+            if ( !field)
+                return;
+            if ( containsHighlighing(rec) ){
+                // The BIG BIG assumption here is that highlights only apply to text content that has no date, number, or other formatting
+                // We simply take the  highlighted value, make a wrapper div, and set highlighted text as content of wrapper div, then make the wrapper the full content of the cell.
+                // If the field is not highlighted, then the value_visible is the same as the value
 
-
+                let recFieldValue = rec_field_value(rec, field);
+                if ( recFieldValue.is_highlighted){
+                    let wrapper_highlight: HTMLElement = document.createElement('div');
+                    addClassesToElement(wrapper_highlight, [CSS_CLASS_grid_cell_highlight_container, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS]);
+                    wrapper_highlight.innerHTML = recFieldValue.value_visible;
+                    let cell:HTMLElement = args.cell as HTMLElement;
+                    cell.innerHTML = ''; // clear
+                    cell.appendChild(wrapper_highlight);
+                }
+            } // if containsHighlighing(rec, field
     } // queryCellInfo
 
 
     protected post_existing_QueryCellInfo = (args: QueryCellInfoEventArgs) => {
-        let field = args.column.field;
-        if (!field)
-            return;
-        let rec: any = args.data;
-        if (!rec)
-            return;
-        let highlighted_fields = rec[highlight_record_column_name];
-        if (!highlighted_fields || !isArray(highlighted_fields || highlighted_fields.length == 0))
-            return;
 
-        if ( highlighted_fields.includes(field) ){
-            let innerHTML = args.cell.innerHTML;
-            if (innerHTML)
-               args.cell.innerHTML = highlight_apply(innerHTML);
-        } // if highlighted_fields.includes(field)
-
-    } // queryCellInfo
+    } // post_existing_QueryCellInfo
 
 
     /**
@@ -1014,7 +1017,7 @@ line-height: 8px;
 
 import {KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
-import {ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, QueryCellInfoEventArgs, Sort} from '@syncfusion/ej2-grids';
+import {ColumnModel, ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, QueryCellInfoEventArgs, Sort} from '@syncfusion/ej2-grids';
 import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
 import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
 import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
@@ -1040,15 +1043,16 @@ import {ColumnMenuItemModel, ColumnMenuOpenEventArgs, FailureEventArgs} from '@s
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
 import {isArray, isFunction} from 'lodash';
+import {CSS_CLASS_grid_cell_highlight_container} from '../../../Constants';
 import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
 import {EJBase} from '../../../data/Ej2Comm';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {N2Html} from '../../generic/N2Html';
-import {highlight_apply, highlight_record_column_name} from '../../highlight/N2HighlightConstants';
+import {containsHighlighing, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS, highlight_apply, highlight_record_column_name, rec_field_value} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';
-import {addN2Class} from '../../N2HtmlDecorator';
+import {addClassesToElement, addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';

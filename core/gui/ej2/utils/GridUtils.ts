@@ -1,5 +1,6 @@
 import {ClickEventArgs}                                                                                                           from "@syncfusion/ej2-navigations";
 import {ExcelExportProperties, GridModel, QueryCellInfoEventArgs}                                                                 from "@syncfusion/ej2-grids";
+import {RecFieldVal} from '../../../gui2/highlight/N2Highlight';
 import {DialogInfo}                                                                                                               from "../abstract/DialogInfo";
 import {AbstractGrid}                                                                                                             from "../abstract/AbstractGrid";
 import {appendDivToPage, htmlElement_html_link, htmlElement_link_clickFunction, skinnyHtmlElementTooltip} from "../../utils/HtmlUtils";
@@ -156,7 +157,7 @@ export let renderer_html_link_clickFunction = (args: QueryCellInfoEventArgs, cli
    //    args.cell.addEventListener('click', clickFunction);
    // }
 }
-export let htmlElement_html_links           = (elem: HTMLElement, cellValue: string, linkValues: string) => {
+export let htmlElement_html_links           = (elem: HTMLElement, linkValues: string) => {
    if (elem) {
       let linkValuesTokens = linkValues.split('\n');
       let anchors          = [];
