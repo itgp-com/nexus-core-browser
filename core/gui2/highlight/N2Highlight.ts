@@ -1,8 +1,8 @@
-import {isString} from 'lodash';
+import {isArray, isString} from 'lodash';
 import {CSS_CLASS_grid_cell_detail_container, CSS_CLASS_grid_cell_detail_value, CSS_CLASS_grid_cell_highlight_container} from '../../Constants';
 import {cssAdd} from '../../CssUtils';
 import {N2Grid} from '../ej2/ext/N2Grid';
-import {IHtmlUtils, N2HtmlDecorator} from '../N2HtmlDecorator';
+import {addClassesToElement, IHtmlUtils, N2HtmlDecorator} from '../N2HtmlDecorator';
 import {CSS_VARS_CORE} from '../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 
@@ -109,7 +109,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
  * @return {any}
  */
 export function containsHighlighing(record:any) {
-    return record && record[highlight_record_column_values];
+    return record && (record[highlight_record_column_name] ||  record[highlight_record_column_values]);
 }
 
 /**
@@ -199,15 +199,18 @@ export function rec_field_value(record: any, field: string): RecFieldVal {
         recFieldVal.value = record[field]; // return actual value when no highlighting
         recFieldVal.value_visible = recFieldVal.value; // start here
 
-        let highlights = record[highlight_record_column_values];
-        if (!highlights) {
+        let highlighted_fields = record[highlight_record_column_name] ;
+        if (  highlighted_fields && isArray(highlighted_fields) && highlighted_fields.includes(field) ) {
+            recFieldVal.is_highlighted = true; // column shoudl be highlighted, but there might be no actual text inside to highlight
+        }
+        let highlighted_values = record[highlight_record_column_values];
+        if (!highlighted_values) {
             recFieldVal.value_visible = record[field];
         } else {
-            if ( highlights.hasOwnProperty(field) ) {
-                recFieldVal.value_visible = highlights[field];
+            if ( highlighted_values.hasOwnProperty(field) ) {
+                recFieldVal.value_visible = highlighted_values[field];
                 if (recFieldVal.value_visible)
                     recFieldVal.value_visible = highlight_apply(recFieldVal.value_visible); // expand placeholders to HTML
-                recFieldVal.is_highlighted = true;
             }
         }
     } // if record
@@ -216,4 +219,10 @@ export function rec_field_value(record: any, field: string): RecFieldVal {
 
 export function isRecFieldVal(obj: any): obj is RecFieldVal {
     return obj && obj.value !== undefined && obj.value_visible !== undefined && obj.is_highlighted !== undefined;
+}
+
+export function highlighted_grid_cell_content(): HTMLElement {
+    let wrapper_highlight: HTMLElement = document.createElement('div');
+    addClassesToElement(wrapper_highlight, [CSS_CLASS_grid_cell_highlight_container, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS]);
+    return wrapper_highlight;
 }

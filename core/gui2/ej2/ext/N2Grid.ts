@@ -541,8 +541,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
                 let recFieldValue = rec_field_value(rec, field);
                 if ( recFieldValue.is_highlighted){
-                    let wrapper_highlight: HTMLElement = document.createElement('div');
-                    addClassesToElement(wrapper_highlight, [CSS_CLASS_grid_cell_highlight_container, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS]);
+                    let wrapper_highlight: HTMLElement = highlighted_grid_cell_content();
                     wrapper_highlight.innerHTML = recFieldValue.value_visible;
                     let cell:HTMLElement = args.cell as HTMLElement;
                     cell.innerHTML = ''; // clear
@@ -1048,7 +1047,7 @@ import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
 import {EJBase} from '../../../data/Ej2Comm';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {N2Html} from '../../generic/N2Html';
-import {containsHighlighing, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS, highlight_apply, highlight_record_column_name, rec_field_value} from '../../highlight/N2Highlight';
+import {containsHighlighing, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS, highlight_apply, highlight_record_column_name, highlighted_grid_cell_content, rec_field_value} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';

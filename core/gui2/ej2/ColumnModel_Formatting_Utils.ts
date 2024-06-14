@@ -2,7 +2,7 @@ import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import dateFormat from 'dateformat';
 import {isDate} from 'lodash';
 import {MetaTableData} from '../../data/MetaTableData';
-import {DATE_FORMATTER_LOCALE} from '../../gui/ej2/utils/GridFormatters';
+import {n2_grid_formatter_date} from '../N2Formatters';
 
 /**
  * The interface for formatColumnAsDate function, which includes metadata and date formatting options.
@@ -52,7 +52,7 @@ export function formatColumnAsDate(meta_or_settings:meta_or_args, ...columnNames
     if ( !args )
         args = {} as Args_Date_Formatter;
 
-    let formatterFunction:Ej2FormatterFunction = DATE_FORMATTER_LOCALE;
+    let formatterFunction:Ej2FormatterFunction = n2_grid_formatter_date();
     if ( args.dateMask_dateFormatLib ) {
         formatterFunction = date_Ej2Formatter(args);
     }

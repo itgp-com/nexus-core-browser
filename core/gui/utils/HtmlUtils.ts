@@ -2,12 +2,13 @@ import {escape, isArray, throttle} from "lodash";
 import {Props} from "tippy.js";
 import {getRandomString, voidFunction} from "../../BaseUtils";
 import {htmlElement_addTooltip_CoreOnly} from "../../CoreUtils";
-import {isRecFieldVal, RecFieldVal} from '../../gui2/highlight/N2Highlight';
+import {highlighted_grid_cell_content, isRecFieldVal, RecFieldVal} from '../../gui2/highlight/N2Highlight';
 import {nexusMain} from "../../NexusMain";
 
 
 export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFieldVal, linkValue: string) => {
     if (elem) {
+        let wrapper_highlight: HTMLElement;
 
         let realLinkValue = linkValue;
         if (realLinkValue == null)
@@ -16,11 +17,21 @@ export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFiel
         let visualValue:string; // default to the cellValue like it's a string
         if ( isRecFieldVal(cellValue)) {
             visualValue = cellValue.value_visible;
+            if( cellValue.is_highlighted) {
+                wrapper_highlight = highlighted_grid_cell_content(); // create a wrapper for the highlighted content classes
+            }
         } else {
             visualValue = cellValue as string;
         }
 
-        elem.innerHTML = `<a href="${realLinkValue}" target="_blank" >${visualValue}</a>`;
+       let innerHTML = `<a href="${realLinkValue}" target="_blank" >${visualValue}</a>`;
+        if ( wrapper_highlight) {
+            wrapper_highlight.innerHTML = innerHTML;
+            elem.innerHTML = '';
+            elem.appendChild(wrapper_highlight);
+        } else {
+            elem.innerHTML = innerHTML;
+        }
     }
 }
 
