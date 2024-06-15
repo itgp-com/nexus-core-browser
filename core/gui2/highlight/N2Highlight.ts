@@ -218,7 +218,7 @@ export function rec_field_value(record: any, field: string): RecFieldVal {
 } // rec_field_value
 
 export function isRecFieldVal(obj: any): obj is RecFieldVal {
-    return obj && obj.value !== undefined && obj.value_visible !== undefined && obj.is_highlighted !== undefined;
+    return obj && obj.hasOwnProperty('value') && obj.hasOwnProperty('value_visible') && obj.hasOwnProperty('is_highlighted');
 }
 
 export function highlighted_grid_cell_content(): HTMLElement {
