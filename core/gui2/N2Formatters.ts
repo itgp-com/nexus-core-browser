@@ -1,5 +1,6 @@
 import {NumberFormatOptions} from '@syncfusion/ej2-base';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
+import dateFormat from 'dateformat';
 import {isDate, isNumber, isString} from 'lodash';
 
 export type EJ2_COLUMN_FORMATTER = (column: Column, rec: Record<string, any>) => string | any;
@@ -57,7 +58,8 @@ export function n2_grid_formatter_date(args?: Args_n2_grid_formatter_date): EJ2_
             }
         }
         if (date) {
-            return date.toLocaleDateString(locale);
+            let format = n2_locale_date_dateFormat_formats({locale: locale}).date;
+            return dateFormat(date, format);
         } else {
             return (data ? data.toString() : '');
         }
@@ -69,7 +71,7 @@ export function n2_grid_formatter_date(args?: Args_n2_grid_formatter_date): EJ2_
 
 
 export function n2_grid_format_date(): string {
-    let format: string = n2_locale_date_formats()?.date;
+    let format: string = n2_locale_date_ej2_formats()?.date;
     if (format == null)
         format = 'yyyy-MM-dd'; // default to ISO format
     return format;
@@ -87,6 +89,18 @@ export interface Args_n2_grid_formatter_datetime {
      * If not specified, defaults to the browser's default locale.
      */
     locale?: string;
+}
+
+
+/**
+ * Converts a non-standard date string in this format "2024-06-10T13:44:56.895-00"
+ * to a standard ISO 8601 format "2024-06-10T13:44:56.895-00:00"
+ *
+ * @param {string} dateString - The non-standard date string.
+ * @returns {string} - The standard ISO 8601 date string.
+ */
+function toISO8601(dateString: string): string {
+    return dateString.replace(/([+-]\d{2})$/, '$100');
 }
 
 /**
@@ -115,7 +129,18 @@ export function n2_grid_formatter_datetime(args?: Args_n2_grid_formatter_datetim
                 dateTime = new Date(data);
             } else if (isString(data)) {
                 // String to Date
-                dateTime = new Date(data);
+                try {
+                    dateTime = new Date(data);
+                } catch (e) { console.error(e)}
+                if ( dateTime == null || isNaN(dateTime.getTime())){
+                    data = toISO8601(data); // convert
+                    try {
+                        dateTime = new Date(data)
+                    } catch (e) { console.error(e)   }
+                }
+                if ( dateTime != null && isNaN(dateTime.getTime())){
+                    dateTime = null; // not a valid date, so let it just print the default string at this point
+                }
             } else {
                 console.error('Unknown datetime for value:', data, ' using when calling n2_grid_formatter_datetime({locale:${locale}) ');
             }
@@ -124,8 +149,8 @@ export function n2_grid_formatter_datetime(args?: Args_n2_grid_formatter_datetim
         }
 
         if (dateTime) {
-            // Format to locale-specific date and time
-            return dateTime.toLocaleString(locale);
+            let format = n2_locale_date_dateFormat_formats({locale: locale}).dateTime;
+            return dateFormat(dateTime, format);
         } else {
             return (data ? data.toString() : '');
         }
@@ -134,7 +159,7 @@ export function n2_grid_formatter_datetime(args?: Args_n2_grid_formatter_datetim
 } // n2_grid_formatter_datetime
 
 export function n2_grid_format_datetime(): string {
-    let format: string = n2_locale_date_formats()?.dateTime;
+    let format: string = n2_locale_date_ej2_formats()?.dateTime;
     if (format == null)
         format = 'yyyy-MM-dd HH:mm'; // default to ISO format
     return format;
@@ -367,7 +392,20 @@ export interface N2LocaleDateFormats {
     dateTime: string;
 }
 
-const _dateFormatCache: { [key: string]: N2LocaleDateFormats } = {};
+const _dateFormatCache_ej2: { [key: string]: N2LocaleDateFormats } = {};
+const _dateFormatCache_dataFormat: { [key: string]: N2LocaleDateFormats } = {};
+
+interface Args_n2_locale_date_formats {
+
+    locale?: string;
+}
+interface Args_n2_locale_date_formats_local extends Args_n2_locale_date_formats {
+
+    /**
+     * Which style library do we generate the formats for
+     */
+    style: 'ej2' | 'dataFormat'
+}
 
 /**
  * Returns the date and date-time formats for a given locale.
@@ -376,13 +414,29 @@ const _dateFormatCache: { [key: string]: N2LocaleDateFormats } = {};
  * @param {string} [locale] - The locale string (e.g., 'en-US', 'de-DE').
  * @returns {N2LocaleDateFormats} The date and date-time formats.
  */
-export function n2_locale_date_formats(locale?: string): N2LocaleDateFormats {
+export function n2_locale_date_ej2_formats(args?:Args_n2_locale_date_formats ): N2LocaleDateFormats {
+    if ( !args)
+        args = {} as Args_n2_locale_date_formats;
+    return n2_locale_date_formats_local({style: 'ej2', locale: args.locale});
+}
+
+export function n2_locale_date_dateFormat_formats(args?:Args_n2_locale_date_formats ): N2LocaleDateFormats {
+    if ( !args)
+        args = {} as Args_n2_locale_date_formats;
+    return n2_locale_date_formats_local({style: 'dataFormat', locale: args.locale});
+}
+
+function n2_locale_date_formats_local(args : Args_n2_locale_date_formats_local ): N2LocaleDateFormats {
+    let style = args.style;
+    let locale: string = args.locale;
     if (!locale) {
         locale = navigator.language; // default to browser locale
     }
 
-    if (_dateFormatCache[locale]) {
-        return _dateFormatCache[locale];
+    if ( style === 'ej2' && _dateFormatCache_ej2[locale]) {
+        return _dateFormatCache_ej2[locale];
+    } else if (style === 'dataFormat' && _dateFormatCache_dataFormat[locale]) {
+        return _dateFormatCache_dataFormat[locale];
     }
 
     const dateOptions: Intl.DateTimeFormatOptions = {
@@ -394,7 +448,8 @@ export function n2_locale_date_formats(locale?: string): N2LocaleDateFormats {
     const dateTimeOptions: Intl.DateTimeFormatOptions = {
         ...dateOptions,
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        dayPeriod: 'short'
     };
 
     let dateTimeParts, dateParts;
@@ -416,27 +471,51 @@ export function n2_locale_date_formats(locale?: string): N2LocaleDateFormats {
         dateParts = fallbackDateFormatter.formatToParts(new Date());
     }
 
-    const formatMap: { [key: string]: string } = {
-        year: 'yyyy',
-        month: 'MM',
-        day: 'dd',
-        hour: 'hh',
-        minute: 'mm',
-        dayPeriod: 'a'
-    };
+    let formatMap: { [key: string]: string } = { }
+    if ( style === 'ej2') {
+
+        formatMap = Object.assign(formatMap, {
+            year: 'yyyy',
+            month: 'MM',
+            day: 'dd',
+            hour: 'hh',
+            minute: 'mm',
+            dayPeriod: 'a'
+        })
+    }   else if ( style === 'dataFormat') {
+
+            formatMap = Object.assign(formatMap, {
+                year: 'yyyy',
+                month: 'mm',
+                day: 'dd',
+                hour: 'hh',   // Use 'HH' if no dayPeriod is included and 24-hour format is needed
+                minute: 'MM',
+                dayPeriod: 'TT'
+            })
+        }
 
     const buildFormatString = (parts: Intl.DateTimeFormatPart[]): string => {
         let formatString = '';
+        let containsDayPeriod = false;
+
         parts.forEach(part => {
             if (part.type === 'literal') {
                 formatString += part.value;
             } else {
                 const formatPart = formatMap[part.type];
                 if (formatPart) {
+                    if (part.type === 'dayPeriod') {
+                        containsDayPeriod = true;
+                    }
                     formatString += formatPart;
                 }
             }
         });
+
+        if (!containsDayPeriod) {
+            formatString = formatString.replace(/hh/g, 'HH'); // replace all 'hh' with 'HH'
+        }
+
         return formatString.trim();
     };
 
@@ -448,27 +527,25 @@ export function n2_locale_date_formats(locale?: string): N2LocaleDateFormats {
         dateTime: dateTimeFormatString
     };
 
-    _dateFormatCache[locale] = value;
+    if ( style === 'ej2') {
+        _dateFormatCache_ej2[locale] = value;
+    } else if (style === 'dataFormat') {
+        _dateFormatCache_dataFormat[locale] = value;
+    }
     return value;
 }
 
 
+console.log('en-US ej2', n2_locale_date_ej2_formats({locale:'en-US'}))
+console.log('de-DE ej2', n2_locale_date_ej2_formats({locale:'de-DE'}))
+console.log('fr-FR ej2', n2_locale_date_ej2_formats({locale:'fr-FR'}))
+console.log('ja-JP ej2', n2_locale_date_ej2_formats({locale:'ja-JP'}))
+console.log('zh-CN ej2', n2_locale_date_ej2_formats({locale:'zh-CN'}))
+console.log('ro-RO ej2', n2_locale_date_ej2_formats({locale:'ro-RO'}))
 
-console.log('en-US', n2_locale_date_formats('en-US'))
-console.log('de-DE', n2_locale_date_formats('de-DE'))
-console.log('fr-FR', n2_locale_date_formats('fr-FR'))
-console.log('ja-JP', n2_locale_date_formats('ja-JP'))
-console.log('zh-CN', n2_locale_date_formats('zh-CN'))
-console.log('ar-SA', n2_locale_date_formats('ar-SA'))
-console.log('es-ES', n2_locale_date_formats('es-ES'))
-console.log('ru-RU', n2_locale_date_formats('ru-RU'))
-console.log('hi-IN', n2_locale_date_formats('hi-IN'))
-console.log('pt-BR', n2_locale_date_formats('pt-BR'))
-console.log('bn-BD', n2_locale_date_formats('bn-BD'))
-console.log('pa-IN', n2_locale_date_formats('pa-IN'))
-console.log('te-IN', n2_locale_date_formats('te-IN'))
-console.log('mr-IN', n2_locale_date_formats('mr-IN'))
-console.log('ta-IN', n2_locale_date_formats('ta-IN'))
-console.log('ur-PK', n2_locale_date_formats('ur-PK'))
-console.log('gu-IN', n2_locale_date_formats('gu-IN'))
-console.log('ro-RO', n2_locale_date_formats('ro-RO'))
+console.log('en-US dateFormat', n2_locale_date_dateFormat_formats({locale:'en-US'}))
+console.log('de-DE dateFormat', n2_locale_date_dateFormat_formats({locale:'de-DE'}))
+console.log('fr-FR dateFormat', n2_locale_date_dateFormat_formats({locale:'fr-FR'}))
+console.log('ja-JP dateFormat', n2_locale_date_dateFormat_formats({locale:'ja-JP'}))
+console.log('zh-CN dateFormat', n2_locale_date_dateFormat_formats({locale:'zh-CN'}))
+console.log('ro-RO dateFormat', n2_locale_date_dateFormat_formats({locale:'ro-RO'}))

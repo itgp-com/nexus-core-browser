@@ -1,8 +1,9 @@
+import {ColumnModel} from '@syncfusion/ej2-grids';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import dateFormat from 'dateformat';
 import {isDate} from 'lodash';
 import {MetaTableData} from '../../data/MetaTableData';
-import {n2_grid_formatter_date} from '../N2Formatters';
+import {n2_grid_format_date, n2_grid_format_datetime, n2_grid_formatter_date} from '../N2Formatters';
 
 /**
  * The interface for formatColumnAsDate function, which includes metadata and date formatting options.
@@ -52,9 +53,16 @@ export function formatColumnAsDate(meta_or_settings:meta_or_args, ...columnNames
     if ( !args )
         args = {} as Args_Date_Formatter;
 
-    let formatterFunction:Ej2FormatterFunction = n2_grid_formatter_date();
+    let formattingSection:ColumnModel = {
+
+    }
+
+    // let formatterFunction:Ej2FormatterFunction = n2_grid_formatter_date();
     if ( args.dateMask_dateFormatLib ) {
-        formatterFunction = date_Ej2Formatter(args);
+        // formatterFunction = date_Ej2Formatter(args);
+        formattingSection.formatter = date_Ej2Formatter(args);
+    } else {
+        formattingSection.format = n2_grid_format_date(); // use format so Excel exports can use it
     }
 
     for (let i = 0; i < columnNames.length; i++) {
@@ -66,7 +74,8 @@ export function formatColumnAsDate(meta_or_settings:meta_or_args, ...columnNames
                 textAlign: "Center",
                 width: 120,
                 type: 'date',
-                formatter: formatterFunction,
+                // formatter: formatterFunction,
+                ...formattingSection,
             });
         }
     } // for
@@ -177,6 +186,14 @@ export function formatColumnAsDateTime(meta_or_settings:MetaTableData | I_format
     if ( !args )
         args = {} as Args_Date_Formatter;
 
+    let formattingSection:ColumnModel = {}
+    if ( args.dateMask_dateFormatLib ){
+        formattingSection.formatter = dateTime_Ej2Formatter(args);
+    } else {
+        formattingSection.format = n2_grid_format_datetime(); // use format so Excel exports can use it
+    }
+
+
     for (let i = 0; i < columnNames.length; i++) {
         let columnName = columnNames[i];
         let column = meta.GRIDCOLS[columnName];
@@ -185,9 +202,10 @@ export function formatColumnAsDateTime(meta_or_settings:MetaTableData | I_format
                 headerTextAlign: "Center",
                 textAlign: "Center",
                 width: 150,
-                type: 'date',
-                formatter: dateTime_Ej2Formatter(args),
-            });
+                // type: 'datetime',
+                //formatter: dateTime_Ej2Formatter(args),
+                ...formattingSection,
+            } as ColumnModel);
         }
     } // for
 } //formatColumnAsDateTime
