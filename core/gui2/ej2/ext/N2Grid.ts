@@ -478,31 +478,59 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
     protected actionFailure = (args: FailureEventArgs) => {
         let retVal: EJBase = (args?.error as any)?.error as EJBase
-        if (retVal.i_d && retVal.v_e_r) {
-            if (retVal) {
-                console.error('Server Error: ', retVal, ' Grid:', this, ' actionFailure args:', args)
+        if ( retVal == null) {
 
-                let dlg = new N2Dlg_Modal({
-                    noStringWrapper: true,
-                    content: new N2Html({
-                        deco: {style: {padding: '2em'}},
-                        value: retVal.errMsgDisplay,
-                    }),
-                    options: {
-                        headerTitle: 'Server Error',
-                        panelSize: {
-                            width: 'auto',
-                            height: 'auto',
-                        },
-                        closeOnEscape: true,
-                        closeOnBackdrop: true,
-                    }, // options
-                }); // dlg
-                dlg.show();
-            }
+            console.error('Server Error: ', retVal, ' Grid:', this, ' actionFailure args:', args)
+
+            let dlg = new N2Dlg_Modal({
+                noStringWrapper: true,
+                content: new N2Html({
+                    deco: {style: {padding: '2em'}},
+                    value: `
+<div style="margin:20px;border:solid 1px #d0d0d0; padding:10px;">
+<pre>${args.error}</pre>
+</div>
+`,
+                }),
+                options: {
+                    headerTitle: 'Server Error',
+                    panelSize: {
+                        width: 'auto',
+                        height: 'auto',
+                    },
+                    closeOnEscape: true,
+                    closeOnBackdrop: true,
+                }, // options
+            }); // dlg
+            dlg.show();
+
         } else {
-            console.error(args?.error);
-        }
+            if (retVal.i_d && retVal.v_e_r) {
+                if (retVal) {
+                    console.error('Server Error: ', retVal, ' Grid:', this, ' actionFailure args:', args)
+
+                    let dlg = new N2Dlg_Modal({
+                        noStringWrapper: true,
+                        content: new N2Html({
+                            deco: {style: {padding: '2em'}},
+                            value: retVal.errMsgDisplay,
+                        }),
+                        options: {
+                            headerTitle: 'Server Error',
+                            panelSize: {
+                                width: 'auto',
+                                height: 'auto',
+                            },
+                            closeOnEscape: true,
+                            closeOnBackdrop: true,
+                        }, // options
+                    }); // dlg
+                    dlg.show();
+                }
+            } else {
+                console.error(args?.error);
+            }
+        } // if retVal == null
 
         if (this._f_existing_actionFailure && this.obj) {
             try {
