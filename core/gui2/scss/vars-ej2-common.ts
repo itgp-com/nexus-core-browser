@@ -102,12 +102,8 @@ let updateThemeVariables = (ev: ThemeChangeEvent) => {
     CSS_VARS_EJ2.border_top_radius = rootStyle.getPropertyValue('--border-top-radius').trim();
     CSS_VARS_EJ2.border_bottom_radius = rootStyle.getPropertyValue('--border-bottom-radius').trim();
     //----
-    CSS_VARS_EJ2.grid_hover_bg_color = rootStyle.getPropertyValue('--grid-hover-bg-color').trim();
     CSS_VARS_EJ2.grid_table_background_color = rootStyle.getPropertyValue('--grid-table-background-color').trim();
     CSS_VARS_EJ2.grid_header_border_color = rootStyle.getPropertyValue('--grid-header-border-color').trim();
-    // --grid-header-font-weight: #{$grid-header-font-weight};
-    // --grid-header-font-size: #{$grid-header-font-size};
-    // --grid-header-height: #{$grid-header-height};
     CSS_VARS_EJ2.grid_header_font_weight = rootStyle.getPropertyValue('--grid-header-font-weight').trim();
     CSS_VARS_EJ2.grid_header_font_size = rootStyle.getPropertyValue('--grid-header-font-size').trim();
     CSS_VARS_EJ2.grid_header_height = rootStyle.getPropertyValue('--grid-header-height').trim();
