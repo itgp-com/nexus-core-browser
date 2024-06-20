@@ -43,16 +43,16 @@
   --border-bottom-radius: #{$border-bottom-radius};
 
 
-  --grid-table-background-color: #{$grid-table-background-color};
-  --grid-header-border-color: #{$grid-header-border-color};
+  --grid-table-background-color: #{$content-bg-color};
+  --grid-header-border-color: #e0e0e0;
 
 
-  --grid-header-font-weight: #{$grid-header-font-weight};
-  --grid-header-font-size: #{$grid-header-font-size};
-  --grid-header-height: #{$grid-header-height};
+  --grid-header-font-weight:500;
+  --grid-header-font-size: 12px;
+  --grid-header-height: 29px;
 
 
 
-  --panel-box-shadow: #{$panel-box-shadow};
-  --chip-bg-color: #{$chip-bg-color};
+  --panel-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.15);
+  --chip-bg-color:  #e0e0e0;
 }
