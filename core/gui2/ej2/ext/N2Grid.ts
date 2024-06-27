@@ -704,17 +704,13 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 let secondOperator = sOperator.value;
                 let secondValue = sValue.value;
 
-                if (firstOperator && firstValue == null) {
-                    fValue.element.focus();
-                    let invalid_value = fValue?.element?.value
 
+                let f_show_error = (invalid_value:string)=>{
 
                     let error_elem = document.createElement('div');
                     error_elem.style.padding = '20px';
                     error_elem.style.fontSize = 'large';
                     error_elem.style.textAlign = 'center';
-
-
 
 
                     //`<div style="padding: 20px;text-align:center;font-size:large;">Invalid value "<span style="font-weight:bold;color:red;">6/6/66</span>"!</div>`
@@ -740,13 +736,20 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                         } as DialogModel
                     });
                     dialog.show();
+                }
 
+
+                if (firstOperator && firstValue == null) {
+                    fValue.element.focus();
+                    let invalid_value = fValue?.element?.value;
+                    f_show_error(invalid_value);
                     return;
                 }
 
                 if (secondOperator && secondValue == null) {
-                    fValue.element.focus();
-                    alert('Enter a valid second value!');
+                    sValue.element.focus();
+                    let invalid_value = sValue?.element?.value;
+                    f_show_error(invalid_value);
                     return;
                 }
 
