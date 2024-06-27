@@ -304,6 +304,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             // do nothing
         } else {
             let existingActionBegin = state.ej.actionBegin;
+            let existingActionComplete = state.ej.actionComplete;
             let existingCreated = state.ej.created;
 
 
@@ -349,7 +350,12 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
             // This function prevents the filter dialog from opening for operations that don't require data entry:
             // Syncfusion ticket https://support.syncfusion.com/support/tickets/578055
+            // Another ticket: enforce validation for dates that are manually entered
+            // Syncusion ticket: https://support.syncfusion.com/support/tickets/602318
             let customFilterOpen = (args: any) => { // beforeCustomFilterOpen internal event
+
+                // This function prevents the filter dialog from opening for operations that don't require data entry:
+                // Syncfusion ticket https://support.syncfusion.com/support/tickets/578055
                 try {
                     let grid: Grid = this.obj;
 
@@ -383,10 +389,20 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 } catch (e) {
                     console.error(e);
                 }
+
+
+                // Another ticket: enforce validation for dates that are manually entered
+                // Syncusion ticket: https://support.syncfusion.com/support/tickets/602318
+
+
             } // customFilterOpen
 
             state.ej.actionBegin = (args: any) => {
                 let grid = thisX.obj;
+
+                if (args.requestType == 'filterBeforeOpen') {
+                    this.implementExcelFilterValidation.call(this);
+                } // if filterBeforeOpen
 
                 if (args.requestType == 'filterchoicerequest') {
 
@@ -410,9 +426,11 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
                 } // if filterchoicerequest
 
-                if (existingActionBegin) {
-                    existingActionBegin.call(this.obj, args);
-                } // if existingActionBegin
+                try {
+                    if (existingActionBegin)
+                        existingActionBegin.call(this.obj, args);
+                } catch (e) { console.error(e); }
+
             } // actionBegin
 
 
@@ -451,7 +469,6 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             } // created
 
 
-
         } // if state.disableContainsAtTopOfFilter
 
 
@@ -478,7 +495,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
     protected actionFailure = (args: FailureEventArgs) => {
         let retVal: EJBase = (args?.error as any)?.error as EJBase
-        if ( retVal == null) {
+        if (retVal == null) {
 
             console.error('Server Error: ', retVal, ' Grid:', this, ' actionFailure args:', args)
 
@@ -558,24 +575,24 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     } // queryCellInfo
 
     protected pre_existing_QueryCellInfo = (args: QueryCellInfoEventArgs) => {
-            let  rec:any = args.data;
-            let field:string = args.column.field;
-            if ( !field)
-                return;
-            if ( containsHighlighing(rec) ){
-                // The BIG BIG assumption here is that highlights only apply to text content that has no date, number, or other formatting
-                // We simply take the  highlighted value, make a wrapper div, and set highlighted text as content of wrapper div, then make the wrapper the full content of the cell.
-                // If the field is not highlighted, then the value_visible is the same as the value
+        let rec: any = args.data;
+        let field: string = args.column.field;
+        if (!field)
+            return;
+        if (containsHighlighing(rec)) {
+            // The BIG BIG assumption here is that highlights only apply to text content that has no date, number, or other formatting
+            // We simply take the  highlighted value, make a wrapper div, and set highlighted text as content of wrapper div, then make the wrapper the full content of the cell.
+            // If the field is not highlighted, then the value_visible is the same as the value
 
-                let recFieldValue = rec_field_value(rec, field);
-                if ( recFieldValue.is_highlighted){
-                    let wrapper_highlight: HTMLElement = highlighted_grid_cell_content();
-                    wrapper_highlight.innerHTML = recFieldValue.value_visible;
-                    let cell:HTMLElement = args.cell as HTMLElement;
-                    cell.innerHTML = ''; // clear
-                    cell.appendChild(wrapper_highlight);
-                }
-            } // if containsHighlighing(rec, field
+            let recFieldValue = rec_field_value(rec, field);
+            if (recFieldValue.is_highlighted) {
+                let wrapper_highlight: HTMLElement = highlighted_grid_cell_content();
+                wrapper_highlight.innerHTML = recFieldValue.value_visible;
+                let cell: HTMLElement = args.cell as HTMLElement;
+                cell.innerHTML = ''; // clear
+                cell.appendChild(wrapper_highlight);
+            }
+        } // if containsHighlighing(rec, field
     } // queryCellInfo
 
 
@@ -652,6 +669,130 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             showUngroupButton: true,
         };
     } // defaultGroupSettings
+
+
+    protected implementExcelFilterValidation(): void {
+
+        let thisN2Grid = this;
+        let grid = this.obj;
+
+        let existing_filterBtnClick = (grid.filterModule.filterModule as any).excelFilterBase.filterBtnClick;
+        if (existing_filterBtnClick['n2_function'])
+            return; // it's already been implemented
+
+        let n2_filterBtnClick = (col: string): void => {
+            const isComplex: boolean = !isNullOrUndefined(col) && isComplexField(col);
+            const complexFieldName: string = !isNullOrUndefined(col) && getComplexFieldID(col);
+            const colValue: string = isComplex ? complexFieldName : col;
+
+            let excelFilterBase = grid.filterModule.filterModule.excelFilterBase
+
+            // @ts-ignore
+            const fValue: NumericTextBox = (excelFilterBase.dlgDiv.querySelector('#' + colValue + '-xlfl-frstvalue') as EJ2Intance).ej2_instances[0];
+            // @ts-ignore
+            const fOperator: DropDownList = (excelFilterBase.dlgDiv.querySelector('#' + colValue + '-xlfl-frstoptr') as EJ2Intance).ej2_instances[0];
+            // @ts-ignore
+            const sValue: NumericTextBox = (excelFilterBase.dlgDiv.querySelector('#' + colValue + '-xlfl-secndvalue') as EJ2Intance).ej2_instances[0];
+            // @ts-ignore
+            const sOperator: DropDownList = (excelFilterBase.dlgDiv.querySelector('#' + colValue + '-xlfl-secndoptr') as EJ2Intance).ej2_instances[0];
+
+
+            if (excelFilterBase.options.column.type === 'date' || excelFilterBase.options.column.type === 'datetime') {
+                let firstOperator = fOperator.value;
+                let firstValue = fValue.value;
+
+                let secondOperator = sOperator.value;
+                let secondValue = sValue.value;
+
+                if (firstOperator && firstValue == null) {
+                    fValue.element.focus();
+                    let invalid_value = fValue?.element?.value
+
+
+                    let error_elem = document.createElement('div');
+                    error_elem.style.padding = '20px';
+                    error_elem.style.fontSize = 'large';
+                    error_elem.style.textAlign = 'center';
+
+
+
+
+                    //`<div style="padding: 20px;text-align:center;font-size:large;">Invalid value "<span style="font-weight:bold;color:red;">6/6/66</span>"!</div>`
+                    if (invalid_value == null) {
+                        error_elem.innerText = `Enter a valid first value!`;
+                    } else {
+                        error_elem.innerHTML = `Invalid value "<span style="font-weight:bold;color:red;">${DOMPurify.sanitize(invalid_value)}</span>"!`;
+                    }
+
+
+                    let dialog = new N2Dialog({
+                        ej :{
+                            content: error_elem,
+                            header: 'Invalid value',
+                            closeOnEscape: true,
+                            height: 'auto',
+                            width: `min(400px, 60%)`,
+                            minHeight: 150,
+                            minWidth: 300,
+                            overlayClick :(args: any) => {
+                                dialog.hide();
+                            }
+                        } as DialogModel
+                    });
+                    dialog.show();
+
+                    return;
+                }
+
+                if (secondOperator && secondValue == null) {
+                    fValue.element.focus();
+                    alert('Enter a valid second value!');
+                    return;
+                }
+
+
+                //
+                // if ((fValue as any).inputElement.parentElement.classList.contains('e-error') || (sValue as any).inputElement.parentElement.classList.contains('e-error') ) {
+                //     alert('Enter a valid date');
+                //     return;
+                //
+                // } // if fValue
+            } // if column.type === 'date' || column.type === 'datetime'
+
+            try {
+                if (existing_filterBtnClick)
+                    existing_filterBtnClick.call(grid, col);
+            } catch (e) { console.error(e); }
+
+            // // @ts-ignore
+            // const sOperator: DropDownList = (<EJ2Intance>this.dlgDiv.querySelector('#' + colValue + '-xlfl-secndoptr')).ej2_instances[0];
+            // let checkBoxValue: boolean;
+            // if (this.options.type === 'string') {
+            //
+            //     // @ts-ignore
+            //     const checkBox: CheckBox = (<EJ2Intance>this.dlgDiv.querySelector('#' + colValue + '-xlflmtcase')).ej2_instances[0];
+            //     checkBoxValue = checkBox.checked;
+            // }
+            //
+            // // @ts-ignore
+            // const andRadio: CheckBox = (<EJ2Intance>this.dlgDiv.querySelector('#' + colValue + 'e-xlfl-frstpredicate')).ej2_instances[0];
+            // let predicate: string = (andRadio.checked ? 'and' : 'or');
+            // if (sValue.value === null) {
+            //     predicate = 'or';
+            // }
+            // this.filterByColumn(
+            //     this.options.field, fOperator.value as string, fValue.value, predicate,
+            //     checkBoxValue, this.options.ignoreAccent, sOperator.value as string, sValue.value);
+            // this.removeDialog();
+
+        } // n2_filterBtnClick
+
+        (n2_filterBtnClick as any)['n2_function'] = true;
+
+        (grid.filterModule.filterModule as any).excelFilterBase.filterBtnClick = n2_filterBtnClick;
+
+    } // actionCompleteValidation
+
 } // N2Grid
 
 /**
@@ -1042,9 +1183,23 @@ line-height: 8px;
 
 } // cssForN2Grid
 
-import {KeyboardEvents} from '@syncfusion/ej2-base';
+import {isNullOrUndefined, KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
-import {ColumnModel, ExcelQueryCellInfoEventArgs, Grid, GridModel, GroupSettingsModel, QueryCellInfoEventArgs, Sort} from '@syncfusion/ej2-grids';
+import {DropDownList} from '@syncfusion/ej2-dropdowns';
+import {
+    EJ2Intance,
+    ExcelQueryCellInfoEventArgs,
+    Filter,
+    getComplexFieldID,
+    Grid,
+    GridModel,
+    GroupSettingsModel,
+    isComplexField,
+    Page,
+    QueryCellInfoEventArgs,
+    Selection,
+    Sort
+} from '@syncfusion/ej2-grids';
 import {Clipboard} from '@syncfusion/ej2-grids/src/grid/actions/clipboard';
 import {ColumnChooser} from '@syncfusion/ej2-grids/src/grid/actions/column-chooser';
 import {ColumnMenu} from '@syncfusion/ej2-grids/src/grid/actions/column-menu';
@@ -1053,10 +1208,8 @@ import {Data} from '@syncfusion/ej2-grids/src/grid/actions/data';
 import {DetailRow} from '@syncfusion/ej2-grids/src/grid/actions/detail-row';
 import {Edit} from '@syncfusion/ej2-grids/src/grid/actions/edit';
 import {ExcelExport} from '@syncfusion/ej2-grids/src/grid/actions/excel-export';
-import {Filter} from '@syncfusion/ej2-grids/src/grid/actions/filter';
 import {Group} from '@syncfusion/ej2-grids/src/grid/actions/group';
 import {InfiniteScroll} from '@syncfusion/ej2-grids/src/grid/actions/infinite-scroll';
-import {Page} from '@syncfusion/ej2-grids/src/grid/actions/page';
 import {PdfExport} from '@syncfusion/ej2-grids/src/grid/actions/pdf-export';
 import {Print} from '@syncfusion/ej2-grids/src/grid/actions/print';
 import {Reorder} from '@syncfusion/ej2-grids/src/grid/actions/reorder';
@@ -1064,30 +1217,32 @@ import {Resize} from '@syncfusion/ej2-grids/src/grid/actions/resize';
 import {RowDD} from '@syncfusion/ej2-grids/src/grid/actions/row-reorder';
 import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
-import {Selection} from '@syncfusion/ej2-grids/src/grid/actions/selection';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
 import {ColumnMenuItemModel, ColumnMenuOpenEventArgs, FailureEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
+import {NumericTextBox} from '@syncfusion/ej2-inputs';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
-import {isArray, isFunction} from 'lodash';
-import {CSS_CLASS_grid_cell_highlight_container} from '../../../Constants';
+import {DialogModel} from '@syncfusion/ej2-popups';
+import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
 import {EJBase} from '../../../data/Ej2Comm';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {N2Html} from '../../generic/N2Html';
-import {containsHighlighing, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS, highlight_apply, highlight_record_column_name, highlighted_grid_cell_content, rec_field_value} from '../../highlight/N2Highlight';
+import {containsHighlighing, highlighted_grid_cell_content, rec_field_value} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';
-import {addClassesToElement, addN2Class} from '../../N2HtmlDecorator';
+import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {ItemModel_N2DropDownMenu, N2DropDownMenu, StateN2DropDownMenu} from '../derived/N2DropDownMenu';
 import {getFirstEj2FromModel} from '../Ej2Utils';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {N2Dialog} from './N2Dialog';
 import {N2Grid_DropDownMenu} from './util/N2Grid_DropDownMenu';
 import {stateGrid_CustomExcelFilter} from './util/N2Grid_Options';
+import DOMPurify from 'dompurify';
 
 Grid.Inject(
     Clipboard,
