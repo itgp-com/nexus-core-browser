@@ -705,7 +705,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 let secondValue = sValue.value;
 
 
-                let f_show_error = (invalid_value:string)=>{
+                let f_show_error = (invalid_value:string, format:string)=>{
 
                     let error_elem = document.createElement('div');
                     error_elem.style.padding = '20px';
@@ -714,10 +714,10 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
                     //`<div style="padding: 20px;text-align:center;font-size:large;">Invalid value "<span style="font-weight:bold;color:red;">6/6/66</span>"!</div>`
-                    if (invalid_value == null) {
-                        error_elem.innerText = `Enter a valid first value!`;
+                    if (invalid_value) {
+                        error_elem.innerHTML = `Invalid value: "<span style="font-weight:bold;color:red;">${DOMPurify.sanitize(invalid_value)}</span>"<p>Please enter a valid first value in format <b>${DOMPurify.sanitize(format)}</b> !`;
                     } else {
-                        error_elem.innerHTML = `Invalid value "<span style="font-weight:bold;color:red;">${DOMPurify.sanitize(invalid_value)}</span>"!`;
+                        error_elem.innerHTML = `Please enter a valid value in format <b>${DOMPurify.sanitize(format)}</b> !`;
                     }
 
 
@@ -742,51 +742,23 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 if (firstOperator && firstValue == null) {
                     fValue.element.focus();
                     let invalid_value = fValue?.element?.value;
-                    f_show_error(invalid_value);
+                    f_show_error(invalid_value, fValue.format);
                     return;
                 }
 
                 if (secondOperator && secondValue == null) {
                     sValue.element.focus();
                     let invalid_value = sValue?.element?.value;
-                    f_show_error(invalid_value);
+                    f_show_error(invalid_value, sValue.format);
                     return;
                 }
 
-
-                //
-                // if ((fValue as any).inputElement.parentElement.classList.contains('e-error') || (sValue as any).inputElement.parentElement.classList.contains('e-error') ) {
-                //     alert('Enter a valid date');
-                //     return;
-                //
-                // } // if fValue
             } // if column.type === 'date' || column.type === 'datetime'
 
             try {
                 if (existing_filterBtnClick)
-                    existing_filterBtnClick.call(grid, col);
+                    existing_filterBtnClick.call(excelFilterBase, col);
             } catch (e) { console.error(e); }
-
-            // // @ts-ignore
-            // const sOperator: DropDownList = (<EJ2Intance>this.dlgDiv.querySelector('#' + colValue + '-xlfl-secndoptr')).ej2_instances[0];
-            // let checkBoxValue: boolean;
-            // if (this.options.type === 'string') {
-            //
-            //     // @ts-ignore
-            //     const checkBox: CheckBox = (<EJ2Intance>this.dlgDiv.querySelector('#' + colValue + '-xlflmtcase')).ej2_instances[0];
-            //     checkBoxValue = checkBox.checked;
-            // }
-            //
-            // // @ts-ignore
-            // const andRadio: CheckBox = (<EJ2Intance>this.dlgDiv.querySelector('#' + colValue + 'e-xlfl-frstpredicate')).ej2_instances[0];
-            // let predicate: string = (andRadio.checked ? 'and' : 'or');
-            // if (sValue.value === null) {
-            //     predicate = 'or';
-            // }
-            // this.filterByColumn(
-            //     this.options.field, fOperator.value as string, fValue.value, predicate,
-            //     checkBoxValue, this.options.ignoreAccent, sOperator.value as string, sValue.value);
-            // this.removeDialog();
 
         } // n2_filterBtnClick
 
