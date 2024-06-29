@@ -1,7 +1,10 @@
 import {DataManager, Query} from '@syncfusion/ej2-data';
 import {AdaptorOptions, DataOptions} from "@syncfusion/ej2-data/src/manager";
+import {isObject} from 'lodash';
+import {N2} from '../gui2/N2';
 import {nexusMain} from "../NexusMain";
 import {ExecuteQueryAlwaysEvent} from './Ej2Comm';
+import {isNexusAdaptor, NexusAdaptor} from './NexusAdaptor';
 import {HttpRequestEvtDataManager, HttpResponseEvtDataManager} from "./NexusComm";
 
 
@@ -11,13 +14,14 @@ export interface NexusDataManager_Settings {
     tablename?: string;
     tablename_is_url ?: boolean;
     clone_for_excel_export ?: ()=> NexusDataManager;
+    n2?:N2;
     // [key: string] : any; // Index signature to allow additional properties
 } // NexusDataManager_Settings
 
 
 export class NexusDataManager extends DataManager {
 
-    static DEBUG_ON: boolean = false;
+    static showDebug: boolean = false;
     readonly isNexusDataManager: boolean = true;
 
     readonly nexus_settings: NexusDataManager_Settings = {};
@@ -27,7 +31,13 @@ export class NexusDataManager extends DataManager {
      */
     constructor(dataSource?: DataOptions | JSON[] | Object[], query?: Query, adaptor?: AdaptorOptions | string) {
         super(dataSource, query, adaptor);
-    }
+        try {
+            if (dataSource && isObject(dataSource) && isNexusAdaptor((dataSource as DataOptions).adaptor)) {
+                ((dataSource as DataOptions).adaptor as NexusAdaptor).nexusDataManager = this;
+            }
+        } catch(e) { console.error(e); }
+
+    } // constructor
 
     /**
      * Executes the given query with local data source.
@@ -35,8 +45,8 @@ export class NexusDataManager extends DataManager {
      */
     executeLocal(query?: Query): Object[] {
         // Custom logic to execute local query
-        if (NexusDataManager.DEBUG_ON)
-            console.log("executeLocal");
+        if (NexusDataManager.showDebug)
+            console.log("NexusDataManager  executeLocal", 'query', query);
         return super.executeLocal(query);
     }
 
@@ -50,8 +60,8 @@ export class NexusDataManager extends DataManager {
      */
     executeQuery(query: Query | Function, done?: Function, fail?: Function, always?: Function): Promise<Response> {
 
-        if (NexusDataManager.DEBUG_ON)
-            console.log("executeQuery");
+        if (NexusDataManager.showDebug)
+            console.log("NexusDataManager  executeQuery", 'query', query, 'done', done, 'fail', fail, 'always', always);
 
         let realQuery: Query;
         let realDoneFunction;
@@ -114,8 +124,8 @@ export class NexusDataManager extends DataManager {
      */
     insert(data: Object, tableName?: string | Query, query?: Query, position?: number): Object | Promise<Object> {
         // Custom logic to insert data
-        if (NexusDataManager.DEBUG_ON)
-            console.log("insert");
+        if (NexusDataManager.showDebug)
+            console.log("NexusDataManager  insert", 'data', data, 'tableName', tableName, 'query', query, 'position', position);
         return super.insert(data, tableName, query, position);
     }
 
@@ -128,8 +138,8 @@ export class NexusDataManager extends DataManager {
      */
     remove(keyField: string, value: Object, tableName?: string | Query, query?: Query): Object | Promise<Object> {
         // Custom logic to remove data
-        if (NexusDataManager.DEBUG_ON)
-            console.log("remove");
+        if (NexusDataManager.showDebug)
+            console.log("NexusDataManager  remove", 'keyField', keyField, 'value', value, 'tableName', tableName, 'query', query);
         return super.remove(keyField, value, tableName, query);
     }
 
@@ -145,8 +155,8 @@ export class NexusDataManager extends DataManager {
      */
     saveChanges(changes: Object, key?: string, tableName?: string | Query, query?: Query, original?: Object): Promise<Object> | Object {
         // Custom logic to save changes
-        if (NexusDataManager.DEBUG_ON)
-            console.log("saveChanges");
+        if (NexusDataManager.showDebug)
+            console.log("NexusDataManager  saveChanges", 'changes', changes, 'key', key, 'tableName', tableName, 'query', query, 'original', original);
         return super.saveChanges(changes, key, tableName, query, original);
     }
 
@@ -156,8 +166,8 @@ export class NexusDataManager extends DataManager {
      */
     setDefaultQuery(query: Query): DataManager {
         // Custom logic to set default query
-        if (NexusDataManager.DEBUG_ON)
-            console.log("setDefaultQuery");
+        if (NexusDataManager.showDebug)
+            console.log("NexusDataManager  setDefaultQuery", 'query', query);
         return super.setDefaultQuery(query);
     }
 
@@ -171,8 +181,8 @@ export class NexusDataManager extends DataManager {
      */
     update(keyField: string, value: Object, tableName?: string | Query, query?: Query, original?: Object): Object | Promise<Object> {
         // Custom logic to update data
-        if (NexusDataManager.DEBUG_ON)
-            console.log("update");
+        if (NexusDataManager.showDebug)
+            console.log("NexusDataManager  update", 'keyField', keyField, 'value', value, 'tableName', tableName, 'query', query, 'original', original);
         return super.update(keyField, value, tableName, query, original);
     }
 } // NexusDataManager

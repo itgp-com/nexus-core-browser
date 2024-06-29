@@ -1,57 +1,12 @@
-import {KeyboardEvents} from '@syncfusion/ej2-base';
-import {ColumnChooser, Data, ExcelQueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
-import {TreeGrid, TreeGridModel} from '@syncfusion/ej2-treegrid';
-import {TreeClipboard} from '@syncfusion/ej2-treegrid/src/treegrid/actions/clipboard';
-import {ColumnMenu} from '@syncfusion/ej2-treegrid/src/treegrid/actions/column-menu';
-import {ContextMenu} from '@syncfusion/ej2-treegrid/src/treegrid/actions/context-menu';
-import {DetailRow} from '@syncfusion/ej2-treegrid/src/treegrid/actions/detail-row';
-import {Edit} from '@syncfusion/ej2-treegrid/src/treegrid/actions/edit';
-import {ExcelExport} from '@syncfusion/ej2-treegrid/src/treegrid/actions/excel-export';
-import {Filter} from '@syncfusion/ej2-treegrid/src/treegrid/actions/filter';
-import {Freeze} from '@syncfusion/ej2-treegrid/src/treegrid/actions/freeze-column';
-import {Page} from '@syncfusion/ej2-treegrid/src/treegrid/actions/page';
-import {PdfExport} from '@syncfusion/ej2-treegrid/src/treegrid/actions/pdf-export';
-import {Print} from '@syncfusion/ej2-treegrid/src/treegrid/actions/print';
-import {Reorder} from '@syncfusion/ej2-treegrid/src/treegrid/actions/reorder';
-import {Resize} from '@syncfusion/ej2-treegrid/src/treegrid/actions/resize';
-import {RowDD} from '@syncfusion/ej2-treegrid/src/treegrid/actions/rowdragdrop';
-import {Selection as TreeGridSelection} from '@syncfusion/ej2-treegrid/src/treegrid/actions/selection';
-import {Sort} from '@syncfusion/ej2-treegrid/src/treegrid/actions/sort';
-import {Aggregate} from '@syncfusion/ej2-treegrid/src/treegrid/actions/summary';
-import {Toolbar} from '@syncfusion/ej2-treegrid/src/treegrid/actions/toolbar';
-import {isFunction} from 'lodash';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-import {cssForN2Grid} from './N2Grid';
+themeChangeListeners().add((ev: ThemeChangeEvent) => {
+    cssForN2Grid(N2TreeGrid.CLASS_IDENTIFIER, 'e-treegrid');
+
+    link_widget_dataSource_NexusDataManager(Grid.prototype);
+}); // normal priority
 
 
-TreeGrid.Inject(
-    Aggregate,
-    ColumnChooser,
-    ColumnMenu,
-    ContextMenu,
-    Data,
-    DetailRow,
-    Edit,
-    ExcelExport,
-    Filter,
-    Freeze,
-    KeyboardEvents,
-    Page,
-    PdfExport,
-    Print,
-    Reorder,
-    Resize,
-    RowDD,
-    Sort,
-    Toolbar,
-    TreeClipboard,
-    TreeGridSelection,
-);
-
-export interface StateN2TreeGridRef extends StateN2EjBasicRef {
-    widget?: N2TreeGrid;
+export interface StateN2TreeGridRef<N2_TREE_GRID extends N2TreeGrid= N2TreeGrid> extends StateN2EjBasicRef {
+    widget?: N2_TREE_GRID;
 }
 
 export interface StateN2TreeGrid<WIDGET_LIBRARY_MODEL extends TreeGridModel = TreeGridModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
@@ -112,6 +67,56 @@ export class N2TreeGrid<STATE extends StateN2TreeGrid = StateN2TreeGrid> extends
     get classIdentifier(): string { return N2TreeGrid.CLASS_IDENTIFIER; }
 } //N2TreeGrid
 
-themeChangeListeners().add((ev: ThemeChangeEvent) => {
-    cssForN2Grid(N2TreeGrid.CLASS_IDENTIFIER, 'e-treegrid');
-}); // normal priority
+
+import {KeyboardEvents} from '@syncfusion/ej2-base';
+import {ColumnChooser, Data, ExcelQueryCellInfoEventArgs, Grid} from '@syncfusion/ej2-grids';
+import {TreeGrid, TreeGridModel} from '@syncfusion/ej2-treegrid';
+import {TreeClipboard} from '@syncfusion/ej2-treegrid/src/treegrid/actions/clipboard';
+import {ColumnMenu} from '@syncfusion/ej2-treegrid/src/treegrid/actions/column-menu';
+import {ContextMenu} from '@syncfusion/ej2-treegrid/src/treegrid/actions/context-menu';
+import {DetailRow} from '@syncfusion/ej2-treegrid/src/treegrid/actions/detail-row';
+import {Edit} from '@syncfusion/ej2-treegrid/src/treegrid/actions/edit';
+import {ExcelExport} from '@syncfusion/ej2-treegrid/src/treegrid/actions/excel-export';
+import {Filter} from '@syncfusion/ej2-treegrid/src/treegrid/actions/filter';
+import {Freeze} from '@syncfusion/ej2-treegrid/src/treegrid/actions/freeze-column';
+import {Page} from '@syncfusion/ej2-treegrid/src/treegrid/actions/page';
+import {PdfExport} from '@syncfusion/ej2-treegrid/src/treegrid/actions/pdf-export';
+import {Print} from '@syncfusion/ej2-treegrid/src/treegrid/actions/print';
+import {Reorder} from '@syncfusion/ej2-treegrid/src/treegrid/actions/reorder';
+import {Resize} from '@syncfusion/ej2-treegrid/src/treegrid/actions/resize';
+import {RowDD} from '@syncfusion/ej2-treegrid/src/treegrid/actions/rowdragdrop';
+import {Selection as TreeGridSelection} from '@syncfusion/ej2-treegrid/src/treegrid/actions/selection';
+import {Sort} from '@syncfusion/ej2-treegrid/src/treegrid/actions/sort';
+import {Aggregate} from '@syncfusion/ej2-treegrid/src/treegrid/actions/summary';
+import {Toolbar} from '@syncfusion/ej2-treegrid/src/treegrid/actions/toolbar';
+import {isFunction} from 'lodash';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {cssForN2Grid} from './N2Grid';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
+
+
+TreeGrid.Inject(
+    Aggregate,
+    ColumnChooser,
+    ColumnMenu,
+    ContextMenu,
+    Data,
+    DetailRow,
+    Edit,
+    ExcelExport,
+    Filter,
+    Freeze,
+    KeyboardEvents,
+    Page,
+    PdfExport,
+    Print,
+    Reorder,
+    Resize,
+    RowDD,
+    Sort,
+    Toolbar,
+    TreeClipboard,
+    TreeGridSelection,
+);

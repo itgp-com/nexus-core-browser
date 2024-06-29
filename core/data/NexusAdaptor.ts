@@ -6,6 +6,7 @@ import {Aggregates, Group} from "@syncfusion/ej2-data/src/util";
 import {nexusMain} from "../NexusMain";
 import {EJBase} from './Ej2Comm';
 import {HttpRequestEvtAdaptor, HttpResponseEvtAdaptor} from "./NexusComm";
+import {NexusDataManager} from './NexusDataManager';
 
 /**
  * Nexus specific URLAdaptor that allows to intercept the HTTP request and response.
@@ -15,6 +16,7 @@ export class NexusAdaptor extends UrlAdaptor {
 
     static showDebug: boolean;
     readonly isNexusAdaptor: boolean = true;
+    nexusDataManager:NexusDataManager;
 
     /**
      * Constructor for Adaptor class
@@ -33,7 +35,7 @@ export class NexusAdaptor extends UrlAdaptor {
         reqParams: { [key: string]: Object; };
     }): void {
         if (NexusAdaptor.showDebug)
-            console.log("addParams");
+            console.log("NexusAdaptor addParams", 'options', options);
 
         // super.addParams(options);
 
@@ -61,7 +63,7 @@ export class NexusAdaptor extends UrlAdaptor {
      */
     batchRequest(dm: DataManager, changes: CrudOptions, e: Object, query: Query, original?: Object): Object {
         if (NexusAdaptor.showDebug)
-            console.log("batchRequest");
+            console.log("NexusAdaptor batchRequest", 'dm', dm, 'changes', changes, 'e', e, 'query', query, 'original', original);
         return super.batchRequest(dm, changes, e, query, original);
     }
 
@@ -74,7 +76,7 @@ export class NexusAdaptor extends UrlAdaptor {
      */
     beforeSend(dm: DataManager, request: Request): void {
         if (NexusAdaptor.showDebug)
-            console.log("beforeSend");
+            console.log("NexusAdaptor beforeSend" , 'dm', dm, 'request', request);
 
         nexusMain.ui?.onHttpRequest({
             type: "ej2Adaptor",
@@ -94,19 +96,19 @@ export class NexusAdaptor extends UrlAdaptor {
      */
     convertToQueryString(request: Object, query: Query, dm: DataManager): string {
         if (NexusAdaptor.showDebug)
-            console.log("convertToQueryString");
+            console.log("NexusAdaptor convertToQueryString", 'request', request, 'query', query, 'dm', dm);
         return super.convertToQueryString(request, query, dm);
     }
 
     protected formRemoteGroupedData(data: Group[], level: number, childLevel: number): Group[] {
         if (NexusAdaptor.showDebug)
-            console.log("formRemoteGroupedData");
+            console.log("NexusAdaptor formRemoteGroupedData", 'data', data, 'level', level, 'childLevel', childLevel);
         return super.formRemoteGroupedData(data, level, childLevel);
     }
 
     protected getAggregateResult(pvt: PvtOptions, data: DataResult, args: DataResult, groupDs?: Object[], query?: Query): DataResult {
         if (NexusAdaptor.showDebug)
-            console.log("getAggregateResult");
+            console.log("NexusAdaptor getAggregateResult", 'pvt', pvt, 'data', data, 'args', args, 'groupDs', groupDs, 'query', query);
         return super.getAggregateResult(pvt, data, args, groupDs, query);
     }
 
@@ -118,13 +120,13 @@ export class NexusAdaptor extends UrlAdaptor {
      */
     getFiltersFrom(data: Object[] | string[] | number[], query: Query): Predicate {
         if (NexusAdaptor.showDebug)
-            console.log("getFiltersFrom");
+            console.log("NexusAdaptor getFiltersFrom", 'data', data, 'query', query);
         return super.getFiltersFrom(data, query);
     }
 
     protected getQueryRequest(query: Query): Requests {
         if (NexusAdaptor.showDebug)
-            console.log("getQueryRequest");
+            console.log("NexusAdaptor getQueryRequest", 'query', query);
         return super.getQueryRequest(query);
     }
 
@@ -133,30 +135,30 @@ export class NexusAdaptor extends UrlAdaptor {
      */
     insert(dm: DataManager, data: Object, tableName: string, query: Query): Object {
         if (NexusAdaptor.showDebug)
-            console.log("insert");
+            console.log("NexusAdaptor insert", 'dm', dm, 'data', data, 'tableName', tableName, 'query', query);
         return super.insert(dm, data, tableName, query);
     }
 
     /**
      * Add the aggregate query to the adaptor`s option.
-     * @param  {Aggregates[]} e
+     * @param  {Aggregates[]} ev
      * @returns void
      */
-    onAggregates(e: Aggregates[]): void {
+    onAggregates(ev: Aggregates[]): void {
         if (NexusAdaptor.showDebug)
-            console.log("onAggregates");
-        super.onAggregates(e);
+            console.log("NexusAdaptor onAggregates", 'ev', ev);
+        super.onAggregates(ev);
     }
 
     /**
      * Add the group query to the adaptor`s option.
-     * @param  {Object[]} e
+     * @param  {Object[]} ev
      * @returns void
      */
-    onGroup(e: QueryOptions[]): QueryOptions[] {
+    onGroup(ev: QueryOptions[]): QueryOptions[] {
         if (NexusAdaptor.showDebug)
-            console.log("onGroup");
-        return super.onGroup(e);
+            console.log("NexusAdaptor onGroup", 'ev', ev);
+        return super.onGroup(ev);
     }
 
     /**
@@ -169,7 +171,7 @@ export class NexusAdaptor extends UrlAdaptor {
      */
     processQuery(dm: DataManager, query: Query, hierarchyFilters?: Object[]): Object {
         if (NexusAdaptor.showDebug)
-            console.log("processQuery");
+            console.log("NexusAdaptor processQuery", 'dm', dm, 'query', query, 'hierarchyFilters', hierarchyFilters);
         return super.processQuery(dm, query, hierarchyFilters);
     }
 
@@ -178,7 +180,7 @@ export class NexusAdaptor extends UrlAdaptor {
      */
     processResponse(data: DataResult, ds?: DataOptions, query?: Query, xhr?: Request, request?: Fetch, changes?: CrudOptions): Object{
         if (NexusAdaptor.showDebug)
-            console.log("processResponse");
+            console.log("NexusAdaptor processResponse", 'data', data, 'ds', ds, 'query', query, 'xhr', xhr, 'request', request, 'changes', changes);
 
         // give the onHttpResponse first priority
         try {
@@ -218,7 +220,7 @@ export class NexusAdaptor extends UrlAdaptor {
      */
     remove(dm: DataManager, keyField: string, value: number | string, tableName: string, query: Query): Object {
         if (NexusAdaptor.showDebug)
-            console.log("remove");
+            console.log("NexusAdaptor remove", 'dm', dm, 'keyField', keyField, 'value', value, 'tableName', tableName, 'query', query);
         return super.remove(dm, keyField, value, tableName, query);
     }
 
@@ -227,7 +229,7 @@ export class NexusAdaptor extends UrlAdaptor {
      */
     update(dm: DataManager, keyField: string, value: Object, tableName: string, query: Query): Object {
         if (NexusAdaptor.showDebug)
-            console.log("update");
+            console.log("NexusAdaptor update", 'dm', dm, 'keyField', keyField, 'value', value, 'tableName', tableName, 'query', query);
         return super.update(dm, keyField, value, tableName, query);
     }
 
