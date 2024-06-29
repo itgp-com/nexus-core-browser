@@ -51,13 +51,10 @@ export function link_widget_dataSource_NexusDataManager(widgetPrototype: any): v
                             if (n2Component) {
                                 // Stamp the NexusDataManager with the N2 component
                                 nexus_dm.nexus_settings.n2 = n2Component as N2;
-                                console.log(`dm stamped with N2${this.constructor.name}`, 'nexus_dm', nexus_dm, `n2_${this.constructor.name.toLowerCase()}`, nexus_dm.nexus_settings.n2);
-                            } else {
-                                console.warn(`N2 component not found for current ${this.constructor.name} instance`);
                             }
                         }
                     } catch (e) {
-                        console.error('Error in dataSource setter:', e);
+                        console.error('Error in link_widget_dataSource_NexusDataManager dataSource setter:', e);
                     }
                 },
                 configurable: originalDescriptor.configurable,
@@ -73,11 +70,6 @@ export function link_widget_dataSource_NexusDataManager(widgetPrototype: any): v
             setupInterceptor();
         }
     } catch (e) {
-        console.error('Error setting up dataSource_NexusDataManager_stamper:', e);
+        console.error('Error in link_widget_dataSource_NexusDataManager:', e);
     }
-} // dataSource_NexusDataManager_stamper
-
-// Usage example:
-// dataSource_NexusDataManager_stamper(Grid.prototype);
-// dataSource_NexusDataManager_stamper(Chart.prototype);
-// ... and so on for other Syncfusion widgets
+} // link_widget_dataSource_NexusDataManager
