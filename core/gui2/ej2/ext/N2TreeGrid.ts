@@ -1,7 +1,9 @@
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(TreeGrid.prototype);
+}); // normal priority
+
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
     cssForN2Grid(N2TreeGrid.CLASS_IDENTIFIER, 'e-treegrid');
-
-    link_widget_dataSource_NexusDataManager(Grid.prototype);
 }); // normal priority
 
 
@@ -69,7 +71,7 @@ export class N2TreeGrid<STATE extends StateN2TreeGrid = StateN2TreeGrid> extends
 
 
 import {KeyboardEvents} from '@syncfusion/ej2-base';
-import {ColumnChooser, Data, ExcelQueryCellInfoEventArgs, Grid} from '@syncfusion/ej2-grids';
+import {ColumnChooser, Data, ExcelQueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
 import {TreeGrid, TreeGridModel} from '@syncfusion/ej2-treegrid';
 import {TreeClipboard} from '@syncfusion/ej2-treegrid/src/treegrid/actions/clipboard';
 import {ColumnMenu} from '@syncfusion/ej2-treegrid/src/treegrid/actions/column-menu';
@@ -90,6 +92,7 @@ import {Sort} from '@syncfusion/ej2-treegrid/src/treegrid/actions/sort';
 import {Aggregate} from '@syncfusion/ej2-treegrid/src/treegrid/actions/summary';
 import {Toolbar} from '@syncfusion/ej2-treegrid/src/treegrid/actions/toolbar';
 import {isFunction} from 'lodash';
+import {nexusMain} from '../../../NexusMain';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';

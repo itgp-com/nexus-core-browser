@@ -1,8 +1,6 @@
-import {TreeView, TreeViewModel} from '@syncfusion/ej2-navigations';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
-
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(FieldsSettings.prototype);
+}); // normal priority
 export interface StateN2TreeViewRef extends StateN2EjBasicRef {
     widget?: N2TreeView;
 }
@@ -34,4 +32,11 @@ export class N2TreeView<STATE extends StateN2TreeView = StateN2TreeView> extends
 
     get classIdentifier(): string { return N2TreeView.CLASS_IDENTIFIER; }
 
-}
+} // N2TreeView
+
+
+import {FieldsSettings, TreeView, TreeViewModel} from '@syncfusion/ej2-navigations';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';

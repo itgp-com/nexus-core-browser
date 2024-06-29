@@ -1,3 +1,37 @@
+
+export interface StateN2ScheduleRef extends StateN2EjBasicRef {
+    widget?: N2Schedule;
+}
+
+export interface StateN2Schedule<WIDGET_LIBRARY_MODEL extends ScheduleModel = ScheduleModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
+    /**
+     * Override with specific type used in code completion
+     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+     */
+    ref?: StateN2ScheduleRef;
+}
+
+export class N2Schedule<STATE extends StateN2Schedule = StateN2Schedule> extends N2EjBasic<STATE, Schedule> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Schedule';
+
+    constructor(state ?: STATE) {
+        super(state);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Schedule.CLASS_IDENTIFIER);
+        super.onStateInitialized(state);
+    }
+
+
+    createEjObj(): void {
+        this.obj = new Schedule(this.state.ej);
+    }
+
+    get classIdentifier(): string { return N2Schedule.CLASS_IDENTIFIER; }
+
+} // N2Schedule
+
 import {Agenda, Day, Month, Schedule, ScheduleModel, Week, WorkWeek} from '@syncfusion/ej2-schedule';
 import {Resize} from '@syncfusion/ej2-schedule/src/schedule/actions/resize';
 import {Scroll} from '@syncfusion/ej2-schedule/src/schedule/actions/scroll';
@@ -35,36 +69,3 @@ Schedule.Inject(
     WorkWeek,
     Year,
 );
-
-export interface StateN2ScheduleRef extends StateN2EjBasicRef {
-    widget?: N2Schedule;
-}
-
-export interface StateN2Schedule<WIDGET_LIBRARY_MODEL extends ScheduleModel = ScheduleModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
-    /**
-     * Override with specific type used in code completion
-     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
-     */
-    ref?: StateN2ScheduleRef;
-}
-
-export class N2Schedule<STATE extends StateN2Schedule = StateN2Schedule> extends N2EjBasic<STATE, Schedule> {
-    static readonly CLASS_IDENTIFIER: string = 'N2Schedule';
-
-    constructor(state ?: STATE) {
-        super(state);
-    }
-
-    protected onStateInitialized(state: STATE) {
-        addN2Class(state.deco,  N2Schedule.CLASS_IDENTIFIER);
-        super.onStateInitialized(state)
-    }
-
-
-    createEjObj(): void {
-        this.obj = new Schedule(this.state.ej);
-    }
-
-    get classIdentifier(): string { return N2Schedule.CLASS_IDENTIFIER; }
-
-}

@@ -1,8 +1,6 @@
-import {Smithchart, SmithchartLegend, SmithchartModel, TooltipRender} from '@syncfusion/ej2-charts';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
-Smithchart.Inject(SmithchartLegend, TooltipRender);
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(Smithchart.prototype);
+}); // normal priority
 
 export interface StateN2SmithchartRef extends StateN2EjBasicRef {
     widget?: N2Smithchart;
@@ -35,4 +33,12 @@ export class N2Smithchart<STATE extends StateN2Smithchart = StateN2Smithchart> e
 
     get classIdentifier(): string { return N2Smithchart.CLASS_IDENTIFIER; }
 
-}
+} // N2Smithchart
+
+import {Smithchart, SmithchartLegend, SmithchartModel, TooltipRender} from '@syncfusion/ej2-charts';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
+
+Smithchart.Inject(SmithchartLegend, TooltipRender);

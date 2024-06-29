@@ -1,3 +1,42 @@
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(Chart.prototype);
+}); // normal priority
+
+export interface StateN2ChartRef extends StateN2EjBasicRef {
+    widget?: N2Chart;
+}
+
+export interface StateN2Chart<WIDGET_LIBRARY_MODEL extends ChartModel = ChartModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
+    /**
+     * Override with specific type used in code completion
+     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+     */
+    ref?: StateN2ChartRef;
+}
+
+export class N2Chart<STATE extends StateN2Chart = StateN2Chart> extends N2EjBasic<STATE, Chart> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Chart';
+
+    constructor(state ?: STATE) {
+        super(state);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Chart.CLASS_IDENTIFIER);
+        super.onStateInitialized(state)
+    }
+
+    createEjObj(): void {
+        this.obj = new Chart(this.state.ej);
+    }
+
+
+    get classIdentifier() { return N2Chart.CLASS_IDENTIFIER; }
+
+}
+
+
+
 import {Chart, ChartModel, ColumnSeries, Legend, LineSeries, Logarithmic} from '@syncfusion/ej2-charts';
 import {ChartAnnotation} from '@syncfusion/ej2-charts/src/chart/annotation/annotation';
 import {Category} from '@syncfusion/ej2-charts/src/chart/axis/category-axis';
@@ -53,8 +92,10 @@ import {Selection} from '@syncfusion/ej2-charts/src/chart/user-interaction/selec
 import {Tooltip} from '@syncfusion/ej2-charts/src/chart/user-interaction/tooltip';
 import {Zoom} from '@syncfusion/ej2-charts/src/chart/user-interaction/zooming';
 import {ScrollBar} from '@syncfusion/ej2-charts/src/common/scrollbar/scrollbar';
+import {nexusMain} from '../../../NexusMain';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
 
 Chart.Inject(LineSeries, MultiColoredLineSeries, MultiColoredAreaSeries, ColumnSeries, ParetoSeries,
     AreaSeries, BarSeries, StackingColumnSeries, StackingAreaSeries, StackingStepAreaSeries,
@@ -67,37 +108,3 @@ Chart.Inject(LineSeries, MultiColoredLineSeries, MultiColoredAreaSeries, ColumnS
     MultiLevelLabel, Trendlines, SmaIndicator, EmaIndicator, TmaIndicator,
     AccumulationDistributionIndicator, AtrIndicator, RsiIndicator, MacdIndicator, StochasticIndicator,
     MomentumIndicator, BollingerBands, ScrollBar, Export);
-
-
-export interface StateN2ChartRef extends StateN2EjBasicRef {
-    widget?: N2Chart;
-}
-
-export interface StateN2Chart<WIDGET_LIBRARY_MODEL extends ChartModel = ChartModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
-    /**
-     * Override with specific type used in code completion
-     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
-     */
-    ref?: StateN2ChartRef;
-}
-
-export class N2Chart<STATE extends StateN2Chart = StateN2Chart> extends N2EjBasic<STATE, Chart> {
-    static readonly CLASS_IDENTIFIER: string = 'N2Chart';
-
-    constructor(state ?: STATE) {
-        super(state);
-    }
-
-    protected onStateInitialized(state: STATE) {
-        addN2Class(state.deco,  N2Chart.CLASS_IDENTIFIER);
-        super.onStateInitialized(state)
-    }
-
-    createEjObj(): void {
-        this.obj = new Chart(this.state.ej);
-    }
-
-
-    get classIdentifier() { return N2Chart.CLASS_IDENTIFIER; }
-
-}

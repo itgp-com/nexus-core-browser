@@ -1,8 +1,9 @@
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(Grid.prototype);
+}); // normal priority
+
 themeChangeListeners().add((_ev: ThemeChangeEvent) => {
     cssForN2Grid(N2Grid.CLASS_IDENTIFIER, 'e-grid');
-
-    link_widget_dataSource_NexusDataManager(Grid.prototype);
-
 }); // normal priority
 
 export interface StateN2GridRef<N2_GRID extends N2Grid = N2Grid> extends StateN2EjBasicRef {
@@ -1206,19 +1207,19 @@ import DOMPurify from 'dompurify';
 import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
 import {EJBase} from '../../../data/Ej2Comm';
-import {isNexusDataManager, NexusDataManager} from '../../../data/NexusDataManager';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
+import {nexusMain} from '../../../NexusMain';
 import {N2Html} from '../../generic/N2Html';
 import {containsHighlighing, highlighted_grid_cell_content, rec_field_value} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
-import {N2, N2Evt_DomAdded} from '../../N2';
+import {N2Evt_DomAdded} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {ItemModel_N2DropDownMenu, N2DropDownMenu, StateN2DropDownMenu} from '../derived/N2DropDownMenu';
-import {getFirstEj2FromModel, getN2FromEJ2} from '../Ej2Utils';
+import {getFirstEj2FromModel} from '../Ej2Utils';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 import {N2Dialog} from './N2Dialog';
 import {N2Grid_DropDownMenu} from './util/N2Grid_DropDownMenu';

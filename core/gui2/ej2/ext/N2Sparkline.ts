@@ -1,8 +1,7 @@
-import {Sparkline, SparklineModel, SparklineTooltip} from '@syncfusion/ej2-charts';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(Sparkline.prototype);
+}); // normal priority
 
-Sparkline.Inject(SparklineTooltip);
 
 export interface StateN2SparklineRef extends StateN2EjBasicRef {
     widget?: N2Sparkline;
@@ -25,7 +24,7 @@ export class N2Sparkline<STATE extends StateN2Sparkline = StateN2Sparkline> exte
 
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco,  N2Sparkline.CLASS_IDENTIFIER);
-        super.onStateInitialized(state)
+        super.onStateInitialized(state);
     }
 
 
@@ -36,3 +35,11 @@ export class N2Sparkline<STATE extends StateN2Sparkline = StateN2Sparkline> exte
     get classIdentifier(): string { return N2Sparkline.CLASS_IDENTIFIER; }
 
 }
+
+import {Sparkline, SparklineModel, SparklineTooltip} from '@syncfusion/ej2-charts';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
+
+Sparkline.Inject(SparklineTooltip);

@@ -1,10 +1,6 @@
-import {BulletChart, BulletChartModel} from '@syncfusion/ej2-charts';
-import {BulletChartLegend} from '@syncfusion/ej2-charts/src/bullet-chart/legend/legend';
-import {BulletTooltip} from '@syncfusion/ej2-charts/src/bullet-chart/user-interaction/tooltip';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
-BulletChart.Inject( BulletTooltip, BulletChartLegend);
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(BulletChart.prototype);
+}); // normal priority
 
 export interface StateN2BulletChartRef extends StateN2EjBasicRef {
     widget?: N2BulletChart;
@@ -37,4 +33,14 @@ export class N2BulletChart<STATE extends StateN2BulletChart = StateN2BulletChart
         return N2BulletChart.CLASS_IDENTIFIER;
     }
 
-}
+} // N2BulletChart
+
+import {BulletChart, BulletChartModel} from '@syncfusion/ej2-charts';
+import {BulletChartLegend} from '@syncfusion/ej2-charts/src/bullet-chart/legend/legend';
+import {BulletTooltip} from '@syncfusion/ej2-charts/src/bullet-chart/user-interaction/tooltip';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
+
+BulletChart.Inject( BulletTooltip, BulletChartLegend);

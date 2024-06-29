@@ -1,7 +1,6 @@
-import {DropDownTree, DropDownTreeModel} from '@syncfusion/ej2-dropdowns';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
+nexusMain.UIStartedListeners.add((ev: any) => {
+    link_widget_dataSource_NexusDataManager(Fields.prototype);
+}); // normal priority
 
 export interface StateN2DropDownTreeRef extends StateN2EjBasicRef {
     widget?: N2DropDownTree;
@@ -38,4 +37,10 @@ export class N2DropDownTree<STATE extends StateN2DropDownTree = StateN2DropDownT
 
     get classIdentifier() { return N2DropDownTree.CLASS_IDENTIFIER; }
 
-}
+} // N2DropDownTree
+
+import {DropDownTree, DropDownTreeModel, Fields} from '@syncfusion/ej2-dropdowns';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';

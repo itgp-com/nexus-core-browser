@@ -1,8 +1,6 @@
-import {Adaptor, HeatMap, HeatMapModel, Legend, Tooltip} from '@syncfusion/ej2-heatmap';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
-HeatMap.Inject(Adaptor, Legend, Tooltip);
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(HeatMap.prototype);
+}); // normal priority
 
 export interface StateN2HeatMapRef extends StateN2EjBasicRef {
     widget?: N2HeatMap;
@@ -25,7 +23,7 @@ export class N2HeatMap<STATE extends StateN2HeatMap = StateN2HeatMap> extends N2
 
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco,  N2HeatMap.CLASS_IDENTIFIER);
-        super.onStateInitialized(state)
+        super.onStateInitialized(state);
     }
 
     createEjObj(): void {
@@ -34,4 +32,12 @@ export class N2HeatMap<STATE extends StateN2HeatMap = StateN2HeatMap> extends N2
 
     get classIdentifier() { return N2HeatMap.CLASS_IDENTIFIER; }
 
-}
+} // N2HeatMap
+
+import {Adaptor, HeatMap, HeatMapModel, Legend, Tooltip} from '@syncfusion/ej2-heatmap';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
+
+HeatMap.Inject(Adaptor, Legend, Tooltip);

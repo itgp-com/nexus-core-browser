@@ -1,25 +1,6 @@
-import {RangeNavigator, RangeNavigatorModel} from '@syncfusion/ej2-charts';
-import {DateTime} from '@syncfusion/ej2-charts/src/chart/axis/date-time-axis';
-import {Double} from '@syncfusion/ej2-charts/src/chart/axis/double-axis';
-import {Logarithmic} from '@syncfusion/ej2-charts/src/chart/axis/logarithmic-axis';
-import {AreaSeries} from '@syncfusion/ej2-charts/src/chart/series/area-series';
-import {LineSeries} from '@syncfusion/ej2-charts/src/chart/series/line-series';
-import {StepLineSeries} from '@syncfusion/ej2-charts/src/chart/series/step-line-series';
-import {PeriodSelector} from '@syncfusion/ej2-charts/src/common/period-selector/period-selector';
-import {RangeTooltip} from '@syncfusion/ej2-charts/src/range-navigator/user-interaction/tooltip';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
-RangeNavigator.Inject(
-    AreaSeries,
-    DateTime,
-    Double,
-    LineSeries,
-    Logarithmic,
-    PeriodSelector,
-    RangeTooltip,
-    StepLineSeries,
-);
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(RangeNavigator.prototype);
+}); // normal priority
 
 export interface StateN2RangeNavigatorRef extends StateN2EjBasicRef {
     widget?: N2RangeNavigator;
@@ -42,7 +23,7 @@ export class N2RangeNavigator<STATE extends StateN2RangeNavigator = StateN2Range
 
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco,  N2RangeNavigator.CLASS_IDENTIFIER);
-        super.onStateInitialized(state)
+        super.onStateInitialized(state);
     }
 
 
@@ -52,4 +33,29 @@ export class N2RangeNavigator<STATE extends StateN2RangeNavigator = StateN2Range
 
     get classIdentifier(): string { return N2RangeNavigator.CLASS_IDENTIFIER; }
 
-}
+} // N2RangeNavigator
+
+import {RangeNavigator, RangeNavigatorModel} from '@syncfusion/ej2-charts';
+import {DateTime} from '@syncfusion/ej2-charts/src/chart/axis/date-time-axis';
+import {Double} from '@syncfusion/ej2-charts/src/chart/axis/double-axis';
+import {Logarithmic} from '@syncfusion/ej2-charts/src/chart/axis/logarithmic-axis';
+import {AreaSeries} from '@syncfusion/ej2-charts/src/chart/series/area-series';
+import {LineSeries} from '@syncfusion/ej2-charts/src/chart/series/line-series';
+import {StepLineSeries} from '@syncfusion/ej2-charts/src/chart/series/step-line-series';
+import {PeriodSelector} from '@syncfusion/ej2-charts/src/common/period-selector/period-selector';
+import {RangeTooltip} from '@syncfusion/ej2-charts/src/range-navigator/user-interaction/tooltip';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
+
+RangeNavigator.Inject(
+    AreaSeries,
+    DateTime,
+    Double,
+    LineSeries,
+    Logarithmic,
+    PeriodSelector,
+    RangeTooltip,
+    StepLineSeries,
+);

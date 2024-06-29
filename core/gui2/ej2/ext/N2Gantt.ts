@@ -1,3 +1,41 @@
+nexusMain.UIStartedListeners.add((ev: any) => {
+    link_widget_dataSource_NexusDataManager(Gantt.prototype);
+}); // normal priority
+
+export interface StateN2GanttRef extends StateN2EjBasicRef {
+    widget?: N2Gantt;
+}
+
+export interface StateN2Gantt<WIDGET_LIBRARY_MODEL extends GanttModel = GanttModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
+    /**
+     * Override with specific type used in code completion
+     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+     */
+    ref?: StateN2GanttRef;
+}
+
+export class N2Gantt<STATE extends StateN2Gantt = StateN2Gantt> extends N2EjBasic<STATE, Gantt> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Gantt'
+
+    constructor(state ?: STATE) {
+        super(state);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Gantt.CLASS_IDENTIFIER);
+        super.onStateInitialized(state);
+    }
+
+
+    createEjObj(): void {
+        this.obj = new Gantt(this.state.ej);
+    }
+
+    get classIdentifier() { return N2Gantt.CLASS_IDENTIFIER; }
+
+
+}
+
 import {KeyboardEvents} from '@syncfusion/ej2-base';
 import {
     ColumnMenu,
@@ -30,8 +68,10 @@ import {ChartRows} from '@syncfusion/ej2-gantt/src/gantt/renderer/chart-rows';
 import {ConnectorLine} from '@syncfusion/ej2-gantt/src/gantt/renderer/connector-line';
 import {Timeline} from '@syncfusion/ej2-gantt/src/gantt/renderer/timeline';
 import {Tooltip} from '@syncfusion/ej2-gantt/src/gantt/renderer/tooltip';
+import {nexusMain} from '../../../NexusMain';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
 
 
 // From https://ej2.syncfusion.com/documentation/gantt/module/
@@ -64,37 +104,3 @@ Gantt.Inject(
     Toolbar,
     Tooltip,
     VirtualScroll);
-
-export interface StateN2GanttRef extends StateN2EjBasicRef {
-    widget?: N2Gantt;
-}
-
-export interface StateN2Gantt<WIDGET_LIBRARY_MODEL extends GanttModel = GanttModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
-    /**
-     * Override with specific type used in code completion
-     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
-     */
-    ref?: StateN2GanttRef;
-}
-
-export class N2Gantt<STATE extends StateN2Gantt = StateN2Gantt> extends N2EjBasic<STATE, Gantt> {
-    static readonly CLASS_IDENTIFIER: string = 'N2Gantt'
-
-    constructor(state ?: STATE) {
-        super(state);
-    }
-
-    protected onStateInitialized(state: STATE) {
-        addN2Class(state.deco,  N2Gantt.CLASS_IDENTIFIER);
-        super.onStateInitialized(state)
-    }
-
-
-    createEjObj(): void {
-        this.obj = new Gantt(this.state.ej);
-    }
-
-    get classIdentifier() { return N2Gantt.CLASS_IDENTIFIER; }
-
-
-}

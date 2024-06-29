@@ -82,6 +82,6 @@ export class NexusMain {
                  1000);
    } // fireUIStartedListeners
 
-} // WebUIStart
+} // NexusMain
 
 export var nexusMain = new NexusMain();// overwrite from a module

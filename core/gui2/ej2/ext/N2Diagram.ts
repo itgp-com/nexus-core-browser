@@ -1,3 +1,37 @@
+
+export interface StateN2DiagramRef extends StateN2EjBasicRef {
+    widget?: N2Diagram;
+}
+
+export interface StateN2Diagram<WIDGET_LIBRARY_MODEL extends DiagramModel = DiagramModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
+    /**
+     * Override with specific type used in code completion
+     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+     */
+    ref?: StateN2DiagramRef;
+}
+
+export class N2Diagram<STATE extends StateN2Diagram = StateN2Diagram> extends N2EjBasic<STATE, Diagram> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Diagram'
+
+    constructor(state ?: STATE) {
+        super(state);
+    }
+
+    protected onStateInitialized(state: STATE) {
+        addN2Class(state.deco,  N2Diagram.CLASS_IDENTIFIER);
+        super.onStateInitialized(state);
+    }
+
+    createEjObj(): void {
+        this.obj = new Diagram(this.state.ej);
+    }
+
+    get classIdentifier() { return N2Diagram.CLASS_IDENTIFIER; }
+
+
+} // N2Diagram
+
 import {Diagram, DiagramModel} from '@syncfusion/ej2-diagrams';
 import {BlazorTooltip} from '@syncfusion/ej2-diagrams/src/diagram/blazor-tooltip/blazor-Tooltip';
 import {DataBinding} from '@syncfusion/ej2-diagrams/src/diagram/data-binding/data-binding';
@@ -24,36 +58,3 @@ Diagram.Inject(
     BpmnDiagrams, SymmetricLayout, ConnectorBridging, UndoRedo, LayoutAnimation, DiagramContextMenu, ConnectorEditing,
     LineRouting, LineDistribution
 );
-
-export interface StateN2DiagramRef extends StateN2EjBasicRef {
-    widget?: N2Diagram;
-}
-
-export interface StateN2Diagram<WIDGET_LIBRARY_MODEL extends DiagramModel = DiagramModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
-    /**
-     * Override with specific type used in code completion
-     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
-     */
-    ref?: StateN2DiagramRef;
-}
-
-export class N2Diagram<STATE extends StateN2Diagram = StateN2Diagram> extends N2EjBasic<STATE, Diagram> {
-    static readonly CLASS_IDENTIFIER: string = 'N2Diagram'
-
-    constructor(state ?: STATE) {
-        super(state);
-    }
-
-    protected onStateInitialized(state: STATE) {
-        addN2Class(state.deco,  N2Diagram.CLASS_IDENTIFIER);
-        super.onStateInitialized(state)
-    }
-
-    createEjObj(): void {
-        this.obj = new Diagram(this.state.ej);
-    }
-
-    get classIdentifier() { return N2Diagram.CLASS_IDENTIFIER; }
-
-
-}

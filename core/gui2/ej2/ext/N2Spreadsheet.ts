@@ -1,15 +1,7 @@
-import {Spreadsheet, SpreadsheetModel} from '@syncfusion/ej2-spreadsheet';
-import {AutoFill, Scroll, Selection} from '@syncfusion/ej2-spreadsheet/src/spreadsheet/actions';
-import {Open} from '@syncfusion/ej2-spreadsheet/src/spreadsheet/integrations';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(Spreadsheet.prototype);
+}); // normal priority
 
-Spreadsheet.Inject(
-    AutoFill,
-    Open,
-    Scroll,
-    Selection,
-);
 
 export interface StateN2SpreadsheetRef extends StateN2EjBasicRef {
     widget?: N2Spreadsheet;
@@ -43,3 +35,18 @@ export class N2Spreadsheet<STATE extends StateN2Spreadsheet = StateN2Spreadsheet
     get classIdentifier(): string { return N2Spreadsheet.CLASS_IDENTIFIER; }
 
 }
+
+import {Spreadsheet, SpreadsheetModel} from '@syncfusion/ej2-spreadsheet';
+import {AutoFill, Scroll, Selection} from '@syncfusion/ej2-spreadsheet/src/spreadsheet/actions';
+import {Open} from '@syncfusion/ej2-spreadsheet/src/spreadsheet/integrations';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
+
+Spreadsheet.Inject(
+    AutoFill,
+    Open,
+    Scroll,
+    Selection,
+);

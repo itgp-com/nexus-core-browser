@@ -1,7 +1,6 @@
-import {ComboBox, ComboBoxModel} from '@syncfusion/ej2-dropdowns';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(ComboBox.prototype);
+}); // normal priority
 
 export interface StateN2ComboBoxRef extends StateN2EjBasicRef {
     widget?: N2ComboBox;
@@ -39,4 +38,11 @@ export class N2ComboBox<STATE extends StateN2ComboBox = StateN2ComboBox> extends
     }
 
 
-}
+} // N2ComboBox
+
+
+import {ComboBox, ComboBoxModel} from '@syncfusion/ej2-dropdowns';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';

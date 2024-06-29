@@ -1,6 +1,6 @@
-import {MultiSelect, MultiSelectModel} from '@syncfusion/ej2-dropdowns';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(MultiSelect.prototype);
+}); // normal priority
 
 
 export interface StateN2MultiSelectRef extends StateN2EjBasicRef {
@@ -36,4 +36,11 @@ export class N2MultiSelect<STATE extends StateN2MultiSelect = StateN2MultiSelect
 
     get classIdentifier(): string { return N2MultiSelect.CLASS_IDENTIFIER; }
 
-}
+} // N2MultiSelect
+
+
+import {MultiSelect, MultiSelectModel} from '@syncfusion/ej2-dropdowns';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';

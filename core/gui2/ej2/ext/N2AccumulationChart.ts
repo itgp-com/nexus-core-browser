@@ -1,21 +1,8 @@
-import {AccumulationChart, AccumulationChartModel} from '@syncfusion/ej2-charts';
-import {AccumulationAnnotation} from '@syncfusion/ej2-charts/src/accumulation-chart/annotation/annotation';
-import {AccumulationDataLabel} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/dataLabel';
-import {FunnelSeries} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/funnel-series';
-import {AccumulationLegend} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/legend';
-import {PieSeries} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/pie-series';
-import {PyramidSeries} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/pyramid-series';
-import {AccumulationHighlight} from '@syncfusion/ej2-charts/src/accumulation-chart/user-interaction/high-light';
-import {AccumulationSelection} from '@syncfusion/ej2-charts/src/accumulation-chart/user-interaction/selection';
-import {AccumulationTooltip} from '@syncfusion/ej2-charts/src/accumulation-chart/user-interaction/tooltip';
-import {Export} from '@syncfusion/ej2-charts/src/chart/print-export/export';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+nexusMain.UIStartedListeners.add((ev:any)=>{
+    link_widget_dataSource_NexusDataManager(AccumulationChart.prototype);
+}); // normal priority
 
-AccumulationChart.Inject(
-     PieSeries, FunnelSeries, PyramidSeries,AccumulationLegend,AccumulationDataLabel,
-    AccumulationTooltip,AccumulationSelection, AccumulationHighlight,AccumulationAnnotation,Export
-);
+
 export interface StateN2AccumulationChartRef extends StateN2EjBasicRef {
     widget?: N2AccumulationChart;
 }
@@ -36,7 +23,7 @@ export class N2AccumulationChart<STATE extends StateN2AccumulationChart = StateN
 
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco,  N2AccumulationChart.CLASS_IDENTIFIER);
-        super.onStateInitialized(state)
+        super.onStateInitialized(state);
     }
 
     createEjObj(): void {
@@ -48,4 +35,25 @@ export class N2AccumulationChart<STATE extends StateN2AccumulationChart = StateN
         return N2AccumulationChart.CLASS_IDENTIFIER;
     }
 
-}
+} // N2AccumulationChart
+
+import {AccumulationChart, AccumulationChartModel} from '@syncfusion/ej2-charts';
+import {AccumulationAnnotation} from '@syncfusion/ej2-charts/src/accumulation-chart/annotation/annotation';
+import {AccumulationDataLabel} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/dataLabel';
+import {FunnelSeries} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/funnel-series';
+import {AccumulationLegend} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/legend';
+import {PieSeries} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/pie-series';
+import {PyramidSeries} from '@syncfusion/ej2-charts/src/accumulation-chart/renderer/pyramid-series';
+import {AccumulationHighlight} from '@syncfusion/ej2-charts/src/accumulation-chart/user-interaction/high-light';
+import {AccumulationSelection} from '@syncfusion/ej2-charts/src/accumulation-chart/user-interaction/selection';
+import {AccumulationTooltip} from '@syncfusion/ej2-charts/src/accumulation-chart/user-interaction/tooltip';
+import {Export} from '@syncfusion/ej2-charts/src/chart/print-export/export';
+import {nexusMain} from '../../../NexusMain';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
+
+AccumulationChart.Inject(
+    PieSeries, FunnelSeries, PyramidSeries,AccumulationLegend,AccumulationDataLabel,
+    AccumulationTooltip,AccumulationSelection, AccumulationHighlight,AccumulationAnnotation,Export
+);
