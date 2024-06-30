@@ -1,8 +1,3 @@
-import {Switch, SwitchModel} from '@syncfusion/ej2-buttons';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
-
 export interface StateN2SwitchRef extends StateN2EjBasicRef {
     widget?: N2Switch;
 }
@@ -39,4 +34,8 @@ export class N2Switch<STATE extends StateN2Switch = StateN2Switch> extends N2EjB
 
     get classIdentifier(): string { return N2Switch.CLASS_IDENTIFIER; }
 
-} // main class
+} // N2Switch
+
+import {Switch, SwitchModel} from '@syncfusion/ej2-buttons';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
