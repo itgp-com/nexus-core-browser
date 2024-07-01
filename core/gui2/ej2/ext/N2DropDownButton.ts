@@ -1,9 +1,3 @@
-import {DropDownButton, DropDownButtonModel} from '@syncfusion/ej2-splitbuttons';
-import {StringArg, stringArgVal} from '../../../BaseUtils';
-import {N2Evt_OnLogic} from '../../N2';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
 
 export interface StateN2DropDownButtonRef extends StateN2EjBasicRef {
     widget?: N2DropDownButton;
@@ -53,3 +47,9 @@ export class N2DropDownButton<STATE extends StateN2DropDownButton = StateN2DropD
 
 
 }
+
+import {DropDownButton, DropDownButtonModel} from '@syncfusion/ej2-splitbuttons';
+import {StringArg, stringArgVal} from '../../../BaseUtils';
+import {N2Evt_OnLogic} from '../../N2';
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';

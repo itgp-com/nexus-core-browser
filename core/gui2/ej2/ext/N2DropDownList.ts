@@ -1,7 +1,3 @@
-nexusMain.UIStartedListeners.add((ev:any)=>{
-    link_widget_dataSource_NexusDataManager(DropDownList.prototype);
-}); // normal priority
-
 export interface StateN2DropDownListRef extends StateN2EjBasicRef {
     widget?: N2DropDownList;
 }
@@ -40,7 +36,5 @@ export class N2DropDownList<STATE extends StateN2DropDownList = StateN2DropDownL
 } // N2DropDownList
 
 import {DropDownList, DropDownListModel} from '@syncfusion/ej2-dropdowns';
-import {nexusMain} from '../../../NexusMain';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
