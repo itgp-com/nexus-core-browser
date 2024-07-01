@@ -2,6 +2,7 @@
 /.gradle
 /.idea
 /build
+/out
 /package-lock.json
 /Mirror-to-MEDQC-UNKNOWA.bat
 /Mirror-OVERWRITE-FROM-UNKNOWA.bat
