@@ -332,6 +332,15 @@ export function detailPanelFromGrid_2Columns_Style01(args: Args_detailPanelFromG
     for (let i = 0; i < gridCellDetails.length; i++) {
         let detail: GridCellDetail = gridCellDetails[i];
 
+
+        //--- remove any internal CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS classes. That highlighing is done at the grid level
+        const highlightElements = detail.elem.querySelectorAll(`.${CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS}`);
+        highlightElements.forEach((el) => {
+            el.classList.remove(CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS);
+        });
+
+
+
         let col = detail.column;
         let detail_elem = detail.elem;
 
