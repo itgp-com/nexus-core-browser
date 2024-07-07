@@ -1,6 +1,7 @@
 import {DataManager, Query} from '@syncfusion/ej2-data';
 import {AdaptorOptions, DataOptions} from "@syncfusion/ej2-data/src/manager";
 import {isObject} from 'lodash';
+import {isN2Grid, N2Grid} from '../gui2/ej2/ext/N2Grid';
 import {N2} from '../gui2/N2';
 import {nexusMain} from "../NexusMain";
 import {ExecuteQueryAlwaysEvent} from './Ej2Comm';
@@ -9,12 +10,12 @@ import {HttpRequestEvtDataManager, HttpResponseEvtDataManager} from "./NexusComm
 
 
 export interface NexusDataManager_Settings {
-    type ?: string;
-    type_group ?: string;
+    type?: string;
+    type_group?: string;
     tablename?: string;
-    tablename_is_url ?: boolean;
-    clone_for_excel_export ?: ()=> NexusDataManager;
-    n2?:N2;
+    tablename_is_url?: boolean;
+    clone_for_excel_export?: () => NexusDataManager;
+    n2?: N2;
     // [key: string] : any; // Index signature to allow additional properties
 } // NexusDataManager_Settings
 
@@ -35,7 +36,7 @@ export class NexusDataManager extends DataManager {
             if (dataSource && isObject(dataSource) && isNexusAdaptor((dataSource as DataOptions).adaptor)) {
                 ((dataSource as DataOptions).adaptor as NexusAdaptor).nexusDataManager = this;
             }
-        } catch(e) { console.error(e); }
+        } catch (e) { console.error(e); }
 
     } // constructor
 
@@ -87,9 +88,27 @@ export class NexusDataManager extends DataManager {
             done: realDoneFunction,
             fail: realFailFunction,
             always: realAlwaysFunction,
+            dm: this,
         };
         try {
-            nexusMain.ui.onHttpRequest(evHttpRequest);
+            try {
+                nexusMain.ui.onHttpRequest(evHttpRequest);
+
+            } catch (e) { console.error(e); }
+
+            try {
+                let widget = this.nexus_settings?.n2;
+                if (isN2Grid(widget)) {
+                    let n2grid = widget as N2Grid;
+                    let state = n2grid.state;
+                    if (state?.onDMDataManagerExecuteQuery) {
+                        state.onDMDataManagerExecuteQuery.call(widget, evHttpRequest);
+                    } else if (!(N2Grid.prototype.onDMDataManagerExecuteQuery === n2grid.onDMDataManagerExecuteQuery)) {
+                        n2grid.onDMDataManagerExecuteQuery.call(n2grid, evHttpRequest);
+                    }
+
+                } // if ( isN2Grid(widget))
+            } catch (e) { console.error(e); }
 
             // override the query, done, fail, always functions in case they were changed
             realQuery = evHttpRequest.query;
@@ -106,6 +125,7 @@ export class NexusDataManager extends DataManager {
             nexusMain.ui.onHttpResponse({
                 type: "ej2DataManager",
                 evt: evt,
+                dm: this,
             } as HttpResponseEvtDataManager)
 
             if (fnAlwaysParent)

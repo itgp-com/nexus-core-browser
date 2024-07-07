@@ -38,6 +38,7 @@ export interface HttpRequestEvtDataManager extends NexusCommEvt{
     done?: Function;
     fail?: Function;
     always?: Function;
+    dm: DataManager;
 } // HttpRequestEvtDataManager
 
 

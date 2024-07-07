@@ -60,8 +60,14 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
 
     disableDefaultRefreshInDropDownMenu?: boolean;
 
+    onDMDataManagerExecuteQuery ?:(ev:HttpRequestEvtDataManager)=>void;
+
 
 } //
+
+export function isN2Grid(widget:any) :boolean{
+    return widget?._isN2Grid;
+}
 
 export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {
     static readonly CLASS_IDENTIFIER: string = 'N2Grid';
@@ -71,10 +77,13 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     private _ddmenu: N2DropDownMenu;
     private _f_existing_actionFailure: (args: FailureEventArgs) => void;
     private _f_existing_queryCellInfo: (args: ExcelQueryCellInfoEventArgs) => void;
+    readonly _isN2Grid:boolean = true;
 
     constructor(state ?: STATE) {
         super(state);
     }
+
+
 
     protected _constructor(state ?: STATE): void {
         super._constructor(state);
@@ -496,6 +505,10 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
         super.onDOMAdded(ev);
     } // onDOMAdded
+
+
+    public onDMDataManagerExecuteQuery(ev:HttpRequestEvtDataManager):void {}
+
 
 
     protected actionFailure = (args: FailureEventArgs) => {
@@ -1207,6 +1220,7 @@ import DOMPurify from 'dompurify';
 import {isFunction} from 'lodash';
 import {cssAddSelector, fontColor, isDev} from '../../../CoreUtils';
 import {EJBase} from '../../../data/Ej2Comm';
+import {HttpRequestEvtDataManager} from '../../../data/NexusComm';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {nexusMain} from '../../../NexusMain';
 import {N2Html} from '../../generic/N2Html';
