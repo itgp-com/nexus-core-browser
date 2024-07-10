@@ -236,6 +236,34 @@ export function n2_grid_formatter_numeric(args ?: Args_n2_grid_formatter_numeric
 
 } //  n2_grid_formatter_numeric
 
+/**
+ * Returns a number formatter for the given locale and number of decimal places.
+ * Usage:
+ *
+ * ``` typescript
+ * let formatter = n2_formatter_numeric({decimals: 2, locale: 'en-US'}); // if locale not specified, defaults to browser locale
+ * let formattedValue = formatter.format(1234.5678); // expected output: "1,234.57"
+ * ```
+ *
+ * @param {Args_n2_grid_formatter_numeric} args
+ * @return {Intl.NumberFormat}
+ */
+export function n2_formatter_numeric(args ?: Args_n2_grid_formatter_numeric): Intl.NumberFormat {
+    if (!args)
+        args = {} as Args_n2_grid_formatter_numeric
+
+    let decimals: number = args.decimals;
+    if (decimals == null)
+        decimals = 0; // this for clarity because a '0' value would be falsy, so using ||  would be confusing
+
+    let locale: string = args.locale || navigator.language;
+
+    return new Intl.NumberFormat(locale, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+    });
+} // n2_formatter_numeric
+
 //-----------------------------------------
 //-------- EJ2 format creators ------------
 
