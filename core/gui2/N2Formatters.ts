@@ -70,6 +70,36 @@ export function n2_grid_formatter_date(args?: Args_n2_grid_formatter_date): EJ2_
 } // n2_grid_formatter_date
 
 
+export class N2DateFormat {
+
+    protected formatter: N2LocaleDateFormats;
+
+    constructor(args?: Args_n2_locale_date_formats) {
+        if ( !args)
+            args = {} as Args_n2_locale_date_formats;
+        this.formatter = n2_locale_date_formats_local({style: 'dateFormat', locale: args.locale})
+    } // constructor
+
+    formatDate(date: Date): string {
+        return dateFormat(date, this.formatter.date);
+    } // format
+
+    formatDateTime(date: Date): string {
+        return dateFormat(date, this.formatter.dateTime);
+    } // formatDateTime
+
+} // N2DateFormat
+
+/**
+ * Function to format date values in an EJ2 grid column.
+ *
+ * @param {Args_n2_grid_formatter_date} args - Arguments for formatting date values.
+ * @returns N2DateFormat A class that formats a date value based on the provided options.
+ */
+export function n2_formatter_date(args?: Args_n2_locale_date_formats): N2DateFormat {
+    return new N2DateFormat(args);
+} // n2_formatter_date
+
 export function n2_grid_format_date(): string {
     let format: string = n2_locale_date_ej2_formats()?.date;
     if (format == null)
@@ -421,7 +451,7 @@ export interface N2LocaleDateFormats {
 }
 
 const _dateFormatCache_ej2: { [key: string]: N2LocaleDateFormats } = {};
-const _dateFormatCache_dataFormat: { [key: string]: N2LocaleDateFormats } = {};
+const _dateFormatCache_dateFormat: { [key: string]: N2LocaleDateFormats } = {};
 
 interface Args_n2_locale_date_formats {
 
@@ -432,14 +462,14 @@ interface Args_n2_locale_date_formats_local extends Args_n2_locale_date_formats 
     /**
      * Which style library do we generate the formats for
      */
-    style: 'ej2' | 'dataFormat'
+    style: 'ej2' | 'dateFormat'
 }
 
 /**
  * Returns the date and date-time formats for a given locale.
  * If no locale is provided, the browser's default locale is used.
  *
- * @param {string} [locale] - The locale string (e.g., 'en-US', 'de-DE').
+ * @param args  - Contains the locale string (e.g., 'en-US', 'de-DE').
  * @returns {N2LocaleDateFormats} The date and date-time formats.
  */
 export function n2_locale_date_ej2_formats(args?:Args_n2_locale_date_formats ): N2LocaleDateFormats {
@@ -451,7 +481,7 @@ export function n2_locale_date_ej2_formats(args?:Args_n2_locale_date_formats ): 
 export function n2_locale_date_dateFormat_formats(args?:Args_n2_locale_date_formats ): N2LocaleDateFormats {
     if ( !args)
         args = {} as Args_n2_locale_date_formats;
-    return n2_locale_date_formats_local({style: 'dataFormat', locale: args.locale});
+    return n2_locale_date_formats_local({style: 'dateFormat', locale: args.locale});
 }
 
 function n2_locale_date_formats_local(args : Args_n2_locale_date_formats_local ): N2LocaleDateFormats {
@@ -463,8 +493,8 @@ function n2_locale_date_formats_local(args : Args_n2_locale_date_formats_local )
 
     if ( style === 'ej2' && _dateFormatCache_ej2[locale]) {
         return _dateFormatCache_ej2[locale];
-    } else if (style === 'dataFormat' && _dateFormatCache_dataFormat[locale]) {
-        return _dateFormatCache_dataFormat[locale];
+    } else if (style === 'dateFormat' && _dateFormatCache_dateFormat[locale]) {
+        return _dateFormatCache_dateFormat[locale];
     }
 
     const dateOptions: Intl.DateTimeFormatOptions = {
@@ -510,7 +540,7 @@ function n2_locale_date_formats_local(args : Args_n2_locale_date_formats_local )
             minute: 'mm',
             dayPeriod: 'a'
         })
-    }   else if ( style === 'dataFormat') {
+    }   else if ( style === 'dateFormat') {
 
             formatMap = Object.assign(formatMap, {
                 year: 'yyyy',
@@ -557,8 +587,8 @@ function n2_locale_date_formats_local(args : Args_n2_locale_date_formats_local )
 
     if ( style === 'ej2') {
         _dateFormatCache_ej2[locale] = value;
-    } else if (style === 'dataFormat') {
-        _dateFormatCache_dataFormat[locale] = value;
+    } else if (style === 'dateFormat') {
+        _dateFormatCache_dateFormat[locale] = value;
     }
     return value;
 }
