@@ -35,6 +35,7 @@ export class N2DropDownList<STATE extends StateN2DropDownList = StateN2DropDownL
 
 } // N2DropDownList
 
-import {DropDownList, DropDownListModel} from '@syncfusion/ej2-dropdowns';
+import {DropDownList, DropDownListModel, VirtualScroll} from '@syncfusion/ej2-dropdowns';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+DropDownList.Inject(VirtualScroll);
