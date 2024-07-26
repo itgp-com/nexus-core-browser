@@ -90,26 +90,11 @@ export interface CssVariables {
 }
 
 /**
- * Sets CSS variables on the :root element.
+ * Sets and/or Updates (overwrites) CSS variables on the :root element.
  *
- * @param variables - An object containing CSS variable names and their values.
- * @param styleId - Optional ID for the style element. If not provided, a default ID will be used.
+ * @param variables - An object containing CSS variable names and their current values.
  */
-export function cssSetVariables(variables: CssVariables, styleId?: string): void {
-    const cssContent = Object.entries(variables)
-        .map(([key, value]) => `--${key.replace(/_/g, '-')}: ${value};`)
-        .join('\n');
-
-    const rootCss = `:root {\n${cssContent}\n}`;
-    cssAdd(rootCss, styleId);
-}
-
-/**
- * Updates CSS variables on the :root element.
- *
- * @param variables - An object containing CSS variable names and their updated values.
- */
-export function cssUpdateVariables(variables: CssVariables,): void {
+export function cssSetVariables(variables: CssVariables): void {
     const root = document.documentElement;
     Object.entries(variables).forEach(([key, value]) => {
         const cssVarName = `--${key.replace(/_/g, '-')}`;
