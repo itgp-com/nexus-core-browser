@@ -1,5 +1,6 @@
 import {ChangeEventArgs} from '@syncfusion/ej2-buttons/src/common/common';
-import {cssAddClass} from '../../../CoreUtils';
+
+import {cssAddClass} from '../../../CssUtils';
 import {ChartTheme, switchTheme, themeChangeListeners} from '../../../gui2/Theming';
 import {N2Html} from '../../generic/N2Html';
 import {N2Panel, StateN2Panel} from '../../generic/N2Panel';

@@ -1,5 +1,6 @@
 import {Carousel, CarouselModel} from '@syncfusion/ej2-navigations';
-import {cssAddSelector} from '../../../CoreUtils';
+
+import {cssAddSelector} from '../../../CssUtils';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';

@@ -1,7 +1,8 @@
 import {Button, ButtonModel} from '@syncfusion/ej2-buttons';
 import {throttle} from 'lodash';
 import {StringArg, stringArgVal} from '../../../BaseUtils';
-import {cssAddSelector} from '../../../CoreUtils';
+
+import {cssAddSelector} from '../../../CssUtils';
 import {N2Evt_OnLogic} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';

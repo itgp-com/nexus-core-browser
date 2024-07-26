@@ -1,6 +1,6 @@
 import {N2_CLASS} from '../../Constants';
-import {cssAddClass, isDev} from '../../CoreUtils';
-import {CssStyle} from '../../gui/AbstractWidget';
+import {isDev} from '../../CoreUtils';
+import {cssAddClass, CssStyle} from '../../CssUtils';
 import {N2Evt_OnHtml} from '../N2';
 import {N2Basic, StateN2Basic} from '../N2Basic';
 import {addN2Class, decoToCssStyle, IHtmlUtils} from '../N2HtmlDecorator';

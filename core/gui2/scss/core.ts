@@ -1,4 +1,4 @@
-import {cssAddClass, cssAddSelector} from "../../CoreUtils";
+import {cssAddClass, cssAddSelector} from '../../CssUtils';
 import {themeChangeListeners} from '../Theming';
 
 export const CSS_FLEX_MAX_XY: string = "flex-component-max flex-full-height";

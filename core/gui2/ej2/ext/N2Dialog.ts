@@ -1,7 +1,8 @@
 import {Dialog, DialogModel} from '@syncfusion/ej2-popups';
 import {BeforeCloseEventArgs, BeforeOpenEventArgs} from '@syncfusion/ej2-popups/src/dialog/dialog';
 import {isArray, isString} from 'lodash';
-import {cssAddSelector, isHTMLElement} from '../../../CoreUtils';
+import {isHTMLElement} from '../../../CoreUtils';
+import {cssAddSelector} from '../../../CssUtils';
 import {N2Html} from '../../generic/N2Html';
 import {
     isN2_Interface_Dialog_BeforeClose,

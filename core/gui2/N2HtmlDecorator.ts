@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import {IKeyValueString} from "../BaseUtils";
-import {cssStyleToString} from "../CoreUtils";
-import {CssStyle} from "../gui/AbstractWidget";
+
+import {CssStyle, cssStyleToString} from '../CssUtils';
 import {StateN2} from "./StateN2";
 
 

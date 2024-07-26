@@ -9,7 +9,8 @@ import {Resize} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/action
 import {Audio} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/audio-module';
 import {Table} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/table-module';
 import {Video} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/video-module';
-import {cssAddSelector} from '../../../CoreUtils';
+
+import {cssAddSelector} from '../../../CssUtils';
 import {StateN2PropertyName} from '../../generic/StateN2PropertyName';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';

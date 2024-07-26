@@ -940,7 +940,7 @@ themeChangeListeners().add((ev) => {
         return panel;
     }
 
-    cssSetRootCSSVariable(CSS_VAR_ORCA_N2DLG_BORDER_RADIUS, '10px');
+    cssSetRootVariable(CSS_VAR_ORCA_N2DLG_BORDER_RADIUS, '10px');
 
     cssAddSelector(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-hdr`, `
        font-family: var(--app-font-family);
@@ -1038,7 +1038,8 @@ function openDialogsList(comparator?: (a: OpenN2DlgRow, b: OpenN2DlgRow) => numb
 import {isArray, isFunction, isObject, isString} from 'lodash';
 import {htmlToElement} from '../../BaseUtils';
 import {CSS_CLASS_N2Dlg_empty_header, N2_CLASS} from '../../Constants';
-import {cssAddSelector, cssSetRootCSSVariable, isHTMLElement} from '../../CoreUtils';
+import {isHTMLElement} from '../../CoreUtils';
+import {cssAddSelector, cssSetRootVariable} from '../../CssUtils';
 import {N2Column} from '../generic/N2Column';
 import {N2Html} from '../generic/N2Html';
 import {

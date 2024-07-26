@@ -1,4 +1,4 @@
-import {cssAddClass} from '../../CoreUtils';
+import {cssAddClass} from '../../CssUtils';
 import {N2Basic, StateN2Basic, StateN2BasicRef} from "../N2Basic";
 import {addN2Class} from "../N2HtmlDecorator";
 import {CSS_FLEX_ROW_DIRECTION} from "../scss/core";

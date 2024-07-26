@@ -1,6 +1,7 @@
 import {Tab, TabModel} from '@syncfusion/ej2-navigations';
 import {SelectEventArgs} from '@syncfusion/ej2-navigations/src/tab/tab';
-import {cssAddSelector} from '../../../CoreUtils';
+
+import {cssAddSelector} from '../../../CssUtils';
 import {N2, N2Evt_OnLogic} from '../../N2';
 import {addClassesToElement, addN2Class, removeClassesFromElement} from '../../N2HtmlDecorator';
 import {getN2FromHtmlElement} from '../../N2Utils';

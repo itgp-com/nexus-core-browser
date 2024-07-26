@@ -12,8 +12,8 @@ init();
 
 
 import {isFunction} from "lodash";
-import {cssStyleToString, removeDoubleSpaces} from "./CoreUtils";
-import {CssStyle} from "./gui/AbstractWidget";
+import {removeDoubleSpaces} from "./CoreUtils";
+import {CssStyle, cssStyleToString} from './CssUtils';
 
 export type StringFunction = () => string;
 export type StringArg = (string | StringFunction);

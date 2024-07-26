@@ -1,5 +1,6 @@
 import {Aggregate, ColumnMenu, ExcelExport, Grid, Page, Resize, Sort, Toolbar} from "@syncfusion/ej2-grids";
-import {AbstractWidget, addWidgetClass, CssStyle}        from "../../AbstractWidget";
+import {CssStyle} from '../../../CssUtils';
+import {AbstractWidget, addWidgetClass}        from "../../AbstractWidget";
 import {gridDecoratorsHeight}                            from "../abstract/AbstractGrid";
 import {Args_WxPanelBase, Evt_PanelResized, WxPanelBase} from "./WxPanelBase";
 import {Args_WxGrid1, WxGrid1}                                                 from "../ext/WxGrid1";

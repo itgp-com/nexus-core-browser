@@ -2,36 +2,25 @@
  * This class serves as the base of every data enabled panel
  */
 
-import {BaseListener}                                                                                                                             from "../BaseListener";
-import {
-   getRandomString,
-   getRandomText,
-   hget,
-   htmlToElement,
-   IArgs_HtmlDecoration,
-   IArgs_HtmlTag,
-   IArgs_HtmlTag_Utils,
-   IKeyValueString,
-   StringArg,
-   stringArgVal
-} from "../BaseUtils";
-import {Err}                                                                                                                                      from "../Core";
-import {getErrorHandler}                                                                                                                          from "../CoreErrorHandling";
-import {ExceptionEvent}                                                                                                                           from "../ExceptionEvent";
-import {ArgsPost, asyncPostRetVal}                                                                                                                from "../HttpUtils";
-import {ListenerHandler, StopListenerChain}                                                                                                       from "../ListenerHandler";
-import {BeforeInitLogicEvent, BeforeInitLogicListener, BeforeInitLogicType}                                                                       from "./BeforeInitLogicListener";
-import {ClientVersion, getClientVersion}                                                                                                          from "./ClientVersion";
-import {DialogInfo}                                                                                                                               from "./ej2/abstract/DialogInfo";
-import {IDialogWindow}                                                                                                                            from "./ej2/abstract/IDialogWindow";
-import {ScreenMeta}                                                                                                                               from "./ScreenMeta";
-import {WidgetErrorHandler, WidgetErrorHandlerStatus}                                                                                             from "./WidgetErrorHandler";
-import {enableRipple}                                                                                                                             from "@syncfusion/ej2-base";
-import {BeforeCloseEventArgs, BeforeOpenEventArgs}                                                                                                from "@syncfusion/ej2-popups";
-import {AxiosResponse}                                                                                                                            from "axios";
-import {escape, isArray}                                                                                                                          from "lodash";
-import * as CSS                                                                                                                                   from "csstype";
-import {AfterInitLogicEvent, AfterInitLogicListener, AfterInitLogicType}                                                                          from "./AfterInitLogicListener";
+import {enableRipple} from "@syncfusion/ej2-base";
+import {BeforeCloseEventArgs, BeforeOpenEventArgs} from "@syncfusion/ej2-popups";
+import {AxiosResponse} from "axios";
+import {escape, isArray} from "lodash";
+import {BaseListener} from "../BaseListener";
+import {getRandomString, getRandomText, hget, htmlToElement, IArgs_HtmlDecoration, IArgs_HtmlTag, IArgs_HtmlTag_Utils, IKeyValueString, StringArg, stringArgVal} from "../BaseUtils";
+import {Err} from "../Core";
+import {getErrorHandler} from "../CoreErrorHandling";
+import {CssStyle} from '../CssUtils';
+import {ExceptionEvent} from "../ExceptionEvent";
+import {ArgsPost, asyncPostRetVal} from "../HttpUtils";
+import {ListenerHandler, StopListenerChain} from "../ListenerHandler";
+import {AfterInitLogicEvent, AfterInitLogicListener, AfterInitLogicType} from "./AfterInitLogicListener";
+import {BeforeInitLogicEvent, BeforeInitLogicListener, BeforeInitLogicType} from "./BeforeInitLogicListener";
+import {ClientVersion, getClientVersion} from "./ClientVersion";
+import {DialogInfo} from "./ej2/abstract/DialogInfo";
+import {IDialogWindow} from "./ej2/abstract/IDialogWindow";
+import {ScreenMeta} from "./ScreenMeta";
+import {WidgetErrorHandler, WidgetErrorHandlerStatus} from "./WidgetErrorHandler";
 
 enableRipple(true);
 
@@ -1276,11 +1265,6 @@ export function addWidgetClass(args: IArgs_HtmlDecoration, additionalClasses: (s
    return args;
 } // addWidgetClass
 
-
-/**
- * Allows the style to be either a hardcoded string or an object that translates to read kebab-case CSS that (**NOT** the JS camelCase)
- */
-export type CssStyle = CSS.PropertiesHyphen;
 
 /**
  * Base class for all Widget settings(arguments)

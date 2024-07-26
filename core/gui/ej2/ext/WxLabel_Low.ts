@@ -1,6 +1,6 @@
 import {IArgs_HtmlTag_Utils}       from "../../../BaseUtils";
+import {CssStyle} from '../../../CssUtils';
 import {Args_WxLabel, WxLabel} from "../../ej2/ext/WxLabel";
-import {CssStyle}              from "../../AbstractWidget";
 
 
 export class Args_WgtLbl_App_Low extends Args_WxLabel {

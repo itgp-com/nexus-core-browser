@@ -1,8 +1,8 @@
+import {cssAddClass} from '../../../CssUtils';
 import {AnyScreen, Args_AnyScreen}                            from "../../AnyScreen";
 import {createMenuStructures, filterByString, MenuStructures} from "../../menu/MenuStructures";
 import {MenuTreeNode}                                         from "../../menu/MenuTreeNode";
 import {AbstractWidget, addWidgetClass}                       from "../../AbstractWidget";
-import {cssAddClass}                                          from "../../../CoreUtils";
 import {DataProvider}                                         from "../../../data/DataProvider";
 import {singleRecordDataProvider}                             from "../../../data/DataProviderUtils";
 import {WxText}                                               from "../ext/WxText";

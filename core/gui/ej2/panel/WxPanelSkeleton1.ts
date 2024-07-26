@@ -1,6 +1,7 @@
+import {CssStyle} from '../../../CssUtils';
 import {AnyWidgetStandard}        from "../../AnyWidgetStandard";
 import {Args_AnyWidget}           from "../../AnyWidget";
-import {AbstractWidget, CssStyle} from "../../AbstractWidget";
+import {AbstractWidget} from "../../AbstractWidget";
 import {WxPanel}                  from "../../ej2/ext/WxPanel";
 import {WxSkeleton}               from "../../ej2/ext/WxSkeleton";
 import {cloneDeep}                from "lodash";

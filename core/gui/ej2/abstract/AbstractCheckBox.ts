@@ -1,9 +1,9 @@
 import {CheckBox, CheckBoxModel}            from '@syncfusion/ej2-buttons';
+import {cssStyleToString} from '../../../CssUtils';
 import {DataProviderChangeEvent}            from "../../../data/DataProvider";
 import {IArgs_HtmlTag, IArgs_HtmlTag_Utils} from "../../../BaseUtils";
 import {AnyWidget, Args_AnyWidget}          from "../../AnyWidget";
 import {addWidgetClass}                     from "../../AbstractWidget";
-import {cssStyleToString}                   from "../../../CoreUtils";
 
 export abstract class Args_WgtCheckBox_Label {
    position ?: "Top" | "Leading" | "Trailing";

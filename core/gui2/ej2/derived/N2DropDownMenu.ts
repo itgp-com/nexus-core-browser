@@ -2,7 +2,8 @@ import {DropDownButton, MenuEventArgs, BeforeOpenCloseMenuEventArgs, OpenCloseMe
 import {ItemModel} from '@syncfusion/ej2-splitbuttons/src/common/common-model';
 import {isString} from 'lodash';
 import {voidFunction} from '../../../BaseUtils';
-import {cssAddSelector, isDev} from '../../../CoreUtils';
+import {isDev} from '../../../CoreUtils';
+import {cssAddSelector} from '../../../CssUtils';
 import {N2Html} from '../../generic/N2Html';
 import {N2, N2Evt_OnHtml} from '../../N2';
 import {N2Basic, StateN2Basic} from '../../N2Basic';
