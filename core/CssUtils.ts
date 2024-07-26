@@ -85,7 +85,7 @@ export function cssRemove(cssSelector: string, styleId?: string): boolean {
 } // end cssRemove
 
 //---------------------------- start CSS global variables definition ------------------------
-interface CssVariables {
+export interface CssVariables {
     [key: string]: string;
 }
 
