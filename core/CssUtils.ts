@@ -82,4 +82,65 @@ export function cssRemove(cssSelector: string, styleId?: string): boolean {
 
     console.warn(`cssRemove: Selector ${cssSelector} not found in any style element.`);
     return false;
+} // end cssRemove
+
+//---------------------------- start CSS global variables definition ------------------------
+interface CssVariables {
+    [key: string]: string;
 }
+
+/**
+ * Sets CSS variables on the :root element.
+ *
+ * @param variables - An object containing CSS variable names and their values.
+ * @param styleId - Optional ID for the style element. If not provided, a default ID will be used.
+ */
+export function cssSetVariables(variables: CssVariables, styleId?: string): void {
+    const cssContent = Object.entries(variables)
+        .map(([key, value]) => `--${key.replace(/_/g, '-')}: ${value};`)
+        .join('\n');
+
+    const rootCss = `:root {\n${cssContent}\n}`;
+    cssAdd(rootCss, styleId);
+}
+
+/**
+ * Updates CSS variables on the :root element.
+ *
+ * @param variables - An object containing CSS variable names and their updated values.
+ */
+export function cssUpdateVariables(variables: CssVariables,): void {
+    const root = document.documentElement;
+    Object.entries(variables).forEach(([key, value]) => {
+        const cssVarName = `--${key.replace(/_/g, '-')}`;
+        root.style.setProperty(cssVarName, value);
+    });
+}
+
+export function cssUpdateVariable(variableName: string, value: string): void {
+    const cssVarName = `--${variableName.replace(/_/g, '-')}`;
+    document.documentElement.style.setProperty(cssVarName, value);
+}
+
+/**
+ * Gets the current value of a CSS variable.
+ *
+ * @param variableName - The name of the CSS variable (without the leading '--').
+ * @returns The current value of the CSS variable, or an empty string if not found.
+ */
+export function cssGetVariableValue(variableName: string): string {
+    const cssVarName = `--${variableName.replace(/_/g, '-')}`;
+    return getComputedStyle(document.documentElement).getPropertyValue(cssVarName).trim();
+}
+
+/**
+ * Removes a CSS variable from the :root element.
+ * @param {string} variableName
+ */
+export function cssRemoveVariable(variableName: string): void {
+    const cssVarName = `--${variableName.replace(/_/g, '-')}`;
+    document.documentElement.style.removeProperty(cssVarName);
+}
+
+
+//---------------------------- end CSS global variables definition ------------------------
