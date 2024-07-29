@@ -167,7 +167,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             options.theme = 'var(--app-dialog-header-background-color)';
         //     options.theme = 'mdb-elegant-dark';
         if (!options.borderRadius)
-            options.borderRadius = `var(${CSS_VAR_ORCA_N2DLG_BORDER_RADIUS})`;
+            options.borderRadius = CSS_VARS_CORE.app_dialog;
         if (options.closeOnEscape == null)
             options.closeOnEscape = true;
         if (!options.content)
@@ -909,7 +909,6 @@ export function isJsPanel(obj: any): obj is JsPanel {
 }
 
 
-export const CSS_VAR_ORCA_N2DLG_BORDER_RADIUS = '--orca-n2dlg-border-radius';
 export const CSS_CLASS_N2DLG_HEADERBAR: string = `${N2Dlg.CLASS_IDENTIFIER}_headerbar`;
 export const CSS_CLASS_N2DLG_HEADERBAR_FRONT_SPACER: string = `${N2Dlg.CLASS_IDENTIFIER}_headerbar_front_spacer`;
 export const CSS_CLASS_N2DLG_HEADERBAR_END_SPACER: string = `${N2Dlg.CLASS_IDENTIFIER}_headerbar_end_spacer`;
@@ -940,7 +939,6 @@ themeChangeListeners().add((ev) => {
         return panel;
     }
 
-    cssSetRootVariable(CSS_VAR_ORCA_N2DLG_BORDER_RADIUS, '10px');
 
     cssAddSelector(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-hdr`, `
        font-family: var(--app-font-family);
@@ -1055,6 +1053,7 @@ import {N2, N2Evt_Destroy, N2Evt_OnLogic} from '../N2';
 import {N2Basic, StateN2Basic, StateN2BasicRef} from '../N2Basic';
 import {addN2Class, decoToHtmlElement} from '../N2HtmlDecorator';
 import {Elem_or_N2, isN2} from '../N2Utils';
+import {CSS_VARS_CORE} from '../scss/vars-material';
 import {themeChangeListeners} from '../Theming';
 import {jsPanel} from './jsPanelLib';
 import {N2DlgBackArrow} from './N2DlgBackArrow';

@@ -5,13 +5,10 @@ import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 themeChangeListeners().add(_coreUpdateThemeCssVariables, 0);
 
 export interface CoreCssVariables extends CssVariables {
-    material_primary_color: string;
-    material_primary_font_color: string;
-    material_accent_color: string;
-    material_accent_font_color: string;
-
-    //----  common properties ----
     app_bright_red: string;
+    app_button_bg_color: string,
+    app_button_color: string,
+    app_button_color_accent: string,
     app_color_blue: string;
     app_color_blue_01: string;
     app_color_cyan: string;
@@ -20,15 +17,26 @@ export interface CoreCssVariables extends CssVariables {
     app_color_gray_text3: string;
     app_color_green: string;
     app_color_green_01: string;
+    app_color_green_02: string;
     app_color_green_03: string;
     app_color_green_04: string;
     app_color_light_gray_001: string;
     app_color_link_blue: string;
+    app_color_panel_background: string;
     app_color_red_01: string;
+    app_color_red_02: string;
     app_color_yellow_01: string;
+    app_color_yellow_02: string;
+    app_color_yellow_03: string;
     app_color_yellow_04: string;
     app_custom_excel_filter_width_number: string;
+    app_dashboard_button_background_color: string;
+    app_dashboard_button_text_color: string;
+    app_dialog_border_radius: string;
+    app_dialog_header_background_color: string;
     app_dialog_header_close_button_size: string;
+    app_dialog_header_font_color: string;
+    app_filter_text_background_color: string;
     app_font_family: string;
     app_font_main: string;
     app_font_size_base_number: string;
@@ -40,48 +48,42 @@ export interface CoreCssVariables extends CssVariables {
     app_font_size_plus_2: string;
     app_font_size_regular: string;
     app_font_size_section_title: string;
-    app_nav_band_background: string;
-    app_widget_spacing: string;
-    font_family: string;
-    grey_dark: string;
-
-    //------ theme specific properties-----------
-
-    app_button_bg_color: string,
-    app_button_color: string,
-    app_button_color_accent: string,
-    app_color_green_02: string;
-    app_color_panel_background: string;
-    app_color_red_02: string;
-    app_color_yellow_02: string;
-    app_color_yellow_03: string;
-    app_dashboard_button_background_color: string;
-    app_dashboard_button_text_color: string;
-    app_dialog_header_background_color: string;
-    app_dialog_header_font_color: string;
-    app_filter_text_background_color: string;
     app_gray_input_background: string;
     app_header_text_color_dark_gray: string;
     app_header_text_color_dark_green: string;
     app_label_color: string;
     app_label_color_coolgray: string;
     app_light_background: string;
+    app_nav_band_background: string;
     app_row_disabled_background_color_lightgray: string;
     app_text_color: string;
     app_text_color_accent: string,
     app_text_highlight_warn_background_color: string;
     app_text_highlight_warn_text_color: string;
+    app_widget_spacing: string;
+    font_family: string;
+    grey_dark: string;
     island_background_color: string;
+    material_accent_color: string;
+    material_accent_font_color: string;
+    material_primary_color: string;
+    material_primary_font_color: string;
+} // CoreCssVariables
 
-
-}
-
-const coreCssCommonVariables: Partial<CoreCssVariables> = {
-    //--- app specific properties ----
+const coreCssCommonVariables: CoreCssVariables = {
+    //--- app specific properties, undefined are theme specific ----
     app_bright_red: '#E1251B',
+    app_button_bg_color: undefined,
+    app_button_color: undefined,
+    app_button_color_accent: undefined,
     app_color_blue: '#10669F',
     app_color_blue_01: '#2174af',
+    app_color_coral_dark: '#EF5350',
+    app_color_coral_light: '#F8BBD0',
+    app_color_coral_medium: '#FF799C',
+    app_color_crimson: '#DC143C',
     app_color_cyan: '#03E0DF',
+    app_color_firebrid: '#B22222',
     app_color_gray_50: '#fafafa',
     app_color_gray_100: '#f5f5f5',
     app_color_gray_200: '#eee',
@@ -98,15 +100,31 @@ const coreCssCommonVariables: Partial<CoreCssVariables> = {
     app_color_gray_text3: '#c3c3c3',
     app_color_green: '#087b3e',
     app_color_green_01: '#087b3e',
+    app_color_green_02: undefined,
     app_color_green_03: '#92D050',
     app_color_green_04: '#679f2b',
     app_color_light_gray_001: '#E9E9E9',
     app_color_link_blue: '#1e90ff',
+    app_color_panel_background: undefined,
     app_color_red_01: '#E1251B',
+    app_color_red_02: undefined,
+    app_color_red_dark: '#D50000',
+    app_color_red_light: '#FF8A80',
+    app_color_red_vivid: '#F44336',
+    app_color_salmon: '#FA8072',
+    app_color_tomato: '#FF6347',
     app_color_yellow_01: '#fefe4c',
+    app_color_yellow_02: undefined,
+    app_color_yellow_03: undefined,
     app_color_yellow_04: '#ffd43b',
     app_custom_excel_filter_width_number: '18px',
+    app_dashboard_button_background_color: undefined,
+    app_dashboard_button_text_color: undefined,
+    app_dialog_border_radius: '10px',
+    app_dialog_header_background_color: undefined,
     app_dialog_header_close_button_size: '18',
+    app_dialog_header_font_color: undefined,
+    app_filter_text_background_color: undefined,
     app_font_family: 'Roboto-Regular, sans-serif',
     app_font_main: 'Roboto-Regular',
     app_font_size_base_number: '12',
@@ -118,45 +136,30 @@ const coreCssCommonVariables: Partial<CoreCssVariables> = {
     app_font_size_plus_2: '14px',
     app_font_size_regular: '12px',
     app_font_size_section_title: '14.25px',
-    app_nav_band_background: '#2174af',
-    app_widget_spacing: '10px',
-    font_family: 'Roboto-Regular, sans-serif',
-    material_primary_color: '#37474f',
-    material_primary_font_color: '#fff',
-    material_accent_color: '#10669F',
-    material_accent_font_color: '#fff',
-    grey_dark: '#303030',
-    //------- theme specific properties-----------
-
-    app_button_bg_color: undefined,
-    app_button_color: undefined,
-    app_button_color_accent: undefined,
-    app_color_green_02: undefined,
-    app_color_panel_background: undefined,
-    app_color_red_02: undefined,
-    app_color_yellow_02: undefined,
-    app_color_yellow_03: undefined,
-    app_dashboard_button_background_color: undefined,
-    app_dashboard_button_text_color: undefined,
-    app_dialog_header_background_color: undefined,
-    app_dialog_header_font_color: undefined,
-    app_filter_text_background_color: undefined,
     app_gray_input_background: undefined,
     app_header_text_color_dark_gray: undefined,
     app_header_text_color_dark_green: undefined,
     app_label_color: undefined,
     app_label_color_coolgray: undefined,
     app_light_background: undefined,
+    app_nav_band_background: '#2174af',
     app_row_disabled_background_color_lightgray: undefined,
     app_text_color: undefined,
     app_text_color_accent: undefined,
     app_text_highlight_warn_background_color: undefined,
     app_text_highlight_warn_text_color: undefined,
+    app_widget_spacing: '10px',
+    font_family: 'Roboto-Regular, sans-serif',
+    grey_dark: '#303030',
     island_background_color: undefined,
+    material_accent_color: '#10669F',
+    material_accent_font_color: '#fff',
+    material_primary_color: '#37474f',
+    material_primary_font_color: '#fff',
 
-};
+} as CoreCssVariables;
 
-const coreCssLightThemeVariables: Partial<CoreCssVariables> = {
+const coreCssLightThemeVariables: CoreCssVariables = {
     app_button_bg_color: coreCssCommonVariables.app_color_gray_50,
     app_button_color: 'rgba(#000, .87)',
     app_button_color_accent: coreCssCommonVariables.material_accent_color,
@@ -182,10 +185,10 @@ const coreCssLightThemeVariables: Partial<CoreCssVariables> = {
     app_text_highlight_warn_background_color: '#f73b2a',
     app_text_highlight_warn_text_color: '#fff',
     island_background_color: '#FFFFFF',
-};
+} as CoreCssVariables ;
 
 const app_dark_color_accent = '#03a9f4';
-const coreCssDarkThemeVariables: Partial<CoreCssVariables> = {
+const coreCssDarkThemeVariables: CoreCssVariables = {
     app_button_bg_color: coreCssCommonVariables.app_color_gray_700,
     app_button_color: '#fff',
     app_button_color_accent: app_dark_color_accent,
@@ -211,7 +214,7 @@ const coreCssDarkThemeVariables: Partial<CoreCssVariables> = {
     app_text_highlight_warn_background_color: '#8f2319',
     app_text_highlight_warn_text_color: '#fff',
     island_background_color: 'rgba(48, 48, 48, 0.6)',
-};
+} as CoreCssVariables;
 
 export const CSS_VARS_CORE: CoreCssVariables = { ...coreCssCommonVariables, ...coreCssLightThemeVariables } as CoreCssVariables;
 
@@ -225,6 +228,7 @@ function _coreUpdateThemeCssVariables(ev: ThemeChangeEvent) {
     });
 
     cssSetRootVariables(CSS_VARS_CORE); // all the variables are updated - this is the core
+    css();
 }
 
 function css() {
