@@ -167,7 +167,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             options.theme = 'var(--app-dialog-header-background-color)';
         //     options.theme = 'mdb-elegant-dark';
         if (!options.borderRadius)
-            options.borderRadius = CSS_VARS_CORE.app_dialog;
+            options.borderRadius = CSS_VARS_CORE.app_dialog_border_radius;
         if (options.closeOnEscape == null)
             options.closeOnEscape = true;
         if (!options.content)
