@@ -1,20 +1,2 @@
 // Custom Material theme colors for this app
-$primary: #37474f; /* rgba(55,71,79,1); */
-$primary-font: #fff;
-$accent: #10669F; /* #094E84 !default; #2174af; #1277bf; rgba(18,119,191,1); */
-$accent-font: #fff;
-
-$app-color-panel-background: #f5f5f5;
-$island-background-color: #FFFFFF;
-
-$app-label-color: #000; // black
-$app-label-color-gray:#0000008a; //rgba(0, 0, 0, 0.54) from Syncfusion material
-$app-text-color: #000; // black
-$app-text-color-accent: $accent;
-$app-button-bgcolor: var(--app-color-gray-50);
-$app-button-color: rgba(#000, .87);
-$app-button-color-accent: $accent; // font color when using accent color
-
-
-
 @import 'vars-material-common.scss'; // variable :root definitions

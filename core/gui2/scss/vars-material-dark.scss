@@ -1,23 +1,3 @@
-//----------Define the custom material theme colors for this app ----------
-$primary: #37474f; /* rgba(55,71,79,1); */
-$primary-font: #fff;
-$accent: #10669F; // #16a2ff; // lighter #10669F;
-$accent-font: #fff;
-
-$app-color-panel-background: var(--app-color-gray-dark);
-$island-background-color: rgba(var(--app-color-panel-background), 60%);
-
-$app-label-color: var(--app-color-gray-text1);
-$app-label-color-gray: #ffffffb3; //rgba(255, 255, 255, 0.7) from Syncfusion material
-$app-text-color: #fff; // white
-$app-text-color-accent: #03a9f4;
-$app-button-bgcolor: var(--app-color-gray-700);
-$app-button-color: #fff; // white same as $grey-dark-font in Ej2)
-$app-button-color-accent: $app-text-color-accent; // font color when using accent color
-
-$app_color_blue_01: $app-text-color-accent;
-
-
 //--------Overwrite syncfusion scss variables -----
 $panel-box-shadow: 0px 2px 5px 0px rgba($accent, 45%);
 
