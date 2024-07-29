@@ -14,16 +14,3 @@ $accent-font: #fff;
   font-weight: normal;
   font-style: normal;
 }
-
-
-//-- start dismantling excel filter settings that should never have been set in the first place --/
-.e-contextmenu-wrapper ul, .e-contextmenu-container ul {
-  font-size: #{$app_font_size_base_number}px !important;
-}
-
-.e-excel-menu.e-contextmenu.e-menu-parent {
-  max-height: unset !important;
-  overflow-y: unset !important;
-}
-
-//--- end excel filter correcting settings ------

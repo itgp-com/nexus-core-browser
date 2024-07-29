@@ -1,4 +1,4 @@
-import {CssVariables, cssSetRootVariables} from '../../CssUtils';
+import {CssVariables, cssSetRootVariables, cssAdd} from '../../CssUtils';
 import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 
 // Listener function with a priority of 0 (default is 100) so it loads first
@@ -226,6 +226,25 @@ function _coreUpdateThemeCssVariables(ev: ThemeChangeEvent) {
 
     cssSetRootVariables(CSS_VARS_CORE); // all the variables are updated - this is the core
 }
+
+function css() {
+    cssAdd(`
+    
+//-- start dismantling excel filter settings that should never have been set in the first place --/
+.e-contextmenu-wrapper ul, .e-contextmenu-container ul {
+  font-size: ${CSS_VARS_CORE.app_font_size_regular} !important;
+}
+
+.e-excel-menu.e-contextmenu.e-menu-parent {
+  max-height: unset !important;
+  overflow-y: unset !important;
+}
+//--- end excel filter correcting settings ------
+    
+    `)
+}
+
+
 
 export function getCSS_VARS_CORE(): CoreCssVariables {
     return CSS_VARS_CORE;
