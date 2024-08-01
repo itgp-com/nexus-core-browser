@@ -4,7 +4,7 @@ import {N2Evt_OnHtml} from '../../N2';
 import {addN2Class, IHtmlUtils, N2HtmlDecorator} from '../../N2HtmlDecorator';
 import {createN2HtmlBasic, createN2HtmlBasicFromDecorator, findHtmlInputElement} from '../../N2Utils';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-import {StateN2Validator, ValidationRuleDetails} from '../StateN2Validator';
+import {StateN2Validator, N2Validator} from '../StateN2Validator';
 
 export enum TextFieldType_Ej2_Material {
     regular = '',
@@ -23,7 +23,7 @@ export interface StateN2TextField<WIDGET extends N2TextField = N2TextField> exte
 
     required?: boolean;
 
-    validationRule?: ValidationRuleDetails<WIDGET>;
+    validationRule?: N2Validator<WIDGET, string>;
 
     /**
      * Defaults to always having an error line.
