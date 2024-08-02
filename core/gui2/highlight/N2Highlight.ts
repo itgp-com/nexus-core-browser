@@ -20,9 +20,10 @@ export const highlight_deco: N2HtmlDecorator = {
     classes: [CSS_CLASS_N2_HIGHLIGHT_STRONG]
 }
 
-export let highlight_record_column_name: string = '___highlights___';
-export let highlight_record_column_nls_text_matches: string = '___nls_text_matches___';
-export let highlight_record_column_values: string = '___highlight_values___';
+export const HIGHLIGHT_RECORD_COLUMN_NAME: string = '___highlights___';
+// export const HIGHLIGHT_RECORD_COLUMN_NLS_TEXT_MATCHES: string = '___nls_text_matches___';
+export const HIGHLIGHT_RECORD_COLUMN_VALUES: string = '___highlight_values___';
+export const HIGHLIGHT_RECORD_COLUMN_EXCERPTS: string = '___highlight_values_excerpts___';
 
 /**
  * Overwritable function to get the HTML for the opening highlight tag.
@@ -39,6 +40,11 @@ export function getHighlightTagOpenHtml() {
 export function getHighlightTagCloseHtml() {
     return `</${highlight_deco.tag}>`;
 }
+
+//And interface for an object with string key, string content, without knowing the key values at compile time
+export interface HighlightedExcerpts {
+    [key: string]: string;
+} // HighlightedExcerpt
 
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
@@ -109,7 +115,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
  * @return {any}
  */
 export function containsHighlighing(record:any) {
-    return record && (record[highlight_record_column_name] ||  record[highlight_record_column_values]);
+    return record && (record[HIGHLIGHT_RECORD_COLUMN_NAME] ||  record[HIGHLIGHT_RECORD_COLUMN_VALUES]);
 }
 
 /**
@@ -128,7 +134,7 @@ export function containsHighlighing(record:any) {
  * @param {string} innerHTML - The input string containing the text to be highlighted.
  * @return {string} - The processed string with highlight tags replaced by HTML span elements.
  */
-export function highlight_apply(innerHTML: string) {
+export function highlight_apply(innerHTML: string) : string{
     if ( !(innerHTML && isString(innerHTML) ) ) {
         // null, empty string, or non-string input
         return innerHTML;
@@ -169,7 +175,7 @@ export function highlight_value(record: any, field: string): any {
 export function highlighted_raw_value(record:any, field:string) : any {
     if (!record)
         return null;
-    let highlights = record[highlight_record_column_values];
+    let highlights = record[HIGHLIGHT_RECORD_COLUMN_VALUES];
     if (!highlights)
         return record[field]; // return actual value when no highlighting
     return highlights[field]; // could be null
@@ -199,11 +205,11 @@ export function rec_field_value(record: any, field: string): RecFieldVal {
         recFieldVal.value = record[field]; // return actual value when no highlighting
         recFieldVal.value_visible = recFieldVal.value; // start here
 
-        let highlighted_fields = record[highlight_record_column_name] ;
+        let highlighted_fields = record[HIGHLIGHT_RECORD_COLUMN_NAME] ;
         if (  highlighted_fields && isArray(highlighted_fields) && highlighted_fields.includes(field) ) {
-            recFieldVal.is_highlighted = true; // column shoudl be highlighted, but there might be no actual text inside to highlight
+            recFieldVal.is_highlighted = true; // column should be highlighted, but there might be no actual text inside to highlight
         }
-        let highlighted_values = record[highlight_record_column_values];
+        let highlighted_values = record[HIGHLIGHT_RECORD_COLUMN_VALUES];
         if (!highlighted_values) {
             recFieldVal.value_visible = record[field];
         } else {
