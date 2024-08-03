@@ -1,4 +1,4 @@
-import {CssVariables, cssSetRootVariables, cssAdd} from '../../CssUtils';
+import {cssAdd, cssSetRootVariables, CssVariables} from '../../CssUtils';
 import {ThemeChangeEvent, themeChangeListeners} from '../Theming';
 
 // Listener function with a priority of 0 (default is 100) so it loads first
@@ -185,7 +185,7 @@ const coreCssLightThemeVariables: CoreCssVariables = {
     app_text_highlight_warn_background_color: '#f73b2a',
     app_text_highlight_warn_text_color: '#fff',
     island_background_color: '#FFFFFF',
-} as CoreCssVariables ;
+} as CoreCssVariables;
 
 const app_dark_color_accent = '#03a9f4';
 const coreCssDarkThemeVariables: CoreCssVariables = {
@@ -216,11 +216,11 @@ const coreCssDarkThemeVariables: CoreCssVariables = {
     island_background_color: 'rgba(48, 48, 48, 0.6)',
 } as CoreCssVariables;
 
-export const CSS_VARS_CORE: CoreCssVariables = { ...coreCssCommonVariables, ...coreCssLightThemeVariables } as CoreCssVariables;
+export const CSS_VARS_CORE: CoreCssVariables = {...coreCssCommonVariables, ...coreCssLightThemeVariables} as CoreCssVariables;
 
 function _coreUpdateThemeCssVariables(ev: ThemeChangeEvent) {
     const themeVariables = ev.newState.theme_type === 'light' ? coreCssLightThemeVariables : coreCssDarkThemeVariables;
-    const updatedVariables = { ...coreCssCommonVariables, ...themeVariables };
+    const updatedVariables = {...coreCssCommonVariables, ...themeVariables};
 
     Object.keys(updatedVariables).forEach(key => {
         const typedKey = key as keyof CoreCssVariables;
@@ -232,9 +232,10 @@ function _coreUpdateThemeCssVariables(ev: ThemeChangeEvent) {
 }
 
 function css() {
+
+    /* start dismantling excel filter settings that should never have been set in the first place */
     cssAdd(`
     
-//-- start dismantling excel filter settings that should never have been set in the first place --/
 .e-contextmenu-wrapper ul, .e-contextmenu-container ul {
   font-size: ${CSS_VARS_CORE.app_font_size_regular} !important;
 }
@@ -243,11 +244,8 @@ function css() {
   max-height: unset !important;
   overflow-y: unset !important;
 }
-//--- end excel filter correcting settings ------
-    
     `)
 }
-
 
 
 export function getCSS_VARS_CORE(): CoreCssVariables {
