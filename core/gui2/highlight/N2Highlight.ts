@@ -115,7 +115,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
  * @return {any}
  */
 export function containsHighlighing(record:any) {
-    return record && (record[HIGHLIGHT_RECORD_COLUMN_NAME] ||  record[HIGHLIGHT_RECORD_COLUMN_VALUES]);
+    return record && (record[HIGHLIGHT_RECORD_COLUMN_NAME] );
 }
 
 /**
