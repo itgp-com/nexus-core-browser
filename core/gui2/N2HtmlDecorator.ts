@@ -298,6 +298,13 @@ export function removeClassesFromClassList(classList: string[] | null | undefine
     return classList.filter(className => !classesToRemoveArray.includes(className));
 } // removeClassesFromClassList
 
+function processClassString(classString: string): string[] {
+    const trimmed = classString.trim();
+    // regex to replace double or more spaces with single space
+    const normalized = trimmed.replace(/\s{2,}/g, ' ');
+    return normalized.length > 0 ? normalized.split(' ') : [];
+}
+
 /**
  * Adds the specified class(es) to the given HTML element's class list, without duplicating any existing classes.
  *
@@ -311,10 +318,21 @@ export function addClassesToElement(htmlElement: HTMLElement | null | undefined,
     }
 
     const classList = htmlElement.classList;
-    const classesToAdd = Array.isArray(classNames) ? classNames : (classNames ? [classNames] : []);
+
+    let classesToAdd: string[] = [];
+
+    if (Array.isArray(classNames)) {
+        // Handle array input
+        // flatMap processes each array element through processClassString and flattens the result
+        // This allows handling of space-separated classes within individual array elements
+        classesToAdd = classNames.flatMap(className => processClassString(className));
+    } else if (classNames) {
+        // Handle string input
+        classesToAdd = processClassString(classNames);
+    }
 
     for (const className of classesToAdd) {
-        if (className && !classList.contains(className)) { // handle null/undefined classNames
+        if (className && !classList.contains(className)) {
             classList.add(className);
         }
     }
@@ -333,14 +351,25 @@ export function removeClassesFromElement(htmlElement: HTMLElement | null | undef
     }
 
     const classList = htmlElement.classList;
-    const classesToRemove = Array.isArray(classNames) ? classNames : [classNames]; // convert single class string to array if needed
 
-    classesToRemove.forEach(className => {
-        if (classList.contains(className)) {
+    let classesToRemove: string[] = [];
+
+    if (Array.isArray(classNames)) {
+        // Handle array input
+        // flatMap processes each array element through processClassString and flattens the result
+        // This allows handling of space-separated classes within individual array elements
+        classesToRemove = classNames.flatMap(className => processClassString(className));
+    } else if (classNames) {
+        // Handle string input
+        classesToRemove = processClassString(classNames);
+    }
+
+    for (const className of classesToRemove) {
+        if (className && classList.contains(className)) {
             classList.remove(className);
         }
-    });
-}
+    }
+} // removeClassesFromElement
 
 /**
  * Transfers classes, style, and other attributes from the source N2HtmlDecorator to the target HTMLElement.
