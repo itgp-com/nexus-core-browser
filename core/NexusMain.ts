@@ -20,14 +20,14 @@ export class NexusMain {
          let baseURL = new URL(".", window.location.href);// Startup should always occur in index.html. Therefore that is the appBase
          setAppBase(baseURL);
 
-         let initialParamsAsString: string = decodeURI(window.location.hash.substr(1)); // all the stuff after # but without #
+         let initialParamsAsString: string = decodeURI(window.location.hash.substring(1)); // all the stuff after # but without #
 
          if (!thisX.ui) {
             window.alert("Error: Please define a menu class in coreUI.webUIStart.mainUI !")
             return;
          }
 
-         //Await all the aync activity to finish
+         //Await all the async activity to finish
          await thisX.ui.init();
 
          // Initialize the screen registry
