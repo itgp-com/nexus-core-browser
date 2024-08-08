@@ -900,6 +900,11 @@ font-size: var(--app-font-size-regular);`
       padding: 5px;
     `);
 
+    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader tr th:first-child:has(.e-headerchkcelldiv)`, `
+      padding-left: 5px;
+    `);
+
+
     // this selector is used to denote a disabled row in the grid
     cssAddSelector(`.${n2GridClass}.${eGridClass} .e-rowcell.screen-grid-col-disabled `, `
       background-color: ${CSS_VARS_CORE.app_row_disabled_background_color_lightgray};
@@ -1142,6 +1147,7 @@ line-height: 8px;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   `);
+
 
     cssAddSelector(
         `.${n2GridClass}.${eGridClass} .e-columnheader .e-headercell`,
