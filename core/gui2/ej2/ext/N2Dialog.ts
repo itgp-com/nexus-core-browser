@@ -78,10 +78,10 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
     constructor(state ?: STATE) {
         super(state);
-    }
-
+    } // constructor
 
     protected onStateInitialized(state: STATE) {
+        let thisX = this;
         addN2Class(state.deco, N2Dialog.CLASS_IDENTIFIER);
         state.ej = state.ej || {};
 
@@ -92,7 +92,7 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
         state.destroyN2ContentOnClose = state.destroyN2ContentOnClose == null ? true : state.destroyN2ContentOnClose;
 
         if (state.appendTo) {
-            this._appendedTo = state.appendTo;
+            thisX._appendedTo = state.appendTo;
             // sync id
             if (state.appendTo.id == null) {
                 state.appendTo.id = state.tagId;
@@ -100,20 +100,17 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
                 state.tagId = state.appendTo.id;
             }
 
-            decoToHtmlElement(this.state.deco, this._appendedTo); // transfer deco to the anchor element
-            if (this.state?.deco?.tag) {
-                if (this._appendedTo?.tagName != this.state?.deco?.tag) {
-                    console.error('Tag of deco cannot be set to the anchor element. deco value is', this.state.deco, 'and anchor element is', this._appendedTo);
+            decoToHtmlElement(thisX.state.deco, thisX._appendedTo); // transfer deco to the anchor element
+            if (thisX.state?.deco?.tag) {
+                if (thisX._appendedTo?.tagName != thisX.state?.deco?.tag) {
+                    console.error('Tag of deco cannot be set to the anchor element. deco value is', thisX.state.deco, 'and anchor element is', thisX._appendedTo);
                 }
             }
 
         } else {
-            // let localAnchorID: string = this.state.tagId; // getRandomString('anchor_');
-            // let elem: HTMLDivElement = document.createElement('div')
-            // elem.id = localAnchorID
-            this._appendedTo = this.htmlElement; // we can call it here because we have recursion prevention in place
-            document.body.appendChild(this.htmlElement);
-            this._appendTargetCreatedLocally = true; // so it can be removed on destroy
+            thisX._appendedTo = thisX.htmlElement; // we can call it here because we have recursion prevention in place
+            document.body.appendChild(thisX.htmlElement);
+            thisX._appendTargetCreatedLocally = true; // so it can be removed on destroy
         }
 
 
@@ -147,11 +144,11 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
         ej.cssClass = ej.cssClass || '';
         if (ej.cssClass != '')
             ej.cssClass += ' ';
-        ej.cssClass += this.className; // name of the class for css purposes
+        ej.cssClass += thisX.className; // name of the class for css purposes
 
 
         // Make a header from either state.header or state.ej.header
-        let n2Header: N2 = this._headerN2();
+        let n2Header: N2 = thisX._headerN2();
         ej.header = n2Header.htmlElement;
 
         if (state.content) {
@@ -165,15 +162,15 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
         ej.beforeOpen = (args: BeforeOpenEventArgs) => {
             try {
-                if (isN2_Interface_Dialog_BeforeOpen(this.state.content)) {
+                if (isN2_Interface_Dialog_BeforeOpen(thisX.state.content)) {
                     try {
                         let evt: N2Evt_Dialog_Cancellable = {
-                            dialog: this,
-                            widget: this.state.content as any,
+                            dialog: thisX,
+                            widget: thisX.state.content as any,
                             native_event: args,
                             cancel: false
                         };
-                        this.state.content.onDialogBeforeOpen(evt);
+                        thisX.state.content.onDialogBeforeOpen.call(thisX.state.content, evt); // context is the content on which the event is called
                         if (evt.cancel) {
                             args.cancel = true;
                         }
@@ -182,16 +179,16 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
                     }
                 }
             } catch (e) {
-                this.handleError(e);
+                thisX.handleError(e);
             }
             if (args.cancel)
                 return;
 
             try {
                 if (userBeforeOpen)
-                    userBeforeOpen.call(this, args); // any user open code
+                    userBeforeOpen.call(thisX, args); // any user open code
             } catch (e) {
-                this.handleError(e);
+                thisX.handleError(e);
             }
 
         } // ej.beforeOpen
@@ -201,29 +198,29 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
                 if (isN2(n2Header))
                     n2Header.initLogic(); // initialize header
             } catch (e) {
-                this.handleError(e);
+                thisX.handleError(e);
             }
 
             try {
-                if (this.state.content) {
-                    if (this.state.content instanceof HTMLElement) {
+                if (thisX.state.content) {
+                    if (thisX.state.content instanceof HTMLElement) {
                     } else {
                         // if N2, init logic
-                        if (isN2(this.state.content))
-                            this.state.content.initLogic(); // initialize content
+                        if (isN2(thisX.state.content))
+                            thisX.state.content.initLogic(); // initialize content
                     }
                 }
             } catch (e) {
-                this.handleError(e);
+                thisX.handleError(e);
             }
-            if (isN2_Interface_Dialog_Open(this.state.content)) {
+            if (isN2_Interface_Dialog_Open(thisX.state.content)) {
                 try {
                     let evt: N2Evt_Dialog<N2Dialog> = {
-                        dialog: this,
-                        widget: this.state.content as any,
+                        dialog: thisX,
+                        widget: thisX.state.content as any,
                         native_event: args
                     };
-                    this.state.content.onDialogOpen(evt);
+                    thisX.state.content.onDialogOpen.call(thisX.state.content, evt); // the context is the content on which the event is called
                 } catch (e) {
                     console.error('N2Dialog._headerN2: error calling onDialogOpen on content', e);
                 }
@@ -231,49 +228,49 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
             try {
                 if (userOpen)
-                    userOpen.call(this, args); // any user open code
+                    userOpen.call(thisX, args); // any user open code
             } catch (e) {
-                this.handleError(e);
+                thisX.handleError(e);
             }
 
         } // ej.open
 
         ej.beforeClose = (args: BeforeCloseEventArgs) => {
-            if (isN2_Interface_Dialog_BeforeClose(this.state.content)) {
+            if (isN2_Interface_Dialog_BeforeClose(thisX.state.content)) {
                 try {
                     let evt: N2Evt_Dialog_Cancellable = {
-                        dialog: this,
-                        widget: this.state.content as any,
+                        dialog: thisX,
+                        widget: thisX.state.content as any,
                         native_event: args,
                         cancel: false
                     };
-                    this.state.content.onDialogBeforeClose(evt);
+                    thisX.state.content.onDialogBeforeClose.call(thisX.state.content,evt); // context is the content on which the event is called
                     if (evt.cancel) {
                         args.cancel = true;
                     }
                 } catch (e) {
                     console.error('N2Dialog._headerN2: error calling onDialogBeforeClose on content', e);
                 }
-            } // if (isN2_Interface_Dialog_BeforeClose(this.state.content))
+            } // if (isN2_Interface_Dialog_BeforeClose(thisX.state.content))
 
             if (args.cancel)
                 return;
 
             try {
                 if (userBeforeClose)
-                    userBeforeClose.call(this, args); // any user open code
+                    userBeforeClose.call(thisX, args); // any user open code
             } catch (e) {
-                this.handleError(e);
+                thisX.handleError(e);
             }
 
         }
 
         ej.close = (args: any) => {
 
-            if (isN2_Interface_Dialog_Close(this.state.content)) {
+            if (isN2_Interface_Dialog_Close(thisX.state.content)) {
                 try {
-                    let evt: N2Evt_Dialog = {dialog: this, widget: this.state.content as any, native_event: args};
-                    this.state.content.onDialogClose(evt);
+                    let evt: N2Evt_Dialog = {dialog: thisX, widget: thisX.state.content as any, native_event: args};
+                    thisX.state.content.onDialogClose.call(thisX.state.content, evt); // context is the content on which the event is called
                 } catch (e) {
                     console.error('N2Dialog._headerN2: error calling onDialogClose on content', e);
                 }
@@ -281,13 +278,13 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
             try {
                 if (userClose)
-                    userClose.call(this, args);
+                    userClose.call(thisX, args);
             } catch (e) {
-                this.handleError(e);
+                thisX.handleError(e);
             }
 
             try {
-                this.destroy();
+                thisX.destroy();
             } catch (e) {
                 console.error('N2Dialog._headerN2: error destroying N2Dialog', e);
             }
@@ -328,9 +325,9 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
 
         try {
-            if (this.state.destroyN2ContentOnClose) {
-                if (isN2(this.state.content)) {
-                    this.state.content?.destroy();
+            if (state.destroyN2ContentOnClose) {
+                if (isN2(state.content)) {
+                    state.content?.destroy();
                 }
             }
         } catch (e) {
@@ -355,7 +352,7 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
         }
 
         super.onDestroy(args);
-    }
+    } // onDestroy
 
     onLogic(args: N2Evt_OnLogic) {
         if (!this._appendTargetCreatedLocally) {

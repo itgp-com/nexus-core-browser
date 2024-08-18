@@ -67,12 +67,14 @@ export interface StateN2Dlg<DATA_TYPE = any> extends StateN2Basic {
 
     /**
      * Called when an N2 dialog is opened (after the content is initialized)
+     * The context of the function (variable 'this') is the dialog content
      * @param {N2Evt_Dialog} evt
      */
     onDialogOpen?: (evt ?: N2Evt_Dialog<N2Dlg, N2 | HTMLElement>) => void;
 
     /**
      * Called when an N2 dialog is closed (after the content is closed).
+     * The context of the function (variable 'this') is the dialog content
      *
      * This is called before any user close logic on the Dialog os called, and before the N2 component destroy() method is called.
      *
@@ -82,6 +84,7 @@ export interface StateN2Dlg<DATA_TYPE = any> extends StateN2Basic {
 
     /**
      * Called when an N2 dialog is opened (after the content is initialized)
+     * The context of the function (variable 'this') is the dialog content
      * @param {N2Evt_Dialog} evt
      */
     onDialogBeforeOpen?: (evt ?: N2Evt_Dialog_Cancellable<N2Dlg, N2 | HTMLElement>) => void;
@@ -90,6 +93,7 @@ export interface StateN2Dlg<DATA_TYPE = any> extends StateN2Basic {
      * Called when an N2 dialog is closed (after the content is closed).
      *
      * This is called before any user close logic on the Dialog os called
+     * The context of the function (variable 'this') is the dialog content
      *
      * @param {N2Evt_Dialog} evt
      */
@@ -429,7 +433,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
 
         //------------------ initial visibility -------------------
-        this._opacity_user_defined = options.opacity; // could be null
+        thisX._opacity_user_defined = options.opacity; // could be null
         // make the panel invisible until the content is initialized
         options.opacity = 0; // panel is now invisible
 
@@ -449,19 +453,19 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
 
         options.onbeforeclose = (panel: JsPanel, status: string) => {
-            if (this._onDialogBeforeCloseAllowed) {
+            if (thisX._onDialogBeforeCloseAllowed) {
 
                 //---------------------- try the onDialogBeforeClose event in the content ----------------
                 try {
-                    if (isN2_Interface_Dialog_BeforeClose(this.state.content)) {
+                    if (isN2_Interface_Dialog_BeforeClose(thisX.state.content)) {
                         try {
                             let evt: N2Evt_Dialog_Cancellable<N2Dlg> = {
                                 dialog: this,
-                                widget: this.state.content as any,
+                                widget: thisX.state.content as any,
                                 native_event: null,
                                 cancel: false
                             };
-                            this.state.content.onDialogBeforeClose(evt);
+                            thisX.state.content.onDialogBeforeClose.call( thisX.state.content, evt);
                             if (evt.cancel) {
                                 return false; // do not allow the close
                             }
@@ -470,19 +474,19 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                         }
                     }
                 } catch (e) {
-                    this.handleError(e);
+                    thisX.handleError(e);
                 }
 
                 //--------------- try the onDialogBeforeClose event in the N2Dlg state event itself ----------------
                 try {
                     if (thisX.state.onDialogBeforeClose) {
                         let evt: N2Evt_Dialog_Cancellable<N2Dlg> = {
-                            dialog: this,
-                            widget: this.state.content as any,
+                            dialog: thisX,
+                            widget: thisX.state.content as any,
                             native_event: null,
                             cancel: false
                         };
-                        thisX.state.onDialogBeforeClose(evt);
+                        thisX.state.onDialogBeforeClose.call( thisX.state.content, evt);
                         if (evt.cancel) {
                             return false; // do not allow the close
                         }
@@ -507,9 +511,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                     }
                     return false; // do not allow the close since none of the defined functions returned true
 
-                } // if (this._onDialogBeforeCloseAllowed)
+                } // if (thisX._onDialogBeforeCloseAllowed)
 
-            } // if (this._onDialogBeforeCloseAllowed)
+            } // if (thisX._onDialogBeforeCloseAllowed)
 
             return true; // allow the close
         }; // onbeforeclose
@@ -539,7 +543,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 if (isN2_Interface_Dialog_Close(state.options.content)) {
                     try {
                         let evt: N2Evt_Dialog = {dialog: thisX, widget: thisX.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}};
-                        state.options.content.onDialogClose(evt);
+                        state.options.content.onDialogClose.call( state.options.content, evt);
                     } catch (e) {
                         console.error('N2Dlg.options.onclosed: error calling onDialogClose on content', e);
                     }
@@ -549,7 +553,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             //------------ Trigger the onDialogClose event in the N2Dlg state event itself ----------------
             try {
                 if (thisX.state.onDialogClose) {
-                    thisX.state.onDialogClose({dialog: thisX, widget: thisX.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}});
+                    thisX.state.onDialogClose.call( thisX.state.content, {dialog: thisX, widget: thisX.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}});
                 }
             } catch (e) { console.error(e); }
 
@@ -594,11 +598,11 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                     if (content && isN2_Interface_Dialog_Open(content)) {
                         try {
                             let evt: N2Evt_Dialog<N2Dlg> = {
-                                dialog: this,
+                                dialog: thisX,
                                 widget: content as any,
                                 native_event: ev
                             };
-                            content.onDialogOpen.call(thisX, evt);
+                            content.onDialogOpen.call(content, evt);
                         } catch (e) {
                             console.error('N2Dlg.onStateInitialized: error calling onDialogOpen on content', e);
                         }
@@ -609,7 +613,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
 
                 if (thisX.state.onDialogOpen) {
-                    thisX.state.onDialogOpen({dialog: this, widget: content as any, native_event: ev});
+                    thisX.state.onDialogOpen.call(content, {dialog: thisX, widget: content as any, native_event: ev});
                 }
 
 
@@ -620,8 +624,8 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             }, //options
         );
 
-        thisX.createJsPanel.call(this);
-        // at this point this.obj is set to jsPanel
+        thisX.createJsPanel.call(thisX);
+        // at this point thisX.obj is set to jsPanel
 
         if ( thisX.state?.excludeFromOpenDialogs !== true)
             openDialogsAdd(thisX); // add this dialog to the list of open dialogs (if not already there)
@@ -651,10 +655,10 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 try {
                     decoToHtmlElement(thisX.state.deco, thisX.obj as HTMLElement); // thisX.obj is HTMLElement because JsPanel is an HTMLElement
                 } catch (e) { console.error(e); }
-            } // if thisX.state.deco && this.obj instanceof HTMLElement
+            } // if thisX.state.deco && thisX.obj instanceof HTMLElement
 
-            (thisX.obj as any)[N2_CLASS] = this; // stamp the N2 object on the jsPanel object
-        } // if this.obj
+            (thisX.obj as any)[N2_CLASS] = thisX; // stamp the N2 object on the jsPanel object
+        } // if thisX.obj
 
 
         // super.onStateInitialized(state);
@@ -672,12 +676,12 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             if (content && isN2_Interface_Dialog_BeforeOpen(content)) {
                 try {
                     let evt: N2Evt_Dialog_Cancellable<N2Dlg, N2 | HTMLElement> = {
-                        dialog: this,
+                        dialog: thisX,
                         widget: content as any,
                         native_event: {panel: panel},
                         cancel: false
                     };
-                    content.onDialogBeforeOpen(evt);
+                    content.onDialogBeforeOpen.call(content, evt);
                     if (evt.cancel) {
                         thisX.state.options.opacity = opacity_user_defined; // restore the original opacity even though it does not matter (in case user reuses that object)
                         thisX._onDialogBeforeCloseAllowed = false;
@@ -703,12 +707,12 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                     }
 
                     let evt: N2Evt_Dialog_Cancellable<N2Dlg, N2 | HTMLElement> = {
-                        dialog: this,
+                        dialog: thisX,
                         widget: content as any,
                         native_event: {panel: panel},
                         cancel: false
                     };
-                    thisX.state.onDialogBeforeOpen(evt);
+                    thisX.state.onDialogBeforeOpen.call(content, evt);
                     if (evt.cancel) {
                         thisX.state.options.opacity = opacity_user_defined; // restore the original opacity even though it does not matter (in case user reuses that object)
                         thisX._onDialogBeforeCloseAllowed = false;
@@ -738,7 +742,6 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
 
     public onDestroy(args: N2Evt_Destroy): void {
-        let id = this.state.tagId;
 
         try {
             if (this.obj) {
