@@ -11,6 +11,7 @@ async function init() {
 init();
 
 
+import DOMPurify from 'dompurify';
 import {isFunction} from "lodash";
 import {removeDoubleSpaces} from "./CoreUtils";
 import {CssStyle, cssStyleToString} from './CssUtils';
@@ -167,7 +168,7 @@ export function wait(ms: number): void {
  */
 export function htmlToElement(htmlString: string): HTMLElement {
    const div     = document.createElement('div');
-   div.innerHTML = htmlString.trim();
+   div.innerHTML = DOMPurify.sanitize(htmlString.trim());
 
    // Change this to div.childNodes to support multiple topContainer-level nodes
    return div.firstElementChild as HTMLElement;

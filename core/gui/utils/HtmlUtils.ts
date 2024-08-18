@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import {escape, isArray, throttle} from "lodash";
 import {Props} from "tippy.js";
 import {getRandomString, voidFunction} from "../../BaseUtils";
@@ -26,11 +27,11 @@ export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFiel
 
        let innerHTML = `<a href="${realLinkValue}" target="_blank" >${visualValue}</a>`;
         if ( wrapper_highlight) {
-            wrapper_highlight.innerHTML = innerHTML;
+            wrapper_highlight.innerHTML = DOMPurify.sanitize(innerHTML);
             elem.innerHTML = '';
             elem.appendChild(wrapper_highlight);
         } else {
-            elem.innerHTML = innerHTML;
+            elem.innerHTML = DOMPurify.sanitize(innerHTML);
         }
     }
 }

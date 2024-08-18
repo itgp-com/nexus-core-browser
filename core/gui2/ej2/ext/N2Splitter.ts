@@ -1,4 +1,5 @@
 import {Splitter, SplitterModel} from '@syncfusion/ej2-layouts';
+import DOMPurify from 'dompurify';
 import {N2, N2Evt_OnLogic} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {getN2FromHtmlElement, isN2HtmlElement} from '../../N2Utils';
@@ -56,7 +57,7 @@ export class N2Splitter<STATE extends StateN2Splitter = StateN2Splitter> extends
                     let stateComponent: (string | HTMLElement | N2) = stateComponents[i];
                     if (stateComponent) {
                         if (typeof stateComponent === 'string') {
-                            paneElem.innerHTML += stateComponent; // append the string HTML to the innerHTML of the pane
+                            paneElem.innerHTML += DOMPurify.sanitize(stateComponent); // append the string HTML to the innerHTML of the pane
                         } else if (stateComponent instanceof HTMLElement) {
                             paneElem.appendChild(stateComponent);
                             if (isN2HtmlElement(stateComponent)) {

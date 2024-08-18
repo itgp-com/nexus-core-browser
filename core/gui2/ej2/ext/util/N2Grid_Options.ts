@@ -20,6 +20,7 @@ import {
     SpinnerArgs
 } from '@syncfusion/ej2-popups';
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
+import DOMPurify from 'dompurify';
 import {isArray} from 'lodash';
 import * as _ from 'lodash';
 import {EJINSTANCES} from '../../../../Constants';
@@ -1012,7 +1013,7 @@ function calculateDefaultHeaderWidth(headerText:string) : number{
     tempDiv.style.whiteSpace = 'nowrap';  // Prevent wrapping
 
     // Insert the text into the div
-    tempDiv.innerHTML = headerText;
+    tempDiv.innerHTML = DOMPurify.sanitize(headerText);
 
     // Append the div to the body
     document.body.appendChild(tempDiv);
