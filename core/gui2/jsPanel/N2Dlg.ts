@@ -109,13 +109,22 @@ export interface StateN2Dlg<DATA_TYPE = any> extends StateN2Basic {
      */
     hideOpenDialogsIcon?: boolean;
 
+    /**
+     * Defaults to false.
+     *
+     * If **true**, the dialog will be repositioned when opened
+     *
+     * Regardless of this flag, the reposition is automatically called when panelSize or contentSize have height/width is set to 'auto'. This is done so because the dialog tries to center itself on the screen without knowing the size of the content - it needs this call
+     */
+    repositionOnOpen?: boolean;
+
 } // N2DlgState
 
 // noinspection JSMismatchedCollectionQueryUpdate
 export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE, JsPanel> {
     static readonly CLASS_IDENTIFIER: string = 'N2Dlg';
 
-    static newN2Dlg_Modal(state ?: StateN2Dlg):N2Dlg {
+    static newN2Dlg_Modal(state ?: StateN2Dlg): N2Dlg {
         return null; // will be overridden by the N2Dlg_Modal class
     }
 
@@ -183,17 +192,17 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         if (options.headerControls == null)
             options.headerControls = {}; // make sure it exists so we can add add to it
         let headerControls = options.headerControls
-        if ( !isString(headerControls)) {
+        if (!isString(headerControls)) {
             // it;s an object
 
-            if  (headerControls.add == null)
+            if (headerControls.add == null)
                 headerControls.add = [];
             let addProperty = headerControls.add;
 
-            let addArray:JsPanelHeaderControlsAdd[] = isArray(addProperty) ? addProperty : [addProperty];
+            let addArray: JsPanelHeaderControlsAdd[] = isArray(addProperty) ? addProperty : [addProperty];
             headerControls.add = addArray;
 
-            if ( !state.hideOpenDialogsIcon) {
+            if (!state.hideOpenDialogsIcon) {
                 // now we add the openDialogs control as the first control (addArray is already added to headerControls so we just modify it here)
 
                 let openDialogsControl: JsPanelHeaderControlsAdd = {
@@ -268,7 +277,6 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             } // if !state.hideOpenDialogsIcon
 
         } // if !isString(headerControls)
-
 
 
         //----------------------- Custom N2Dlg dragit options that include the whole headerbar ---------------
@@ -465,7 +473,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                                 native_event: null,
                                 cancel: false
                             };
-                            thisX.state.content.onDialogBeforeClose.call( thisX.state.content, evt);
+                            thisX.state.content.onDialogBeforeClose.call(thisX.state.content, evt);
                             if (evt.cancel) {
                                 return false; // do not allow the close
                             }
@@ -486,7 +494,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                             native_event: null,
                             cancel: false
                         };
-                        thisX.state.onDialogBeforeClose.call( thisX.state.content, evt);
+                        thisX.state.onDialogBeforeClose.call(thisX.state.content, evt);
                         if (evt.cancel) {
                             return false; // do not allow the close
                         }
@@ -543,7 +551,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 if (isN2_Interface_Dialog_Close(state.options.content)) {
                     try {
                         let evt: N2Evt_Dialog = {dialog: thisX, widget: thisX.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}};
-                        state.options.content.onDialogClose.call( state.options.content, evt);
+                        state.options.content.onDialogClose.call(state.options.content, evt);
                     } catch (e) {
                         console.error('N2Dlg.options.onclosed: error calling onDialogClose on content', e);
                     }
@@ -553,7 +561,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             //------------ Trigger the onDialogClose event in the N2Dlg state event itself ----------------
             try {
                 if (thisX.state.onDialogClose) {
-                    thisX.state.onDialogClose.call( thisX.state.content, {dialog: thisX, widget: thisX.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}});
+                    thisX.state.onDialogClose.call(thisX.state.content, {dialog: thisX, widget: thisX.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}});
                 }
             } catch (e) { console.error(e); }
 
@@ -589,6 +597,46 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         document.addEventListener("jspanelloaded", _ev => {
                 let ev: JsPanel_DocumentEvent = _ev as any as JsPanel_DocumentEvent;
 
+
+// ----- start is reposition call necessary ? ----------
+                // Set of CSS keyword values
+                const cssKeywordValues = new Set(['auto', 'fit-content', 'max-content', 'min-content', 'inherit', 'initial', 'unset']);
+                // Helper function to check if a value is a keyword string
+                function isKeywordValue(value: string | number | ((panel: JsPanel) => string | number)): boolean {
+                    return typeof value === 'string' && cssKeywordValues.has(value);
+                }
+
+                let call_reposition: boolean = thisX?.state?.repositionOnOpen || false;
+
+                if (call_reposition == false) {
+                    if (thisX.state?.options?.panelSize) {
+                        let panelSize = thisX.state.options.panelSize;
+                        if (isObject(panelSize) && (isKeywordValue(panelSize?.width) || isKeywordValue(panelSize?.height))) {
+                            call_reposition = true;
+                        }
+                    } // if thisX.state?.options?.panelSize
+
+                    if (call_reposition == false) {
+                        if (thisX.state?.options?.contentSize) {
+                            let contentSize = thisX.state.options.contentSize;
+                            if (isObject(contentSize) && (isKeywordValue(contentSize?.width) || isKeywordValue(contentSize?.height))) {
+                                call_reposition = true;
+                            }
+                        } // if thisX.state?.options?.contentSize
+                    } // if call_reposition == false
+                } // if call_reposition
+
+                if (call_reposition) {
+                    try {
+                        setTimeout(() => {
+                            thisX.obj.reposition(); // reposition the dialog (but only after it shows up - so setTimeout)
+                        })
+                    } catch (e) { console.error(e); }
+                }
+//----------------- end is reposition call necessary ? ----------------
+
+
+
                 let content = thisX.state.content as any;
                 if (content == null) {
                     content = thisX.state.options.content as any;
@@ -596,6 +644,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
                 try {
                     if (content && isN2_Interface_Dialog_Open(content)) {
+
                         try {
                             let evt: N2Evt_Dialog<N2Dlg> = {
                                 dialog: thisX,
@@ -627,7 +676,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         thisX.createJsPanel.call(thisX);
         // at this point thisX.obj is set to jsPanel
 
-        if ( thisX.state?.excludeFromOpenDialogs !== true)
+        if (thisX.state?.excludeFromOpenDialogs !== true)
             openDialogsAdd(thisX); // add this dialog to the list of open dialogs (if not already there)
 
         try {
@@ -1040,7 +1089,7 @@ import {isArray, isFunction, isObject, isString} from 'lodash';
 import {htmlToElement} from '../../BaseUtils';
 import {CSS_CLASS_N2Dlg_empty_header, N2_CLASS} from '../../Constants';
 import {isHTMLElement} from '../../CoreUtils';
-import {cssAddSelector, cssSetRootVariable} from '../../CssUtils';
+import {cssAddSelector} from '../../CssUtils';
 import {N2Column} from '../generic/N2Column';
 import {N2Html} from '../generic/N2Html';
 import {
