@@ -25,7 +25,7 @@ export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFiel
             visualValue = cellValue as string;
         }
 
-       let innerHTML = `<a href="${realLinkValue}" target="_blank" >${visualValue}</a>`;
+       let innerHTML = `<a href="${realLinkValue}" >${visualValue}</a>`;
         if ( wrapper_highlight) {
             wrapper_highlight.innerHTML = DOMPurify.sanitize(innerHTML);
             elem.innerHTML = '';
@@ -33,6 +33,9 @@ export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFiel
         } else {
             elem.innerHTML = DOMPurify.sanitize(innerHTML);
         }
+        let a_elem = elem.querySelector('a');
+        a_elem.setAttribute('target', '_blank'); // DOMPurify would remove the target attribute so we add it here
+        a_elem.setAttribute('rel', 'noopener noreferrer'); // noopener gives no back access to original window object, noreferrer prevents the current page from showing as the referrer in the opened page
     }
 }
 
