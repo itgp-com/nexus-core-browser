@@ -1,4 +1,4 @@
-nexusMain.UIStartedListeners.add((ev:any)=>{
+nexusMain.UIStartedListeners.add((ev: any) => {
     link_widget_dataSource_NexusDataManager(Grid.prototype);
 }); // normal priority
 
@@ -6,9 +6,18 @@ themeChangeListeners().add((_ev: ThemeChangeEvent) => {
     cssForN2Grid(N2Grid.CLASS_IDENTIFIER, 'e-grid');
 }); // normal priority
 
+interface N2GridEvent<N2_GRID extends N2Grid = N2Grid> {
+    n2grid?: N2_GRID;
+}
+
 export interface StateN2GridRef<N2_GRID extends N2Grid = N2Grid> extends StateN2EjBasicRef {
     widget?: N2_GRID;
 }
+
+export interface N2Evt_FilterEvent<N2_GRID extends N2Grid = N2Grid> extends FilterEventArgs, N2GridEvent<N2_GRID> {}
+
+export interface N2Evt_ActionFailure<N2_GRID extends N2Grid = N2Grid> extends FailureEventArgs, N2GridEvent<N2_GRID> {}
+
 
 export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
@@ -43,6 +52,17 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
 
 
     /**
+     * If true, the default N2Grid implementation (Excel filter) will not be added to the grid
+     */
+    disableDefaultFilterBeforeOpen ?:boolean;
+
+    /**
+     * If true, the default N2Grid implementation will not be added to the grid
+     */
+    disableDefaultFilterChoiceRequest ?:boolean;
+
+
+    /**
      * By default, in an N2Grid, the Autofit All option in a column menu is disabled.
      * Set this to **true** to enable the Autofit All option in the column menu.
      */
@@ -60,12 +80,40 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
 
     disableDefaultRefreshInDropDownMenu?: boolean;
 
-    onDMDataManagerExecuteQuery ?:(ev:HttpRequestEvtDataManager)=>void;
+    onDMDataManagerExecuteQuery?: (ev: HttpRequestEvtDataManager) => void;
+
+    /**
+     * Called when the grid is about to filter the data (part of actionBegin event with reqyestType = 'filtering')
+     * This call is before any actionBegin event that the gridModel implements)
+     * @param {N2Evt_FilterEvent} args
+     */
+    onFilterBegin?: (args: N2Evt_FilterEvent) => void;
+
+    /**
+     * Same as @link{onFilterBegin} but called after any actionBegin event that the gridModel implements (assuming it has not been cancelled already)
+     * @param {N2Evt_FilterEvent} args
+     */
+    onFilterBegin_post?: (args: N2Evt_FilterEvent) => void;
+
+    /**
+     * Called when the grid has finished filtering the data (part of actionComplete event with requestType = 'filtering')
+     * This call is before any actionComplete event that the gridModel implements)
+     * @param {N2Evt_FilterEvent} args
+     */
+    onFilterEnd?: (args: N2Evt_FilterEvent) => void;
+
+    /**
+     * Same as @link{onFilterEnd} but called after the default actionComplete event that the gridModel implements
+     * @param {N2Evt_FilterEvent} args
+     */
+    onFilterEnd_post ?: (args: N2Evt_FilterEvent) => void;
 
 
-} //
 
-export function isN2Grid(widget:any) :boolean{
+
+} // StateN2Grid
+
+export function isN2Grid(widget: any): boolean {
     return widget?._isN2Grid;
 }
 
@@ -77,12 +125,11 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     private _ddmenu: N2DropDownMenu;
     private _f_existing_actionFailure: (args: FailureEventArgs) => void;
     private _f_existing_queryCellInfo: (args: ExcelQueryCellInfoEventArgs) => void;
-    readonly _isN2Grid:boolean = true;
+    readonly _isN2Grid: boolean = true;
 
     constructor(state ?: STATE) {
         super(state);
     }
-
 
 
     protected _constructor(state ?: STATE): void {
@@ -413,42 +460,123 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
             state.ej.actionBegin = (args: any) => {
                 let grid = thisX.obj;
+                let state = thisX.state;
+                let requestType = args.requestType;
 
-                if (args.requestType == 'filterBeforeOpen') {
-                    this.implementExcelFilterValidation.call(this);
-                } // if filterBeforeOpen
+                // Stamp the n2Grid object into the args
+                args.n2grid = thisX;
 
-                if (args.requestType == 'filterchoicerequest') {
+                //------------ start internal functions
 
-                    // @ts-ignore
-                    // noinspection UnnecessaryLocalVariableJS
-                    let f_getcMenuDS = function getCMenuDS(type) {
-                        let model = [];
-                        for (let i = 0; i < filterOperators[type].length; i++) {
-                            if (filterOperators[type][i].length) {
-                                model.push({
-                                    text: filterOperators[type][i] + '...',
-                                });
-                            } else {
-                                model.push({separator: true});
-                            }
-                        }
-                        return model;
-                    }; // f_getcMenuDS
+                switch (requestType) {
+                    case 'filtering':
+                        if ( state.onFilterBegin) {
+                            try {
+                                state.onFilterBegin.call(thisX, args);
+                            } catch (e) { console.error(e); }
+                        } // if state.onFilterBegin
 
-                    (grid.filterModule.filterModule as any).excelFilterBase.getCMenuDS = f_getcMenuDS;
+                        break;
+                    case 'filterBeforeOpen':
+                        if ( state.disableDefaultFilterBeforeOpen == true){
+                            // do nothing
+                        } else {
+                            thisX.implementExcelFilterValidation.call(thisX);
+                        } // if state.disableDefaultFilterBeforeOpen
+                        break;
 
-                } // if filterchoicerequest
+                    case 'filterchoicerequest':
+
+                        if ( state.disableDefaultFilterChoiceRequest == true){
+                            // do nothing
+                        } else {
+                            // @ts-ignore
+                            // noinspection UnnecessaryLocalVariableJS
+                            let f_getcMenuDS = function getCMenuDS(type) {
+                                let model = [];
+                                for (let i = 0; i < filterOperators[type].length; i++) {
+                                    if (filterOperators[type][i].length) {
+                                        model.push({
+                                            text: filterOperators[type][i] + '...',
+                                        });
+                                    } else {
+                                        model.push({separator: true});
+                                    }
+                                }
+                                return model;
+                            }; // f_getcMenuDS
+
+                            (grid.filterModule.filterModule as any).excelFilterBase.getCMenuDS = f_getcMenuDS;
+                        } // if state.disableDefaultFilterChoiceRequest
+                        break;
+
+                } // switch
+
+                if (args.cancel)
+                    return;
 
                 try {
                     if (existingActionBegin)
                         existingActionBegin.call(this.obj, args);
                 } catch (e) { console.error(e); }
 
+
+                if (args.cancel)
+                    return;
+                switch (requestType) {
+                    case 'filtering':
+                        if (state.onFilterBegin_post) {
+                            try {
+                                state.onFilterBegin_post.call(thisX, args);
+                            } catch (e) { console.error(e); }
+                        } // if state.onFilterBegin
+                        break;
+                } // switch
             } // actionBegin
 
 
-            // Enables filter dialog from opening for operations that don't require data entry:
+            state.ej.actionComplete = (args: any) => {
+                let grid = thisX.obj;
+                let state = thisX.state;
+                let requestType = args.requestType;
+
+                // Stamp the n2Grid object into the args
+                args.n2grid = thisX;
+
+                switch (requestType) {
+                    case 'filtering':
+                        if (state.onFilterEnd) {
+                            try {
+                                state.onFilterEnd.call(thisX, args);
+                            } catch (e) { console.error(e); }
+                        } // if state.onFilterEnd
+                        break;
+                } // switch
+
+
+                if ( existingActionComplete) {
+                    try {
+                        existingActionComplete.call(this.obj, args);
+                    } catch (e) { console.error(e); }
+                } // if existingActionComplete
+
+
+                switch (requestType) {
+                    case 'filtering':
+                        if (state.onFilterEnd_post) {
+                            try {
+                                state.onFilterEnd_post.call(thisX, args);
+                            } catch (e) { console.error(e); }
+                        } // if state.onFilterEnd
+                        break;
+                } // switch
+
+            } // actionComplete
+
+
+
+
+                // Enables filter dialog from opening for operations that don't require data entry:
             // Syncfusion ticket https://support.syncfusion.com/support/tickets/578055
             state.ej.created = (args: any) => {
                 let grid = thisX.obj;
@@ -507,8 +635,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     } // onDOMAdded
 
 
-    public onDMDataManagerExecuteQuery(ev:HttpRequestEvtDataManager):void {}
-
+    public onDMDataManagerExecuteQuery(ev: HttpRequestEvtDataManager): void {}
 
 
     protected actionFailure = (args: FailureEventArgs) => {
@@ -1186,9 +1313,13 @@ import {isNullOrUndefined, KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
 import {DropDownList} from '@syncfusion/ej2-dropdowns';
 import {
+    ColumnMenuItemModel,
+    ColumnMenuOpenEventArgs,
     EJ2Intance,
     ExcelQueryCellInfoEventArgs,
+    FailureEventArgs,
     Filter,
+    FilterEventArgs,
     getComplexFieldID,
     Grid,
     GridModel,
@@ -1217,7 +1348,6 @@ import {RowDD} from '@syncfusion/ej2-grids/src/grid/actions/row-reorder';
 import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
-import {ColumnMenuItemModel, ColumnMenuOpenEventArgs, FailureEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {NumericTextBox} from '@syncfusion/ej2-inputs';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
