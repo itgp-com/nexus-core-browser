@@ -27,12 +27,6 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
     ref?: StateN2GridRef;
 
     /**
-     * If set to true, no custom column menu will be added to the grid column definitions
-     * Defaults to false
-     */
-    disableCustomColumnMenu?: boolean;
-
-    /**
      * By default this component implements a custom Excel filter on every filterable column.
      * Set this to true to disable this feature.
      */
@@ -183,7 +177,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
         //---------------- Column Menu start ---------------------
-        if (!state.disableCustomColumnMenu) { // only add the column menu if it's not disabled
+        if (state.ej.showColumnMenu) { // only add the column menu if it's not disabled
             const clearSortSuffix = '_colmenu_clearSort';
             const autoFillSuffix = '_colmenu_AutoFitAll';
             const filterSuffix = '_colmenu_Filter';
