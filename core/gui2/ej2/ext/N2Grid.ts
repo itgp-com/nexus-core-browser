@@ -27,6 +27,12 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
     ref?: StateN2GridRef;
 
     /**
+     * If set to true, no custom column menu will be added to the grid column definitions
+     * Defaults to false
+     */
+    disableCustomColumnMenu?: boolean;
+
+    /**
      * By default this component implements a custom Excel filter on every filterable column.
      * Set this to true to disable this feature.
      */
@@ -54,12 +60,12 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
     /**
      * If true, the default N2Grid implementation (Excel filter) will not be added to the grid
      */
-    disableDefaultFilterBeforeOpen ?:boolean;
+    disableDefaultFilterBeforeOpen?: boolean;
 
     /**
      * If true, the default N2Grid implementation will not be added to the grid
      */
-    disableDefaultFilterChoiceRequest ?:boolean;
+    disableDefaultFilterChoiceRequest?: boolean;
 
 
     /**
@@ -106,9 +112,7 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * Same as @link{onFilterEnd} but called after the default actionComplete event that the gridModel implements
      * @param {N2Evt_FilterEvent} args
      */
-    onFilterEnd_post ?: (args: N2Evt_FilterEvent) => void;
-
-
+    onFilterEnd_post?: (args: N2Evt_FilterEvent) => void;
 
 
 } // StateN2Grid
@@ -179,157 +183,173 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
         //---------------- Column Menu start ---------------------
-        const clearSortSuffix = '_colmenu_clearSort';
-        if (!gridModel.columnMenuItems) {
+        if (!state.disableCustomColumnMenu) { // only add the column menu if it's not disabled
+            const clearSortSuffix = '_colmenu_clearSort';
+            const autoFillSuffix = '_colmenu_AutoFitAll';
+            const filterSuffix = '_colmenu_Filter';
 
-            gridModel.columnMenuItems = [
-                'AutoFitAll',
-                'AutoFit',
-                'SortAscending',
-                'SortDescending',
-                // { text: 'Clear Filter', id: 'gridclearfiltering' },
-                // { text: 'Custom Filter', id: 'gridcustomfilter' },
-                {
-                    "text": "Clear Sort",
-                    "id": state.tagId + clearSortSuffix,
-                    "iconCss": ""
-                } as ColumnMenuItemModel,
-                'Group',
-                'Ungroup',
-                'ColumnChooser',
-                'Filter'
-            ] as any[];
-        } // if ! gridModel.columnMenuItems
+            if (!gridModel.columnMenuItems) {
 
-
-        try {
-            let f_user_columnMenuOpen = gridModel.columnMenuOpen;
-            gridModel.columnMenuOpen = (ev: ColumnMenuOpenEventArgs) => {
-
-
-                let grid: Grid = getFirstEj2FromModel(gridModel);
+                gridModel.columnMenuItems = [
+                    'AutoFitAll',
+                    'AutoFit',
+                    'SortAscending',
+                    'SortDescending',
+                    // { text: 'Clear Filter', id: 'gridclearfiltering' },
+                    // { text: 'Custom Filter', id: 'gridcustomfilter' },
+                    {
+                        "text": "Clear Sort",
+                        "id": state.tagId + clearSortSuffix,
+                        "iconCss": ""
+                    } as ColumnMenuItemModel,
+                    'Group',
+                    'Ungroup',
+                    'ColumnChooser',
+                    'Filter'
+                ] as any[];
+            } // if ! gridModel.columnMenuItems
 
 
-                // //--------------------- Syncfusion suggested hack to move the filter items to the main column menu (no more filter sub-menu) ---------------------
-                // let args = ev;
-                // args.items[5].text = args.column.type.replace(/\w+/g,
-                //     function (w) {
-                //         return w[0].toUpperCase() + w.slice(1).toLowerCase();
-                //     }) + ' Filters';
-                // args.element.querySelectorAll('li')[5].classList.add('e-submenu');
-                // args.items[5].iconCss = 'e-submenu';
-                // grid.filterModule.setFilterModel(args.column);
-                // let options: IFilterArgs = grid.filterModule.createOptions(args.column, args.element) as IFilterArgs;
-                // let excelFilterModule: ExcelFilterBase = grid.filterModule.filterModule['excelFilterBase'];
-                // const filterLength: number = (excelFilterModule['existingPredicate'][options.field] && excelFilterModule['existingPredicate'][options.field].length) ||
-                //     options.filteredColumns.filter((col: Predicate) => {
-                //         return options.field === col.field;
-                //     }).length;
-                //
-                // if (filterLength === 0) {
-                //     grid.columnMenuModule['disableItems'].push('Clear Filter');
-                // } else {
-                //     // remove the clear filter option from the column menu
-                //     grid.columnMenuModule['disableItems'] = grid.columnMenuModule['disableItems'].filter((item: string) => {
-                //         return item !== 'Clear Filter';
-                //     });
-                // }
-                // excelFilterModule['updateModel'](options);
-                // excelFilterModule['menu'] = args.element;
-                // excelFilterModule['dlg'] = args.element;
-                // excelFilterModule['cmenu'] = grid.createElement('ul', {className: 'e-excel-menu'}) as HTMLUListElement;
-                // EventHandler.add(args.element, 'mouseover', (e: any) => {
-                //     setTimeout(() => {
-                //         if (!e.target || e.target.id !== 'gridcustomfilter') {
-                //             if (excelFilterModule['isCMenuOpen']) {
-                //                 const submenu: Element = excelFilterModule['menu'].querySelector('.e-submenu');
-                //                 if (!isNullOrUndefined(submenu)) {
-                //                     submenu.classList.remove('e-selected');
-                //                 }
-                //                 excelFilterModule['destroyCMenu']();
-                //             }
-                //             return;
-                //         } else {
-                //             if (!e.target.classList.contains('e-selected')) {
-                //                 excelFilterModule['hoverHandler'](e);
-                //             }
-                //             // else {
-                //             //     const submenu: Element = args.element.querySelector('.e-submenu');
-                //             //     if (!isNullOrUndefined(submenu)) {
-                //             //         submenu.classList.remove('e-selected');
-                //             //     }
-                //             //     excelFilterModule['destroyCMenu']();
-                //             // }
-                //         }
-                //     }, 0);
-                // }, grid.filterModule.filterModule['excelFilterBase']);
-                // //-------------------- end Syncfusion suggested hack ---------------------
+            try {
+                let f_user_columnMenuOpen = gridModel.columnMenuOpen;
+                gridModel.columnMenuOpen = (ev: ColumnMenuOpenEventArgs) => {
 
 
-                let clearSortItem = ev.items.find((elem) => elem.id.endsWith(clearSortSuffix));
-                if (clearSortItem) {
-                    // only exists in main menu, in column or filter sub menus it's blank
-                    let clearSortElem = document.getElementById(clearSortItem.id);
-                    if (clearSortElem) {
-                        if (ev.column.allowSorting) {
-                            let index = grid.sortSettings.columns.findIndex((col) => col.field == ev.column.field); // -1 means not found
-                            if (index < 0) {
-                                // not sorted currently, so remove clear sort option
-                                clearSortElem.style.display = 'none';
+                    let grid: Grid = getFirstEj2FromModel(gridModel);
+
+
+                    // //--------------------- Syncfusion suggested hack to move the filter items to the main column menu (no more filter sub-menu) ---------------------
+                    // let args = ev;
+                    // args.items[5].text = args.column.type.replace(/\w+/g,
+                    //     function (w) {
+                    //         return w[0].toUpperCase() + w.slice(1).toLowerCase();
+                    //     }) + ' Filters';
+                    // args.element.querySelectorAll('li')[5].classList.add('e-submenu');
+                    // args.items[5].iconCss = 'e-submenu';
+                    // grid.filterModule.setFilterModel(args.column);
+                    // let options: IFilterArgs = grid.filterModule.createOptions(args.column, args.element) as IFilterArgs;
+                    // let excelFilterModule: ExcelFilterBase = grid.filterModule.filterModule['excelFilterBase'];
+                    // const filterLength: number = (excelFilterModule['existingPredicate'][options.field] && excelFilterModule['existingPredicate'][options.field].length) ||
+                    //     options.filteredColumns.filter((col: Predicate) => {
+                    //         return options.field === col.field;
+                    //     }).length;
+                    //
+                    // if (filterLength === 0) {
+                    //     grid.columnMenuModule['disableItems'].push('Clear Filter');
+                    // } else {
+                    //     // remove the clear filter option from the column menu
+                    //     grid.columnMenuModule['disableItems'] = grid.columnMenuModule['disableItems'].filter((item: string) => {
+                    //         return item !== 'Clear Filter';
+                    //     });
+                    // }
+                    // excelFilterModule['updateModel'](options);
+                    // excelFilterModule['menu'] = args.element;
+                    // excelFilterModule['dlg'] = args.element;
+                    // excelFilterModule['cmenu'] = grid.createElement('ul', {className: 'e-excel-menu'}) as HTMLUListElement;
+                    // EventHandler.add(args.element, 'mouseover', (e: any) => {
+                    //     setTimeout(() => {
+                    //         if (!e.target || e.target.id !== 'gridcustomfilter') {
+                    //             if (excelFilterModule['isCMenuOpen']) {
+                    //                 const submenu: Element = excelFilterModule['menu'].querySelector('.e-submenu');
+                    //                 if (!isNullOrUndefined(submenu)) {
+                    //                     submenu.classList.remove('e-selected');
+                    //                 }
+                    //                 excelFilterModule['destroyCMenu']();
+                    //             }
+                    //             return;
+                    //         } else {
+                    //             if (!e.target.classList.contains('e-selected')) {
+                    //                 excelFilterModule['hoverHandler'](e);
+                    //             }
+                    //             // else {
+                    //             //     const submenu: Element = args.element.querySelector('.e-submenu');
+                    //             //     if (!isNullOrUndefined(submenu)) {
+                    //             //         submenu.classList.remove('e-selected');
+                    //             //     }
+                    //             //     excelFilterModule['destroyCMenu']();
+                    //             // }
+                    //         }
+                    //     }, 0);
+                    // }, grid.filterModule.filterModule['excelFilterBase']);
+                    // //-------------------- end Syncfusion suggested hack ---------------------
+
+
+                    let clearSortItem = ev.items.find((elem) => elem.id.endsWith(clearSortSuffix));
+                    if (clearSortItem) {
+                        // only exists in main menu, in column or filter sub menus it's blank
+                        let clearSortElem = document.getElementById(clearSortItem.id);
+                        if (clearSortElem) {
+                            if (ev.column.allowSorting) {
+                                let index = grid.sortSettings.columns.findIndex((col) => col.field == ev.column.field); // -1 means not found
+                                if (index < 0) {
+                                    // not sorted currently, so remove clear sort option
+                                    clearSortElem.style.display = 'none';
+                                } else {
+                                    // make it visible again if it was hidden by style.display = 'none' previously
+                                    clearSortElem.style.display = ''; //
+                                }
+
                             } else {
-                                // make it visible again if it was hidden by style.display = 'none' previously
-                                clearSortElem.style.display = ''; //
+                                // sorting not allowed, so remove clear sort option
+                                clearSortElem.style.display = 'none';
                             }
-
-                        } else {
-                            // sorting not allowed, so remove clear sort option
-                            clearSortElem.style.display = 'none';
-                        }
-                    } // if clearSortElem
-                } // if clearSortItem
+                        } // if clearSortElem
+                    } // if clearSortItem
 
 
-                if (!state.enableColumnMenuAutofitAll) {
-                    for (let i = 0; i < ev.items.length; i++) {
-                        if (ev.items[i].id.endsWith('_colmenu_AutoFitAll')) {
-                            let elem = document.getElementById(ev.items[i].id);
-                            if (elem) {
-                                elem.style.display = 'none';
+                    if (!state.enableColumnMenuAutofitAll) {
+                        for (let i = 0; i < ev.items.length; i++) {
+                            if (ev.items[i].id.endsWith(autoFillSuffix)) {
+                                let elem = document.getElementById(ev.items[i].id);
+                                if (elem) {
+                                    elem.style.display = 'none';
+                                }
                             }
-                        }
-                    } // for
-
-                } // if ! state.enableColumnMenuAutofitAll
+                        } // for
+                    } // if ! state.enableColumnMenuAutofitAll
 
 
-                if (f_user_columnMenuOpen != null) {
-                    f_user_columnMenuOpen.call(grid, ev);
-                }
+                    if (state.disableCustomFilter) {
+                        // hide filters in menu
+                        for (let i = 0; i < ev.items.length; i++) {
+                            if (ev.items[i].id.endsWith(filterSuffix)) {
+                                let elem = document.getElementById(ev.items[i].id);
+                                if (elem) {
+                                    elem.style.display = 'none';
+                                }
+                            }
+                        } // for
+                    } // if state.disableCustomFilter
 
-            } // columnMenuOpen
-        } catch (e) { console.error(e); }
 
+                    if (f_user_columnMenuOpen != null) {
+                        f_user_columnMenuOpen.call(grid, ev);
+                    }
 
-        let f_user_columnMenuClick = gridModel.columnMenuClick;
-        gridModel.columnMenuClick = (ev: MenuEventArgs) => {
-            let grid: Grid = getFirstEj2FromModel(gridModel);
-            try {
-                if (ev.item.id.endsWith(clearSortSuffix)) {
-                    // handle Clear Sort
-                    let column = (ev as any).column as Column;
-                    if (column) {
-                        grid.removeSortColumn(column.field);
-                    } // if column
-                }
+                } // columnMenuOpen
             } catch (e) { console.error(e); }
 
-            try {
-                if (f_user_columnMenuClick != null) {
-                    f_user_columnMenuClick.call(grid, ev);
-                }
-            } catch (e) { console.error(e); }
-        } // columnMenuClick
 
+            let f_user_columnMenuClick = gridModel.columnMenuClick;
+            gridModel.columnMenuClick = (ev: MenuEventArgs) => {
+                let grid: Grid = getFirstEj2FromModel(gridModel);
+                try {
+                    if (ev.item.id.endsWith(clearSortSuffix)) {
+                        // handle Clear Sort
+                        let column = (ev as any).column as Column;
+                        if (column) {
+                            grid.removeSortColumn(column.field);
+                        } // if column
+                    }
+                } catch (e) { console.error(e); }
+
+                try {
+                    if (f_user_columnMenuClick != null) {
+                        f_user_columnMenuClick.call(grid, ev);
+                    }
+                } catch (e) { console.error(e); }
+            } // columnMenuClick
+        } // if (!state.disableCustomColumnMenu)
         //------------------ Column Menu end ---------------------
 
 
@@ -470,7 +490,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
                 switch (requestType) {
                     case 'filtering':
-                        if ( state.onFilterBegin) {
+                        if (state.onFilterBegin) {
                             try {
                                 state.onFilterBegin.call(thisX, args);
                             } catch (e) { console.error(e); }
@@ -478,7 +498,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
                         break;
                     case 'filterBeforeOpen':
-                        if ( state.disableDefaultFilterBeforeOpen == true){
+                        if (state.disableDefaultFilterBeforeOpen == true) {
                             // do nothing
                         } else {
                             thisX.implementExcelFilterValidation.call(thisX);
@@ -487,7 +507,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
                     case 'filterchoicerequest':
 
-                        if ( state.disableDefaultFilterChoiceRequest == true){
+                        if (state.disableDefaultFilterChoiceRequest == true) {
                             // do nothing
                         } else {
                             // @ts-ignore
@@ -554,7 +574,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 } // switch
 
 
-                if ( existingActionComplete) {
+                if (existingActionComplete) {
                     try {
                         existingActionComplete.call(this.obj, args);
                     } catch (e) { console.error(e); }
@@ -574,9 +594,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             } // actionComplete
 
 
-
-
-                // Enables filter dialog from opening for operations that don't require data entry:
+            // Enables filter dialog from opening for operations that don't require data entry:
             // Syncfusion ticket https://support.syncfusion.com/support/tickets/578055
             state.ej.created = (args: any) => {
                 let grid = thisX.obj;

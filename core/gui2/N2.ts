@@ -45,6 +45,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     private _alreadyInOnStateInitialized: boolean = false; // flag to prevent infinite recursion
     private _onDOMAddedProcessed: boolean = false;
     private _onDOMRemovedProcessed: boolean = false;
+    private _resizeLastSize: { width: number; height: number; } = {width: 0, height: 0};
 
     protected constructor(state ?: STATE) {
         this._constructor(state);
@@ -240,13 +241,27 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             if (this.resizeAllowed) {
                 if (this && this.initialized) {
 
-                    let param: N2Evt_Resized = {widget: this, size: _size}
+                    if (this._resizeLastSize.width == _size.width && this._resizeLastSize.height == _size.height)
+                        return; // no change in size
 
-                    if (this.state.onResized) {
-                        this.state.onResized(param);
-                    } else {
-                        this.onResized(param);
-                    }
+                    let param: N2Evt_Resized = {
+                        widget: this,
+                        size: _size,
+                        lastSize: this._resizeLastSize,
+                        lastSizeEmpty: (this._resizeLastSize.width == 0 && this._resizeLastSize.height ==0 ),
+                        height_diff: _size.height - this._resizeLastSize.height,
+                        width_diff: _size.width - this._resizeLastSize.width,
+                    } ;
+
+                    try {
+                        if (this.state.onResized) {
+                            this.state.onResized(param);
+                        } else {
+                            this.onResized(param);
+                        }
+                    } catch (e) { console.error(e);}
+
+                    this._resizeLastSize = _size;
 
                 } // if (thisX && thisX.obj && thisX.initialized )
             } // if resizeAllowed
@@ -687,13 +702,13 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
      * If this is overridden in a child class, it will be called when the html element for this N2 widget is added to the DOM
      * @param {N2Evt_DomAdded} ev
      */
-    onDOMAdded(ev: N2Evt_DomAdded) : void {}
+    onDOMAdded(ev: N2Evt_DomAdded): void {}
 
     /**
      * If this is overridden in a child class, it will be called when the html element for this N2 widget is removed from the DOM
      * @param {N2Evt_DomRemoved} ev
      */
-    onDOMRemoved(ev: N2Evt_DomRemoved): void{}
+    onDOMRemoved(ev: N2Evt_DomRemoved): void {}
 
 
     private _initLogicIfNeeded() {
@@ -835,7 +850,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                     console.error(e);
                     this.handleError(e);
                 }
-            } else if ( !(N2.prototype.onDOMAdded === this.onDOMAdded) ) {
+            } else if (!(N2.prototype.onDOMAdded === this.onDOMAdded)) {
                 // if the base method from N2 is DIFFERENT than the current method
                 try {
                     ObserverManager.addOnAdded({
@@ -881,7 +896,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                     this.handleError(e);
                 }
 
-            } else if ( !(N2.prototype.onDOMRemoved === this.onDOMRemoved) ){
+            } else if (!(N2.prototype.onDOMRemoved === this.onDOMRemoved)) {
                 // if the base method from N2 is DIFFERENT than the current method
                 try {
                     ObserverManager.addOnRemoved({
@@ -998,7 +1013,11 @@ export interface N2Evt_AfterLogic extends N2Evt {
 }
 
 export interface N2Evt_Resized extends N2Evt {
-    size?: { width: number; height: number; }
+    size: { width: number; height: number; }
+    lastSize: { width: number; height: number; }
+    lastSizeEmpty: boolean;
+    height_diff: number;
+    width_diff: number;
 }
 
 
@@ -1028,7 +1047,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
 }
 `
 //--------------- the following deals with N2 input components ----------
-        cssContent += `
+    cssContent += `
 .${N2.CLASS_IDENTIFIER} .e-input-group input.e-input,
 .${N2.CLASS_IDENTIFIER} .e-input-group.e-control-wrapper input.e-input,
 .${N2.CLASS_IDENTIFIER} .e-input-group textarea.e-input,

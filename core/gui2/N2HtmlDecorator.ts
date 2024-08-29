@@ -527,8 +527,7 @@ export function decoToCssStyle(style: CssStyle | string): CssStyle {
     if (typeof style === 'string') {
         const parsedStyle = parseCssString(style);
         Object.keys(parsedStyle).forEach(key => {
-            const camelCaseKey = toCamelCase(key);
-            (cssStyle as any)[camelCaseKey] = parsedStyle[key];
+            (cssStyle as any)[key] = parsedStyle[key];
         });
     } else {
         // Directly return the original CssStyle object
