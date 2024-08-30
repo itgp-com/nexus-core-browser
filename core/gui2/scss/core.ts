@@ -1,4 +1,4 @@
-import {cssAddClass, cssAddSelector} from '../../CssUtils';
+import {cssAdd, cssAddClass, cssAddSelector} from '../../CssUtils';
 import {themeChangeListeners} from '../Theming';
 
 export const CSS_FLEX_MAX_XY: string = "flex-component-max flex-full-height";
@@ -29,14 +29,6 @@ export const CSS_CLASS_GRID_FILTER_MENU_PRESENT: string = 'grid_filter_menu_pres
 export const CSS_CLASS_horizontal_divider: string = 'core_horizontal_divider';
 
 
-/***
- *  See
- * https://yyjhao.com/posts/roll-your-own-css-in-js/
- * https://yyjhao.com/posts/roll-your-own-css-in-js-3/
- *
- * for further info
- */
-
 /**
  *   display: flex;
  *   flex-direction: row;
@@ -52,34 +44,37 @@ export const CSS_CORE_FLEX_FULL_WIDTH: string = 'css_core_flex_full_width';
  */
 export const CSS_CORE_FLEX_CENTER_ALL_FULL: string = 'css_core_flex_center_all_full';
 
-/**
- * display: flex;
- * justify-content: centerContainer;
- */
 
 
 themeChangeListeners().add((ev) => {
 
-    cssAddClass(CSS_CORE_FLEX_FULL_WIDTH, `  display: flex;  flex-direction: row;  height: 100%;`);
+    cssAdd(`
 
+/* remove ugly extra space from tooltip if we have more than one html element. HTML will handle itself */    
+.tippy-box .tippy-content {
+  white-space: unset;
+}    
 
-    cssAddClass(CSS_CORE_FLEX_CENTER_ALL_FULL, ` 
+.${CSS_CORE_FLEX_FULL_WIDTH} {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.${CSS_CORE_FLEX_CENTER_ALL_FULL} {
     display: flex;
     justify-content: center; 
     align-items: center; 
     height: 100%; 
     width: 100%; 
-    `);
+} 
+    
+.${CSS_CLASS_horizontal_divider}{   
+    border-top: 1px solid lightgray; 
+ }  
+    `)
 
-// remove ugly extra space from tooltip if we have more than one html element. HTML will handle itself
-    cssAddSelector(`.tippy-box .tippy-content`,
-        `
-  white-space: unset;
-  `);
 
-    // cssAddSelector(
-    //     ``,
-    //     ``);
 
 
 }) // regular priority
