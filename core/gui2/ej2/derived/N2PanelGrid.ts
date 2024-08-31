@@ -1,11 +1,10 @@
-import {Grid, GridModel} from '@syncfusion/ej2-grids';
-import {getOffsetHeight, getOffsetWidth} from '../../../BaseUtils';
-import {CSS_FLEX_MAX_XY} from '../../scss/core';
-import {N2PanelLayout, StateN2PanelLayout} from '../../generic/N2PanelLayout';
-import {EnumPanelLayout} from '../../generic/N2PanelLayoutFlex';
+import {Grid} from '@syncfusion/ej2-grids';
+import {throttle} from 'lodash';
+import {resizeGridHeight, resizeGridWidth} from '../../../utils/Ej2GridUtils';
+import {EnumPanelLayout, N2PanelLayout, StateN2PanelLayout} from '../../generic/N2PanelLayout';
 import {N2Evt_Resized} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
-import {getGridDecoratorsHeight} from '../Ej2Utils';
+import {CSS_FLEX_MAX_XY} from '../../scss/core';
 import {N2Grid, StateN2Grid} from '../ext/N2Grid';
 
 export type Elem_or_N2EjGrid<STATE extends StateN2Grid = any> = HTMLElement | N2Grid<STATE>; // compatible with  Elem_or_N2
@@ -35,7 +34,7 @@ export interface StateN2PanelGrid<STATE extends StateN2Grid = StateN2Grid> exten
  * Specializes {@link N2PanelLayoutFlex} to use a Grid component as the centerContainer.
  */
 export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN2PanelGrid = StateN2PanelGrid> extends N2PanelLayout<STATE> {
-    static readonly CLASS_IDENTIFIER:string = 'N2PanelGrid'
+    static readonly CLASS_IDENTIFIER: string = 'N2PanelGrid'
     private _n2Grid: GRID_TYPE;
 
     constructor(state ?: STATE) {
@@ -43,10 +42,38 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
     }
 
     protected onStateInitialized(state: STATE) {
+        let thisX = this;
         addN2Class(state.deco, CSS_FLEX_MAX_XY, N2PanelGrid.CLASS_IDENTIFIER);
 
         if (state.resizeTracked == null)
             state.resizeTracked = true; // enable resize tracking by default
+
+
+        // Change the state of the center panel to track resize events and call the onGridContainerResized method
+        let f_throttled_onGridContainerResized = throttle(
+            (evt?: N2Evt_Resized) => {
+                thisX.onGridContainerResized.call(thisX, evt);
+            },
+            thisX.resizeEventMinInterval,
+            {
+                leading: false, // Prevent the function from being called immediately
+                trailing: true // Ensure the function is called 100ms after the last call
+            }
+        );
+
+        let stateCenter = state.stateCenterContainer || {};
+        if (stateCenter.resizeTracked == null)
+            stateCenter.resizeTracked = true; // enable resize tracking by default, but don't override if already set
+
+        let existingOnResized = stateCenter.onResized;
+        stateCenter.onResized = (evt?: N2Evt_Resized) => {
+            f_throttled_onGridContainerResized.call(thisX, evt);
+            try {
+                if (existingOnResized)
+                    existingOnResized.call(thisX, evt);
+            } catch (e) { console.error(e); }
+        }
+        state.stateCenterContainer = stateCenter; // assign in case it was just created
 
         if (state.gridAutoHeight == null)
             state.gridAutoHeight = true; // enable auto height by default
@@ -54,7 +81,7 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
         if (state.gridAutoWidth == null)
             state.gridAutoWidth = true; // enable auto width by default
 
-        if ( state.center && state.center instanceof N2Grid) {
+        if (state.center && state.center instanceof N2Grid) {
             this.n2Grid = state.center as GRID_TYPE;
         }
 
@@ -92,87 +119,74 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
         return elem;
     }
 
-
     /**
+     * Handles resize events, adjusting the grid dimensions when the component is resized,
+     * and ensures that resize events are temporarily disabled during the resizing process
+     * to prevent redundant operations.
      *
-     * @param evt
+     * This method overrides the `onResized` method from the parent class. It first checks
+     * if the resize event indicates a meaningful change in size (either in width or height).
+     * If so, it temporarily disables further resize events and adjusts the grid's height
+     * and width based on the current state configuration (`gridAutoHeight` and `gridAutoWidth`).
+     * Finally, it re-enables resize events after a short delay.
+     *
+     * @param {N2Evt_Resized} [evt] - An optional event object that provides information about the resize event.
+     *        This object includes details such as the difference in height and width (`height_diff` and `width_diff`)
+     *        and whether the last size was empty (`lastSizeEmpty`).
+     *
+     * @returns {void} This method does not return any value.
+     *
+     * @throws {Error} If any error occurs during the resizing process, it is caught and handled within the method.
+     *        The resize events are still re-enabled even if an error occurs.
+     *
+     * @example
+     * // Example of overriding the onResized method in a subclass
+     * class CustomComponent extends BaseComponent {
+     *     onResized(evt?: N2Evt_Resized): void {
+     *         super.onResized(evt);
+     *         // Additional custom resize handling logic
+     *     }
+     * }
+     *
+     * @see N2Evt_Resized - The event interface for resize events.
      */
-    onResized(evt?: N2Evt_Resized): void {
+    protected lastTimeCalled: Date;
+    onGridContainerResized(evt?: N2Evt_Resized): void {
         super.onResized(evt);
 
+        if (evt.height_diff != 0 || evt.width_diff != 0) {
+
+            // log event and also keep track and log the time elapsed since last call here (using this.lastTimeCalled)
+            let now = new Date();
+            let lastTimeCalled = this.lastTimeCalled;
+            let timeDiff = lastTimeCalled ? now.getTime() - lastTimeCalled.getTime() : 'n/a';
+            this.lastTimeCalled = now;
+            console.log('N2PanelGrid: onGridContainerResized: evt:', evt, 'timeDiff:', timeDiff);
+
+            this.resizeGrid.call( this );
+        } // if ( !evt.lastSizeEmpty && (evt.height_diff != 0 || evt.width_diff != 0) )
+    } // onResized
+
+    resizeGrid() {
         try {
             this.resizeAllowed = false; // disable resize events while we are resizing the grid
             if (this._n2Grid) {
                 let state = this.state;
                 let grid: Grid = this._n2Grid.obj;
 
-                if (state.gridAutoHeight) {
+                if (state.gridAutoHeight)
+                    resizeGridHeight(grid, this.centerContainer.htmlElement);
 
-                    let previousGridHeight = grid.height;
-                    let newGridHeight = this.calculateGridHeight();
-                    if (newGridHeight > 0 && newGridHeight != previousGridHeight) {
-                        grid.height = newGridHeight;
-                    }
-                } // if (state.gridAutoHeight)
-
-                if (state.gridAutoWidth) {
-                    let newWidth = this.calculateGridWidth();
-                    if (newWidth > 0 && newWidth != grid.width) {
-                        grid.width = newWidth;
-                    }
-                }
+                if (state.gridAutoWidth)
+                    resizeGridWidth(grid, this.centerContainer.htmlElement);
             } // if (this.n2Grid)
         } finally {
             setTimeout(() => {
                 this.resizeAllowed = true;
             }, this.resizeEventMinInterval + 50); // restore this after the last debounce could have fired
         }
-    }
 
-    protected calculateGridHeight(): number {
-        if (!this._n2Grid)
-            return 0;
-        let grid: Grid = this._n2Grid.obj;
-        if (!grid)
-            return 0;
-
-        let gridDecoratorsHeight: number = getGridDecoratorsHeight(grid);
-
-        let parentElem = grid.element?.parentElement;
-        if (!parentElem)
-            parentElem = this.centerContainer.htmlElement;
-
-        let totalHeight = getOffsetHeight(parentElem);
-
-
-        // the grid has this extra height that we need to subtract between offset and client somewhere
-        let gridElementClientHeight = grid.element.clientHeight; // inside height this element stretches
-        let gridElementOffsetHeight = grid.element.offsetHeight; // outside height this element stretches
-        let gridExtraHeight = gridElementOffsetHeight - gridElementClientHeight;
-        if (gridExtraHeight < 0)
-            gridExtraHeight = 0;
-
-        return totalHeight -  gridDecoratorsHeight - gridExtraHeight  -5; // 5pixels appear to be added somewhere when the grid is filtered and the filter is shown in the paging bottom
-    }
-
-    protected calculateGridWidth(): number {
-
-        if (!this._n2Grid)
-            return 0;
-        let grid: Grid = this._n2Grid.obj;
-        if (!grid)
-            return 0;
-
-        let parentElem = grid.element?.parentElement;
-        if (!parentElem)
-            parentElem = this.centerContainer.htmlElement;
-
-        let innerWidth = getOffsetWidth(parentElem);
-
-        // noinspection ES6ConvertLetToConst,UnnecessaryLocalVariableJS
-        let gridWidth: number = (innerWidth > 1 ? innerWidth - 1: innerWidth);
-        return gridWidth;
-    }
+    } // resizeGrid
 
 
     public get n2Grid(): GRID_TYPE {
@@ -180,25 +194,6 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
     }
 
     public set n2Grid(n2Grid: GRID_TYPE) {
-
-
-        // Trigger resize event on actionComplete of the grid
-        let gridState:StateN2Grid = n2Grid.state;
-        let gridModel:GridModel = gridState.ej;
-        if(!gridModel)
-            gridModel = gridState.ej = {};
-
-        let userActionComplete = gridModel.actionComplete;
-        gridModel.actionComplete = (args) => {
-            try {
-                if (userActionComplete)
-                    userActionComplete(args);
-            } finally {
-                // regardless of the output
-                this.onResized();
-            }
-        } // gridModel.actionComplete
-
         this._n2Grid = n2Grid;
     }
-}
+} // N2PanelGrid

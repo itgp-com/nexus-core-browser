@@ -1,13 +1,13 @@
-import {N2_CLASS} from '../../Constants';
-import {isDev} from '../../CoreUtils';
-import {cssAddClass, CssStyle} from '../../CssUtils';
-import {N2Evt_OnHtml} from '../N2';
-import {N2Basic, StateN2Basic} from '../N2Basic';
-import {addN2Class, decoToCssStyle, IHtmlUtils} from '../N2HtmlDecorator';
-import {Elem_or_N2, showN2PanelInfoDialog} from '../N2Utils';
-import {themeChangeListeners} from '../Theming';
-import {N2Panel, StateN2Panel} from './N2Panel';
 
+export enum EnumPanelLayout {
+    outerTop = 'outerTop',
+    outerBottom = 'outerBottom',
+    top = 'top',
+    left = 'left',
+    right = 'right',
+    bottom = 'bottom',
+    center = 'center',
+}
 
 export interface StateN2PanelLayout extends StateN2Basic {
 
@@ -300,3 +300,13 @@ themeChangeListeners().add((ev) => {
     });
 
 });
+
+import {N2_CLASS} from '../../Constants';
+import {isDev} from '../../CoreUtils';
+import {cssAddClass, CssStyle} from '../../CssUtils';
+import {N2Evt_OnHtml} from '../N2';
+import {N2Basic, StateN2Basic} from '../N2Basic';
+import {addN2Class, decoToCssStyle, IHtmlUtils} from '../N2HtmlDecorator';
+import {Elem_or_N2, showN2PanelInfoDialog} from '../N2Utils';
+import {themeChangeListeners} from '../Theming';
+import {N2Panel, StateN2Panel} from './N2Panel';

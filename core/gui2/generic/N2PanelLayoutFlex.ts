@@ -1,26 +1,17 @@
 import {DialogUtility} from '@syncfusion/ej2-popups';
-import {CSS_FLEX_MAX_XY} from "../scss/core";
 import {isDev} from '../../CoreUtils';
 import {N2} from "../N2";
 import {N2Basic, StateN2Basic} from "../N2Basic";
 import {addN2Class} from '../N2HtmlDecorator';
 import {Elem_or_N2, isN2} from "../N2Utils";
+import {CSS_FLEX_MAX_XY} from "../scss/core";
 import {N2Column} from "./N2Column";
 import {N2Panel} from './N2Panel';
+import {EnumPanelLayout} from './N2PanelLayout';
 import {N2Row} from "./N2Row";
 
-export enum EnumPanelLayout {
-    outerTop = 'outerTop',
-    outerBottom = 'outerBottom',
-    top = 'top',
-    left = 'left',
-    right = 'right',
-    bottom = 'bottom',
-    center = 'center',
-}
 
-
-export interface StateN2PanelLayoutFlex extends StateN2Basic {
+interface StateN2PanelLayoutFlex extends StateN2Basic {
 
     outerTop?: Elem_or_N2;
     outerBottom?: Elem_or_N2;
@@ -58,7 +49,7 @@ export interface StateN2PanelLayoutFlex extends StateN2Basic {
 }
 
 
-export class N2PanelLayoutFlex<STATE extends StateN2PanelLayoutFlex = StateN2PanelLayoutFlex> extends N2Basic<STATE> {
+class N2PanelLayoutFlex<STATE extends StateN2PanelLayoutFlex = StateN2PanelLayoutFlex> extends N2Basic<STATE> {
     static readonly CLASS_IDENTIFIER:string = "N2PanelLayoutFlex"
 
     protected _outerTopElem: HTMLElement;

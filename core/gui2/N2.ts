@@ -45,7 +45,7 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     private _alreadyInOnStateInitialized: boolean = false; // flag to prevent infinite recursion
     private _onDOMAddedProcessed: boolean = false;
     private _onDOMRemovedProcessed: boolean = false;
-    private _resizeLastSize: { width: number; height: number; } = {width: 0, height: 0};
+    public lastSize: { width: number; height: number; } = {width: 0, height: 0}; // extending classes update this if they need to fire onResized (N2PanelGrid specifically)
 
     protected constructor(state ?: STATE) {
         this._constructor(state);
@@ -241,27 +241,22 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             if (this.resizeAllowed) {
                 if (this && this.initialized) {
 
-                    if (this._resizeLastSize.width == _size.width && this._resizeLastSize.height == _size.height)
+                    if (this.lastSize.width == _size.width && this.lastSize.height == _size.height)
                         return; // no change in size
 
-                    let param: N2Evt_Resized = {
-                        widget: this,
-                        size: _size,
-                        lastSize: this._resizeLastSize,
-                        lastSizeEmpty: (this._resizeLastSize.width == 0 && this._resizeLastSize.height ==0 ),
-                        height_diff: _size.height - this._resizeLastSize.height,
-                        width_diff: _size.width - this._resizeLastSize.width,
-                    } ;
+                    let param: N2Evt_Resized = this.create_N2Evt_Resized(_size);
 
-                    try {
-                        if (this.state.onResized) {
-                            this.state.onResized(param);
-                        } else {
-                            this.onResized(param);
-                        }
-                    } catch (e) { console.error(e);}
+                    if( param.lastSizeEmpty || param.height_diff != 0 || param.width_diff != 0 ) {
+                        try {
+                            if (this.state.onResized) {
+                                this.state.onResized(param);
+                            } else {
+                                this.onResized(param);
+                            }
+                        } catch (e) { console.error(e);}
+                    }
 
-                    this._resizeLastSize = _size;
+                    this.lastSize = _size;
 
                 } // if (thisX && thisX.obj && thisX.initialized )
             } // if resizeAllowed
@@ -273,6 +268,17 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
             trailing: true, // trailing: true ensures that the function will execute once at the end of the wait period, provided no new calls are made within the last 500ms of the timer.
         }
     );
+
+    create_N2Evt_Resized(size: { width: number; height: number; }): N2Evt_Resized {
+        return {
+            widget: this,
+            size: size,
+            lastSize: this.lastSize,
+            lastSizeEmpty: (this.lastSize.width == 0 && this.lastSize.height ==0 ),
+            height_diff: Math.abs(size.height - this.lastSize.height),
+            width_diff: Math.abs(size.width - this.lastSize.width),
+        };
+    } // create_N2Evt_Resized
 
 
     //---------------- end resize methods ----------------
