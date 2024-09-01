@@ -175,10 +175,10 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
                 let grid: Grid = this._n2Grid.obj;
 
                 if (state.gridAutoHeight)
-                    resizeGridHeight(grid, this.centerContainer.htmlElement);
+                    resizeGridHeight(grid);
 
                 if (state.gridAutoWidth)
-                    resizeGridWidth(grid, this.centerContainer.htmlElement);
+                    resizeGridWidth(grid);
             } // if (this.n2Grid)
         } finally {
             setTimeout(() => {
