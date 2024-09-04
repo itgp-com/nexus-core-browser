@@ -9,7 +9,7 @@ export async function resourceExists(resourceUrl: string): Promise<boolean> {
       let response = await axios.head(resourceUrl,)
       return response.status != 404;
    } catch (ex) {
-      console.log(ex);
+      console.error(ex);
       return false;  // no, it doesn't exist if there was an exception
    }
 } // resourceExists

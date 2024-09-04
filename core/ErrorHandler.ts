@@ -30,7 +30,7 @@ export class ErrorHandler {
             console.error(ex);
         } else if (typeof ex === 'string' || typeof ex === 'number') {
             this.displayErrorMessageToUser(ex as string);
-            console.log(ex);
+            console.error(ex);
         } else if (typeof ex === 'object' && (ex.hasOwnProperty('displayMessage') || ex.hasOwnProperty('logMessage'))) { //  instanceof Err
             let displayMessage = ex.displayMessage;
             let logMessage = ex.logMessage;
@@ -45,18 +45,18 @@ export class ErrorHandler {
             }
 
             if (ex.logMessage)
-                console.log(ex.logMessage);
+                console.error(ex.logMessage);
 
         } else {
             this.displayErrorMessageToUser(ex.toString());
-            console.log(ex.toString())
+            console.error(ex.toString())
         }
     }
 
     public displayErrorMessageToUser(errorText: string) {
 
         setTimeout(() => {
-                console.log(`Exception occurred. Message is: ${errorText}`);
+                console.error(`Exception occurred. Message is: ${errorText}`);
 
                 this._initDisplayExceptionHTML(errorText); // initialize HTML
 

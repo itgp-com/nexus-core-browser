@@ -396,7 +396,7 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
          }
       } // if ( htmlTagClass)
    } catch (ex) {
-      console.log(ex);
+      console.error(ex);
    }
 
    // now update the style attribute
@@ -416,7 +416,7 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
          }
       } // if (htmlTagStyle)
    } catch (ex) {
-      console.log(ex);
+      console.error(ex);
    }
 
    // now add any additional  attributes
@@ -433,13 +433,13 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
                try {
                   htmlElement.setAttribute(key, value);
                } catch (ex) {
-                  console.log(ex);
+                  console.error(ex);
                }
             } // if key
          } // for
       } //if (htmlOtherAttr )
    } catch (ex) {
-      console.log(ex);
+      console.error(ex);
    }
 
 } // applyHtmlDecoration

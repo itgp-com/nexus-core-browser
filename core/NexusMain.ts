@@ -47,7 +47,7 @@ export class NexusMain {
 
       } catch (ex) {
          // A catastrophic error has occurred on instantiating the very basic UI for the app
-         console.log(ex);
+         console.error(ex);
          //window.alert('Startup error: ' + ex);
          getErrorHandler().displayErrorMessageToUser('Initialization failed with the following server message: ' + ex)
       }
@@ -67,12 +67,12 @@ export class NexusMain {
                           thisX.UIStartedListeners.fire({
                                                           event:            {}, // empty event
                                                           exceptionHandler: event => {
-                                                             console.log(event);
+                                                             console.error(event);
                                                           }
                                                        });
 
                        } catch (t) {
-                          console.log(t);
+                          console.error(t);
                        }
                        thisX.UIStartedListeners.clear(); // delete all the listeners
                     } // if (this.UIStartedListeners)

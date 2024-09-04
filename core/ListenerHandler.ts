@@ -150,7 +150,7 @@ export class ListenerHandler<E, Listener extends BaseListener<E>> {
                      };
                      exceptionHandler(ev);
                   } else {
-                     console.log(ex);
+                     console.error(ex);
                   }
                } // if (exceptionHandler)
             } // if listener

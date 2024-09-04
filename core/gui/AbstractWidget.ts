@@ -334,7 +334,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                thisX.beforeRepaintWidgetListeners.fire({
                                                           event:            beforeEvent,
                                                           exceptionHandler: (exceptionEvent) => {
-                                                             console.log(exceptionEvent.exception);
+                                                             console.error(exceptionEvent.exception);
                                                              getErrorHandler().displayErrorMessageToUser(exceptionEvent.description);
                                                           }
                                                        });
@@ -370,7 +370,7 @@ export abstract class AbstractWidget<DATA_TYPE = any> {
                            thisX.afterRepaintWidgetListeners.fire({
                                                                      event:            afterEvent,
                                                                      exceptionHandler: (exceptionEvent) => {
-                                                                        console.log(exceptionEvent.exception);
+                                                                        console.error(exceptionEvent.exception);
                                                                         getErrorHandler().displayErrorMessageToUser(exceptionEvent.description);
                                                                      },
                                                                   });

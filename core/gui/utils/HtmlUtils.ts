@@ -161,7 +161,7 @@ export function appendDivToPage(): string {
         return (inserted ? id : null);
 
     } catch (ex) {
-        console.log(ex);
+        console.error(ex);
         return null;
     }
 }
@@ -175,7 +175,7 @@ export function removeHTMLfromPage(id: string): boolean {
             success = (removedElement != null); // success true if removed element found
         }
     } catch (ex) {
-        console.log(ex);
+        console.error(ex);
     }
     return success;
 }

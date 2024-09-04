@@ -161,7 +161,6 @@ export class N2PanelGrid<GRID_TYPE extends N2Grid = N2Grid, STATE extends StateN
             let lastTimeCalled = this.lastTimeCalled;
             let timeDiff = lastTimeCalled ? now.getTime() - lastTimeCalled.getTime() : 'n/a';
             this.lastTimeCalled = now;
-            console.log('N2PanelGrid: onGridContainerResized: evt:', evt, 'timeDiff:', timeDiff);
 
             this.resizeGrid.call( this );
         } // if ( !evt.lastSizeEmpty && (evt.height_diff != 0 || evt.width_diff != 0) )

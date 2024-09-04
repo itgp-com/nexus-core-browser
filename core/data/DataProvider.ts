@@ -36,7 +36,7 @@ export class ValueInstance<T> {
             let actualInstanceValue = classArgInstanceOrArrayVal(this.instance);
             this.previousInstance   = _.cloneDeep(actualInstanceValue);
          } catch (ex) {
-            console.log(ex);
+            console.error(ex);
          }
       }
       this._instance = value;

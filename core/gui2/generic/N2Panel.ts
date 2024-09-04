@@ -27,12 +27,3 @@ export class N2Panel<STATE extends StateN2Panel = StateN2Panel> extends N2Basic<
     }
 
 } // N2Panel
-
-// themeChangeListeners().add((ev: ThemeChangeEvent) => {
-//     let rules = `
-//         background-color: var(--app-color-panel-background);
-//     `;
-//     console.log(`N2Panel scss rules:` , rules);
-//     cssAddSelector(`.${N2Panel.CLASS_IDENTIFIER}`, rules);
-//
-// }); // themeChangeListeners().add normal priority
