@@ -36,16 +36,20 @@ export const COL_ROW_NUMBER: string = '__gridrownumber__';
 export const EXCEL_TABLE_SUFFIX: string = '_~~xlsx~~_';
 
 
-/**
- * This function should be overwritten (with new content) by the NexusOverwrites module of any application
- * that uses this core library.
- *
- * If it is not overwritten, it returns 7.5
- * @return {number} 7.5 if not overwritten, but is usually overwritten and customized in the NexusOverwrites module
- */
-export let getPixelCharWidth = function ():number {
-    return 7.5;
-}
+export class N2Grid_Options_Utils {
+
+    /**
+     * This function should be overwritten (with new content) by the NexusOverwrites module of any application
+     * that uses this core library.
+     *
+     * If it is not overwritten, it returns 7.5
+     * @return {number} 7.5 if not overwritten, but is usually overwritten and customized in the NexusOverwrites module
+     */
+    public static getPixelCharWidth(): number {
+        return 7.5;
+    }
+} // N2Grid_Options
+
 
 export function rowNumberCol(): ColumnModel {
     return {
@@ -54,7 +58,7 @@ export function rowNumberCol(): ColumnModel {
         headerTextAlign: "Center",
         type: "number",
         textAlign: "Center",
-        width: 9 * getPixelCharWidth(),
+        width: 9 * N2Grid_Options_Utils.getPixelCharWidth(),
         allowFiltering: false,
         allowGrouping: false,
         allowSorting: false,
@@ -971,7 +975,7 @@ export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
 
                 if (typeof width === 'string' && width.endsWith('ch')) {
                     const numberValue = parseFloat(width.slice(0, -2)); // Extract the number part of the string
-                    width =  numberValue * getPixelCharWidth();
+                    width =  numberValue * N2Grid_Options_Utils.getPixelCharWidth();
                 }
 
                 if (typeof width === 'string' &&  width.endsWith('em')) {
