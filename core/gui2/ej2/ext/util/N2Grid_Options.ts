@@ -43,7 +43,7 @@ export const EXCEL_TABLE_SUFFIX: string = '_~~xlsx~~_';
  * If it is not overwritten, it returns 7.5
  * @return {number} 7.5 if not overwritten, but is usually overwritten and customized in the NexusOverwrites module
  */
-export function getPixelCharWidth():number {
+export let getPixelCharWidth = function ():number {
     return 7.5;
 }
 
