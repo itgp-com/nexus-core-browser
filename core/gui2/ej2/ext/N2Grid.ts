@@ -144,7 +144,24 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         state.ej = state.ej || {};
         let gridModel: GridModel = state.ej;
 
-        state.maxExcelRowsExported = state.maxExcelRowsExported || 10000; // default to 1000;
+
+        if (state.resizeTracked == undefined)
+            state.resizeTracked = true; // only set to true if not already set
+
+        let f_existing_onResized = state.onResized;
+        state.onResized = (ev: N2Evt_Resized) => {
+            if ( state.resizeTracked) {
+
+            } // if state.resizeTracked
+
+            try {
+                if ( f_existing_onResized)
+                    f_existing_onResized.call(thisX, ev);
+            } catch (e) { console.error(e); }
+        } // onResized
+
+
+        state.maxExcelRowsExported = state.maxExcelRowsExported || 10000; // default to 10000;
 
         // only add the column menu if it's not disabled
         if (state.ej?.showColumnMenu == undefined) {
@@ -1375,7 +1392,7 @@ import {nexusMain} from '../../../NexusMain';
 import {N2Html} from '../../generic/N2Html';
 import {containsHighlighing, highlighted_grid_cell_content, rec_field_value} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
-import {N2Evt_DomAdded} from '../../N2';
+import {N2Evt_DomAdded, N2Evt_Resized} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';

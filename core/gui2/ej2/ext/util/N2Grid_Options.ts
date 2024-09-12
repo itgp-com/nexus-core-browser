@@ -21,9 +21,10 @@ import {
 } from '@syncfusion/ej2-popups';
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
 import DOMPurify from 'dompurify';
-import {isArray} from 'lodash';
+import {escape, isArray} from 'lodash';
 import * as _ from 'lodash';
 import {EJINSTANCES} from '../../../../Constants';
+import {isDev} from '../../../../CoreUtils';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../../scss/vars-material';
@@ -652,7 +653,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                             for (let i = 0; i < ejs.length; i++) {
                                 let grid: Grid = ejs[i];
                                 let message: string = getGridFilterMessage(grid);
-                                grid.updateExternalMessage((message ? `<div style="color:green;">${getGridFilterMessage(grid)}</div>` : null));
+                                grid.updateExternalMessage((message ? `<div style="color:green;">${escape(message)}</div>` : null));
                             } // for
                         } // if ejs != null
                     } catch (e) {
@@ -706,6 +707,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
 function getGridFilterMessage(gObj: Grid): string {
 
     let filterStatusMsg: string;
+    let previousFilterStatusMsg: string = '';
     let getFormatFlValue;
     let column;
 
@@ -717,15 +719,15 @@ function getGridFilterMessage(gObj: Grid): string {
     let valueFormatter: any = filterModule.serviceLocator.getService('valueFormatter');
 
     if (gObj.pagerModule){
-        filterStatusMsg = gObj.pagerModule?.pagerObj?.externalMessage
+        previousFilterStatusMsg = gObj.pagerModule?.pagerObj?.externalMessage
     }
 
     let thisX: any = filterModule as any
 
     updateValues(gObj);
 
-    if (columns.length > 0 && filterStatusMsg !== l10n?.getConstant('InvalidFilterMessage')) {
-        filterStatusMsg = '';
+    filterStatusMsg = '';
+    if (columns.length > 0 && previousFilterStatusMsg !== l10n?.getConstant('InvalidFilterMessage')) {
         for (let index = 0; index < columns.length; index++) {
             column = gObj.grabColumnByUidFromAllCols(columns[parseInt(index.toString(), 10)].uid)
                 || gObj.grabColumnByFieldFromAllCols(columns[parseInt(index.toString(), 10)].field);
@@ -842,8 +844,10 @@ function getGridFilterMessage(gObj: Grid): string {
                                 stringValue = value ? 'true' : 'false';
                                 break;
                             default:
-                                stringValue = (value == null ? '' : value.toString());
-                        }
+                                stringValue = value.toString(); // it's never null, so make a string since we don't know what it is
+                                if ( isDev() )
+                                    console.log('Unknown column type: ' + column_type + ' for column ' + column.field  + `(${column.headerText}) when creating filter message for grid ` + gObj);
+                        } // switch column_type
                     } // if value != null
 
                     if ( stringValue && value != null) {
@@ -863,7 +867,7 @@ function getGridFilterMessage(gObj: Grid): string {
         }
     }
     return filterStatusMsg;
-}
+} // getGridFilterMessage
 
 function updateValues(gObj: Grid): any {
     let filter: Filter = gObj.filterModule;

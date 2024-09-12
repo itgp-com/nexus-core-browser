@@ -260,7 +260,7 @@ export const CLASS_N2_PANEL_LAYOUT_CENTER = N2PanelLayout.CLASS_IDENTIFIER + '_c
 export const CLASS_N2_PANEL_LAYOUT_RIGHT = N2PanelLayout.CLASS_IDENTIFIER + '_right';
 export const CLASS_N2_PANEL_LAYOUT_BOTTOM = N2PanelLayout.CLASS_IDENTIFIER + '_bottom';
 
-themeChangeListeners().add((ev) => {
+themeChangeListeners().add((_ev) => {
     cssAddClass(N2PanelLayout.CLASS_IDENTIFIER, {
         display: 'grid',
         'grid-template-rows': 'auto 1fr auto',
