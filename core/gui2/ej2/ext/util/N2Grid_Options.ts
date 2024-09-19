@@ -1,28 +1,20 @@
 import {EmitType, isNullOrUndefined} from '@syncfusion/ej2-base';
 import {CrudOptions, DataManager, DataOptions, Query} from '@syncfusion/ej2-data';
 import {DataResult} from '@syncfusion/ej2-data/src/adaptors';
-import {Predicate} from '@syncfusion/ej2-data/src/query';
 import {AutoComplete} from '@syncfusion/ej2-dropdowns';
 import {FilteringEventArgs} from '@syncfusion/ej2-dropdowns/src/drop-down-base/drop-down-base';
-import {ColumnModel, Filter, Grid, GridModel, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
+import {ColumnModel, Filter, Grid, GridModel, PredicateModel, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
 import * as events from '@syncfusion/ej2-grids/src/grid/base/constant';
 import {ToolbarItem, ToolbarItems} from '@syncfusion/ej2-grids/src/grid/base/enum';
 import {RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
 import {ExcelFilterBase} from '@syncfusion/ej2-grids/src/grid/common/excel-filter-base';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {ClickEventArgs, ItemModel} from '@syncfusion/ej2-navigations';
-import {
-    createElementParams,
-    createSpinner,
-    Dialog,
-    hideSpinner,
-    showSpinner,
-    SpinnerArgs
-} from '@syncfusion/ej2-popups';
+import {createElementParams, createSpinner, Dialog, hideSpinner, showSpinner, SpinnerArgs} from '@syncfusion/ej2-popups';
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
 import DOMPurify from 'dompurify';
-import {escape, isArray} from 'lodash';
 import * as _ from 'lodash';
+import {escape, isArray} from 'lodash';
 import {EJINSTANCES} from '../../../../Constants';
 import {isDev} from '../../../../CoreUtils';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
@@ -170,7 +162,7 @@ export function stateN2Grid_RowNumber(gridModel: GridModel, options: Grid_RowNum
     if (!gridModel)
         return; // nothing to do
 
-    const _ROW_NUMNER_APPLIED:string = '__row_num_done__';
+    const _ROW_NUMNER_APPLIED: string = '__row_num_done__';
 
     if ((gridModel as any)[_ROW_NUMNER_APPLIED])
         return; // already applied
@@ -374,7 +366,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
             filterSettings: {type: 'Excel', showFilterBarStatus: true, showFilterBarOperator: true,},
             created: (args) => {
                 try {
-                    let ejs:any[] = (gridModel as any)[EJINSTANCES];
+                    let ejs: any[] = (gridModel as any)[EJINSTANCES];
                     if (ejs != null) {
                         for (let i = 0; i < ejs.length; i++) {
                             let grid: Grid = ejs[i];
@@ -510,17 +502,17 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                                             for (let i = 0; i < inputElems.length; i++) {
                                                 let inputElem = inputElems[i];
 
-                                                    let id:string =  inputElem.id;
-                                                    if ( id) {
-                                                        // Create a MutationObserver with the handler function
-                                                        let observer = new MutationObserver(createDOMInsertionHandler(id));
-                                                        // Start observing the DOM for changes
-                                                        observer.observe(document.body, {
-                                                            childList: true,
-                                                            subtree: true
-                                                        });
-                                                        break; // out of the loop
-                                                    } // if id
+                                                let id: string = inputElem.id;
+                                                if (id) {
+                                                    // Create a MutationObserver with the handler function
+                                                    let observer = new MutationObserver(createDOMInsertionHandler(id));
+                                                    // Start observing the DOM for changes
+                                                    observer.observe(document.body, {
+                                                        childList: true,
+                                                        subtree: true
+                                                    });
+                                                    break; // out of the loop
+                                                } // if id
                                             } // for i - inputElems
 
                                         }; // f
@@ -648,7 +640,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
 
                     try {
 
-                        let ejs:any[] = (gridModel as any)[EJINSTANCES];
+                        let ejs: any[] = (gridModel as any)[EJINSTANCES];
                         if (ejs != null) {
                             for (let i = 0; i < ejs.length; i++) {
                                 let grid: Grid = ejs[i];
@@ -668,7 +660,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                             for (let i = 0; i < ejInstances.length; i++) {
                                 let grid = ejInstances[0];
 
-                                let n2Grid:N2Grid = getN2FromEJ2(grid) as N2Grid;
+                                let n2Grid: N2Grid = getN2FromEJ2(grid) as N2Grid;
                                 if (n2Grid?.state?.disableScrollToTopAfterPaging)
                                     continue; // skip this grid
 
@@ -683,7 +675,7 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
                             } // for
                         } // if ejInstances
                     } // if paging
-                }catch (e) {
+                } catch (e) {
                     console.error(e);
                 }
 
@@ -706,130 +698,73 @@ export function stateGrid_CustomExcelFilter(gridModel: (GridModel | TreeGridMode
 
 function getGridFilterMessage(gObj: Grid): string {
 
-    let filterStatusMsg: string;
-    let previousFilterStatusMsg: string = '';
-    let getFormatFlValue;
-    let column;
+
+    let filterStatusMsg: string = '';
+    try {
+        let predicate: PredicateModel;
+        let previousFilterStatusMsg: string = '';
+        let stringValue: string = ''
+        let column;
 
 
-    let columns = gObj.filterSettings.columns;
+        let filterColumns = gObj.filterSettings.columns;
 
-    let filterModule = gObj.filterModule;
-    let l10n: any = filterModule.serviceLocator.getService('localization');
-    let valueFormatter: any = filterModule.serviceLocator.getService('valueFormatter');
+        let filterModule = gObj.filterModule;
+        let l10n: any = filterModule.serviceLocator.getService('localization');
+        let valueFormatter: any = filterModule.serviceLocator.getService('valueFormatter');
 
-    if (gObj.pagerModule){
-        previousFilterStatusMsg = gObj.pagerModule?.pagerObj?.externalMessage
-    }
+        if (gObj.pagerModule) {
+            previousFilterStatusMsg = gObj.pagerModule?.pagerObj?.externalMessage
+        }
 
-    let thisX: any = filterModule as any
+        let thisX: any = filterModule as any
 
-    updateValues(gObj);
+        updateValues(gObj);
 
-    filterStatusMsg = '';
-    if (columns.length > 0 && previousFilterStatusMsg !== l10n?.getConstant('InvalidFilterMessage')) {
-        for (let index = 0; index < columns.length; index++) {
-            column = gObj.grabColumnByUidFromAllCols(columns[parseInt(index.toString(), 10)].uid)
-                || gObj.grabColumnByFieldFromAllCols(columns[parseInt(index.toString(), 10)].field);
-            if (index) {
-                filterStatusMsg += ' and ';
-            }
-            if (!isNullOrUndefined(column.format)) {
-                let flValue = (column.type === 'date' || column.type === 'datetime' || column.type === 'dateonly') ?
-                    valueFormatter.fromView(thisX.values[column.field], column.getParser(), (column.type === 'dateonly' ? 'date' : column.type)) :
-                    thisX.values[column.field];
-                if (!(column.type === 'date' || column.type === 'datetime' || column.type === 'dateonly')) {
-                    let formater: any = filterModule.serviceLocator.getService('valueFormatter');
-                    getFormatFlValue = formater.toView(flValue, column.getParser()).toString();
+        if (filterColumns.length > 0 && previousFilterStatusMsg !== l10n?.getConstant('InvalidFilterMessage')) {
+            for (let index = 0; index < filterColumns.length; index++) {
+                predicate = filterColumns[index];
+                let raw_operator = predicate.operator;
+
+                column = gObj.grabColumnByUidFromAllCols(filterColumns[index].uid) || gObj.grabColumnByFieldFromAllCols(filterColumns[index].field);
+
+                if (index)
+                    filterStatusMsg += ' and ';
+
+
+                if (!isNullOrUndefined(column.format)) {
+                    let flValue = (column.type === 'date' || column.type === 'datetime' || column.type === 'dateonly') ?
+                        valueFormatter.fromView(thisX.values[column.field], column.getParser(), (column.type === 'dateonly' ? 'date' : column.type)) :
+                        thisX.values[column.field];
+                    if (!(column.type === 'date' || column.type === 'datetime' || column.type === 'dateonly')) {
+                        let formater: any = filterModule.serviceLocator.getService('valueFormatter');
+                        stringValue = formater.toView(flValue, column.getParser()).toString();
+                    } else {
+                        stringValue = (filterModule as any).setFormatForFlColumn(flValue, column);
+                    }
                 } else {
-                    getFormatFlValue = (filterModule as any).setFormatForFlColumn(flValue, column);
-                }
-                filterStatusMsg += column.headerText + ': ' + getFormatFlValue;
-            } else {
-                let predicate: Predicate = (columns[index] as any).properties;
-                if (predicate) {
-                    let raw_operator = predicate.operator;
-                    let operator: string = '';
+                    // predicate = (columns[index] as any).properties;
+                    // if (predicate) {
                     let column_type = column.type;
                     let value: any = predicate.value;
-                    let stringValue ='';
 
-                    /*
-                     '<': 'lessthan',
-                     '>': 'greaterthan',
-                     '<=': 'lessthanorequal',
-                     '>=': 'greaterthanorequal',
-                     '==': 'equal',
-                     '!=': 'notequal',
-                     '*=': 'contains',
-                     '$=': 'endswith',
-                     '^=': 'startswith'
-                     */
                     switch (raw_operator) {
-                        case 'lessthan':
-                            operator = '<';
-                            break;
-                        case 'greaterthan':
-                            operator = '>';
-                            break;
-                        case 'lessthanorequal':
-                            operator = '<=';
-                            break;
-                        case 'greaterthanorequal':
-                            operator = '>=';
-                            break;
-                        case 'equal':
-                            operator = '=';
-                            break;
-                        case 'notequal':
-                            operator = 'not equal';
-                            break;
-                        case 'contains':
-                            operator = 'contains';
-                            break;
-                        case 'doesnotcontain':
-                            operator = 'does not contain';
-                            break;
-                        case 'endswith':
-                            operator = 'ends with';
-                            break;
-                        case 'doesnotendwith':
-                            operator = 'does not end with';
-                            break;
-
-                        case 'startswith':
-                            operator = 'starts with';
-                            break;
-                        case 'doesnotstartwith':
-                            operator = 'does not start with';
-                            break;
                         case 'isnotnull':
-                            operator = 'is not null';
                             value = null;
                             break;
                         case 'isnull':
-                            operator = 'is null';
                             value = null;
                             break;
-                        case 'like':
-                            operator = 'like';
-                            break;
+
                         case 'isempty':
-                            operator = 'is empty';
                             value = null;
                             break;
                         case 'isnotempty':
-                            operator = 'is not empty';
                             value = null;
                             break;
-                        case 'wildcard':
-                            operator = 'wildcard';
-                            break;
-                        default:
-                            operator = raw_operator;
-
                     }
-                    if ( value != null) {
+
+                    if (value != null) {
                         switch (column_type) {
                             case 'date':
                                 stringValue = (value as Date).toLocaleDateString();
@@ -845,27 +780,101 @@ function getGridFilterMessage(gObj: Grid): string {
                                 break;
                             default:
                                 stringValue = value.toString(); // it's never null, so make a string since we don't know what it is
-                                if ( isDev() )
-                                    console.log('Unknown column type: ' + column_type + ' for column ' + column.field  + `(${column.headerText}) when creating filter message for grid ` + gObj);
+                                if (isDev())
+                                    console.log('Unknown column type: ' + column_type + ' for column ' + column.field + `(${column.headerText}) when creating filter message for grid ` + gObj);
                         } // switch column_type
                     } // if value != null
 
-                    if ( stringValue && value != null) {
+                    if (stringValue && value != null) {
                         // surround with single quotes
                         stringValue = `'${stringValue}'`;
                     }
 
-                    let headerText = (column.headerText || column.field || ( _.isString(column.headerTemplate)? column.headerTemplate.replace('<br>', ' / ').replace('<p>', ' / ') : 'column')) // if not text then DB col name
-
-                    filterStatusMsg += `${headerText} ${operator} ${stringValue} `;
-
-                } else {
-                    // last-ditch default Syncfusion original code
-                    filterStatusMsg += column.headerText + ': ' + thisX.values[column.field];
                 }
+
+
+                let headerText = (column.headerText || column.field || (_.isString(column.headerTemplate) ? column.headerTemplate.replace('<br>', ' / ').replace('<p>', ' / ') : 'column')) // if not text then DB col name
+
+                let operator: string = '';
+
+                /*
+                 '<': 'lessthan',
+                 '>': 'greaterthan',
+                 '<=': 'lessthanorequal',
+                 '>=': 'greaterthanorequal',
+                 '==': 'equal',
+                 '!=': 'notequal',
+                 '*=': 'contains',
+                 '$=': 'endswith',
+                 '^=': 'startswith'
+                 */
+                switch (raw_operator) {
+                    case 'lessthan':
+                        operator = '<';
+                        break;
+                    case 'greaterthan':
+                        operator = '>';
+                        break;
+                    case 'lessthanorequal':
+                        operator = '<=';
+                        break;
+                    case 'greaterthanorequal':
+                        operator = '>=';
+                        break;
+                    case 'equal':
+                        operator = '=';
+                        break;
+                    case 'notequal':
+                        operator = 'not equal';
+                        break;
+                    case 'contains':
+                        operator = 'contains';
+                        break;
+                    case 'doesnotcontain':
+                        operator = 'does not contain';
+                        break;
+                    case 'endswith':
+                        operator = 'ends with';
+                        break;
+                    case 'doesnotendwith':
+                        operator = 'does not end with';
+                        break;
+
+                    case 'startswith':
+                        operator = 'starts with';
+                        break;
+                    case 'doesnotstartwith':
+                        operator = 'does not start with';
+                        break;
+                    case 'isnotnull':
+                        operator = 'is not null';
+                        break;
+                    case 'isnull':
+                        operator = 'is null';
+                        break;
+                    case 'like':
+                        operator = 'like';
+                        break;
+                    case 'isempty':
+                        operator = 'is empty';
+                        break;
+                    case 'isnotempty':
+                        operator = 'is not empty';
+                        break;
+                    case 'wildcard':
+                        operator = 'wildcard';
+                        break;
+                    default:
+                        operator = raw_operator;
+
+                }
+
+                filterStatusMsg += `${headerText} ${operator} ${stringValue} `;
+
             }
         }
-    }
+    } catch (e) { console.error(e); }
+
     return filterStatusMsg;
 } // getGridFilterMessage
 
@@ -917,17 +926,15 @@ function applyColumnFormat(filter: Filter, filterValue: any) {
 //----------------------------------------------
 
 
-
-
-const COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS :string = '_n2_cwa_';
+const COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS: string = '_n2_cwa_';
 
 /**
  * Calculates the grid column width so that filter and sorting widgets in the column heading have space to display without overlapping the text
  * @param {ColumnModel[]} columns
  */
-export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
+export function adjustColumnWidthForCustomExcelFilters(columns: ColumnModel[]) {
     let baseFontSize = Number.parseInt(CSS_VARS_CORE.app_font_size_base_number);
-    let app_custom_excel_filter_width_number:number;
+    let app_custom_excel_filter_width_number: number;
     try {
         app_custom_excel_filter_width_number = Number.parseInt(CSS_VARS_CORE.app_custom_excel_filter_width_number);
     } catch (e) {}
@@ -937,62 +944,62 @@ export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
 
     if (columns) {
         for (const column of columns) {
-            if ( (column as any)[COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS] == true)
+            if ((column as any)[COLUMN__WIDTH_ADJUSTED_FOR_CUSTOM_FILTERS] == true)
                 continue; // already adjusted
 
 
             /*
-            extra calculation explained:
-            For columns that are right and left justified, most of the time we need to make room for 3*18px (filter arrow + sorting arrow + bubble )
-            For centered columns, the bubble arrow is part of the centered text, and as such we need to introduce the filter arrow and sorting arrow widths as extra padding to keep the heading centered and nothing overwriting
+             extra calculation explained:
+             For columns that are right and left justified, most of the time we need to make room for 3*18px (filter arrow + sorting arrow + bubble )
+             For centered columns, the bubble arrow is part of the centered text, and as such we need to introduce the filter arrow and sorting arrow widths as extra padding to keep the heading centered and nothing overwriting
              */
 
-            let extra :number = 0
+            let extra: number = 0
             let filterArrowWidth = app_custom_excel_filter_width_number
             let sortArrowWidth = app_custom_excel_filter_width_number
             let sortBubbleWidth = app_custom_excel_filter_width_number
 
             if (column.allowFiltering !== false) // undefined same as true
                 extra += filterArrowWidth;
-            let isSorted:boolean = (column.allowSorting !== false) ; // undefined same as true
+            let isSorted: boolean = (column.allowSorting !== false); // undefined same as true
             if (isSorted) {
                 extra += sortArrowWidth; // sort arrow
                 extra += sortBubbleWidth// bubble
             } // if (isSorted)
 
 
-            if (column.headerTextAlign == "Center"){
+            if (column.headerTextAlign == "Center") {
                 extra += filterArrowWidth; // need to allow space on the opposite side for the filter arrow so it is balanced
-                if ( isSorted ) {
+                if (isSorted) {
                     extra += sortArrowWidth; // sort arrow
                 }
 
                 // We do not balance for the sort bubble because it is part of the centered text of the heading
                 // It gets created as a sub-div of the heading) and as such there is no balancing necessary since it is part of the heading and is centered with the heading
                 // Therefore only the filter and the arrow width need to be added as padding on the opposite side to keep centered
-            } else if (column.headerTextAlign == null || column.headerTextAlign == "Left" || column.headerTextAlign == "Right"){
+            } else if (column.headerTextAlign == null || column.headerTextAlign == "Left" || column.headerTextAlign == "Right") {
                 extra += 6; // avoid overwriting the last character (based on the css rules set by N2Grid cssForN2Grid(...) function
             }// if (column.headerTextAlign == "Center")
 
             if (extra > 0) {
-                let width:string|number = column.width;
+                let width: string | number = column.width;
 
                 if (typeof width === 'string' && width.endsWith('ch')) {
                     const numberValue = parseFloat(width.slice(0, -2)); // Extract the number part of the string
-                    width =  numberValue * N2Grid_Options_Utils.getPixelCharWidth();
+                    width = numberValue * N2Grid_Options_Utils.getPixelCharWidth();
                 }
 
-                if (typeof width === 'string' &&  width.endsWith('em')) {
+                if (typeof width === 'string' && width.endsWith('em')) {
                     const numericValue = parseFloat(width.slice(0, -2)); // Extract the number part of the string
                     width = numericValue * baseFontSize;
                 }
 
 
                 if (_.isNumber(width)) {
-                    let headerText:string = (column.headerTemplate ? column.headerTemplate as string : column.headerText) || '';
-                    let defaultWidth:number = calculateDefaultHeaderWidth(headerText);
+                    let headerText: string = (column.headerTemplate ? column.headerTemplate as string : column.headerText) || '';
+                    let defaultWidth: number = calculateDefaultHeaderWidth(headerText);
 
-                    if ( defaultWidth + extra < width) {
+                    if (defaultWidth + extra < width) {
                         // do nothing if the width is already big enough for the default width and the extra (there's enough room for the filter and sort icons)
                     } else {
                         // width should be adjusted
@@ -1015,7 +1022,7 @@ export function adjustColumnWidthForCustomExcelFilters(columns:ColumnModel[]) {
 
 } // adjustColumnWidthForFilters
 
-function calculateDefaultHeaderWidth(headerText:string) : number{
+function calculateDefaultHeaderWidth(headerText: string): number {
 
 
     // Create a temporary div element
@@ -1075,7 +1082,7 @@ function createDOMInsertionHandler(tag_id: string) {
                             observer = null;
                         } // if (observer)
                     } // if (inputElement)
-                } catch(e){
+                } catch (e) {
                     console.error(e);
                 }
             }
@@ -1084,14 +1091,11 @@ function createDOMInsertionHandler(tag_id: string) {
 } // createDOMInsertionHandler
 
 
-
-
-
-export class  ExcelExportNexus {
+export class ExcelExportNexus {
     public static async doExcelExport(args: Args_DoExcelExport): Promise<any> {
         try {
             let grid: Grid = args.grid;
-            if ( grid && grid.allowExcelExport)
+            if (grid && grid.allowExcelExport)
                 return grid.excelExport();
         } catch (e) { console.error(e); }
     } // doExcelExport
