@@ -33,7 +33,6 @@ export class N2Diagram<STATE extends StateN2Diagram = StateN2Diagram> extends N2
 } // N2Diagram
 
 import {Diagram, DiagramModel} from '@syncfusion/ej2-diagrams';
-import {BlazorTooltip} from '@syncfusion/ej2-diagrams/src/diagram/blazor-tooltip/blazor-Tooltip';
 import {DataBinding} from '@syncfusion/ej2-diagrams/src/diagram/data-binding/data-binding';
 import {ConnectorEditing} from '@syncfusion/ej2-diagrams/src/diagram/interaction/connector-editing';
 import {LineDistribution} from '@syncfusion/ej2-diagrams/src/diagram/interaction/line-distribution';
@@ -54,7 +53,7 @@ import {addN2Class} from '../../N2HtmlDecorator';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 Diagram.Inject(
-    HierarchicalTree, MindMap, RadialTree, ComplexHierarchicalTree, DataBinding, Snapping, PrintAndExport, BlazorTooltip,
+    HierarchicalTree, MindMap, RadialTree, ComplexHierarchicalTree, DataBinding, Snapping, PrintAndExport,
     BpmnDiagrams, SymmetricLayout, ConnectorBridging, UndoRedo, LayoutAnimation, DiagramContextMenu, ConnectorEditing,
     LineRouting, LineDistribution
 );
