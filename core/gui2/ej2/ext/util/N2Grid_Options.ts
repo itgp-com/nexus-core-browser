@@ -110,7 +110,7 @@ export function stateN2Grid_excelExport(state: StateN2Grid, fnExcelExport ?: Emi
     } else {
         if (isArray(toolbar)) {
             if (toolbar.indexOf('ExcelExport') === -1) {
-                toolbar = toolbar.insert(0, 'ExcelExport'); // always show the Excel Export button first
+                toolbar = toolbar.splice(0, 0, 'ExcelExport'); // always show the Excel Export button first
                 state.ej.toolbar = toolbar;
             }
         } else {

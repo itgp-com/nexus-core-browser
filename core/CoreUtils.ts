@@ -24,28 +24,6 @@ declare global {
     }
 }
 
-/**
- * Inserts one or more items at a specified index in the array.
- *
- * @this {Array} - The array context on which the method is called.
- * @param {number} index - The index at which the new items should be inserted.
- * @param {...any} items - The items to be inserted into the array.
- * @returns {Array} - Returns a new array with the items inserted at the specified index.
- *
- * @example
- * const arr = [1, 2, 4];
- * const newArr = arr.insert(2, 3);
- * console.log(newArr); // Outputs: [1, 2, 3, 4]
- */
-Array.prototype.insert = function (index: number, ...items: any) {
-    //return this.splice(index, 0, item);
-    return [
-        ...this.slice(0, index),
-        ...items,
-        ...this.slice(index)
-    ];
-};
-
 
 /**
  * Escapes special HTML characters (`&`, `<`, `>`) in a string.

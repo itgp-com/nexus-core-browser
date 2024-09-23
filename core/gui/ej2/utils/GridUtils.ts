@@ -134,7 +134,7 @@ export function excelToolbarInGridModel(disableExcelExport: boolean, gridModel: 
       if (gridModel?.toolbar) {
          let index = gridModel?.toolbar.indexOf('ExcelExport');
          if (index < 0)
-            gridModel.toolbar.insert(0, 'ExcelExport');
+            gridModel.toolbar.splice(0, 0, 'ExcelExport');
       } else {
          gridModel.toolbar = ['ExcelExport'];
       }
@@ -150,13 +150,8 @@ export let renderer_html_link = (args: QueryCellInfoEventArgs, cellValue: string
 export let renderer_html_link_clickFunction = (args: QueryCellInfoEventArgs, clickFunction: (evt: any) => (void | Promise<void>)) => {
 // Example of an href the takes no action:<a href="#" onclick="return false;">
    htmlElement_link_clickFunction(args.cell as HTMLElement, clickFunction);
-
-   // let original = args.cell.innerHTML
-   // if (original) {
-   //    args.cell.innerHTML = `<a href="#" onclick="return false;">${original}</a>`;
-   //    args.cell.addEventListener('click', clickFunction);
-   // }
 }
+
 export let htmlElement_html_links           = (elem: HTMLElement, linkValues: string) => {
    if (elem) {
       let linkValuesTokens = linkValues.split('\n');
