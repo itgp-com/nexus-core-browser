@@ -83,7 +83,7 @@ const coreCssCommonVariables: CoreCssVariables = {
     app_color_coral_medium: '#FF799C',
     app_color_crimson: '#DC143C',
     app_color_cyan: '#03E0DF',
-    app_color_firebrid: '#B22222',
+    app_color_firebrick: '#B22222',
     app_color_gray_50: '#fafafa',
     app_color_gray_100: '#f5f5f5',
     app_color_gray_200: '#eee',
