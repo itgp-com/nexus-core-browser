@@ -582,12 +582,15 @@ export interface Ej2QueryOptions {
  *     console.error("Error fetching data:", error);
  *   });
  */
-export async function ej2Query(tablename: string, query: Query, options?: Ej2QueryOptions): Promise<any[]> {
+export async function ej2Query(tablename: string, query?: Query, options?: Ej2QueryOptions): Promise<any[]> {
     let dataManager = new DataManager({
         url: (options?. tablenameisDirectURL ? tablename : urlTableEj2(tablename) ),
         adaptor: (options?.adaptor ? options.adaptor : new NexusAdaptor()),
         crossDomain: true
     });
+
+    if (query == null)
+        query = new Query();
 
     return new Promise((resolve, reject) => {
             dataManager.executeQuery(query, (e: any) => {
