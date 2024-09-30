@@ -555,6 +555,11 @@ export interface Ej2QueryOptions {
      * The adaptor to be used for the query. If not provided, a default `NexusAdaptor` will be used.
      */
     adaptor?: NexusAdaptor;
+    /**
+     * If true, then the tablename parameter is considered a resolved URL, and urlTableEj2(tablename) is not called
+     * Defaults to false
+     */
+    tablenameisDirectURL?: boolean;
 }
 
 /**
@@ -579,7 +584,7 @@ export interface Ej2QueryOptions {
  */
 export async function ej2Query(tablename: string, query: Query, options?: Ej2QueryOptions): Promise<any[]> {
     let dataManager = new DataManager({
-        url: urlTableEj2(tablename),
+        url: (options?. tablenameisDirectURL ? tablename : urlTableEj2(tablename) ),
         adaptor: (options?.adaptor ? options.adaptor : new NexusAdaptor()),
         crossDomain: true
     });
