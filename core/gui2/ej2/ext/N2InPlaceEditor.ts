@@ -7,7 +7,9 @@ import {MultiSelect} from '@syncfusion/ej2-inplace-editor/src/inplace-editor/mod
 import {Rte} from '@syncfusion/ej2-inplace-editor/src/inplace-editor/modules/rte';
 import {Slider} from '@syncfusion/ej2-inplace-editor/src/inplace-editor/modules/slider';
 import {TimePicker} from '@syncfusion/ej2-inplace-editor/src/inplace-editor/modules/time-picker';
+import {cssAdd} from '../../../CssUtils';
 import {addN2Class} from '../../N2HtmlDecorator';
+import {themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
 InPlaceEditor.Inject(
@@ -53,4 +55,15 @@ export class N2InPlaceEditor<STATE extends StateN2InPlaceEditor = StateN2InPlace
     get classIdentifier(): string { return N2InPlaceEditor.CLASS_IDENTIFIER; }
 
 
-}
+} // N2InPlaceEditor
+
+themeChangeListeners().add((ev) => {
+
+    // When editor is instantiated, have the same 8px left margin as the view label element before editing started
+    cssAdd(`
+.${N2InPlaceEditor.CLASS_IDENTIFIER}.e-inplaceeditor .e-editable-wrapper {
+    padding-left: 8px;
+    padding-right: 8px;
+}    
+    `); // cssAdd
+}); // themeChangeListeners.add  default priority
