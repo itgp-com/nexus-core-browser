@@ -23,6 +23,9 @@ export interface StateN2TextField<WIDGET extends N2TextField = N2TextField> exte
 
     required?: boolean;
 
+    /**
+     * Override with specific N2TextField widget class and string type
+     */
     validationRule?: N2Validator<WIDGET, string>;
 
     /**

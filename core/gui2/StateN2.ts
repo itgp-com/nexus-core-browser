@@ -1,4 +1,5 @@
 import {WidgetErrorHandler} from "../gui/WidgetErrorHandler";
+import {N2Validator} from './ej2/StateN2Validator';
 import {
    N2,
    N2Evt,
@@ -156,6 +157,25 @@ export interface StateN2 {
     * This property will be initialized to {} in the initialization of widget/state
     */
    other ?: any;
+
+   /**
+    * Represents a validator function for this N2 widget.
+    * @param ev - The validation event object.
+    * @returns void
+    *
+    * @description
+    * The validator function should:
+    * - Set `ev.error` to a non-null/non-empty error message string if there is an error (depending on the N2 control, the value might be in  `ev.value`).
+    * - Do absolutely nothing if the value is valid.
+    *
+    * @example
+    * const myValidator: N2Validator<N2TextField, string> = (ev) => {
+    *   if (ev.value.length < 3) {
+    *     ev.error = "Input must be at least 3 characters long";
+    *   }
+    * };
+    */
+   validationRule?: N2Validator<N2, any>;
 }
 
 export interface StateN2Ref {

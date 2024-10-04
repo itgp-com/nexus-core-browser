@@ -1,4 +1,5 @@
 import {FormValidator, FormValidatorModel} from '@syncfusion/ej2-inputs';
+import {getRandomString, getRandomText} from '../../../BaseUtils';
 import {nexusMain} from '../../../NexusMain';
 import {N2, N2Evt_DomAdded, N2Evt_OnHtml, N2Evt_OnLogic} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
@@ -237,6 +238,31 @@ function _attachValidation(n2: N2): void {
                     value: syncfusionArgs?.value,
                     error: null
                 };
+                if ( ev.element && (ev.element as any).value == null)
+                    (ev.element as any).value = '_'; // Impersonate an HTMLInputElement with a non-null value so the retarded checkRequired method in form-validator in Syncfusion does not clear the error message even when the required flag is not set
+
+                if ( ev.element && (ev.element as any).name == null){
+                    // try the attribute first
+                    let name_found = true;
+                    let name = ev.element.getAttribute('name');
+                    if ( !name){
+                        name_found = false;
+                        // try the id
+                        name = ev.element.getAttribute('id');
+                        if (!name){
+                            // try the tagId
+                            name = n2State.tagId; // always exists (even when it's not used)
+                            if (!name)
+                                name = getRandomText(16);
+                        }
+                    }
+                    (ev.element as any).name = name; // impersonate an HTMLInputElement
+                    if (!name_found) {
+                        ev.element.setAttribute('name', name);
+                    }
+                } // set name in order to impersonate an HTMLInputElement
+
+
 
                 if (n2State.validationRule) {
                     n2State.validationRule(ev);
