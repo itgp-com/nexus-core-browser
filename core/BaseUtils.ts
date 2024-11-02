@@ -5,7 +5,7 @@
 let base32Encode: any;
 
 async function init() {
-   base32Encode = (await import('base32-encode')).default;
+    base32Encode = (await import('base32-encode')).default;
 }
 
 init();
@@ -20,32 +20,32 @@ export type StringFunction = () => string;
 export type StringArg = (string | StringFunction);
 
 export interface voidFunction {
-   (): void;
+    (): void;
 }
 
 export function getRandomInt(max: number) {
-   return Math.floor(Math.random() * Math.floor(max));
+    return Math.floor(Math.random() * Math.floor(max));
 }
 
 export function getRandomString(prefix?: string): string {
-   let p: string = (prefix ? `${prefix}_` : '');
-   p             = p.replace(/\./g, '_'); // replaces '.' with '_'
-   p             = p.replace(/#|:/g, '_'); // replaces '#' and ':' with '_'
-   let retVal    = `${p}${getRandomInt(1000)}_${getRandomInt(100000)}`;
-   return retVal;
+    let p: string = (prefix ? `${prefix}_` : '');
+    p = p.replace(/\./g, '_'); // replaces '.' with '_'
+    p = p.replace(/#|:/g, '_'); // replaces '#' and ':' with '_'
+    let retVal = `${p}${getRandomInt(1000)}_${getRandomInt(100000)}`;
+    return retVal;
 } // noinspection JSUnusedGlobalSymbols
 
 export function getRandomText(length: number): string {
-   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-   let result = '';
-   for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-   }
-   return result;
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
 }
 
 export interface noArgsFunction {
-   (): any;
+    (): any;
 }
 
 // export function isFunction(arg: any): boolean {
@@ -53,17 +53,17 @@ export interface noArgsFunction {
 // }
 
 export function stringArgVal(arg: StringArg): string {
-   // arg can only be a String or StringFunction
-   if (arg) {
-      if (isFunction(arg)) {
-         let s: string = (<StringFunction>arg)();
-         return s;
-      } else {
-         return <string>arg;
-      }
-   } else {
-      return '';
-   }
+    // arg can only be a String or StringFunction
+    if (arg) {
+        if (isFunction(arg)) {
+            let s: string = (<StringFunction>arg)();
+            return s;
+        } else {
+            return <string>arg;
+        }
+    } else {
+        return '';
+    }
 } //stringArgVal
 //---------------- Class instance/array/instance function/ array function type ------------------
 /**
@@ -84,16 +84,16 @@ export type ClassArgInstanceOrArray<T> = (T | T[] | ClassFunction<T> | ClassArra
  * @param arg
  */
 export function classArgInstanceVal<T>(arg: ClassArg<T>): T {
-   if (arg) {
-      if (isFunction(arg)) {
-         let val: T = (<ClassFunction<T>>arg)();
-         return val;
-      } else {
-         return (<T>arg);
-      }
-   } else {
-      return null;
-   }
+    if (arg) {
+        if (isFunction(arg)) {
+            let val: T = (<ClassFunction<T>>arg)();
+            return val;
+        } else {
+            return (<T>arg);
+        }
+    } else {
+        return null;
+    }
 } // classArgInstanceVal
 /**
  * Extract an actual array T[] regardless of whether the argument is already an array or if it's a function that yields the T[] array when called
@@ -101,16 +101,16 @@ export function classArgInstanceVal<T>(arg: ClassArg<T>): T {
  * @param arg
  */
 export function classArgArrayVal<T>(arg: |ClassArrayArg<T>): T[] {
-   if (arg) {
-      if (isFunction(arg)) {
-         let val: T[] = (<ClassArrayFunction<T>>arg)();
-         return val;
-      } else {
-         return (<T[]>arg);
-      }
-   } else {
-      return null;
-   }
+    if (arg) {
+        if (isFunction(arg)) {
+            let val: T[] = (<ClassArrayFunction<T>>arg)();
+            return val;
+        } else {
+            return (<T[]>arg);
+        }
+    } else {
+        return null;
+    }
 } // classArgInstanceVal
 /**
  * /**
@@ -119,37 +119,37 @@ export function classArgArrayVal<T>(arg: |ClassArrayArg<T>): T[] {
  * @param arg
  */
 export function classArgInstanceOrArrayVal<T>(arg: (ClassArg<T> | ClassArrayArg<T> | ClassArgInstanceOrArray<T>)): (T | T[]) {
-   // arg can only be a String or StringFunction
-   if (arg) {
-      if (isFunction(arg)) {
+    // arg can only be a String or StringFunction
+    if (arg) {
+        if (isFunction(arg)) {
 
-         if (arg as ClassFunction<T>) {
-            let val: T = (<ClassFunction<T>>arg)();
-            return val;
-         } else {
-            let arrayVal: T[] = (<ClassArrayFunction<T>>arg)();
-            return arrayVal;
-         }
+            if (arg as ClassFunction<T>) {
+                let val: T = (<ClassFunction<T>>arg)();
+                return val;
+            } else {
+                let arrayVal: T[] = (<ClassArrayFunction<T>>arg)();
+                return arrayVal;
+            }
 
-      } else {
-         if (Array.isArray(arg)) {
-            return (<T[]>arg);
-         } else {
-            return (<T>arg);
-         }
-      }
-   } else {
-      return null;
-   }
+        } else {
+            if (Array.isArray(arg)) {
+                return (<T[]>arg);
+            } else {
+                return (<T>arg);
+            }
+        }
+    } else {
+        return null;
+    }
 } //stringArgVal
 export function isA(ChildClass: any, ParentClass: any) {
-   let _ = ChildClass.prototype;
-   while (_ != null) {
-      if (_ == ParentClass.prototype)
-         return true;
-      _ = _.__proto__;
-   }
-   return false;
+    let _ = ChildClass.prototype;
+    while (_ != null) {
+        if (_ == ParentClass.prototype)
+            return true;
+        _ = _.__proto__;
+    }
+    return false;
 }
 
 /**
@@ -159,30 +159,43 @@ export function isA(ChildClass: any, ParentClass: any) {
  * @param ms
  */
 export function wait(ms: number): void {
-   // noinspection JSIgnoredPromiseFromCall
-   new Promise(resolve => setTimeout(resolve, ms));
+    // noinspection JSIgnoredPromiseFromCall
+    new Promise(resolve => setTimeout(resolve, ms));
 } // noinspection JSUnusedGlobalSymbols
 /**
  * @htmlString {String} HTML representing a single element
  * @return {HTMLElement}
  */
 export function htmlToElement(htmlString: string): HTMLElement {
-   const div     = document.createElement('div');
-   div.innerHTML = DOMPurify.sanitize(htmlString.trim());
+    const div = document.createElement('div');
+    div.innerHTML = DOMPurifyNexus(htmlString.trim());
 
-   // Change this to div.childNodes to support multiple topContainer-level nodes
-   return div.firstElementChild as HTMLElement;
-} //---------------------------------------
+    // Change this to div.childNodes to support multiple topContainer-level nodes
+    return div.firstElementChild as HTMLElement;
+}
+
+/**
+ * Custom DOMPurify function that sanitizes HTML strings and marks the 'target' and 'rel' attribute as safe.
+ * @param {string} htmlString
+ * @return {string}
+ * @constructor
+ */
+export function DOMPurifyNexus(htmlString: string): string {
+    return DOMPurify.sanitize(htmlString.trim(), {ADD_ATTR: ['target', 'rel']}); // mark target as safe attribute
+}
+
+
+//---------------------------------------
 /**
  * Removes all the tags after the lastIdTag passed in
  *
  * @param lastIdTag the last tag of the application html inside body. Defaults to 'app__l_a_s_t__' if not passed in
  */
 export function cleanUpHtml(lastIdTag: string = 'app__l_a_s_t__') {
-   // get rid of all the junk in the page
-   nextAll(null, document.getElementById(lastIdTag)).forEach((el: HTMLElement) => {
-      el.remove();
-   });
+    // get rid of all the junk in the page
+    nextAll(null, document.getElementById(lastIdTag)).forEach((el: HTMLElement) => {
+        el.remove();
+    });
 } // noinspection SpellCheckingInspection
 
 /**
@@ -192,21 +205,21 @@ export function cleanUpHtml(lastIdTag: string = 'app__l_a_s_t__') {
  * @param element anchor element to start from
  */
 export function nextAll(selector: string, element: HTMLElement): HTMLElement[] {
-   let all: HTMLElement[] = [];
-   if (element) {
-      while (element.nextElementSibling) {
-         element = element.nextElementSibling as HTMLElement;
-         if (selector) {
-            if (element.matches(selector)) {
-               all.push(element);
+    let all: HTMLElement[] = [];
+    if (element) {
+        while (element.nextElementSibling) {
+            element = element.nextElementSibling as HTMLElement;
+            if (selector) {
+                if (element.matches(selector)) {
+                    all.push(element);
+                }
+            } else {
+                // no selector - all elements go in
+                all.push(element);
             }
-         } else {
-            // no selector - all elements go in
-            all.push(element);
-         }
-      }
-   }
-   return all;
+        }
+    }
+    return all;
 }
 
 
@@ -224,13 +237,13 @@ export function nextAll(selector: string, element: HTMLElement): HTMLElement[] {
  * ```
  */
 export function deleteElementById(elementId: string) {
-   // Find the element by its ID
-   var element = document.getElementById(elementId);
+    // Find the element by its ID
+    var element = document.getElementById(elementId);
 
-   // If the element exists, remove it from the DOM
-   if (element) {
-      element.parentNode.removeChild(element);
-   }
+    // If the element exists, remove it from the DOM
+    if (element) {
+        element.parentNode.removeChild(element);
+    }
 } // deleteElementById
 
 // noinspection SpellCheckingInspection
@@ -239,126 +252,126 @@ export function deleteElementById(elementId: string) {
  * @param id
  */
 export function hget(id: string): HTMLElement {
-   if (id)
-      return document.getElementById(id);
-   else
-      return null;
+    if (id)
+        return document.getElementById(id);
+    else
+        return null;
 }
 
 export function hgetInput(id: string): HTMLInputElement {
-   return hget(id) as HTMLInputElement;
+    return hget(id) as HTMLInputElement;
 } // noinspection JSUnusedGlobalSymbols
 // noinspection JSUnusedGlobalSymbols
 export function cast<T>(obj: any, cl: { new(args: any): T }): T {
-   if (obj)
-      obj.__proto__ = cl.prototype;
-   return obj;
+    if (obj)
+        obj.__proto__ = cl.prototype;
+    return obj;
 }
 
 export function castArray<T>(array: Object[], cl: { new(args: any): T }): T[] {
-   if (array) {
-      array.forEach(elem => {
-         cast(elem, cl);
-      });
-   }
-   return array as T[];
+    if (array) {
+        array.forEach(elem => {
+            cast(elem, cl);
+        });
+    }
+    return array as T[];
 }
 
 export class Args_FunctionsTable {
-   functionName: string;
-   /**
-    * Concatenation of arguments to pass to this function complete with surrounding quotes, commas between parameters, etc
-    * Ex: arguments = "'arg1', 'arg2', 'arg3'"
-    */
-   arguments ?: string;
+    functionName: string;
+    /**
+     * Concatenation of arguments to pass to this function complete with surrounding quotes, commas between parameters, etc
+     * Ex: arguments = "'arg1', 'arg2', 'arg3'"
+     */
+    arguments ?: string;
 }
 
 export function functionAsTable(param: Args_FunctionsTable): string {
-   if (!param.arguments) {
-      return `${param.functionName}()`; // no arguments
-   } else {
-      // Base32 encode, then add second set of paranthesis to indicate encoding
+    if (!param.arguments) {
+        return `${param.functionName}()`; // no arguments
+    } else {
+        // Base32 encode, then add second set of paranthesis to indicate encoding
 
-      let uint8array  = new TextEncoder().encode(param.arguments);
-      // https://www.npmjs.com/package/base32-encode
-      let encodedArgs = base32Encode(uint8array, 'RFC4648'); // RFC4648 is the default standard that the application server uses
+        let uint8array = new TextEncoder().encode(param.arguments);
+        // https://www.npmjs.com/package/base32-encode
+        let encodedArgs = base32Encode(uint8array, 'RFC4648'); // RFC4648 is the default standard that the application server uses
 
-      // double paranthesis to indicate encoded arguments
-      return `${param.functionName}((${encodedArgs}))`;
+        // double paranthesis to indicate encoded arguments
+        return `${param.functionName}((${encodedArgs}))`;
 
-   } // if arguments
+    } // if arguments
 } // functionAsTable
 
 
 export interface IKeyValueString {
-   [key: string]: string
+    [key: string]: string
 }
 
 export interface IArgs_HtmlDecoration {
-   htmlTagClass?: string;
-   htmlTagStyle?: CssStyle;
-   htmlOtherAttr?: IKeyValueString; // {string:string};
+    htmlTagClass?: string;
+    htmlTagStyle?: CssStyle;
+    htmlOtherAttr?: IKeyValueString; // {string:string};
 }
 
 export interface IArgs_HtmlTag extends IArgs_HtmlDecoration {
-   htmlTagType?: string; // div by default
+    htmlTagType?: string; // div by default
 }
 
 export class IArgs_HtmlTag_Utils {
 
-   static init(args: IArgs_HtmlDecoration): IArgs_HtmlTag {
-      if (!args)
-         args = {};
-      if (!(args as any).htmlTagType)
-         (args as IArgs_HtmlTag).htmlTagType = 'div';// default to 'div'
-      if (!args.htmlTagClass)
-         args.htmlTagClass = '';
-      if (!args.htmlTagStyle)
-         args.htmlTagStyle = {};
-      if (!args.htmlOtherAttr)
-         args.htmlOtherAttr = {};
+    static init(args: IArgs_HtmlDecoration): IArgs_HtmlTag {
+        if (!args)
+            args = {};
+        if (!(args as any).htmlTagType)
+            (args as IArgs_HtmlTag).htmlTagType = 'div';// default to 'div'
+        if (!args.htmlTagClass)
+            args.htmlTagClass = '';
+        if (!args.htmlTagStyle)
+            args.htmlTagStyle = {};
+        if (!args.htmlOtherAttr)
+            args.htmlOtherAttr = {};
 
-      return args;
-   }
+        return args;
+    }
 
-   static class(args: IArgs_HtmlDecoration): string {
-      args             = IArgs_HtmlTag_Utils.init(args);
-      let htmlTagClass = '';
-      if (args.htmlTagClass)
-         htmlTagClass = ` class="${args.htmlTagClass}"`;
+    static class(args: IArgs_HtmlDecoration): string {
+        args = IArgs_HtmlTag_Utils.init(args);
+        let htmlTagClass = '';
+        if (args.htmlTagClass)
+            htmlTagClass = ` class="${args.htmlTagClass}"`;
 
-      return htmlTagClass;
-   }
+        return htmlTagClass;
+    }
 
-   static style(args: IArgs_HtmlDecoration): string {
-      args             = IArgs_HtmlTag_Utils.init(args);
-      let htmlTagStyle = '';
-      if (args.htmlTagStyle)
-         htmlTagStyle = ` style="${cssStyleToString(args.htmlTagStyle)}"`;
-      return htmlTagStyle;
-   }
+    static style(args: IArgs_HtmlDecoration): string {
+        args = IArgs_HtmlTag_Utils.init(args);
+        let htmlTagStyle = '';
+        if (args.htmlTagStyle)
+            htmlTagStyle = ` style="${cssStyleToString(args.htmlTagStyle)}"`;
+        return htmlTagStyle;
+    }
 
-   static otherAttr(args: IArgs_HtmlDecoration): string {
-      args          = IArgs_HtmlTag_Utils.init(args);
-      let htmlAttrs = '';
-      if (args.htmlOtherAttr) {
-         Object.entries(args.htmlOtherAttr).forEach(entry => {
-            let key   = entry[0];
-            let value = entry[1];
-            //use key and value here
-            if (value == null) {
-               htmlAttrs += ` ${key}` // attributes like 'required' that don't have an equal something after the name
-            } else {
-               htmlAttrs += ` ${key}="${value}"`;
-            }
-         });
-      }
-      return htmlAttrs;
-   }
+    static otherAttr(args: IArgs_HtmlDecoration): string {
+        args = IArgs_HtmlTag_Utils.init(args);
+        let htmlAttrs = '';
+        if (args.htmlOtherAttr) {
+            Object.entries(args.htmlOtherAttr).forEach(entry => {
+                let key = entry[0];
+                let value = entry[1];
+                //use key and value here
+                if (value == null) {
+                    htmlAttrs += ` ${key}` // attributes like 'required' that don't have an equal something after the name
+                } else {
+                    htmlAttrs += ` ${key}="${value}"`;
+                }
+            });
+        }
+        return htmlAttrs;
+    }
 
-   static all(args: IArgs_HtmlDecoration): string {
-      return `${IArgs_HtmlTag_Utils.class(args)}${IArgs_HtmlTag_Utils.style(args)}${IArgs_HtmlTag_Utils.otherAttr(args)}`;
-   }
+    static all(args: IArgs_HtmlDecoration): string {
+        return `${IArgs_HtmlTag_Utils.class(args)}${IArgs_HtmlTag_Utils.style(args)}${IArgs_HtmlTag_Utils.otherAttr(args)}`;
+    }
 
 }
 
@@ -379,68 +392,68 @@ export class IArgs_HtmlTag_Utils {
  * applyHtmlDecoration(elem, decoration);
  */
 export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_HtmlDecoration): void {
-   if (!htmlElement)
-      return;
-   if (!decoration)
-      return;
+    if (!htmlElement)
+        return;
+    if (!decoration)
+        return;
 
-   // first append any classes
-   try {
-      let htmlTagClass: string = decoration.htmlTagClass;
-      if (htmlTagClass) {
-         htmlTagClass = removeDoubleSpaces(htmlTagClass);
-         if (htmlTagClass) {
-            let newClasses: string[] = htmlTagClass.split(' ');
-            htmlElement.classList.remove(...newClasses)
-            htmlElement.classList.add(...newClasses);
-         }
-      } // if ( htmlTagClass)
-   } catch (ex) {
-      console.error(ex);
-   }
+    // first append any classes
+    try {
+        let htmlTagClass: string = decoration.htmlTagClass;
+        if (htmlTagClass) {
+            htmlTagClass = removeDoubleSpaces(htmlTagClass);
+            if (htmlTagClass) {
+                let newClasses: string[] = htmlTagClass.split(' ');
+                htmlElement.classList.remove(...newClasses)
+                htmlElement.classList.add(...newClasses);
+            }
+        } // if ( htmlTagClass)
+    } catch (ex) {
+        console.error(ex);
+    }
 
-   // now update the style attribute
-   try {
-      let styleAsString: string = cssStyleToString(decoration.htmlTagStyle);
-      if (styleAsString) {
-         styleAsString = removeDoubleSpaces(styleAsString);
-         if (styleAsString) {
-            let currentStyle: string = htmlElement.getAttribute('style');
-            if (!currentStyle)
-               currentStyle = ''
-            if (currentStyle.length > 0 && (!currentStyle.endsWith(';')))
-               currentStyle += ';'
+    // now update the style attribute
+    try {
+        let styleAsString: string = cssStyleToString(decoration.htmlTagStyle);
+        if (styleAsString) {
+            styleAsString = removeDoubleSpaces(styleAsString);
+            if (styleAsString) {
+                let currentStyle: string = htmlElement.getAttribute('style');
+                if (!currentStyle)
+                    currentStyle = ''
+                if (currentStyle.length > 0 && (!currentStyle.endsWith(';')))
+                    currentStyle += ';'
 
-            currentStyle += styleAsString;
-            htmlElement.setAttribute('style', currentStyle);
-         }
-      } // if (htmlTagStyle)
-   } catch (ex) {
-      console.error(ex);
-   }
+                currentStyle += styleAsString;
+                htmlElement.setAttribute('style', currentStyle);
+            }
+        } // if (htmlTagStyle)
+    } catch (ex) {
+        console.error(ex);
+    }
 
-   // now add any additional  attributes
+    // now add any additional  attributes
 
-   try {
-      let htmlOtherAttr: IKeyValueString = decoration.htmlOtherAttr;
-      if (htmlOtherAttr) {
-         for (let key in htmlOtherAttr) {
-            if (key) {
-               let value: string = htmlOtherAttr[key];
+    try {
+        let htmlOtherAttr: IKeyValueString = decoration.htmlOtherAttr;
+        if (htmlOtherAttr) {
+            for (let key in htmlOtherAttr) {
+                if (key) {
+                    let value: string = htmlOtherAttr[key];
 
-               if (value == null)
-                  value = ''; // empty attribute
-               try {
-                  htmlElement.setAttribute(key, value);
-               } catch (ex) {
-                  console.error(ex);
-               }
-            } // if key
-         } // for
-      } //if (htmlOtherAttr )
-   } catch (ex) {
-      console.error(ex);
-   }
+                    if (value == null)
+                        value = ''; // empty attribute
+                    try {
+                        htmlElement.setAttribute(key, value);
+                    } catch (ex) {
+                        console.error(ex);
+                    }
+                } // if key
+            } // for
+        } //if (htmlOtherAttr )
+    } catch (ex) {
+        console.error(ex);
+    }
 
 } // applyHtmlDecoration
 
@@ -453,18 +466,18 @@ export function applyHtmlDecoration(htmlElement: HTMLElement, decoration: IArgs_
  * @returns {number} The client width of the element in pixels.
  */
 export function getClientWidth(element: HTMLElement): number {
-   // Temporarily change display to inline-block to measure width if needed
-   const originalDisplay = element.style.display;
-   if (window.getComputedStyle(element).display === 'inline') {
-      element.style.display = 'inline-block';
-   }
+    // Temporarily change display to inline-block to measure width if needed
+    const originalDisplay = element.style.display;
+    if (window.getComputedStyle(element).display === 'inline') {
+        element.style.display = 'inline-block';
+    }
 
-   const width = element.clientWidth;
+    const width = element.clientWidth;
 
-   // Restore the original display value
-   element.style.display = originalDisplay;
+    // Restore the original display value
+    element.style.display = originalDisplay;
 
-   return width;
+    return width;
 } // getClientWidth
 /**
  * Gets the inner height of an HTMLElement, including padding but excluding borders and margins.
@@ -474,18 +487,18 @@ export function getClientWidth(element: HTMLElement): number {
  * @returns {number} The client height of the element in pixels.
  */
 export function getClientHeight(element: HTMLElement): number {
-   // Temporarily change display to inline-block to measure height if needed
-   const originalDisplay = element.style.display;
-   if (window.getComputedStyle(element).display === 'inline') {
-      element.style.display = 'inline-block';
-   }
+    // Temporarily change display to inline-block to measure height if needed
+    const originalDisplay = element.style.display;
+    if (window.getComputedStyle(element).display === 'inline') {
+        element.style.display = 'inline-block';
+    }
 
-   const height = element.clientHeight;
+    const height = element.clientHeight;
 
-   // Restore the original display value
-   element.style.display = originalDisplay;
+    // Restore the original display value
+    element.style.display = originalDisplay;
 
-   return height;
+    return height;
 } // getClientHeight
 
 /**
@@ -496,18 +509,18 @@ export function getClientHeight(element: HTMLElement): number {
  * @returns {number} The offset width of the element in pixels.
  */
 export function getOffsetWidth(element: HTMLElement): number {
-   // Temporarily change display to inline-block to measure width if needed
-   const originalDisplay = element.style.display;
-   if (window.getComputedStyle(element).display === 'inline') {
-      element.style.display = 'inline-block';
-   }
+    // Temporarily change display to inline-block to measure width if needed
+    const originalDisplay = element.style.display;
+    if (window.getComputedStyle(element).display === 'inline') {
+        element.style.display = 'inline-block';
+    }
 
-   const width = element.offsetWidth;
+    const width = element.offsetWidth;
 
-   // Restore the original display value
-   element.style.display = originalDisplay;
+    // Restore the original display value
+    element.style.display = originalDisplay;
 
-   return width;
+    return width;
 } // getOffsetWidth
 
 /**
@@ -518,18 +531,18 @@ export function getOffsetWidth(element: HTMLElement): number {
  * @returns {number} The offset height of the element in pixels.
  */
 export function getOffsetHeight(element: HTMLElement): number {
-   // Temporarily change display to inline-block to measure height if needed
-   const originalDisplay = element.style.display;
-   if (window.getComputedStyle(element).display === 'inline') {
-      element.style.display = 'inline-block';
-   }
+    // Temporarily change display to inline-block to measure height if needed
+    const originalDisplay = element.style.display;
+    if (window.getComputedStyle(element).display === 'inline') {
+        element.style.display = 'inline-block';
+    }
 
-   const height = element.offsetHeight;
+    const height = element.offsetHeight;
 
-   // Restore the original display value
-   element.style.display = originalDisplay;
+    // Restore the original display value
+    element.style.display = originalDisplay;
 
-   return height;
+    return height;
 } // getOffsetHeight
 
 /**
@@ -539,5 +552,5 @@ export function getOffsetHeight(element: HTMLElement): number {
  * @returns {string} - The modified string with leading slashes removed.
  */
 export function removeSlashPrefix(input: string): string {
-   return input.replace(/^\/+/, "");
+    return input.replace(/^\/+/, "");
 }

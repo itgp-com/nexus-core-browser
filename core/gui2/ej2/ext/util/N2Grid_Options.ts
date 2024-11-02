@@ -12,9 +12,9 @@ import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {ClickEventArgs, ItemModel} from '@syncfusion/ej2-navigations';
 import {createElementParams, createSpinner, Dialog, hideSpinner, showSpinner, SpinnerArgs} from '@syncfusion/ej2-popups';
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
-import DOMPurify from 'dompurify';
 import * as _ from 'lodash';
 import {escape, isArray} from 'lodash';
+import {DOMPurifyNexus} from '../../../../BaseUtils';
 import {EJINSTANCES} from '../../../../Constants';
 import {isDev} from '../../../../CoreUtils';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
@@ -1039,7 +1039,7 @@ function calculateDefaultHeaderWidth(headerText: string): number {
     tempDiv.style.whiteSpace = 'nowrap';  // Prevent wrapping
 
     // Insert the text into the div
-    tempDiv.innerHTML = DOMPurify.sanitize(headerText);
+    tempDiv.innerHTML = DOMPurifyNexus(headerText);
 
     // Append the div to the body
     document.body.appendChild(tempDiv);

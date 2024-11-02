@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import {StringArg, stringArgVal} from "../../BaseUtils";
+import {DOMPurifyNexus, StringArg, stringArgVal} from "../../BaseUtils";
 import {Args_AnyWidget}          from "../AnyWidget";
 import {addWidgetClass}          from "../AbstractWidget";
 import {DataProvider}            from "../../data/DataProvider";
@@ -84,7 +84,7 @@ export class CoreLabel extends AnyWidgetStandard<any, Args_AnyWidget, StringArg>
       let anchor                                    = this.hget;
       if (anchor) {
          let sval         = stringArgVal(val);
-         anchor.innerHTML = DOMPurify.sanitize(sval);
+         anchor.innerHTML = DOMPurifyNexus(sval);
          super.value = sval;
       }
    }

@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 import {escape, isArray, throttle} from "lodash";
 import {Props} from "tippy.js";
-import {getRandomString, voidFunction} from "../../BaseUtils";
+import {DOMPurifyNexus, getRandomString, voidFunction} from "../../BaseUtils";
 import {htmlElement_addTooltip_CoreOnly} from "../../CoreUtils";
 import {highlighted_grid_cell_content, isRecFieldVal, RecFieldVal} from '../../gui2/highlight/N2Highlight';
 import {nexusMain} from "../../NexusMain";
@@ -27,14 +27,14 @@ export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFiel
 
        let innerHTML = `<a href="${realLinkValue}" >${visualValue}</a>`;
         if ( wrapper_highlight) {
-            wrapper_highlight.innerHTML = DOMPurify.sanitize(innerHTML);
+            wrapper_highlight.innerHTML = DOMPurifyNexus(innerHTML);
             elem.innerHTML = '';
             elem.appendChild(wrapper_highlight);
         } else {
-            elem.innerHTML = DOMPurify.sanitize(innerHTML);
+            elem.innerHTML = DOMPurifyNexus(innerHTML);
         }
         let a_elem = elem.querySelector('a');
-        a_elem.setAttribute('target', '_blank'); // DOMPurify would remove the target attribute so we add it here
+        a_elem.setAttribute('target', '_blank'); // DOMPurify.sanitize would remove the target attribute so we add it here
         a_elem.setAttribute('rel', 'noopener noreferrer'); // noopener gives no back access to original window object, noreferrer prevents the current page from showing as the referrer in the opened page
     }
 }

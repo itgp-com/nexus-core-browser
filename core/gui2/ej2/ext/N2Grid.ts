@@ -889,9 +889,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
                     //`<div style="padding: 20px;text-align:center;font-size:large;">Invalid value "<span style="font-weight:bold;color:red;">6/6/66</span>"!</div>`
                     if (invalid_value) {
-                        error_elem.innerHTML = `Invalid value: "<span style="font-weight:bold;color:red;">${DOMPurify.sanitize(invalid_value)}</span>"<p>Please enter a valid first value in format <b>${DOMPurify.sanitize(format)}</b> !`;
+                        error_elem.innerHTML = `Invalid value: "<span style="font-weight:bold;color:red;">${DOMPurifyNexus(invalid_value)}</span>"<p>Please enter a valid first value in format <b>${DOMPurify.sanitize(format)}</b> !`;
                     } else {
-                        error_elem.innerHTML = `Please enter a valid value in format <b>${DOMPurify.sanitize(format)}</b> !`;
+                        error_elem.innerHTML = `Please enter a valid value in format <b>${DOMPurifyNexus(format)}</b> !`;
                     }
 
 
@@ -1383,6 +1383,7 @@ import {MenuEventArgs} from '@syncfusion/ej2-navigations';
 import {DialogModel} from '@syncfusion/ej2-popups';
 import DOMPurify from 'dompurify';
 import {isFunction} from 'lodash';
+import {DOMPurifyNexus} from '../../../BaseUtils';
 import {fontColor, isDev} from '../../../CoreUtils';
 import {cssAddSelector} from '../../../CssUtils';
 import {EJBase} from '../../../data/Ej2Comm';
