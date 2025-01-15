@@ -1,4 +1,27 @@
 export const DEFAULT_SYSTEM_I18N: string = 'en_us';
+
+/**
+ * Return the default  Orca1 language ('en_us')
+ * @param value 'en_us
+ */
+export function getLocaleDefault(): string {
+   return DEFAULT_SYSTEM_I18N;
+}
+
+
+/**
+ * Return the current locale of the browser or 'en_us' if not found
+ * @return {string} current locale of the browser
+ */
+export function getLocale(): string {
+   // Fallback for older browsers that might use navigator.userLanguage
+   const locale = navigator.language || (navigator as any).userLanguage || 'en-US';
+   // Convert to lower case and replace hyphen with underscore (e.g., "en-US" to "en_us")
+   return locale.toLowerCase().replace('-', '_');
+}
+
+
+
 //-------------- fields/variables
 /**
  * Default language for the system
