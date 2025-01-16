@@ -63,11 +63,7 @@ export enum QUERY_OPERATORS {
     DOES_NOT_END_WITH = "doesnotendwith",
     DOES_NOT_CONTAIN = "doesnotcontain",
     LIKE = "like",
-    NOT_LIKE = "notlike",
-    IN = "in",
-    NOT_IN = "notin",
-    BETWEEN = "between",
-    NOT_BETWEEN = "notbetween"
+    NOT_LIKE = "notlike"
 }
 
 export function gridWidth(columns: ColumnModel[]): number {
