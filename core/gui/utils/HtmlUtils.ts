@@ -302,13 +302,18 @@ export async function sizeHtmlElementFragment(
 export class Args_SkinnyTooltip {
     htmlElement: HTMLElement;
     text: string | RecFieldVal;
-    maxWidth: number;
+    maxWidth ?: number;
     tippyProps ?: Partial<Props>;
     /**
      * Superseedes the 'text' when opening the dialog
      * @type {string | HTMLElement}
      */
     htmlForDialog ?: string;
+    /**
+     * If true, the text will not be sanitized
+     * @type {boolean} defaults to false
+     */
+    disableDOMPurify ?: boolean;
 }
 
 export function skinnyHtmlElementTooltip(args: Args_SkinnyTooltip): string {

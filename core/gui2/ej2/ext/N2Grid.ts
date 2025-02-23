@@ -14,9 +14,11 @@ export interface StateN2GridRef<N2_GRID extends N2Grid = N2Grid> extends StateN2
     widget?: N2_GRID;
 }
 
-export interface N2Evt_FilterEvent<N2_GRID extends N2Grid = N2Grid> extends FilterEventArgs, N2GridEvent<N2_GRID> {}
+export interface N2Evt_FilterEvent<N2_GRID extends N2Grid = N2Grid> extends FilterEventArgs, N2GridEvent<N2_GRID> {
+}
 
-export interface N2Evt_ActionFailure<N2_GRID extends N2Grid = N2Grid> extends FailureEventArgs, N2GridEvent<N2_GRID> {}
+export interface N2Evt_ActionFailure<N2_GRID extends N2Grid = N2Grid> extends FailureEventArgs, N2GridEvent<N2_GRID> {
+}
 
 
 export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
@@ -109,6 +111,12 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
     onFilterEnd_post?: (args: N2Evt_FilterEvent) => void;
 
 
+    /**
+     * Optional implementation for creating the innerHTML for the current cell
+     * @param args
+     */
+    onQueryGridCellHTML?: (args: { qArgs: QueryCellInfoEventArgs, field:string, recFieldValue:RecFieldVal }) => string;
+
 } // StateN2Grid
 
 export function isN2Grid(widget: any): boolean {
@@ -118,7 +126,9 @@ export function isN2Grid(widget: any): boolean {
 export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<STATE, Grid> {
     static readonly CLASS_IDENTIFIER: string = 'N2Grid';
 
-    get classIdentifier(): string { return N2Grid.CLASS_IDENTIFIER; }
+    get classIdentifier(): string {
+        return N2Grid.CLASS_IDENTIFIER;
+    }
 
     private _ddmenu: N2DropDownMenu;
     private _f_existing_actionFailure: (args: FailureEventArgs) => void;
@@ -150,14 +160,16 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
         let f_existing_onResized = state.onResized;
         state.onResized = (ev: N2Evt_Resized) => {
-            if ( state.resizeTracked) {
+            if (state.resizeTracked) {
 
             } // if state.resizeTracked
 
             try {
-                if ( f_existing_onResized)
+                if (f_existing_onResized)
                     f_existing_onResized.call(thisX, ev);
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
         } // onResized
 
 
@@ -338,7 +350,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     }
 
                 } // columnMenuOpen
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
 
 
             let f_user_columnMenuClick = gridModel.columnMenuClick;
@@ -352,13 +366,17 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                             grid.removeSortColumn(column.field);
                         } // if column
                     }
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error(e);
+                }
 
                 try {
                     if (f_user_columnMenuClick != null) {
                         f_user_columnMenuClick.call(grid, ev);
                     }
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error(e);
+                }
             } // columnMenuClick
         } // if (!state.disableCustomColumnMenu)
         //------------------ Column Menu end ---------------------
@@ -385,9 +403,13 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                             existingExcelQueryCellInfo.call(this, args);
                         } // if existingExcelQueryCellInfo
 
-                    } catch (e) { console.error(e); }
+                    } catch (e) {
+                        console.error(e);
+                    }
                 } // excelQueryCellInfo
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
         } // if state.disableExcelAutoFormater
 
 
@@ -504,7 +526,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                         if (state.onFilterBegin) {
                             try {
                                 state.onFilterBegin.call(thisX, args);
-                            } catch (e) { console.error(e); }
+                            } catch (e) {
+                                console.error(e);
+                            }
                         } // if state.onFilterBegin
 
                         break;
@@ -549,7 +573,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 try {
                     if (existingActionBegin)
                         existingActionBegin.call(this.obj, args);
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error(e);
+                }
 
 
                 if (args.cancel)
@@ -559,7 +585,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                         if (state.onFilterBegin_post) {
                             try {
                                 state.onFilterBegin_post.call(thisX, args);
-                            } catch (e) { console.error(e); }
+                            } catch (e) {
+                                console.error(e);
+                            }
                         } // if state.onFilterBegin
                         break;
                 } // switch
@@ -579,7 +607,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                         if (state.onFilterEnd) {
                             try {
                                 state.onFilterEnd.call(thisX, args);
-                            } catch (e) { console.error(e); }
+                            } catch (e) {
+                                console.error(e);
+                            }
                         } // if state.onFilterEnd
                         break;
                 } // switch
@@ -588,7 +618,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 if (existingActionComplete) {
                     try {
                         existingActionComplete.call(this.obj, args);
-                    } catch (e) { console.error(e); }
+                    } catch (e) {
+                        console.error(e);
+                    }
                 } // if existingActionComplete
 
 
@@ -597,7 +629,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                         if (state.onFilterEnd_post) {
                             try {
                                 state.onFilterEnd_post.call(thisX, args);
-                            } catch (e) { console.error(e); }
+                            } catch (e) {
+                                console.error(e);
+                            }
                         } // if state.onFilterEnd
                         break;
                 } // switch
@@ -658,13 +692,16 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     if (isDev())
                         console.error('N2Grid.onDOMAdded: this.obj is not initialized yet');
                 }
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
         super.onDOMAdded(ev);
     } // onDOMAdded
 
 
-    public onDMDataManagerExecuteQuery(ev: HttpRequestEvtDataManager): void {}
+    public onDMDataManagerExecuteQuery(ev: HttpRequestEvtDataManager): void {
+    }
 
 
     protected actionFailure = (args: FailureEventArgs) => {
@@ -726,7 +763,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         if (this._f_existing_actionFailure && this.obj) {
             try {
                 this._f_existing_actionFailure.call(this?.obj, args);
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
         } // if if (f_actionFailure && this.obj)
     } // actionFailure
 
@@ -734,45 +773,95 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
         try {
             this.pre_existing_QueryCellInfo(args);
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
         if (this._f_existing_queryCellInfo) {
             try {
                 this._f_existing_queryCellInfo.call(this.obj, args);
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
         } // if this._f_existing_queryCellInfo
 
         try {
             this.post_existing_QueryCellInfo(args);
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
     } // queryCellInfo
 
-    protected pre_existing_QueryCellInfo = (args: QueryCellInfoEventArgs) => {
-        let rec: any = args.data;
-        let field: string = args.column.field;
+    protected pre_existing_QueryCellInfo = (qArgs: QueryCellInfoEventArgs) => {
+        let rec: any = qArgs.data;
+        let field: string = qArgs.column.field;
         if (!field)
             return;
-        if (containsHighlighing(rec)) {
-            // The BIG BIG assumption here is that highlights only apply to text content that has no date, number, or other formatting
-            // We simply take the  highlighted value, make a wrapper div, and set highlighted text as content of wrapper div, then make the wrapper the full content of the cell.
-            // If the field is not highlighted, then the value_visible is the same as the value
 
-            let recFieldValue = rec_field_value(rec, field);
+        let recFieldValue = rec_field_value(rec, field);
+        let innerHTML: string;
+        if ( this.state.onQueryGridCellHTML) {
+            try {
+                innerHTML = this.state.onQueryGridCellHTML.call(this, {qArgs, field, recFieldValue});
+            } catch (e) {
+                console.error(e + ' Using default implementation');
+            }
+        } // if this.state.onQueryGridCellHTML
+
+        if ( innerHTML == null) {
+            let value_visible: string | string[] = recFieldValue.value_visible;
+            if (isArray(value_visible)) {
+                // array to string html. HTML is not harmful because the highlighting uses DOMPurify.sanitize
+                innerHTML = value_visible.map(v => v.replace(/,/g, '&#44;')).join(', ') // format array as comma delimited string
+            } else {
+                // single value
+                if (value_visible == null) {
+                    innerHTML = '';
+                } else {
+                    innerHTML = value_visible.toString();
+                } // if value_visible == null
+            }
+        } // if innerHTML == null
+
+        // if (containsHighlighing(rec)) {
+        // } // if containsHighlighing(rec, field
+        //
+
+        if ( innerHTML != null) {
             if (recFieldValue.is_highlighted) {
+
+                // The BIG BIG assumption here is that highlights only apply to text or text array content that has no fancy date, number, or other formatting
+                // We simply take the  highlighted value, make a wrapper div, and set highlighted text as content of wrapper div, then make the wrapper the full content of the cell.
+                // If the field is not highlighted, then the value_visible is the same as the value
+
+
+
                 let wrapper_highlight: HTMLElement = highlighted_grid_cell_content();
-                wrapper_highlight.innerHTML = recFieldValue.value_visible;
-                let cell: HTMLElement = args.cell as HTMLElement;
+                wrapper_highlight.innerHTML = innerHTML
+
+                let cell: HTMLElement = qArgs.cell as HTMLElement;
                 cell.innerHTML = ''; // clear
                 cell.appendChild(wrapper_highlight);
+            } else {
+                // no highlighting, so just set the cell value
+                let cell: HTMLElement = qArgs.cell as HTMLElement;
+                if (cell) {
+                    cell.innerHTML = innerHTML;
+                } // if cell
             }
-        } // if containsHighlighing(rec, field
+        } // if innerHTML != null
+
+
     } // queryCellInfo
 
 
     protected post_existing_QueryCellInfo = (args: QueryCellInfoEventArgs) => {
 
     } // post_existing_QueryCellInfo
+
+
+
 
 
     /**
@@ -932,7 +1021,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             try {
                 if (existing_filterBtnClick)
                     existing_filterBtnClick.call(excelFilterBase, col);
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
 
         } // n2_filterBtnClick
 
@@ -956,7 +1047,8 @@ export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
     let app_custom_excel_filter_width_number: number;
     try {
         app_custom_excel_filter_width_number = Number.parseInt(CSS_VARS_CORE.app_custom_excel_filter_width_number);
-    } catch (e) {}
+    } catch (e) {
+    }
     if (app_custom_excel_filter_width_number == 0)
         app_custom_excel_filter_width_number = 18;
 
@@ -1382,7 +1474,7 @@ import {NumericTextBox} from '@syncfusion/ej2-inputs';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
 import {DialogModel} from '@syncfusion/ej2-popups';
 import DOMPurify from 'dompurify';
-import {isFunction} from 'lodash';
+import {isArray, isFunction} from 'lodash';
 import {DOMPurifyNexus} from '../../../BaseUtils';
 import {fontColor, isDev} from '../../../CoreUtils';
 import {cssAddSelector} from '../../../CssUtils';
@@ -1391,7 +1483,12 @@ import {HttpRequestEvtDataManager} from '../../../data/NexusComm';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {nexusMain} from '../../../NexusMain';
 import {N2Html} from '../../generic/N2Html';
-import {containsHighlighing, highlighted_grid_cell_content, rec_field_value} from '../../highlight/N2Highlight';
+import {
+    containsHighlighing,
+    highlighted_grid_cell_content,
+    rec_field_value,
+    RecFieldVal
+} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded, N2Evt_Resized} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';

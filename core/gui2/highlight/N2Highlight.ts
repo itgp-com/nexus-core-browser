@@ -1,5 +1,9 @@
-import {isArray, isString} from 'lodash';
-import {CSS_CLASS_grid_cell_detail_container, CSS_CLASS_grid_cell_detail_value, CSS_CLASS_grid_cell_highlight_container} from '../../Constants';
+import {isArray} from 'lodash';
+import {
+    CSS_CLASS_grid_cell_detail_container,
+    CSS_CLASS_grid_cell_detail_value,
+    CSS_CLASS_grid_cell_highlight_container
+} from '../../Constants';
 import {cssAdd} from '../../CssUtils';
 import {N2Grid} from '../ej2/ext/N2Grid';
 import {addClassesToElement, IHtmlUtils, N2HtmlDecorator} from '../N2HtmlDecorator';
@@ -114,8 +118,8 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
  * @param record
  * @return {any}
  */
-export function containsHighlighing(record:any) {
-    return record && (record[HIGHLIGHT_RECORD_COLUMN_NAME] );
+export function containsHighlighing(record: any) {
+    return record && (record[HIGHLIGHT_RECORD_COLUMN_NAME]);
 }
 
 /**
@@ -131,28 +135,55 @@ export function containsHighlighing(record:any) {
  * // Output: This is a <span class="n2-highlight-strong">highlighted</span> text.
  * ```
  *
- * @param {string} innerHTML - The input string containing the text to be highlighted.
+ * @param {string} value - The input string containing the text to be highlighted.
  * @return {string} - The processed string with highlight tags replaced by HTML span elements.
  */
-export function highlight_apply(innerHTML: string) : string{
-    if ( !(innerHTML && isString(innerHTML) ) ) {
-        // null, empty string, or non-string input
-        return innerHTML;
-    }
+export function highlight_apply(value: any): string | string[] {
+    if (value == null || value == '') {
+        return ''; //empty string even for null since it's a highlighted string (Always a string)
+    } else if (isArray(value)) {
+        let arrayRawValues = value as any[];
+        // noinspection UnnecessaryLocalVariableJS
+        let arrayValues: string[] = arrayRawValues.map((v) => highlight_apply(v) as string);
+        return arrayValues;
+    } else {
+        try {
 
-    // from here on it's a real string
-    let highlight_tag_open_html = getHighlightTagOpenHtml();
-    let highlight_tag_close_html = getHighlightTagCloseHtml();
-    try {
-        return innerHTML.replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), highlight_tag_open_html)
-            .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), highlight_tag_close_html);
-    } catch (e) {
-        console.error('Error in highlight_apply', e);
-        return innerHTML;
-    }
+        // from here on it's a real string
+        let highlight_tag_open_html = getHighlightTagOpenHtml();
+        let highlight_tag_close_html = getHighlightTagCloseHtml();
+
+            return value.toString().replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), highlight_tag_open_html)
+                .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), highlight_tag_close_html);
+        } catch (e) {
+            console.error('Error in highlight_apply', e);
+            return value;
+        }
+    } // if else
+
+
+//
+// if ( !(value && (isString(value) || isArray(value)) ) ) {
+//     // null, empty string, or non-string input
+//     return value;
+// }
+//
+// // from here on it's a real string
+// let highlight_tag_open_html = getHighlightTagOpenHtml();
+// let highlight_tag_close_html = getHighlightTagCloseHtml();
+// try {
+//
+//
+//
+//
+//     return value.replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), highlight_tag_open_html)
+//         .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), highlight_tag_close_html);
+// } catch (e) {
+//     console.error('Error in highlight_apply', e);
+//     return value;
+// }
 
 } // highlight_apply
-
 
 
 /**
@@ -172,7 +203,7 @@ export function highlight_value(record: any, field: string): any {
     return value;
 }
 
-export function highlighted_raw_value(record:any, field:string) : any {
+export function highlighted_raw_value(record: any, field: string): any {
     if (!record)
         return null;
     let highlights = record[HIGHLIGHT_RECORD_COLUMN_VALUES];
@@ -205,18 +236,19 @@ export function rec_field_value(record: any, field: string): RecFieldVal {
         recFieldVal.value = record[field]; // return actual value when no highlighting
         recFieldVal.value_visible = recFieldVal.value; // start here
 
-        let highlighted_fields = record[HIGHLIGHT_RECORD_COLUMN_NAME] ;
-        if (  highlighted_fields && isArray(highlighted_fields) && highlighted_fields.includes(field) ) {
+        let highlighted_fields = record[HIGHLIGHT_RECORD_COLUMN_NAME];
+        if (highlighted_fields && isArray(highlighted_fields) && highlighted_fields.includes(field)) {
             recFieldVal.is_highlighted = true; // column should be highlighted, but there might be no actual text inside to highlight
         }
         let highlighted_values = record[HIGHLIGHT_RECORD_COLUMN_VALUES];
         if (!highlighted_values) {
             recFieldVal.value_visible = record[field];
         } else {
-            if ( highlighted_values.hasOwnProperty(field) ) {
+            if (highlighted_values.hasOwnProperty(field)) {
                 recFieldVal.value_visible = highlighted_values[field];
-                if (recFieldVal.value_visible)
+                if (recFieldVal.value_visible) {
                     recFieldVal.value_visible = highlight_apply(recFieldVal.value_visible); // expand placeholders to HTML
+                }
             }
         }
     } // if record
