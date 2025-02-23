@@ -115,7 +115,19 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * Optional implementation for creating the innerHTML for the current cell
      * @param args
      */
-    onQueryGridCellHTML?: (args: { qArgs: QueryCellInfoEventArgs, field:string, recFieldValue:RecFieldVal }) => string;
+    onQueryCellInfoHTML?: (args: { qArgs: QueryCellInfoEventArgs, field:string, recFieldValue:RecFieldVal }) => string;
+
+
+    /**
+     * This event gets called before a tooltip for the cell array is created.
+     * If you return 'true' that means that the default tooltip will not be created, and you, the developer is in charge of
+     * creating it at all or any other changes you want to do.
+     *
+     * @param args
+     * @return {boolean|void} true to stop the default tooltip from being shown, empty or false to continue with the default code
+     */
+    onQueryCellInfoArrayTooltip?: (args: { qArgs: QueryCellInfoEventArgs, field:string, recFieldValue:RecFieldVal }) => boolean|void;
+
 
 } // StateN2Grid
 
@@ -800,42 +812,42 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             return;
 
         let recFieldValue = rec_field_value(rec, field);
+        let value_visible: string | string[] = recFieldValue.value_visible;
+        let isDataAnArray:boolean = isArray(value_visible);
+
         let innerHTML: string;
-        if ( this.state.onQueryGridCellHTML) {
+        if ( this.state.onQueryCellInfoHTML) {
             try {
-                innerHTML = this.state.onQueryGridCellHTML.call(this, {qArgs, field, recFieldValue});
+                innerHTML = this.state.onQueryCellInfoHTML.call(this, {qArgs, field, recFieldValue});
             } catch (e) {
                 console.error(e + ' Using default implementation');
             }
         } // if this.state.onQueryGridCellHTML
 
+
+        // fill in the innerHTML if it was not set by the user
         if ( innerHTML == null) {
-            let value_visible: string | string[] = recFieldValue.value_visible;
-            if (isArray(value_visible)) {
+            if (isDataAnArray) {
                 // array to string html. HTML is not harmful because the highlighting uses DOMPurify.sanitize
-                innerHTML = value_visible.map(v => v.replace(/,/g, '&#44;')).join(', ') // format array as comma delimited string
-            } else {
+                innerHTML = (value_visible as string[]).map(v => v.replace(/,/g, '&#44;')).join(', ') // format array as comma delimited string
+            } else { // isDataAnArray
                 // single value
                 if (value_visible == null) {
                     innerHTML = '';
                 } else {
                     innerHTML = value_visible.toString();
                 } // if value_visible == null
-            }
+            } // if isDataAnArray
         } // if innerHTML == null
 
-        // if (containsHighlighing(rec)) {
-        // } // if containsHighlighing(rec, field
-        //
 
-        if ( innerHTML != null) {
+        // now check again if the innerHTML is not null ( should never be null at this point
+        if ( innerHTML) {
             if (recFieldValue.is_highlighted) {
 
                 // The BIG BIG assumption here is that highlights only apply to text or text array content that has no fancy date, number, or other formatting
                 // We simply take the  highlighted value, make a wrapper div, and set highlighted text as content of wrapper div, then make the wrapper the full content of the cell.
                 // If the field is not highlighted, then the value_visible is the same as the value
-
-
 
                 let wrapper_highlight: HTMLElement = highlighted_grid_cell_content();
                 wrapper_highlight.innerHTML = innerHTML
@@ -850,7 +862,27 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     cell.innerHTML = innerHTML;
                 } // if cell
             }
-        } // if innerHTML != null
+        } // if innerHTML == null
+
+
+        let userHandlesTooltip = false;
+        if ( isDataAnArray) {
+            try {
+                userHandlesTooltip = this.state.onQueryCellInfoArrayTooltip?.call(this, {qArgs, field, recFieldValue});
+            } catch (e) {
+                console.error(e + ' Using default tooltip implementation for array data.');
+            }
+        } // if isDataAnArray
+
+        if (! userHandlesTooltip) {
+            // default tooltip
+            let cell: HTMLElement = qArgs.cell as HTMLElement;
+            if (cell) {
+                try {
+                    this.queryCellInfoTooltipForArrayData({qArgs, field, recFieldValue});
+                } catch (e) { console.error(e); }
+            } // if cell
+        } // if userHandlesTooltip
 
 
     } // queryCellInfo
@@ -861,7 +893,15 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     } // post_existing_QueryCellInfo
 
 
-
+    /**
+     * Empty implementation in core
+     * this method is usually overwritten by the extending application from app_specific/Nexus_Overwrites or can be overwritted by an extending class
+     * @param args
+     */
+    public queryCellInfoTooltipForArrayData(args: { qArgs: QueryCellInfoEventArgs, field:string, recFieldValue:RecFieldVal }): void {
+            // this method is overwritten by the extending application from app_specific/Nexus_Overwrites
+            // creates application-specific tooltips for data arrays
+    } // queryCellInfoTooltipForArrayData
 
 
     /**
@@ -1483,12 +1523,7 @@ import {HttpRequestEvtDataManager} from '../../../data/NexusComm';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {nexusMain} from '../../../NexusMain';
 import {N2Html} from '../../generic/N2Html';
-import {
-    containsHighlighing,
-    highlighted_grid_cell_content,
-    rec_field_value,
-    RecFieldVal
-} from '../../highlight/N2Highlight';
+import {highlighted_grid_cell_content, rec_field_value, RecFieldVal} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded, N2Evt_Resized} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';
