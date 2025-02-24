@@ -865,24 +865,24 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } // if innerHTML == null
 
 
-        let userHandlesTooltip = false;
         if ( isDataAnArray) {
+            let userHandlesTooltip = false;
             try {
                 userHandlesTooltip = this.state.onQueryCellInfoArrayTooltip?.call(this, {qArgs, field, recFieldValue});
             } catch (e) {
                 console.error(e + ' Using default tooltip implementation for array data.');
             }
-        } // if isDataAnArray
 
-        if (! userHandlesTooltip) {
-            // default tooltip
-            let cell: HTMLElement = qArgs.cell as HTMLElement;
-            if (cell) {
-                try {
-                    this.queryCellInfoTooltipForArrayData({qArgs, field, recFieldValue});
-                } catch (e) { console.error(e); }
-            } // if cell
-        } // if userHandlesTooltip
+            if (! userHandlesTooltip) {
+                // default tooltip
+                let cell: HTMLElement = qArgs.cell as HTMLElement;
+                if (cell) {
+                    try {
+                        this.queryCellInfoTooltipForArrayData({qArgs, field, recFieldValue});
+                    } catch (e) { console.error(e); }
+                } // if cell
+            } // if userHandlesTooltip
+        } // if isDataAnArray
 
 
     } // queryCellInfo
