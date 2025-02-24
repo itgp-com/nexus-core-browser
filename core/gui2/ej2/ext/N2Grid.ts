@@ -832,11 +832,8 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 innerHTML = (value_visible as string[]).map(v => v.replace(/,/g, '&#44;')).join(', ') // format array as comma delimited string
             } else { // isDataAnArray
                 // single value
-                if (value_visible == null) {
-                    innerHTML = '';
-                } else {
-                    innerHTML = value_visible.toString();
-                } // if value_visible == null
+                // do absolutely nothing - leave things as they are in innerHTML (could be formatted data, which value_visible would not be
+
             } // if isDataAnArray
         } // if innerHTML == null
 
