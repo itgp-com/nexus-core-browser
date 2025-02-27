@@ -15,7 +15,7 @@ import {TreeGridModel} from '@syncfusion/ej2-treegrid';
 import * as _ from 'lodash';
 import {escape, isArray} from 'lodash';
 import {DOMPurifyNexus} from '../../../../BaseUtils';
-import {EJINSTANCES} from '../../../../Constants';
+import {CSS_CLASS_grid_cell_detail, EJINSTANCES} from '../../../../Constants';
 import {isDev} from '../../../../CoreUtils';
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
@@ -41,6 +41,40 @@ export class N2Grid_Options_Utils {
     public static getPixelCharWidth(): number {
         return 7.5;
     }
+
+    /**
+     * This function should be overwritten (with new content) by the NexusOverwrites module of any application
+     * that uses this core library.
+     *
+     * If it is not overwritten, it returns false
+     * @param args {qArgs:QueryCellInfoEventArgs}
+     * @return {boolean} false if not cell content not blurred, true if content is marked as blurred
+     */
+    public static isBlurred(param:{qArgs:QueryCellInfoEventArgs}): boolean {
+        return false;
+    } // isBlurred
+
+    /**
+     * This function should be overwritten (with new content) by the NexusOverwrites module of any application
+     *
+     * @param qArgs
+     */
+    public static isRowDetailPanel(qArgs: QueryCellInfoEventArgs): boolean {
+        let val:boolean = false;
+        if ((qArgs as any)?.row_detail_panel )
+         val = (qArgs as any).row_detail_panel; // mark this as a detail panel cell, used in Search_Base in _add_highlighted_excerpts_to_grid_cells
+        return val;
+    } // isDetailPane
+
+    /**
+     * This function should be overwritten (with new content) by the NexusOverwrites module of any application
+     * @param qArgs
+     * @param val
+     */
+    public static setRowDetailPanel(qArgs: QueryCellInfoEventArgs, val:boolean): void {
+        (qArgs as any).row_detail_panel = val;
+    } // setRowDetailPanel
+
 } // N2Grid_Options
 
 

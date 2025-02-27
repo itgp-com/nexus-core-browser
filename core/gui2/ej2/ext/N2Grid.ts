@@ -115,7 +115,11 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * Optional implementation for creating the innerHTML for the current cell
      * @param args
      */
-    onQueryCellInfoHTML?: (args: { qArgs: QueryCellInfoEventArgs, field:string, recFieldValue:RecFieldVal }) => string;
+    onQueryCellInfoHTML?: (args: {
+        qArgs: QueryCellInfoEventArgs,
+        field: string,
+        recFieldValue: RecFieldVal
+    }) => string;
 
 
     /**
@@ -126,7 +130,25 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * @param args
      * @return {boolean|void} true to stop the default tooltip from being shown, empty or false to continue with the default code
      */
-    onQueryCellInfoArrayTooltip?: (args: { qArgs: QueryCellInfoEventArgs, field:string, recFieldValue:RecFieldVal }) => boolean|void;
+    onQueryCellInfo_ArrayTooltip?: (args: {
+        qArgs: QueryCellInfoEventArgs,
+        field: string,
+        recFieldVal: RecFieldVal
+    }) => boolean | void;
+
+    /**
+     * This event gets called before a tooltip for the cell (that contains regular atomic/non array data) is created.
+     * If you return 'true' that means that the default tooltip will not be created, and you, the developer is in charge of
+     * creating it at all or any other changes you want to do.
+     *
+     * @param args
+     * @return {string|void} string to show as tooltip, empty or void to continue with the default code
+     */
+    onQueryCellInfo_RegularTooltip?: (args: {
+        qArgs: QueryCellInfoEventArgs,
+        field: string,
+        recFieldVal: RecFieldVal
+    }) => string | void;
 
 
 } // StateN2Grid
@@ -797,6 +819,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             }
         } // if this._f_existing_queryCellInfo
 
+
         try {
             this.post_existing_QueryCellInfo(args);
         } catch (e) {
@@ -811,14 +834,49 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         if (!field)
             return;
 
-        let recFieldValue = rec_field_value(rec, field);
-        let value_visible: string | string[] = recFieldValue.value_visible;
-        let isDataAnArray:boolean = isArray(value_visible);
+        let isBlurred = false;
+        try {
+            isBlurred = N2Grid_Options_Utils.isBlurred({qArgs});
+        } catch (e) {
+            console.error(e);
+        }
+
+        let cell: HTMLElement = qArgs.cell as HTMLElement;
+        let recFieldVal = rec_field_value(rec, field);
+        let isRowDetailPanel = N2Grid_Options_Utils.isRowDetailPanel(qArgs);
+        let isDataAnArray: boolean = isArray(recFieldVal.value_visible);
+        let isHighlightedHTML = false;
+
+        let content: string | string[];
+        if (recFieldVal.is_highlighted) {
+            content = recFieldVal.value_visible;
+            isHighlightedHTML = true;
+        } else {
+            content = recFieldVal.value // same as text.value_visible actually
+        }
+
+        // if we have content, are in row_detail_panel mode and we're not blurred, then add the CSS_CLASS_detail_long_text class
+        if (content && isRowDetailPanel && !N2Grid_Options_Utils.isBlurred({qArgs})) { // was in OrcaWidgets/ skinnyElemTooltip 309
+            let htmlElement: HTMLElement;
+            if (cell.classList.contains(CSS_CLASS_grid_cell_detail))
+                htmlElement = cell.querySelector(CSS_CLASS_grid_cell_detail);
+            else
+                htmlElement = cell.querySelector(`.${CSS_CLASS_grid_cell_detail}`);
+
+            // htmlElement is not null only if we're inside a detail panel call
+            if (htmlElement) {
+                // this is not a Grid cell, it's a detail cell
+                addClassesToElement(htmlElement, CSS_CLASS_detail_long_text);
+                if (htmlElement.id == null)
+                    htmlElement.id = getRandomString(`cell_detail_longtxt`);
+            }
+        } // if content && ! N2Grid_Options_Utils.isBlurred({qArgs})
+
 
         let innerHTML: string;
-        if ( this.state.onQueryCellInfoHTML) {
+        if (this.state.onQueryCellInfoHTML) {
             try {
-                innerHTML = this.state.onQueryCellInfoHTML.call(this, {qArgs, field, recFieldValue});
+                innerHTML = this.state.onQueryCellInfoHTML.call(this, {qArgs, field, recFieldValue: recFieldVal});
             } catch (e) {
                 console.error(e + ' Using default implementation');
             }
@@ -826,61 +884,135 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
         // fill in the innerHTML if it was not set by the user
-        if ( innerHTML == null) {
+        if (innerHTML == null) {
             if (isDataAnArray) {
-                // array to string html. HTML is not harmful because the highlighting uses DOMPurify.sanitize
-                innerHTML = (value_visible as string[]).map(v => v.replace(/,/g, '&#44;')).join(', ') // format array as comma delimited string
+                if (isRowDetailPanel) {
+                    // in row detail, the content is <br> delimited so we can see the list better
+                    innerHTML = (content as string[]).map(v => v.replace(/,/g, '&#44;')).join('<br>'); // format array as multi-line string for each array entry
+                } else {
+                    // grid cell for array is ', ' delimited
+                    innerHTML = (content as string[]).map(v => v.replace(/,/g, '&#44;')).join(', ') // format array as comma delimited string
+                }
             } else { // isDataAnArray
-                // single value
-                // do absolutely nothing - leave things as they are in innerHTML (could be formatted data, which value_visible would not be
-
+                if (isHighlightedHTML) {
+                    // highlighted content is already formatted as HTML, so just set it
+                    innerHTML = content as string;
+                } else {
+                    // plain single value
+                    // do absolutely nothing - leave things as they are in innerHTML (could be formatted data, which value_visible would not be
+                }
             } // if isDataAnArray
+
+
         } // if innerHTML == null
 
 
-        // now check again if the innerHTML is not null ( should never be null at this point
-        if ( innerHTML) {
-            if (recFieldValue.is_highlighted) {
+        // if innerHTML has been instantiated (array or highlighted text)
 
-                // The BIG BIG assumption here is that highlights only apply to text or text array content that has no fancy date, number, or other formatting
-                // We simply take the  highlighted value, make a wrapper div, and set highlighted text as content of wrapper div, then make the wrapper the full content of the cell.
-                // If the field is not highlighted, then the value_visible is the same as the value
+        if (innerHTML) {
 
-                let wrapper_highlight: HTMLElement = highlighted_grid_cell_content();
-                wrapper_highlight.innerHTML = innerHTML
+            // so if we have a new innerHTML, we need to set the surrounding CSS for innerHTML
 
-                let cell: HTMLElement = qArgs.cell as HTMLElement;
-                cell.innerHTML = ''; // clear
-                cell.appendChild(wrapper_highlight);
-            } else {
-                // no highlighting, so just set the cell value
-                let cell: HTMLElement = qArgs.cell as HTMLElement;
-                if (cell) {
-                    cell.innerHTML = innerHTML;
-                } // if cell
-            }
+
+            const e = document.createElement("div");
+            e.style.display = "flex";
+            e.style.alignItems = "center";
+
+
+            const textCell = document.createElement("div");
+            if (isHighlightedHTML)
+                addClassesToElement(e, [CSS_CLASS_grid_cell_highlight_container, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS]);
+
+            // direct add if no highlighting
+            textCell.innerHTML = innerHTML;
+            textCell.style.flex = "1";
+
+
+            addClassesToElement(textCell, CSS_CLASS_ellipsis_container);
+
+
+            const iconCell = document.createElement("div");
+            const icon = document.createElement("i");
+            // icon.classList.add("fa-solid", "fa-magnifying-glass");
+            icon.classList.add("fa-regular", "fa-comment-dots"); // <i class="fa-regular fa-comment-dots"></i>
+            icon.style.cursor = "pointer";
+            icon.style.color = CSS_VARS_CORE.app_color_blue;
+            icon.style.fontSize = "0.65em";
+
+            iconCell.appendChild(icon);
+
+            e.appendChild(textCell);
+            e.appendChild(iconCell);
+
+            // add click to iconCell to get const tippyInstance = elem._tippy; and if if (tippyInstance.state.isVisible) then call  tippyInstance.show();
+            iconCell.style.cursor = "pointer";
+            iconCell.addEventListener('click', () => {
+                const tippyInstance = (cell as any)._tippy;
+                if (tippyInstance) {
+                    if (tippyInstance?.state?.isVisible == false) {
+                        tippyInstance.show();
+                    } // if (tippyInstance?.state?.isVisible == false)
+                } // if ( tippyInstance)
+            }); // iconCell.addEventListener('click', ...)
+
+            cell.innerHTML = ''; // clear all contents
+            cell.appendChild(e);
         } // if innerHTML == null
 
 
-        if ( isDataAnArray) {
+        let existing_tippy_tooltip = findElementWithTippyTooltip(cell);
+        if ( existing_tippy_tooltip == null) {
+
             let userHandlesTooltip = false;
-            try {
-                userHandlesTooltip = this.state.onQueryCellInfoArrayTooltip?.call(this, {qArgs, field, recFieldValue});
-            } catch (e) {
-                console.error(e + ' Using default tooltip implementation for array data.');
-            }
+            if (isDataAnArray) {
+                try {
+                    userHandlesTooltip = this.state.onQueryCellInfo_ArrayTooltip?.call(this, {
+                        qArgs,
+                        field,
+                        recFieldValue: recFieldVal
+                    });
+                } catch (e) {
+                    console.error(e + ' Using default tooltip implementation for array data.');
+                }
 
-            if (! userHandlesTooltip) {
-                // default tooltip
-                let cell: HTMLElement = qArgs.cell as HTMLElement;
-                if (cell) {
+                if (!userHandlesTooltip) {
+                    // default array tooltip
+                    let cell: HTMLElement = qArgs.cell as HTMLElement;
+                    if (cell) {
+                        try {
+                            this.queryCellInfo_ArrayTooltip({qArgs, field, recFieldVal: recFieldVal});
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    } // if cell
+                } // if userHandlesTooltip
+            } else {
+                // not an array
+                if (isHighlightedHTML) {
                     try {
-                        this.queryCellInfoTooltipForArrayData({qArgs, field, recFieldValue});
-                    } catch (e) { console.error(e); }
-                } // if cell
-            } // if userHandlesTooltip
-        } // if isDataAnArray
+                        userHandlesTooltip = this.state.onQueryCellInfo_RegularTooltip?.call(this, {  // Nexus_Overwrites usually creates an application specific tooltip implementation
+                            qArgs,
+                            field,
+                            recFieldValue: recFieldVal
+                        });
+                    } catch (e) {
+                        console.error(e + ' Using default tooltip implementation for array data.');
+                    }
 
+                    if (!userHandlesTooltip) {
+                        // default regular tooltip
+                        let cell: HTMLElement = qArgs.cell as HTMLElement;
+                        if (cell) {
+                            try {
+                                this.queryCellInfo_RegularTooltip({qArgs, field, recFieldVal: recFieldVal}); // Nexus_Overwrites usually creates an application specific tooltip implementation
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        } // if cell
+                    } // if userHandlesTooltip
+                } // if ( isHighlightedHTML)
+            } // if isDataAnArray
+        } // if ( existing_tippy_tooltip == null)
 
     } // queryCellInfo
 
@@ -891,14 +1023,32 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
     /**
-     * Empty implementation in core
-     * this method is usually overwritten by the extending application from app_specific/Nexus_Overwrites or can be overwritted by an extending class
+     * Empty implementation in core. Is overwritten by Nexus_Overwrites in extending application.
+     *
+     * This method is can also be an extending class, separate from Nexus_Overwrites, if needed.
      * @param args
      */
-    public queryCellInfoTooltipForArrayData(args: { qArgs: QueryCellInfoEventArgs, field:string, recFieldValue:RecFieldVal }): void {
-            // this method is overwritten by the extending application from app_specific/Nexus_Overwrites
-            // creates application-specific tooltips for data arrays
+    public queryCellInfo_ArrayTooltip(args: {
+        qArgs: QueryCellInfoEventArgs,
+        field: string,
+        recFieldVal: RecFieldVal
+    }): void {
+        // this method is overwritten by the extending application from app_specific/Nexus_Overwrites
+        // creates application-specific tooltips for data arrays
     } // queryCellInfoTooltipForArrayData
+
+    /**
+     * Empty implementation in core. Is overwritten by Nexus_Overwrites in extending application.
+     * @param args
+     */
+    public queryCellInfo_RegularTooltip(args: {
+        qArgs: QueryCellInfoEventArgs,
+        field: string,
+        recFieldVal: RecFieldVal
+    }): void {
+        // this method is overwritten by the extending application from app_specific/Nexus_Overwrites
+        // creates application-specific tooltips for regular data
+    }
 
 
     /**
@@ -1097,6 +1247,23 @@ export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
     let gridHoverFontColor = fontColor(gridHoverBgColor); // the contrast color to the current background
 
 
+    cssAdd(`
+.${CSS_CLASS_ellipsis_container}, .${N2Grid.CLASS_IDENTIFIER} .e-rowcell .${CSS_CLASS_ellipsis_container} {
+  width: 100%; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.${n2GridClass}.e-control.${eGridClass} .e-rowcell {
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size-regular);        
+}
+ 
+ 
+    `); // CSS for N2Grid and N2TreeGrid
+
+
     // Removes blue background from grid editable checkbox and restores border and font color
     cssAddSelector(`.${n2GridClass} .e-checkbox-wrapper .e-frame.e-check, .${n2GridClass} .e-css.e-checkbox-wrapper .e-frame.e-check`,
         `
@@ -1157,11 +1324,11 @@ font-size: var(--app-font-size-regular);`
         color: ${gridHoverFontColor} !important;
     `);
 
-    // Grid cell font type and size
-    cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell`, `
-  font-family: var(--app-font-family);
-  font-size: var(--app-font-size-regular);    
-    `);
+  //   // Grid cell font type and size
+  //   cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell`, `
+  // font-family: var(--app-font-family);
+  // font-size: var(--app-font-size-regular);
+  //   `);
 
 
     // left divider color for row cell, header and filter cells
@@ -1512,19 +1679,25 @@ import {MenuEventArgs} from '@syncfusion/ej2-navigations';
 import {DialogModel} from '@syncfusion/ej2-popups';
 import DOMPurify from 'dompurify';
 import {isArray, isFunction} from 'lodash';
-import {DOMPurifyNexus} from '../../../BaseUtils';
-import {fontColor, isDev} from '../../../CoreUtils';
-import {cssAddSelector} from '../../../CssUtils';
+import {DOMPurifyNexus, getRandomString} from '../../../BaseUtils';
+import {
+    CSS_CLASS_detail_long_text,
+    CSS_CLASS_ellipsis_container,
+    CSS_CLASS_grid_cell_detail,
+    CSS_CLASS_grid_cell_highlight_container
+} from "../../../Constants";
+import {findElementWithTippyTooltip, fontColor, isDev} from '../../../CoreUtils';
+import {cssAdd, cssAddSelector} from '../../../CssUtils';
 import {EJBase} from '../../../data/Ej2Comm';
 import {HttpRequestEvtDataManager} from '../../../data/NexusComm';
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {nexusMain} from '../../../NexusMain';
 import {N2Html} from '../../generic/N2Html';
-import {highlighted_grid_cell_content, rec_field_value, RecFieldVal} from '../../highlight/N2Highlight';
+import {CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS, rec_field_value, RecFieldVal} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded, N2Evt_Resized} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';
-import {addN2Class} from '../../N2HtmlDecorator';
+import {addClassesToElement, addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
@@ -1533,7 +1706,7 @@ import {getFirstEj2FromModel} from '../Ej2Utils';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 import {N2Dialog} from './N2Dialog';
 import {N2Grid_DropDownMenu} from './util/N2Grid_DropDownMenu';
-import {stateGrid_CustomExcelFilter} from './util/N2Grid_Options';
+import {N2Grid_Options_Utils, stateGrid_CustomExcelFilter} from './util/N2Grid_Options';
 import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSource';
 
 Grid.Inject(

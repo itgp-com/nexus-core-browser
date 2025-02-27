@@ -8,6 +8,7 @@ export const CSS_CLASS_grid_cell_detail_container = 'n2-grid-cell-detail-contain
 export const CSS_CLASS_grid_cell_detail_parent = 'n2-grid-cell-detail-parent';
 export const CSS_CLASS_detail_long_text = 'n2-detail-long-text';
 export const CSS_CLASS_grid_cell_highlight_container = 'n2-grid-cell-highlight-container';
+export const CSS_CLASS_ellipsis_container = 'n2-ellipsis-container';
 
 export const CSS_CLASS_o_detail_text_collapsible: string = 'n2-detail-text-collapsible';
 export const CSS_CLASS_o_detail_content: string = 'n2-detail-content';

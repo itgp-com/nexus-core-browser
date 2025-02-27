@@ -993,3 +993,25 @@ export function inertColumnModel(): ColumnModel {
         showColumnMenu: false,
     } as ColumnModel;
 }
+
+
+export function findElementWithTippyTooltip(root: HTMLElement): HTMLElement | null {
+    if ((root as any)._tippy) {
+        return root;
+    }
+    for (const child of Array.from(root.children)) {
+        const found = findElementWithTippyTooltip(child as HTMLElement);
+        if (found) {
+            return found;
+        }
+    }
+    return null;
+} // findElementWithTippyTooltip
+
+
+export function removeTippyTooltip(element: HTMLElement): void {
+    const tippyInstance = (element as any)._tippy;
+    if (tippyInstance) {
+        tippyInstance.destroy();
+    }
+} // removeTippyTooltip
