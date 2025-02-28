@@ -149,9 +149,9 @@ export function highlight_apply(value: any): string | string[] {
     } else {
         try {
 
-        // from here on it's a real string
-        let highlight_tag_open_html = getHighlightTagOpenHtml();
-        let highlight_tag_close_html = getHighlightTagCloseHtml();
+            // from here on it's a real string
+            let highlight_tag_open_html = getHighlightTagOpenHtml();
+            let highlight_tag_close_html = getHighlightTagCloseHtml();
 
             return value.toString().replace(new RegExp(HIGHLIGHT_TAG_OPEN, 'g'), highlight_tag_open_html)
                 .replace(new RegExp(HIGHLIGHT_TAG_CLOSE, 'g'), highlight_tag_close_html);
@@ -232,39 +232,34 @@ export interface RecFieldVal {
     /**
      * Automated tooltip content.
      */
-    value_tooltip :any;
+    value_tooltip: any;
 }
 
 export function rec_field_value(record: any, field: string): RecFieldVal {
-    let recFieldVal: RecFieldVal = {value: null, value_visible: null, is_highlighted: false, value_tooltip:null};
+    let recFieldVal: RecFieldVal = {value: null, value_visible: null, is_highlighted: false, value_tooltip: null};
 
     if (record) {
         recFieldVal.value = record[field]; // return actual value when no highlighting
-        recFieldVal.value_visible = recFieldVal.value; // start here
 
-        let highlighted_fields = record[HIGHLIGHT_RECORD_COLUMN_NAME];
-        if (highlighted_fields && isArray(highlighted_fields) && highlighted_fields.includes(field)) {
-            recFieldVal.is_highlighted = true; // column should be highlighted, but there might be no actual text inside to highlight
-        }
-
+        recFieldVal.is_highlighted = isFieldHighlightedInRecord(record, field); // column should be highlighted, but there might be no actual text inside to highlight
 
         let highlighted_values = record[HIGHLIGHT_RECORD_COLUMN_VALUES];
         let highlighted_excerpts = record[HIGHLIGHT_RECORD_COLUMN_EXCERPTS];
 
-        let columnValue = highlight_apply( highlighted_values[field] );
-        let columnExcerpt = highlight_apply( highlighted_excerpts[field] ) ;
+        let fieldValue = (highlighted_values == null ? null:  highlight_apply(highlighted_values[field]) );
+        let fieldExcerpt = (highlighted_excerpts == null ? null : highlight_apply(highlighted_excerpts[field]) );
 
+        recFieldVal.value_visible = recFieldVal.value; // start here
         if (!highlighted_values) {
             recFieldVal.value_visible = record[field];
         } else {
-            if (columnValue) {
-                recFieldVal.value_visible = columnValue;
-            }
-        }
+            if (fieldValue)
+                recFieldVal.value_visible = fieldValue;
+        } // if highlighted_values
 
         recFieldVal.value_tooltip = recFieldVal.value_visible;
-        if ( !columnValue && columnExcerpt )
-            recFieldVal.value_tooltip = columnExcerpt; // if no columnValue, use columnExcerpt for tooltip
+        if (!fieldValue && fieldExcerpt)
+            recFieldVal.value_tooltip = fieldExcerpt; // if no columnValue, use columnExcerpt for tooltip
 
     } // if record
     return recFieldVal;
@@ -279,3 +274,10 @@ export function highlighted_grid_cell_content(): HTMLElement {
     addClassesToElement(wrapper_highlight, [CSS_CLASS_grid_cell_highlight_container, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS]);
     return wrapper_highlight;
 }
+
+export function isFieldHighlightedInRecord(record: any, field: string): boolean {
+    if (!record || !field)
+        return false;
+    let highlighted_fields = record[HIGHLIGHT_RECORD_COLUMN_NAME];
+    return highlighted_fields && isArray(highlighted_fields) && highlighted_fields.includes(field);
+} // isFieldHighlightedInRecord
