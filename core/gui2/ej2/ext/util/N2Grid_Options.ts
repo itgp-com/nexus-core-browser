@@ -10,13 +10,26 @@ import {RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interfa
 import {ExcelFilterBase} from '@syncfusion/ej2-grids/src/grid/common/excel-filter-base';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {ClickEventArgs, ItemModel} from '@syncfusion/ej2-navigations';
-import {createElementParams, createSpinner, Dialog, hideSpinner, showSpinner, SpinnerArgs} from '@syncfusion/ej2-popups';
+import {
+    createElementParams,
+    createSpinner,
+    Dialog,
+    hideSpinner,
+    showSpinner,
+    SpinnerArgs
+} from '@syncfusion/ej2-popups';
 import {TreeGridModel} from '@syncfusion/ej2-treegrid';
 import * as _ from 'lodash';
 import {escape, isArray} from 'lodash';
 import {DOMPurifyNexus} from '../../../../BaseUtils';
-import {CSS_CLASS_grid_cell_detail, EJINSTANCES} from '../../../../Constants';
-import {isDev} from '../../../../CoreUtils';
+import {
+    CSS_CLASS_ellipsis_container,
+    CSS_CLASS_grid_cell_highlight_container,
+    EJINSTANCES
+} from '../../../../Constants';
+import {findElementWithTippyTooltip, isDev} from '../../../../CoreUtils';
+import {CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS} from "../../../highlight/N2Highlight";
+import {addClassesToElement} from "../../../N2HtmlDecorator";
 import {CSS_CLASS_GRID_FILTER_MENU_PRESENT, CSS_CLASS_row_number_001} from '../../../scss/core';
 import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../../scss/vars-material';
@@ -50,7 +63,7 @@ export class N2Grid_Options_Utils {
      * @param args {qArgs:QueryCellInfoEventArgs}
      * @return {boolean} false if not cell content not blurred, true if content is marked as blurred
      */
-    public static isBlurred(param:{qArgs:QueryCellInfoEventArgs}): boolean {
+    public static isBlurred(param: { qArgs: QueryCellInfoEventArgs }): boolean {
         return false;
     } // isBlurred
 
@@ -60,9 +73,9 @@ export class N2Grid_Options_Utils {
      * @param qArgs
      */
     public static isRowDetailPanel(qArgs: QueryCellInfoEventArgs): boolean {
-        let val:boolean = false;
-        if ((qArgs as any)?.row_detail_panel )
-         val = (qArgs as any).row_detail_panel; // mark this as a detail panel cell, used in Search_Base in _add_highlighted_excerpts_to_grid_cells
+        let val: boolean = false;
+        if ((qArgs as any)?.row_detail_panel)
+            val = (qArgs as any).row_detail_panel; // mark this as a detail panel cell, used in Search_Base in _add_highlighted_excerpts_to_grid_cells
         return val;
     } // isDetailPane
 
@@ -71,9 +84,83 @@ export class N2Grid_Options_Utils {
      * @param qArgs
      * @param val
      */
-    public static setRowDetailPanel(qArgs: QueryCellInfoEventArgs, val:boolean): void {
+    public static setRowDetailPanel(qArgs: QueryCellInfoEventArgs, val: boolean): void {
         (qArgs as any).row_detail_panel = val;
     } // setRowDetailPanel
+
+
+    public static createEllipsisContainerElement(param: {
+        textElem: HTMLElement,
+        qArgs: QueryCellInfoEventArgs,
+        includeDotTooltipButton?: boolean,
+        isHighlightedHTML?: boolean
+    }): HTMLElement {
+
+        let isHighlightedHTML: boolean = param?.isHighlightedHTML || false;
+        let includeDotTooltipButton: boolean = param?.includeDotTooltipButton || false;
+        let textElem: HTMLElement = param?.textElem;
+        if (!textElem) {
+            console.error('textElem passed to N2Grid_Options_Utils.createEllipsisContainerElement(..) is null or undefined');
+            return null;
+        }
+
+
+        let cell: HTMLElement = param?.qArgs.cell as HTMLElement;
+        if (!cell) {
+            console.error('gridCell passed to N2Grid_Options_Utils.createEllipsisContainerElement(..) is null or undefined');
+            return null;
+        }
+
+        const ellipsisContainerElem = document.createElement("div");
+        ellipsisContainerElem.style.display = "flex";
+        ellipsisContainerElem.style.alignItems = "center";
+        if (isHighlightedHTML)
+            addClassesToElement(ellipsisContainerElem, [CSS_CLASS_grid_cell_highlight_container, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS]);
+
+        textElem.style.flex = "1";
+
+        addClassesToElement(textElem, CSS_CLASS_ellipsis_container);
+
+        ellipsisContainerElem.appendChild(textElem);
+
+        // if specifically called with includeDotTooltipButton = true, then always add the button
+        // if not, then add it if the cell is a not detail panel cell
+        let addDotTooltipButton: boolean = includeDotTooltipButton;
+        if ( addDotTooltipButton == false){
+            if ( ! (N2Grid_Options_Utils.isRowDetailPanel(param.qArgs) == true) ){
+                addDotTooltipButton = true; // add button if not a detail panel cell, don't add if a detail panel cell
+            } // if (N2Grid_Options_Utils.isRowDetailPanel(param.qArgs) == true)
+        } // if (addDotTooltipButton == false)
+
+        if (addDotTooltipButton ) {
+
+            const iconCell = document.createElement("div");
+            const icon = document.createElement("i");
+            // icon.classList.add("fa-solid", "fa-magnifying-glass");
+            icon.classList.add("fa-regular", "fa-comment-dots"); // <i class="fa-regular fa-comment-dots"></i>
+            icon.style.cursor = "pointer";
+            icon.style.color = CSS_VARS_CORE.app_color_blue;
+            icon.style.fontSize = "0.65em";
+
+            iconCell.appendChild(icon);
+            ellipsisContainerElem.appendChild(iconCell);
+
+            // add click to iconCell to get const tippyInstance = elem._tippy; and if if (tippyInstance.state.isVisible) then call  tippyInstance.show();
+            iconCell.style.cursor = "pointer";
+            iconCell.addEventListener('click', () => {
+                let tippyElem = findElementWithTippyTooltip(cell);
+                if (tippyElem) {
+                    const tippyInstance = (cell as any)._tippy;
+                    if (tippyInstance) {
+                        if (tippyInstance?.state?.isVisible == false) {
+                            tippyInstance.show();
+                        } // if (tippyInstance?.state?.isVisible == false)
+                    } // if ( tippyInstance)
+                } // if ( tippyElem )
+            }); // iconCell.addEventListener('click', ...)
+        } // if (includeDotTooltipButton)
+        return ellipsisContainerElem;
+    } // createEllipsisContainerElement
 
 } // N2Grid_Options
 
@@ -907,7 +994,9 @@ function getGridFilterMessage(gObj: Grid): string {
 
             }
         }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+    }
 
     return filterStatusMsg;
 } // getGridFilterMessage
@@ -971,7 +1060,8 @@ export function adjustColumnWidthForCustomExcelFilters(columns: ColumnModel[]) {
     let app_custom_excel_filter_width_number: number;
     try {
         app_custom_excel_filter_width_number = Number.parseInt(CSS_VARS_CORE.app_custom_excel_filter_width_number);
-    } catch (e) {}
+    } catch (e) {
+    }
     if (app_custom_excel_filter_width_number == 0)
         app_custom_excel_filter_width_number = 18;
 
@@ -1131,7 +1221,9 @@ export class ExcelExportNexus {
             let grid: Grid = args.grid;
             if (grid && grid.allowExcelExport)
                 return grid.excelExport();
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
     } // doExcelExport
 }
 

@@ -114,12 +114,13 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
     /**
      * Optional implementation for creating the innerHTML for the current cell
      * @param args
+     * @return {HTMLElement} the innerHTML to use for the cell
      */
-    onQueryCellInfoHTML?: (args: {
+    onQueryCellInfo_CreateCellHTML?: (args: {
         qArgs: QueryCellInfoEventArgs,
         field: string,
         recFieldValue: RecFieldVal
-    }) => string;
+    }) => HTMLElement;
 
 
     /**
@@ -834,6 +835,10 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         if (!field)
             return;
 
+        let cell: HTMLElement = qArgs.cell as HTMLElement;
+        if ( !cell)
+            return;
+
         let isBlurred = false;
         try {
             isBlurred = N2Grid_Options_Utils.isBlurred({qArgs});
@@ -841,7 +846,9 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             console.error(e);
         }
 
-        let cell: HTMLElement = qArgs.cell as HTMLElement;
+        if (isDev())
+            cell.setAttribute('data-col', field); // tag every cell with its column name so it's easy to debug at development time
+
         let recFieldVal = rec_field_value(rec, field);
         let isRowDetailPanel = N2Grid_Options_Utils.isRowDetailPanel(qArgs);
         let isDataAnArray: boolean = isArray(recFieldVal.value_visible);
@@ -856,16 +863,18 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         }
 
         // if we have content, are in row_detail_panel mode and we're not blurred, then add the CSS_CLASS_detail_long_text class
-        if (content && isRowDetailPanel && !N2Grid_Options_Utils.isBlurred({qArgs})) { // was in OrcaWidgets/ skinnyElemTooltip 309
+        if (content && isRowDetailPanel && !isBlurred) { // was in OrcaWidgets/ skinnyElemTooltip 309
             let htmlElement: HTMLElement;
             if (cell.classList.contains(CSS_CLASS_grid_cell_detail))
-                htmlElement = cell.querySelector(CSS_CLASS_grid_cell_detail);
+                htmlElement = cell;
             else
                 htmlElement = cell.querySelector(`.${CSS_CLASS_grid_cell_detail}`);
 
             // htmlElement is not null only if we're inside a detail panel call
             if (htmlElement) {
-                // this is not a Grid cell, it's a detail cell
+                // this is not a Grid cell, it's a detail cell and this enables the collapsing/expanding long text functionality
+                // without this class present, the text is not collapsible and is shown entirely in the detail pane cell
+                // (hint, hint in case we need to selectively disable this functionality, it's as simple as not including this class)
                 addClassesToElement(htmlElement, CSS_CLASS_detail_long_text);
                 if (htmlElement.id == null)
                     htmlElement.id = getRandomString(`cell_detail_longtxt`);
@@ -873,10 +882,10 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } // if content && ! N2Grid_Options_Utils.isBlurred({qArgs})
 
 
-        let innerHTML: string;
-        if (this.state.onQueryCellInfoHTML) {
+        let textElem: HTMLElement;
+        if (this.state.onQueryCellInfo_CreateCellHTML) {
             try {
-                innerHTML = this.state.onQueryCellInfoHTML.call(this, {qArgs, field, recFieldValue: recFieldVal});
+                textElem = this.state.onQueryCellInfo_CreateCellHTML.call(this, {qArgs, field, recFieldValue: recFieldVal});
             } catch (e) {
                 console.error(e + ' Using default implementation');
             }
@@ -884,79 +893,46 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
         // fill in the innerHTML if it was not set by the user
-        if (innerHTML == null) {
+        if (textElem == null) {
             if (isDataAnArray) {
                 if (isRowDetailPanel) {
                     // in row detail, the content is <br> delimited so we can see the list better
-                    innerHTML = (content as string[]).map(v => v.replace(/,/g, '&#44;')).join('<br>'); // format array as multi-line string for each array entry
+                    let multiLineString:string = (content as string[]).map(v => v.replace(/,/g, '&#44;')).join('<br>'); // format array as multi-line string for each array entry
+                    textElem = document.createElement('div');
+                    textElem.innerHTML = multiLineString;
                 } else {
                     // grid cell for array is ', ' delimited
-                    innerHTML = (content as string[]).map(v => v.replace(/,/g, '&#44;')).join(', ') // format array as comma delimited string
+                    let singleLineCommaDelimitedCell = (content as string[]).map(v => v.replace(/,/g, '&#44;')).join(', ') // format array as comma delimited string
+                    textElem = document.createElement('div');
+                    textElem.innerHTML = singleLineCommaDelimitedCell;
                 }
             } else { // isDataAnArray
                 if (isHighlightedHTML) {
                     // highlighted content is already formatted as HTML, so just set it
-                    innerHTML = content as string;
+                    let highlightedCellContent:string  = content as string;
+                    textElem = document.createElement('div');
+                    textElem.innerHTML = highlightedCellContent;
                 } else {
                     // plain single value
                     // do absolutely nothing - leave things as they are in innerHTML (could be formatted data, which value_visible would not be
                 }
             } // if isDataAnArray
-
-
         } // if innerHTML == null
 
 
         // if innerHTML has been instantiated (array or highlighted text)
-
-        if (innerHTML) {
+        if (textElem) {
 
             // so if we have a new innerHTML, we need to set the surrounding CSS for innerHTML
-
-
-            const e = document.createElement("div");
-            e.style.display = "flex";
-            e.style.alignItems = "center";
-
-
-            const textCell = document.createElement("div");
-            if (isHighlightedHTML)
-                addClassesToElement(e, [CSS_CLASS_grid_cell_highlight_container, CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS]);
-
-            // direct add if no highlighting
-            textCell.innerHTML = innerHTML;
-            textCell.style.flex = "1";
-
-
-            addClassesToElement(textCell, CSS_CLASS_ellipsis_container);
-
-
-            const iconCell = document.createElement("div");
-            const icon = document.createElement("i");
-            // icon.classList.add("fa-solid", "fa-magnifying-glass");
-            icon.classList.add("fa-regular", "fa-comment-dots"); // <i class="fa-regular fa-comment-dots"></i>
-            icon.style.cursor = "pointer";
-            icon.style.color = CSS_VARS_CORE.app_color_blue;
-            icon.style.fontSize = "0.65em";
-
-            iconCell.appendChild(icon);
-
-            e.appendChild(textCell);
-            e.appendChild(iconCell);
-
-            // add click to iconCell to get const tippyInstance = elem._tippy; and if if (tippyInstance.state.isVisible) then call  tippyInstance.show();
-            iconCell.style.cursor = "pointer";
-            iconCell.addEventListener('click', () => {
-                const tippyInstance = (cell as any)._tippy;
-                if (tippyInstance) {
-                    if (tippyInstance?.state?.isVisible == false) {
-                        tippyInstance.show();
-                    } // if (tippyInstance?.state?.isVisible == false)
-                } // if ( tippyInstance)
-            }); // iconCell.addEventListener('click', ...)
+            let ellipsisContainerElem = N2Grid_Options_Utils.createEllipsisContainerElement({
+                textElem,
+                qArgs,
+                isHighlightedHTML,
+                includeDotTooltipButton: (!isRowDetailPanel), // no button if detail
+            });
 
             cell.innerHTML = ''; // clear all contents
-            cell.appendChild(e);
+            cell.appendChild(ellipsisContainerElem);
         } // if innerHTML == null
 
 
@@ -969,7 +945,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     userHandlesTooltip = this.state.onQueryCellInfo_ArrayTooltip?.call(this, {
                         qArgs,
                         field,
-                        recFieldValue: recFieldVal
+                        recFieldVal
                     });
                 } catch (e) {
                     console.error(e + ' Using default tooltip implementation for array data.');
@@ -993,7 +969,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                         userHandlesTooltip = this.state.onQueryCellInfo_RegularTooltip?.call(this, {  // Nexus_Overwrites usually creates an application specific tooltip implementation
                             qArgs,
                             field,
-                            recFieldValue: recFieldVal
+                            recFieldVal
                         });
                     } catch (e) {
                         console.error(e + ' Using default tooltip implementation for array data.');
