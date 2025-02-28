@@ -215,6 +215,11 @@ export function highlighted_raw_value(record: any, field: string): any {
 
 export interface RecFieldVal {
     /**
+     * true if the value is highlighted, false if not
+     */
+    is_highlighted: boolean;
+
+    /**
      * the internal value for the field as straight record[field]
      */
     value: any;
@@ -223,14 +228,15 @@ export interface RecFieldVal {
      * If not highlighted, this will be the same as value (internal value as rec[field]
      */
     value_visible: any;
+
     /**
-     * true if the value is highlighted, false if not
+     * Automated tooltip content.
      */
-    is_highlighted: boolean;
+    value_tooltip :any;
 }
 
 export function rec_field_value(record: any, field: string): RecFieldVal {
-    let recFieldVal: RecFieldVal = {value: null, value_visible: null, is_highlighted: false};
+    let recFieldVal: RecFieldVal = {value: null, value_visible: null, is_highlighted: false, value_tooltip:null};
 
     if (record) {
         recFieldVal.value = record[field]; // return actual value when no highlighting
@@ -240,17 +246,26 @@ export function rec_field_value(record: any, field: string): RecFieldVal {
         if (highlighted_fields && isArray(highlighted_fields) && highlighted_fields.includes(field)) {
             recFieldVal.is_highlighted = true; // column should be highlighted, but there might be no actual text inside to highlight
         }
+
+
         let highlighted_values = record[HIGHLIGHT_RECORD_COLUMN_VALUES];
+        let highlighted_excerpts = record[HIGHLIGHT_RECORD_COLUMN_EXCERPTS];
+
+        let columnValue = highlight_apply( highlighted_values[field] );
+        let columnExcerpt = highlight_apply( highlighted_excerpts[field] ) ;
+
         if (!highlighted_values) {
             recFieldVal.value_visible = record[field];
         } else {
-            if (highlighted_values.hasOwnProperty(field)) {
-                recFieldVal.value_visible = highlighted_values[field];
-                if (recFieldVal.value_visible) {
-                    recFieldVal.value_visible = highlight_apply(recFieldVal.value_visible); // expand placeholders to HTML
-                }
+            if (columnValue) {
+                recFieldVal.value_visible = columnValue;
             }
         }
+
+        recFieldVal.value_tooltip = recFieldVal.value_visible;
+        if ( !columnValue && columnExcerpt )
+            recFieldVal.value_tooltip = columnExcerpt; // if no columnValue, use columnExcerpt for tooltip
+
     } // if record
     return recFieldVal;
 } // rec_field_value

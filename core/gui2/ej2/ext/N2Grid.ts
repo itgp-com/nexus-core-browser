@@ -119,7 +119,7 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
     onQueryCellInfo_CreateCellHTML?: (args: {
         qArgs: QueryCellInfoEventArgs,
         field: string,
-        recFieldValue: RecFieldVal
+        recFieldVal: RecFieldVal
     }) => HTMLElement;
 
 
@@ -885,7 +885,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         let textElem: HTMLElement;
         if (this.state.onQueryCellInfo_CreateCellHTML) {
             try {
-                textElem = this.state.onQueryCellInfo_CreateCellHTML.call(this, {qArgs, field, recFieldValue: recFieldVal});
+                textElem = this.state.onQueryCellInfo_CreateCellHTML.call(this, {qArgs, field, recFieldVal});
             } catch (e) {
                 console.error(e + ' Using default implementation');
             }
@@ -956,7 +956,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     let cell: HTMLElement = qArgs.cell as HTMLElement;
                     if (cell) {
                         try {
-                            this.queryCellInfo_ArrayTooltip({qArgs, field, recFieldVal: recFieldVal});
+                            this.queryCellInfo_ArrayTooltip({qArgs, field, recFieldVal});
                         } catch (e) {
                             console.error(e);
                         }
