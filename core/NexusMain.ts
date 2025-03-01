@@ -30,10 +30,6 @@ export class NexusMain {
          //Await all the async activity to finish
          await thisX.ui.init();
 
-         // Initialize the screen registry
-         thisX.ui.screenRegistry = await thisX.ui.createNewScreenRegistry();
-         thisX.ui.menuRegistry = await thisX.ui.createNewMenuRegistry();
-
          // on start, call the theme initialization with the initial theme state
          switchTheme(thisX.ui.initialThemeState());
 
@@ -48,7 +44,6 @@ export class NexusMain {
       } catch (ex) {
          // A catastrophic error has occurred on instantiating the very basic UI for the app
          console.error(ex);
-         //window.alert('Startup error: ' + ex);
          getErrorHandler().displayErrorMessageToUser('Initialization failed with the following server message: ' + ex)
       }
    };
