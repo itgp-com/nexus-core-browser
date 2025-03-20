@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 import {escape, isArray, throttle} from "lodash";
 import {Props} from "tippy.js";
 import {DOMPurifyNexus, getRandomString, voidFunction} from "../../BaseUtils";
+import {CSS_CLASS_ellipsis_container} from "../../Constants";
 import {htmlElement_addTooltip_CoreOnly} from "../../CoreUtils";
 import {highlighted_grid_cell_content, isRecFieldVal, RecFieldVal} from '../../gui2/highlight/N2Highlight';
 import {nexusMain} from "../../NexusMain";
@@ -9,6 +10,14 @@ import {nexusMain} from "../../NexusMain";
 
 export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFieldVal, linkValue: string) => {
     if (elem) {
+
+        let elemToUse = elem;
+        // See if the elem is a highlighted grid cell already. In that case the link and content is added to that inner HTMLElement, not the outer elem that has all the highlighting layers (that would get destroyed)
+        let highlightedInnerElem :HTMLElement = elemToUse.querySelector(`.${CSS_CLASS_ellipsis_container}`) as HTMLElement;
+        if (highlightedInnerElem != null)
+            elemToUse = highlightedInnerElem; // use the inner element for the link
+
+
         let wrapper_highlight: HTMLElement;
 
         let realLinkValue = linkValue;
@@ -28,16 +37,16 @@ export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFiel
        let innerHTML = `<a href="${realLinkValue}" >${visualValue}</a>`;
         if ( wrapper_highlight) {
             wrapper_highlight.innerHTML = DOMPurifyNexus(innerHTML);
-            elem.innerHTML = '';
-            elem.appendChild(wrapper_highlight);
+            elemToUse.innerHTML = '';
+            elemToUse.appendChild(wrapper_highlight);
         } else {
-            elem.innerHTML = DOMPurifyNexus(innerHTML);
+            elemToUse.innerHTML = DOMPurifyNexus(innerHTML);
         }
-        let a_elem = elem.querySelector('a');
+        let a_elem = elemToUse.querySelector('a');
         a_elem.setAttribute('target', '_blank'); // DOMPurify.sanitize would remove the target attribute so we add it here
         a_elem.setAttribute('rel', 'noopener noreferrer'); // noopener gives no back access to original window object, noreferrer prevents the current page from showing as the referrer in the opened page
-    }
-}
+    } // if (elem)
+} // htmlElement_html_link
 
 
 
