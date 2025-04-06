@@ -1227,9 +1227,9 @@ export class ExcelExportNexus {
                 let excelExportSettings: N2ExcelExportSettings = state?.excelExportSettings;
 
                 let excelExportProperties: ExcelExportProperties = excelExportSettings?.excelExportProperties;
-                let isMultipleExport: boolean = excelExportSettings.isMultipleExport;
-                let workbook: Workbook = excelExportSettings.workbook;
-                let isBlob: boolean = excelExportSettings.isBlob;
+                let isMultipleExport: boolean = excelExportSettings?.isMultipleExport;
+                let workbook: Workbook = excelExportSettings?.workbook;
+                let isBlob: boolean = excelExportSettings?.isBlob;
                 return await grid.excelExport(excelExportProperties, isMultipleExport, workbook, isBlob)
             }
         } catch (e) {
