@@ -1,6 +1,6 @@
 {
   "name": "nexus-core-browser",
-  "version": "4.5.28",
+  "version": "4.5.30",
   "private": true,
   "description": "nexus-core-browser",
   "author": "InsiTech",
@@ -9,23 +9,23 @@
     "test": "mocha -r ts-node/register --project tsconfig.test.json 'test/**/*.ts'"
   },
   "dependencies": {
-    "@stomp/stompjs": "7.0.1",
-    "@syncfusion/ej2": "28.2.12",
-    "@types/chai": "5.2.0",
+    "@stomp/stompjs": "7.1.1",
+    "@syncfusion/ej2": "29.1.35",
+    "@types/chai": "5.2.1",
     "@types/chart.js": "2.9.41",
     "@types/collections": "5.1.5",
     "@types/sockjs-client": "1.5.4",
     "axios": "1.8.4",
     "base32-encode": "2.0.0",
-    "bootstrap": "5.3.3",
+    "bootstrap": "5.3.5",
     "chai": "5.2.0",
     "chart.js": "4.4.8",
-    "chartjs-plugin-trendline": "2.1.6",
+    "chartjs-plugin-trendline": "2.1.7",
     "crypto-js": "4.2.0",
     "css-element-queries": "1.2.3",
     "csstype": "3.1.3",
     "dateformat": "5.0.3",
-    "dompurify": "3.2.4",
+    "dompurify": "3.2.5",
     "js-file-download": "0.4.12",
     "jspanel4": "4.16.1",
     "lodash": "4.17.21",
@@ -45,7 +45,7 @@
     "@types/lodash": "4.17.16",
     "@types/mocha": "10.0.10",
     "npm-run-all": "4.1.5",
-    "typescript": "5.8.2"
+    "typescript": "5.8.3"
   },
   "dependencies-commented-out": {
     "npm-upgrade": "3.1.0",

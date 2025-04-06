@@ -33,6 +33,12 @@ export interface N2PreExcelExport {
     state : StateN2Grid;
 } // N2PreExcelExport
 
+export interface N2PostExcelExport {
+    result: any,
+    n2Grid: N2Grid,
+    state: StateN2Grid,
+} // N2PostExcelExport
+
 export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
@@ -178,6 +184,16 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * @param args N2PreExcelExport
      */
     onPreExcelExport ?: (args:N2PreExcelExport) => void | Promise<void>;
+
+    /**
+     * Called from ExcelExportNexus.doExcelExport after the actual export is performed.
+     * Can be async, and the calling code will wait for the promise to resolve before continuing.
+     *
+     * This is a good place to reset the excelExportSettings properties
+     * It also allows the developer to look at the result of calling grid.excelExport(...)
+     * @param args N2PostExcelExport
+     */
+    onPostExcelExport ?: (args:N2PostExcelExport) => void | Promise<void>;
 
 } // StateN2Grid
 

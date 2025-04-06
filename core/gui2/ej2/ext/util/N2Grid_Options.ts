@@ -36,7 +36,7 @@ import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../../scss/vars-material';
 import {getN2FromEJ2} from '../../Ej2Utils';
 import {N2Ej} from '../../N2Ej';
-import {N2ExcelExportSettings, N2Grid, N2PreExcelExport, StateN2Grid} from '../N2Grid';
+import {N2ExcelExportSettings, N2Grid, N2PostExcelExport, N2PreExcelExport, StateN2Grid} from '../N2Grid';
 import {isSpinnerCreated} from './Spinner_Options';
 
 export const COL_ROW_NUMBER: string = '__gridrownumber__';
@@ -1242,7 +1242,15 @@ export class ExcelExportNexus {
                 let isMultipleExport: boolean = excelExportSettings?.isMultipleExport;
                 let workbook: Workbook = excelExportSettings?.workbook;
                 let isBlob: boolean = excelExportSettings?.isBlob;
-                return await grid.excelExport(excelExportProperties, isMultipleExport, workbook, isBlob)
+
+                let export_result = await grid.excelExport(excelExportProperties, isMultipleExport, workbook, isBlob)
+
+                let args_postExcelExport: N2PostExcelExport = {
+                    result: export_result,
+                    n2Grid: n2Grid,
+                    state: state,
+                };
+                await n2Grid.state.onPostExcelExport(args_postExcelExport);
             }
         } catch (e) {
             console.error(e);
