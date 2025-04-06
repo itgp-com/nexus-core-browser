@@ -20,6 +20,12 @@ export interface N2Evt_FilterEvent<N2_GRID extends N2Grid = N2Grid> extends Filt
 export interface N2Evt_ActionFailure<N2_GRID extends N2Grid = N2Grid> extends FailureEventArgs, N2GridEvent<N2_GRID> {
 }
 
+export interface N2ExcelExportSettings {
+    excelExportProperties?: ExcelExportProperties;
+    isMultipleExport?: boolean;
+    workbook?: Workbook;
+    isBlob?: boolean;
+} // N2ExcelExportSettings
 
 export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
@@ -151,6 +157,11 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
         recFieldVal: RecFieldVal
     }) => string | void;
 
+    /**
+     * The contents of this property will be passed to the grid.excelExport(...) call when
+     * an Excel export is performed.
+     */
+    excelExportSettings?: N2ExcelExportSettings;
 
 } // StateN2Grid
 
@@ -1613,6 +1624,7 @@ line-height: 8px;
 import {isNullOrUndefined, KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
 import {DropDownList} from '@syncfusion/ej2-dropdowns';
+import {Workbook} from "@syncfusion/ej2-excel-export";
 import {
     ColumnMenuItemModel,
     ColumnMenuOpenEventArgs,
@@ -1649,6 +1661,7 @@ import {RowDD} from '@syncfusion/ej2-grids/src/grid/actions/row-reorder';
 import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
+import {ExcelExportProperties} from "@syncfusion/ej2-grids/src/grid/base/interface";
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {NumericTextBox} from '@syncfusion/ej2-inputs';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';

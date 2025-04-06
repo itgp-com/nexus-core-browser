@@ -3,10 +3,11 @@ import {CrudOptions, DataManager, DataOptions, Query} from '@syncfusion/ej2-data
 import {DataResult} from '@syncfusion/ej2-data/src/adaptors';
 import {AutoComplete} from '@syncfusion/ej2-dropdowns';
 import {FilteringEventArgs} from '@syncfusion/ej2-dropdowns/src/drop-down-base/drop-down-base';
+import {Workbook} from "@syncfusion/ej2-excel-export";
 import {ColumnModel, Filter, Grid, GridModel, PredicateModel, QueryCellInfoEventArgs} from '@syncfusion/ej2-grids';
 import * as events from '@syncfusion/ej2-grids/src/grid/base/constant';
 import {ToolbarItem, ToolbarItems} from '@syncfusion/ej2-grids/src/grid/base/enum';
-import {RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
+import {ExcelExportProperties, RowDataBoundEventArgs} from '@syncfusion/ej2-grids/src/grid/base/interface';
 import {ExcelFilterBase} from '@syncfusion/ej2-grids/src/grid/common/excel-filter-base';
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {ClickEventArgs, ItemModel} from '@syncfusion/ej2-navigations';
@@ -35,7 +36,7 @@ import {CSS_VARS_EJ2} from '../../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../../scss/vars-material';
 import {getN2FromEJ2} from '../../Ej2Utils';
 import {N2Ej} from '../../N2Ej';
-import {N2Grid, StateN2Grid} from '../N2Grid';
+import {N2ExcelExportSettings, N2Grid, StateN2Grid} from '../N2Grid';
 import {isSpinnerCreated} from './Spinner_Options';
 
 export const COL_ROW_NUMBER: string = '__gridrownumber__';
@@ -1220,8 +1221,17 @@ export class ExcelExportNexus {
     public static async doExcelExport(args: Args_DoExcelExport): Promise<any> {
         try {
             let grid: Grid = args.grid;
-            if (grid && grid.allowExcelExport)
-                return grid.excelExport();
+            if (grid && grid.allowExcelExport) {
+                let n2Grid = getN2FromEJ2(grid);
+                let state = n2Grid?.state as StateN2Grid;
+                let excelExportSettings: N2ExcelExportSettings = state?.excelExportSettings;
+
+                let excelExportProperties: ExcelExportProperties = excelExportSettings?.excelExportProperties;
+                let isMultipleExport: boolean = excelExportSettings.isMultipleExport;
+                let workbook: Workbook = excelExportSettings.workbook;
+                let isBlob: boolean = excelExportSettings.isBlob;
+                return await grid.excelExport(excelExportProperties, isMultipleExport, workbook, isBlob)
+            }
         } catch (e) {
             console.error(e);
         }
