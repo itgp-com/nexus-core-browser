@@ -27,6 +27,12 @@ export interface N2ExcelExportSettings {
     isBlob?: boolean;
 } // N2ExcelExportSettings
 
+export interface N2PreExcelExport {
+    cancel : boolean;
+    n2Grid : N2Grid;
+    state : StateN2Grid;
+} // N2PreExcelExport
+
 export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel> extends StateN2EjBasic<WIDGET_LIBRARY_MODEL> {
     /**
      * Override with specific type used in code completion
@@ -162,6 +168,16 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * an Excel export is performed.
      */
     excelExportSettings?: N2ExcelExportSettings;
+
+    /**
+     * Called from ExcelExportNexus.doExcelExport before the actual export is performed.
+     * Can be async, and the calling code will wait for the promise to resolve before continuing.
+     *
+     * This is a good place to set the excelExportSettings property
+     * It also allows one to cancel the export by setting args.cancel = true
+     * @param args N2PreExcelExport
+     */
+    onPreExcelExport ?: (args:N2PreExcelExport) => void | Promise<void>;
 
 } // StateN2Grid
 
