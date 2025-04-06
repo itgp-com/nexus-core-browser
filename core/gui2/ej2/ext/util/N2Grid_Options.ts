@@ -128,13 +128,13 @@ export class N2Grid_Options_Utils {
         // if specifically called with includeDotTooltipButton = true, then always add the button
         // if not, then add it if the cell is a not detail panel cell unless it's a hard false
         let addDotTooltipButton: boolean = includeDotTooltipButton;
-        if ( addDotTooltipButton == false &&  !IncludeDotTooltipButtonHardFalse ) {
-            if ( ! (N2Grid_Options_Utils.isRowDetailPanel(param.qArgs) == true) ){
+        if (addDotTooltipButton == false && !IncludeDotTooltipButtonHardFalse) {
+            if (!(N2Grid_Options_Utils.isRowDetailPanel(param.qArgs) == true)) {
                 addDotTooltipButton = true; // add button if not a detail panel cell, don't add if a detail panel cell
             } // if (N2Grid_Options_Utils.isRowDetailPanel(param.qArgs) == true)
         } // if (addDotTooltipButton == false)
 
-        if (addDotTooltipButton ) {
+        if (addDotTooltipButton) {
 
             const iconCell = document.createElement("div");
             const icon = document.createElement("i");
