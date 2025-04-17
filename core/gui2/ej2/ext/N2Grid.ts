@@ -1050,7 +1050,10 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     public queryCellInfo_ArrayTooltip(args: {
         qArgs: QueryCellInfoEventArgs,
         field: string,
-        recFieldVal: RecFieldVal
+        /**
+         * Optional. If null, the data will be read from the 'field' (allows for substituting the data from this field with the data from another)
+         */
+        recFieldVal ?: RecFieldVal
     }): void {
         // this method is overwritten by the extending application from app_specific/Nexus_Overwrites
         // creates application-specific tooltips for data arrays
