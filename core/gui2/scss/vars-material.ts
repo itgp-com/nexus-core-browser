@@ -20,6 +20,7 @@ export interface CoreCssVariables extends CssVariables {
     app_color_green_02: string;
     app_color_green_03: string;
     app_color_green_04: string;
+    app_color_green_05: string;
     app_color_light_gray_001: string;
     app_color_link_blue: string;
     app_color_panel_background: string;
@@ -103,6 +104,7 @@ const coreCssCommonVariables: CoreCssVariables = {
     app_color_green_02: undefined,
     app_color_green_03: '#92D050',
     app_color_green_04: '#679f2b',
+    app_color_green_05: '#2ea44f',
     app_color_light_gray_001: '#E9E9E9',
     app_color_link_blue: '#1e90ff',
     app_color_panel_background: undefined,
