@@ -20,6 +20,7 @@ import {CSS_VARS_CORE} from '../../scss/vars-material';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 import {N2DialogBackArrow} from './util/N2DialogBackArrow';
+import {N2DialogCloseIcon} from "./util/N2DialogCloseIcon";
 
 
 export interface StateN2DialogRef extends StateN2EjBasicRef {
@@ -412,8 +413,8 @@ export class N2Dialog<STATE extends StateN2Dialog = any> extends N2EjBasic<STATE
 
     }
 
-    protected _headerBackArrow(): N2DialogBackArrow {
-        return new N2DialogBackArrow({
+    protected _headerBackArrow(): N2DialogCloseIcon {
+        return new N2DialogCloseIcon({
             value: null,
             dialog: this,
         });

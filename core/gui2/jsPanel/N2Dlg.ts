@@ -206,7 +206,8 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 // now we add the openDialogs control as the first control (addArray is already added to headerControls so we just modify it here)
 
                 let openDialogsControl: JsPanelHeaderControlsAdd = {
-                    html: '<i class="fa-regular fa-window-restore fa-lg" style="margin: 0 5px;"></i>',
+                    //<i class="fa-solid fa-rectangle-list"></i>
+                    html: '<i class="fa-regular fa-rectangle-list fa-lg" style="margin: 0 5px;"></i>',
                     name: 'openDialogs',
                     position: 1,
                     handler: (panel: JsPanel, control: HTMLElement) => {
@@ -904,7 +905,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
          The back arrow is always the first element in the logo and its cursor is a pointer.
          Any headerLogo specified in the
          */
-        let backArrow = new N2DlgBackArrow({value: null, dialog: this});
+        let n2DlgCloseIcon = new N2DlgCloseIcon({value: null, dialog: this});
 
         let ohl: string | HTMLElement = state.options.headerLogo;
         let existingElem: HTMLElement = null;
@@ -928,12 +929,12 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         let headerLogoElem: HTMLElement;
 
         if (existingElem) {
-            let logoRow = new N2Row({children: [backArrow, existingElem]});
+            let logoRow = new N2Row({children: [n2DlgCloseIcon, existingElem]});
             logoRow.initLogic();
             headerLogoElem = logoRow.htmlElement;
         } else {
-            backArrow.initLogic();
-            headerLogoElem = backArrow.htmlElement;
+            n2DlgCloseIcon.initLogic();
+            headerLogoElem = n2DlgCloseIcon.htmlElement;
         }
 
         // state.options.headerLogo = ;
@@ -1109,3 +1110,4 @@ import {CSS_VARS_CORE} from '../scss/vars-material';
 import {themeChangeListeners} from '../Theming';
 import {jsPanel} from './jsPanelLib';
 import {N2DlgBackArrow} from './N2DlgBackArrow';
+import {N2DlgCloseIcon} from "./N2DlgCloseIcon";
