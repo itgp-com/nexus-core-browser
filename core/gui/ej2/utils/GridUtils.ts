@@ -3,7 +3,13 @@ import {ExcelExportProperties, GridModel, QueryCellInfoEventArgs}               
 import {RecFieldVal} from '../../../gui2/highlight/N2Highlight';
 import {DialogInfo}                                                                                                               from "../abstract/DialogInfo";
 import {AbstractGrid}                                                                                                             from "../abstract/AbstractGrid";
-import {appendDivToPage, htmlElement_html_link, htmlElement_link_clickFunction, skinnyHtmlElementTooltip} from "../../utils/HtmlUtils";
+import {
+   appendDivToPage,
+   getHighlightedInnerElem,
+   htmlElement_html_link,
+   htmlElement_link_clickFunction,
+   skinnyHtmlElementTooltip
+} from "../../utils/HtmlUtils";
 import {HeaderCellInfoEventArgs}                                                                                                  from "@syncfusion/ej2-grids/src/grid/base/interface";
 import {TooltipModel}                                                                                                             from "@syncfusion/ej2-popups/src/tooltip/tooltip-model";
 import {Cell}                                                                                                                     from "@syncfusion/ej2-grids/src/grid/models/cell";
@@ -154,6 +160,14 @@ export let renderer_html_link_clickFunction = (args: QueryCellInfoEventArgs, cli
 
 export let htmlElement_html_links           = (elem: HTMLElement, linkValues: string) => {
    if (elem) {
+
+      let elemToUse: HTMLElement = elem;
+
+      // See if the elem is a highlighted grid cell already. In that case the link and content is added to that inner HTMLElement, not the outer elem that has all the highlighting layers (that would get destroyed)
+      let highlightedInnerElem: HTMLElement = getHighlightedInnerElem(elem);
+      if (highlightedInnerElem != null)
+         elemToUse = highlightedInnerElem; // use the inner element for the link
+
       let linkValuesTokens = linkValues.split('\n');
       let anchors          = [];
       let counter          = 1;
@@ -162,7 +176,7 @@ export let htmlElement_html_links           = (elem: HTMLElement, linkValues: st
          counter += 1;
       }
       let span       = `<span>` + anchors.join(', ') + `</span>`;
-      elem.innerHTML = span;
+      elemToUse.innerHTML = span;
    }
 }
 

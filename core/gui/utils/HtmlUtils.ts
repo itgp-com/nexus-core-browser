@@ -13,7 +13,7 @@ export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFiel
 
         let elemToUse = elem;
         // See if the elem is a highlighted grid cell already. In that case the link and content is added to that inner HTMLElement, not the outer elem that has all the highlighting layers (that would get destroyed)
-        let highlightedInnerElem :HTMLElement = elemToUse.querySelector(`.${CSS_CLASS_ellipsis_container}`) as HTMLElement;
+        let highlightedInnerElem: HTMLElement = getHighlightedInnerElem(elem);
         if (highlightedInnerElem != null)
             elemToUse = highlightedInnerElem; // use the inner element for the link
 
@@ -48,6 +48,20 @@ export let htmlElement_html_link = (elem: HTMLElement, cellValue: string|RecFiel
     } // if (elem)
 } // htmlElement_html_link
 
+
+/**
+ * Get the inner element of a highlighted grid cell. If none, return null
+ * @param elem outer HTML element that has might have the highlighting layers
+ */
+export function getHighlightedInnerElem(elem: HTMLElement): HTMLElement {
+    // See if the elem is a highlighted grid cell already. In that case the link and content is added to that inner HTMLElement, not the outer elem that has all the highlighting layers (that would get destroyed)
+    if ( elem != null) {
+        let highlightedInnerElem: HTMLElement = elem?.querySelector(`.${CSS_CLASS_ellipsis_container}`) as HTMLElement;
+        if (highlightedInnerElem != null)
+            return highlightedInnerElem; // use the inner element for the link
+    } // if ( elem != null)
+    return null;
+}
 
 
 export let htmlElement_link_clickFunction = (elem: HTMLElement, clickFunction: (evt: any) => (void | Promise<void>), options ?: { throttle_disable?: boolean, throttle_wait_ms?: number }) => {
