@@ -152,16 +152,7 @@ export function isA(ChildClass: any, ParentClass: any) {
     return false;
 }
 
-/**
- * Used inside an async function to timeout for a number of milliseconds and then continue.
- * Uses the old setTimeout JS5 multithreading.
- *
- * @param ms
- */
-export function wait(ms: number): void {
-    // noinspection JSIgnoredPromiseFromCall
-    new Promise(resolve => setTimeout(resolve, ms));
-} // noinspection JSUnusedGlobalSymbols
+
 /**
  * @htmlString {String} HTML representing a single element
  * @return {HTMLElement}
