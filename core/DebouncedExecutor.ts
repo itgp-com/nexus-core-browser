@@ -1,17 +1,21 @@
 import { debounce } from 'moderndash';
 
-
 /**
- * Type definition for moderndash debounced function
+ * Extend moderndash’s debounced function type.
  */
-export type DebouncedFunction<TFunc extends (...args: any[]) => any> = TFunc & {
+export type DebouncedFunction<
+    TFunc extends (...args: any[]) => any
+> = TFunc & {
     cancel: () => void;
     flush: (...args: Parameters<TFunc>) => void;
     pending: () => boolean;
 };
 
+
 /**
  * A debounced function wrapper that prevents overlapping executions unlike standard debounce implementations.
+ *  - At most one running and one pending invocation
+ *  - Full public API: execute, cancel, flush, isPending, isExecuting, waitForCompletion
  *
  * Uses moderndash debounce for timing control and availability of isPending() functionality
  * Uses a mutex for execution serialization to prevent overlapping executions
@@ -43,136 +47,122 @@ export type DebouncedFunction<TFunc extends (...args: any[]) => any> = TFunc & {
  *
  */
 export class DebouncedExecutor<TArgs extends unknown[], TReturn> {
-    private readonly debouncedFunction: DebouncedFunction<(...args: TArgs) => void>;
-    private readonly mutex = new ExecutionMutex<TReturn>();
+    private isRunning = false;
+    private pendingArgs: TArgs | null = null;
+    private completionPromise: Promise<void> | null = null;
+    private completionResolve: (() => void) | null = null;
+
+    private readonly debouncedFn: DebouncedFunction<(...args: TArgs) => void>;
 
     constructor(
-        private readonly originalFunction: (...args: TArgs) => Promise<TReturn>,
-        private readonly waitTimeBetweenSaveCalls: number
+        private readonly originalFn: (...args: TArgs) => Promise<TReturn>,
+        private readonly waitMs: number
     ) {
-        // Create debounced wrapper that queues execution through mutex
-        this.debouncedFunction = debounce(
-            (...args: TArgs) => {
-                this.mutex.execute(() => this.originalFunction(...args));
-            },
-            waitTimeBetweenSaveCalls
+        this.debouncedFn = debounce(
+            (...args: TArgs) => this.onDebounceFire(...args),
+            this.waitMs
         ) as DebouncedFunction<(...args: TArgs) => void>;
     }
 
     /**
-     * Execute the function with debouncing and overlap prevention
+     * Schedule the debounced function.
      */
     public execute(...args: TArgs): void {
-        this.debouncedFunction(...args);
+        this.debouncedFn(...args);
     }
 
     /**
-     * Cancel any pending debounced execution
+     * Cancel any pending debounce timer.
      */
     public cancel(): void {
-        this.debouncedFunction.cancel();
+        this.debouncedFn.cancel();
     }
 
     /**
-     * Flush any pending debounced execution immediately
+     * Flush the debounce: fire immediately with given args.
      */
     public flush(...args: TArgs): void {
-        this.debouncedFunction.flush(...args);
+        this.debouncedFn.flush(...args);
     }
 
     /**
-     * Check if there's a pending debounced execution
+     * Returns true if a debounce timer is active.
      */
     public isPending(): boolean {
-        return this.debouncedFunction.pending();
+        return this.debouncedFn.pending();
     }
 
     /**
-     * Check if the function is currently executing
+     * Returns true if the original function is executing.
      */
     public isExecuting(): boolean {
-        return this.mutex.isLocked();
+        return this.isRunning;
     }
 
-    /**
-     * Wait for any currently executing function to complete
+     /**
+     * Waits for the debounce timer to fire and any pending run to finish.
      */
     public async waitForCompletion(): Promise<void> {
-        return this.mutex.waitForCompletion();
-    }
-}
-
-/**
- * Mutex implementation for serializing async function executions
- * Ensures only one execution happens at a time
- */
-class ExecutionMutex<TReturn> {
-    private currentExecution: Promise<TReturn> | null = null;
-    private executionQueue: Array<() => Promise<TReturn>> = [];
-    private isProcessing = false;
-
-    /**
-     * Execute a function with mutual exclusion
-     */
-    public execute(fn: () => Promise<TReturn>): void {
-        this.executionQueue.push(fn);
-        this.processQueue();
+        await new Promise<void>((resolve) => {
+            const check = () => {
+                const timerPending = this.debouncedFn.pending();
+                if (!this.isRunning && !timerPending && this.pendingArgs == null) {
+                    resolve();
+                } else {
+                    setTimeout(check, 20);
+                }
+            };
+            check();
+        });
     }
 
-    /**
-     * Check if a function is currently executing
-     */
-    public isLocked(): boolean {
-        return this.currentExecution !== null;
-    }
 
     /**
-     * Wait for the current execution to complete
+     * Internal debounce fire handler.
      */
-    public async waitForCompletion(): Promise<void> {
-        if (this.currentExecution) {
-            try {
-                await this.currentExecution;
-            } catch {
-                // Ignore errors, we just want to wait for completion
-            }
-        }
-    }
-
-    /**
-     * Process the execution queue serially
-     */
-    private async processQueue(): Promise<void> {
-        if (this.isProcessing) {
+    private async onDebounceFire(...args: TArgs): Promise<void> {
+        // Always keep latest args
+        if (this.isRunning) {
+            this.pendingArgs = args;
             return;
         }
 
-        this.isProcessing = true;
+        this.isRunning = true;
+        try {
+            await this.originalFn(...args);
+        } catch (err) {
+            // Optional: log or handle the error
+            console.error('DebouncedExecutor error:', err);
+        } finally {
+            this.isRunning = false;
 
-        while (this.executionQueue.length > 0) {
-            const nextFunction = this.executionQueue.shift()!;
+            // Signal completion
+            if (this.completionResolve) {
+                this.completionResolve();
+                this.completionPromise = null;
+                this.completionResolve = null;
+            }
 
-            try {
-                this.currentExecution = nextFunction();
-                await this.currentExecution;
-            } catch (error) {
-                // Log error but continue processing queue
-                console.error('Execution error in debounced function:', error);
-            } finally {
-                this.currentExecution = null;
+            // If a call came in during execution, run it now
+            if (this.pendingArgs) {
+                const next = this.pendingArgs;
+                this.pendingArgs = null;
+                // Invoke without debounce delay
+                await this.onDebounceFire(...next);
             }
         }
-
-        this.isProcessing = false;
     }
 }
 
-/**
- * Factory function for creating debounced executors
- */
-export function createDebouncedExecutor<TArgs extends unknown[], TReturn>(
-    fn: (...args: TArgs) => Promise<TReturn>,
-    waitTimeBetweenSaveCalls: number
-): DebouncedExecutor<TArgs, TReturn> {
-    return new DebouncedExecutor(fn, waitTimeBetweenSaveCalls);
-}
+// /**
+//  * Factory helper.
+//  */
+// export function createDebouncedExecutor<
+//     TArgs extends unknown[],
+//     TReturn
+// >(
+//     fn: (...args: TArgs) => Promise<TReturn>,
+//     waitMs: number
+// ): DebouncedExecutor<TArgs, TReturn> {
+//     return new DebouncedExecutor(fn, waitMs);
+// }

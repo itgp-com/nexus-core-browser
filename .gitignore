@@ -3,6 +3,7 @@
 /.idea
 /build
 /out
+/test/browser/core/build
 /package-lock.json
 /Mirror-to-MEDQC-UNKNOWA.bat
 /Mirror-OVERWRITE-FROM-UNKNOWA.bat

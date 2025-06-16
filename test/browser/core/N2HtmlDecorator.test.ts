@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { IHtmlUtils, N2HtmlDecorator, addN2Class, removeN2Class } from '../../../core/gui2/N2HtmlDecorator'; // Replace with your actual module path
 
 describe('IHtmlUtils', () => {

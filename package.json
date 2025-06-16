@@ -1,6 +1,6 @@
 {
   "name": "nexus-core-browser",
-  "version": "4.5.37",
+  "version": "4.5.38",
   "private": true,
   "description": "nexus-core-browser",
   "author": "InsiTech",
@@ -11,14 +11,12 @@
   "dependencies": {
     "@stomp/stompjs": "7.1.1",
     "@syncfusion/ej2": "29.2.10",
-    "@types/chai": "5.2.2",
     "@types/chart.js": "2.9.41",
     "@types/collections": "5.1.5",
     "@types/sockjs-client": "1.5.4",
     "axios": "1.10.0",
     "base32-encode": "2.0.0",
     "bootstrap": "5.3.6",
-    "chai": "5.2.0",
     "chart.js": "4.5.0",
     "chartjs-plugin-trendline": "2.1.9",
     "crypto-js": "4.2.0",
@@ -29,7 +27,6 @@
     "js-file-download": "0.4.12",
     "jspanel4": "4.16.1",
     "lodash": "4.17.21",
-    "mocha": "11.6.0",
     "moderndash": "4.0.0",
     "object-observer": "5.2.0",
     "sockjs-client": "1.6.1",
@@ -43,10 +40,12 @@
     "@types/crypto-js": "4.2.2",
     "@types/dateformat": "5.0.3",
     "@types/dompurify": "3.0.5",
+    "@types/jest": "^29.5.14",
     "@types/lodash": "4.17.17",
-    "@types/mocha": "10.0.10",
+    "@types/node": "^24.0.1",
     "npm-run-all": "4.1.5",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "vitest": "3.2.3"
   },
   "dependencies-commented-out": {
     "npm-upgrade": "3.1.0",

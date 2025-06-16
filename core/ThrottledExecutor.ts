@@ -93,49 +93,59 @@ export class ThrottledExecutor<TArgs extends unknown[], TReturn> {
  * Mutex for serializing async executions
  */
 class ExecutionMutex<TReturn> {
-    private queue: Array<() => Promise<TReturn>> = [];
-    private current: Promise<TReturn> | null = null;
-    private processing = false;
+    private currentExecution: Promise<TReturn> | null = null;
+    private executionQueue: Array<() => Promise<TReturn>> = [];
+    private isProcessing = false;
 
     /** Queue a function and process serially */
     public execute(fn: () => Promise<TReturn>): void {
-        this.queue.push(fn);
+        this.executionQueue.push(fn);
         this.processQueue();
     }
 
     /** Returns true if an execution is ongoing */
     public isLocked(): boolean {
-        return this.current !== null;
+        return this.currentExecution !== null;
     }
 
     /** Wait until current execution completes */
     public async waitForCompletion(): Promise<void> {
-        if (this.current) {
-            try {
-                await this.current;
-            } catch {
-                // swallow errors
-            }
+        // Fast path: queue empty and no current execution
+        if (!this.currentExecution && this.executionQueue.length === 0) {
+            return;
         }
+
+        // Otherwise, poll until both conditions are false
+        await new Promise<void>((resolve) => {
+            const check = () => {
+                if (!this.currentExecution && this.executionQueue.length === 0) {
+                    resolve();
+                } else {
+                    setTimeout(check, 50);
+                }
+            };
+            check();
+        });
     }
+
 
     /** Internal loop to dequeue and run functions one by one */
     private async processQueue(): Promise<void> {
-        if (this.processing) return;
-        this.processing = true;
+        if (this.isProcessing) return;
+        this.isProcessing = true;
 
-        while (this.queue.length) {
-            const fn = this.queue.shift()!;
+        while (this.executionQueue.length) {
+            const fn = this.executionQueue.shift()!;
             try {
-                this.current = fn();
-                await this.current;
+                this.currentExecution = fn();
+                await this.currentExecution;
             } catch (err) {
                 console.error('Error in throttled execution:', err);
             } finally {
-                this.current = null;
+                this.currentExecution = null;
             }
         }
 
-        this.processing = false;
+        this.isProcessing = false;
     }
 }
