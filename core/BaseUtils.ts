@@ -152,28 +152,124 @@ export function isA(ChildClass: any, ParentClass: any) {
     return false;
 }
 
+/**
+ * Sanitizes an HTML string using DOMPurify, allowing 'target' and 'rel' attributes.
+ *
+ * This function should be used to clean user-supplied or dynamic HTML before inserting it into the DOM,
+ * to prevent XSS attacks. It is used internally by {@link htmlToElement}, {@link htmlToElements}, and {@link htmlToFragment}.
+ *
+ * @param {string} htmlString - The HTML string to sanitize.
+ * @returns {string} The sanitized HTML string.
+ *
+ * @example
+ * const safeHtml = DOMPurifyNexus('<a href="..." target="_blank" rel="noopener">link</a>');
+ */
+export function DOMPurifyNexus(htmlString: string): string {
+    return DOMPurify.sanitize(htmlString.trim(), {ADD_ATTR: ['target', 'rel']});
+}
+
 
 /**
- * @htmlString {String} HTML representing a single element
- * @return {HTMLElement}
+ * Options for HTML parsing functions.
+ * @typedef {Object} HtmlParseOptions
+ * @property {boolean} [disableSanitize] - If true, skips DOMPurifyNexus sanitization. Use with caution!
  */
-export function htmlToElement(htmlString: string): HTMLElement {
-    const div = document.createElement('div');
-    div.innerHTML = DOMPurifyNexus(htmlString.trim());
+export type HtmlParseOptions = {
+    /**
+     * If true, disables HTML sanitization via DOMPurifyNexus.
+     * Use only if you trust the HTML source!
+     */
+    disableSanitize?: boolean;
+};
 
-    // Change this to div.childNodes to support multiple topContainer-level nodes
+/**
+ * Converts an HTML string representing a single element into an HTMLElement.
+ *
+ * By default, the HTML string is sanitized using {@link DOMPurifyNexus} to prevent XSS.
+ * You can disable sanitization by passing `{ disableSanitize: true }` as the second parameter.
+ * Use this function when your HTML string contains only one top-level element.
+ * For multiple elements, use {@link htmlToElements} or {@link htmlToFragment}.
+ *
+ * @param {string} htmlString - HTML representing a single element.
+ * @param {HtmlParseOptions} [options] - Optional settings (e.g., disableSanitize).
+ * @returns {HTMLElement} The resulting HTMLElement.
+ *
+ * @example
+ * const el = htmlToElement('<button>Click me</button>');
+ * document.body.appendChild(el);
+ *
+ * @example
+ * // Unsafe: disables sanitization
+ * const el = htmlToElement('<button onclick="alert(1)">Unsafe</button>', { disableSanitize: true });
+ */
+export function htmlToElement(htmlString: string, options?: HtmlParseOptions): HTMLElement {
+    const div = document.createElement('div');
+    const html = options?.disableSanitize
+        ? htmlString.trim()
+        : DOMPurifyNexus(htmlString.trim());
+    div.innerHTML = html;
     return div.firstElementChild as HTMLElement;
 }
 
 /**
- * Custom DOMPurify function that sanitizes HTML strings and marks the 'target' and 'rel' attribute as safe.
- * @param {string} htmlString
- * @return {string}
- * @constructor
+ * Converts an HTML string containing multiple top-level elements into an array of HTMLElements.
+ *
+ * By default, the HTML string is sanitized using {@link DOMPurifyNexus} to prevent XSS.
+ * You can disable sanitization by passing `{ disableSanitize: true }` as the second parameter.
+ * Use this function when your HTML string contains multiple sibling elements at the top level.
+ * For a single element, use {@link htmlToElement}. For a fragment, use {@link htmlToFragment}.
+ *
+ * @param {string} htmlString - HTML containing one or more top-level elements.
+ * @param {HtmlParseOptions} [options] - Optional settings (e.g., disableSanitize).
+ * @returns {HTMLElement[]} An array of HTMLElements parsed from the string.
+ *
+ * @example
+ * const elements = htmlToElements('<div>One</div><div>Two</div>');
+ * elements.forEach(el => document.body.appendChild(el));
+ *
+ * @example
+ * // Unsafe: disables sanitization
+ * const elements = htmlToElements('<div onclick="alert(1)">Unsafe</div>', { disableSanitize: true });
  */
-export function DOMPurifyNexus(htmlString: string): string {
-    return DOMPurify.sanitize(htmlString.trim(), {ADD_ATTR: ['target', 'rel']}); // mark target as safe attribute
+export function htmlToElements(htmlString: string, options?: HtmlParseOptions): HTMLElement[] {
+    const div = document.createElement('div');
+    const html = options?.disableSanitize
+        ? htmlString.trim()
+        : DOMPurifyNexus(htmlString.trim());
+    div.innerHTML = html;
+    return Array.from(div.children) as HTMLElement[];
 }
+
+/**
+ * Converts an HTML string into a DocumentFragment containing all top-level nodes.
+ *
+ * By default, the HTML string is sanitized using {@link DOMPurifyNexus} to prevent XSS.
+ * You can disable sanitization by passing `{ disableSanitize: true }` as the second parameter.
+ * Use this when you want to insert multiple elements or nodes (including text nodes) into the DOM efficiently.
+ * For a single element, use {@link htmlToElement}. For an array of elements, use {@link htmlToElements}.
+ *
+ * @param {string} htmlString - HTML containing one or more top-level nodes.
+ * @param {HtmlParseOptions} [options] - Optional settings (e.g., disableSanitize).
+ * @returns {DocumentFragment} A DocumentFragment containing the parsed nodes.
+ *
+ * @example
+ * const fragment = htmlToFragment('<div>One</div><div>Two</div>');
+ * document.body.appendChild(fragment);
+ *
+ * @example
+ * // Unsafe: disables sanitization
+ * const fragment = htmlToFragment('<div onclick="alert(1)">Unsafe</div>', { disableSanitize: true });
+ */
+export function htmlToFragment(htmlString: string, options?: HtmlParseOptions): DocumentFragment {
+    const template = document.createElement('template');
+    const html = options?.disableSanitize
+        ? htmlString.trim()
+        : DOMPurifyNexus(htmlString.trim());
+    template.innerHTML = html;
+    return template.content;
+}
+
+
 
 
 //---------------------------------------
