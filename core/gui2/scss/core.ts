@@ -44,6 +44,10 @@ export const CSS_CORE_FLEX_FULL_WIDTH: string = 'css_core_flex_full_width';
  */
 export const CSS_CORE_FLEX_CENTER_ALL_FULL: string = 'css_core_flex_center_all_full';
 
+export const CSS_CLASS_N2_DISPLAY_NONE = 'n2-display-none';
+export const CSS_CLASS_N2_DISPLAY_BLOCK = 'n2-display-block';
+export const CSS_CLASS_N2_DISPLAY_FLEX = 'n2-display-flex';
+
 
 
 themeChangeListeners().add((ev) => {
@@ -72,6 +76,17 @@ themeChangeListeners().add((ev) => {
 .${CSS_CLASS_horizontal_divider}{   
     border-top: 1px solid lightgray; 
  }  
+ 
+.${CSS_CLASS_N2_DISPLAY_NONE}{
+    display: none;
+}
+.${CSS_CLASS_N2_DISPLAY_BLOCK}{
+    display: block;
+}
+.${CSS_CLASS_N2_DISPLAY_FLEX}{
+    display: flex;
+}
+ 
     `)
 
 
