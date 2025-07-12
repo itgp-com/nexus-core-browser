@@ -360,6 +360,13 @@ nexusMain.UIStartedListeners.add((ev: any) => {
 
                     this.removeErrorRules(name);
                     this.errorRules.push(errorRule);
+
+
+
+                    this.invalid = true; // custom
+
+
+
                     // Set aria attributes to invalid elements
                     this.inputElement.setAttribute('aria-invalid', 'true');
                     this.inputElement.setAttribute('aria-describedby', this.inputElement.id + '-info');
@@ -425,101 +432,144 @@ nexusMain.UIStartedListeners.add((ev: any) => {
     //Monkey-hammer the entire implementation
     (FormValidator.prototype as any).validateRules = validateRules___custom;
 
-/*
-    ---- original syncfusion implementation below ----------/
-    // Validate each rule based on input element name
-private validateRules(name: string): void {
-        if (!this.rules[`${name}`]) {
-        return;
-    }
-    const rules: string[] = Object.keys(this.rules[`${name}`]);
-    let hiddenType: boolean = false;
-    let validateHiddenType: boolean = false;
-    const vhPos: number = rules.indexOf('validateHidden');
-    const hPos: number = rules.indexOf('hidden');
-    this.getInputElement(name);
-    if (hPos !== -1) {
-        hiddenType = true;
-    }
-    if (vhPos !== -1) {
-        validateHiddenType = true;
-    }
-    if (!hiddenType || (hiddenType && validateHiddenType)) {
-        if (vhPos !== -1) {
-            rules.splice(vhPos, 1);
+
+
+    /*
+        ---- original syncfusion implementation below ----------/
+        // Validate each rule based on input element name
+    private validateRules(name: string): void {
+            if (!this.rules[`${name}`]) {
+            return;
         }
+        const rules: string[] = Object.keys(this.rules[`${name}`]);
+        let hiddenType: boolean = false;
+        let validateHiddenType: boolean = false;
+        const vhPos: number = rules.indexOf('validateHidden');
+        const hPos: number = rules.indexOf('hidden');
+        this.getInputElement(name);
         if (hPos !== -1) {
-            rules.splice((hPos - 1), 1);
+            hiddenType = true;
         }
-        this.getErrorElement(name);
-        for (const rule of rules) {
-            const errorMessage: string = this.getErrorMessage(this.rules[`${name}`][`${rule}`], rule);
-            const errorRule: ErrorRule = { name: name, message: errorMessage };
-            const eventArgs: FormEventArgs = {
-                inputName: name,
-                element: this.inputElement,
-                message: errorMessage
-            };
-            if (!this.isValid(name, rule) && !this.inputElement.classList.contains(this.ignore)) {
-                this.removeErrorRules(name);
-                this.errorRules.push(errorRule);
-                // Set aria attributes to invalid elements
-                this.inputElement.setAttribute('aria-invalid', 'true');
-                this.inputElement.setAttribute('aria-describedby', this.inputElement.id + '-info');
-                const inputParent: HTMLElement = this.inputElement.parentElement;
-                const grandParent: HTMLElement = inputParent.parentElement;
-                if (inputParent.classList.contains('e-control-wrapper') || inputParent.classList.contains('e-wrapper') ||
-                    (this.inputElement.classList.contains('e-input') && inputParent.classList.contains('e-input-group'))) {
-                    inputParent.classList.add(this.errorClass);
-                    inputParent.classList.remove(this.validClass);
-                }
-                else if ((grandParent != null) && (grandParent.classList.contains('e-control-wrapper') ||
-                    grandParent.classList.contains('e-wrapper'))) {
-                    grandParent.classList.add(this.errorClass);
-                    grandParent.classList.remove(this.validClass);
-                }
-                else {
-                    this.inputElement.classList.add(this.errorClass);
-                    this.inputElement.classList.remove(this.validClass);
-                }
-                if (!this.infoElement) {
-                    this.createErrorElement(name, errorRule.message, this.inputElement);
-                } else {
-                    this.showMessage(errorRule);
-                }
-                eventArgs.errorElement = this.infoElement;
-                eventArgs.status = 'failure';
-                if (inputParent.classList.contains('e-control-wrapper') || inputParent.classList.contains('e-wrapper') ||
-                    (this.inputElement.classList.contains('e-input') && inputParent.classList.contains('e-input-group'))) {
-                    inputParent.classList.add(this.errorClass);
-                    inputParent.classList.remove(this.validClass);
-                }
-                else if ((grandParent != null) && (grandParent.classList.contains('e-control-wrapper') ||
-                    grandParent.classList.contains('e-wrapper'))) {
-                    grandParent.classList.add(this.errorClass);
-                    grandParent.classList.remove(this.validClass);
-                }
-                else {
-                    this.inputElement.classList.add(this.errorClass);
-                    this.inputElement.classList.remove(this.validClass);
-                }
-                this.optionalValidationStatus(name, eventArgs);
-                this.trigger('validationComplete', eventArgs);
-                // Set aria-required to required rule elements
-                if (rule === 'required') {
-                    this.inputElement.setAttribute('aria-required', 'true');
-                }
-                break;
-            } else {
-                this.hideMessage(name);
-                eventArgs.status = 'success';
-                this.trigger('validationComplete', eventArgs);
+        if (vhPos !== -1) {
+            validateHiddenType = true;
+        }
+        if (!hiddenType || (hiddenType && validateHiddenType)) {
+            if (vhPos !== -1) {
+                rules.splice(vhPos, 1);
             }
+            if (hPos !== -1) {
+                rules.splice((hPos - 1), 1);
+            }
+            this.getErrorElement(name);
+            for (const rule of rules) {
+                const errorMessage: string = this.getErrorMessage(this.rules[`${name}`][`${rule}`], rule);
+                const errorRule: ErrorRule = { name: name, message: errorMessage };
+                const eventArgs: FormEventArgs = {
+                    inputName: name,
+                    element: this.inputElement,
+                    message: errorMessage
+                };
+                if (!this.isValid(name, rule) && !this.inputElement.classList.contains(this.ignore)) {
+                    this.removeErrorRules(name);
+                    this.errorRules.push(errorRule);
+                    // Set aria attributes to invalid elements
+                    this.inputElement.setAttribute('aria-invalid', 'true');
+                    this.inputElement.setAttribute('aria-describedby', this.inputElement.id + '-info');
+                    const inputParent: HTMLElement = this.inputElement.parentElement;
+                    const grandParent: HTMLElement = inputParent.parentElement;
+                    if (inputParent.classList.contains('e-control-wrapper') || inputParent.classList.contains('e-wrapper') ||
+                        (this.inputElement.classList.contains('e-input') && inputParent.classList.contains('e-input-group'))) {
+                        inputParent.classList.add(this.errorClass);
+                        inputParent.classList.remove(this.validClass);
+                    }
+                    else if ((grandParent != null) && (grandParent.classList.contains('e-control-wrapper') ||
+                        grandParent.classList.contains('e-wrapper'))) {
+                        grandParent.classList.add(this.errorClass);
+                        grandParent.classList.remove(this.validClass);
+                    }
+                    else {
+                        this.inputElement.classList.add(this.errorClass);
+                        this.inputElement.classList.remove(this.validClass);
+                    }
+                    if (!this.infoElement) {
+                        this.createErrorElement(name, errorRule.message, this.inputElement);
+                    } else {
+                        this.showMessage(errorRule);
+                    }
+                    eventArgs.errorElement = this.infoElement;
+                    eventArgs.status = 'failure';
+                    if (inputParent.classList.contains('e-control-wrapper') || inputParent.classList.contains('e-wrapper') ||
+                        (this.inputElement.classList.contains('e-input') && inputParent.classList.contains('e-input-group'))) {
+                        inputParent.classList.add(this.errorClass);
+                        inputParent.classList.remove(this.validClass);
+                    }
+                    else if ((grandParent != null) && (grandParent.classList.contains('e-control-wrapper') ||
+                        grandParent.classList.contains('e-wrapper'))) {
+                        grandParent.classList.add(this.errorClass);
+                        grandParent.classList.remove(this.validClass);
+                    }
+                    else {
+                        this.inputElement.classList.add(this.errorClass);
+                        this.inputElement.classList.remove(this.validClass);
+                    }
+                    this.optionalValidationStatus(name, eventArgs);
+                    this.trigger('validationComplete', eventArgs);
+                    // Set aria-required to required rule elements
+                    if (rule === 'required') {
+                        this.inputElement.setAttribute('aria-required', 'true');
+                    }
+                    break;
+                } else {
+                    this.hideMessage(name);
+                    eventArgs.status = 'success';
+                    this.trigger('validationComplete', eventArgs);
+                }
+            }
+        } else {
+            return;
         }
-    } else {
-        return;
     }
-}
-*/
+    */
+
+
+    FormValidator.prototype.validate = function (selected?) :boolean {
+        const rules: string[] = Object.keys(this.rules);
+        if (selected && rules.length) {
+            this.validateRules(selected);
+            //filter the selected element it don't have any valid input element
+            return rules.indexOf(selected) !== -1 && this.errorRules.filter((data: any) => {
+                return data.name === selected;
+            }).length === 0;
+        } else {
+            this.errorRules = [];
+            this.invalid = false; // custom
+            for (const name of rules) {
+                this.validateRules(name);
+            }
+            let invalid:boolean = this.invalid || this.errorRules.length > 0
+            return (! invalid); // return true if no errors, false if there are errors
+        }
+    };
+    /*
+    //Original implementation of validate function:
+
+    public validate(selected?: string): boolean {
+        const rules: string[] = Object.keys(this.rules);
+        if (selected && rules.length) {
+            this.validateRules(selected);
+            //filter the selected element it don't have any valid input element
+            return rules.indexOf(selected) !== -1 && this.errorRules.filter((data: ErrorRule) => {
+                return data.name === selected;
+            }).length === 0;
+        } else {
+            this.errorRules = [];
+            for (const name of rules) {
+                this.validateRules(name);
+            }
+            return this.errorRules.length === 0;
+        }
+    }
+     */
+
 
 }); // normal priority
