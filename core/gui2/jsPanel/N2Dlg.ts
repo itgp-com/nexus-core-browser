@@ -143,9 +143,13 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
     private _opacity_user_defined: number;
 
 
-    constructor(state ?: STATE) { super(state); }
+    constructor(state ?: STATE) {
+        super(state);
+    }
 
-    get classIdentifier() { return N2Dlg.CLASS_IDENTIFIER; }
+    get classIdentifier() {
+        return N2Dlg.CLASS_IDENTIFIER;
+    }
 
     protected onStateInitialized(state: STATE): void {
         let thisX = this;
@@ -270,7 +274,8 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
 
                     },
-                    afterInsert: (control: any) => {},
+                    afterInsert: (control: any) => {
+                    },
                 };
                 addArray.unshift(openDialogsControl); // add first
 
@@ -408,7 +413,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             if (n2) {
                 try {
                     n2.initLogic();
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error(e);
+                }
             }
 
             if (state.autoContainment) {
@@ -417,13 +424,20 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
                 // add at the very beginning
                 f_callbacks.unshift((panel2: JsPanel) => {
-                    let paneldata: JsPanelOptions_PanelData = {
-                        height: panel2.content.offsetHeight,
-                        width: panel2.content.offsetWidth,
-                        left: panel2.content.offsetLeft,
-                        top: panel2.content.offsetTop
-                    }
-                    f_autoContainment(panel2, paneldata, null);
+
+                    // run auto-containment if there is a header
+                    let panelElem = panel2 as any as HTMLElement;
+                    const controlBar = panelElem.querySelector(".jsPanel-controlbar");
+                    const headerBar = panelElem.querySelector(".jsPanel-headerbar");
+                    if (controlBar && headerBar) {
+                        let panel_data: JsPanelOptions_PanelData = {
+                            height: panel2.content.offsetHeight,
+                            width: panel2.content.offsetWidth,
+                            left: panel2.content.offsetLeft,
+                            top: panel2.content.offsetTop
+                        }
+                        f_autoContainment(panel2, panel_data, null);
+                    } // if (controlBar && headerBar)
                 }); // add the autoContainment function as the first callback
 
             } // if state.autoContainment
@@ -434,7 +448,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                         if (f)
                             f.call(panel, panel)
                     }); // keep JsPanel object as 'this' in the callback and as its argument
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error(e);
+                }
             } // if f_callbacks
 
 
@@ -458,7 +474,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                     onbeforeclose_user_defined = [x as OnBeforeClose];
                 }
             } // if x
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
 
         options.onbeforeclose = (panel: JsPanel, status: string) => {
@@ -500,7 +518,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                             return false; // do not allow the close
                         }
                     }
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error(e);
+                }
 
                 // if we got here it means the user did not cancel the close
 
@@ -539,7 +559,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                     onclose_user_defined = [x as OnClosed];
                 }
             }// if x
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
         options.onclosed = onclose_user_defined;
 
@@ -551,20 +573,32 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             try {
                 if (isN2_Interface_Dialog_Close(state.options.content)) {
                     try {
-                        let evt: N2Evt_Dialog = {dialog: thisX, widget: thisX.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}};
+                        let evt: N2Evt_Dialog = {
+                            dialog: thisX,
+                            widget: thisX.state.content as any,
+                            native_event: {panel: panel, closedByUser: closedByUser}
+                        };
                         state.options.content.onDialogClose.call(state.options.content, evt);
                     } catch (e) {
                         console.error('N2Dlg.options.onclosed: error calling onDialogClose on content', e);
                     }
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
 
             //------------ Trigger the onDialogClose event in the N2Dlg state event itself ----------------
             try {
                 if (thisX.state.onDialogClose) {
-                    thisX.state.onDialogClose.call(thisX.state.content, {dialog: thisX, widget: thisX.state.content as any, native_event: {panel: panel, closedByUser: closedByUser}});
+                    thisX.state.onDialogClose.call(thisX.state.content, {
+                        dialog: thisX,
+                        widget: thisX.state.content as any,
+                        native_event: {panel: panel, closedByUser: closedByUser}
+                    });
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
 
             openDialogsRemove(thisX); // remove this dialog from the list of open dialogs
 
@@ -602,6 +636,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 // ----- start is reposition call necessary ? ----------
                 // Set of CSS keyword values
                 const cssKeywordValues = new Set(['auto', 'fit-content', 'max-content', 'min-content', 'inherit', 'initial', 'unset']);
+
                 // Helper function to check if a value is a keyword string
                 function isKeywordValue(value: string | number | ((panel: JsPanel) => string | number)): boolean {
                     return typeof value === 'string' && cssKeywordValues.has(value);
@@ -632,10 +667,11 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                         setTimeout(() => {
                             thisX.obj.reposition(); // reposition the dialog (but only after it shows up - so setTimeout)
                         })
-                    } catch (e) { console.error(e); }
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
 //----------------- end is reposition call necessary ? ----------------
-
 
 
                 let content = thisX.state.content as any;
@@ -682,11 +718,15 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
         try {
             thisX.refreshHeaderLogo(); // set the header logo
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
         try {
             thisX.refreshHeaderTitle(); // set the header
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
 
         let state = thisX.state;
@@ -704,7 +744,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             if (thisX.state.deco && thisX.obj instanceof HTMLElement) {
                 try {
                     decoToHtmlElement(thisX.state.deco, thisX.obj as HTMLElement); // thisX.obj is HTMLElement because JsPanel is an HTMLElement
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error(e);
+                }
             } // if thisX.state.deco && thisX.obj instanceof HTMLElement
 
             (thisX.obj as any)[N2_CLASS] = thisX; // stamp the N2 object on the jsPanel object
@@ -798,7 +840,9 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 (this.obj as any)[N2_CLASS] = null; // remove the stamp
                 this.obj = null; // remove the reference
             }
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
         super.onDestroy(args);
 
@@ -807,13 +851,17 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             if (this.state.destroyN2ContentOnClose && isN2(this.state.content)) {
                 (this.state.content as N2).destroy();
             }
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
         try {
             if (this.state.destroyN2HeaderOnClose && isN2(this.state.header)) {
                 (this.state.header as N2).destroy();
             }
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
 
     } // onDestroy
 
@@ -1063,7 +1111,9 @@ function openDialogsAdd(n2Dlg: N2Dlg): void {
     try {
         if (!openDialogsExists(n2Dlg))
             openDialogs.push({dialog: n2Dlg, timestamp: new Date()});
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+    }
 } // add
 
 function openDialogsRemove(n2Dlg: N2Dlg): void {
@@ -1071,7 +1121,9 @@ function openDialogsRemove(n2Dlg: N2Dlg): void {
         let index = openDialogs.findIndex(row => row.dialog === n2Dlg);
         if (index >= 0)
             openDialogs.splice(index, 1);
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+    }
 } // remove
 
 // parameter is optional comparator function that uses OpenN2DlgDialog to sort the openDialogs List
