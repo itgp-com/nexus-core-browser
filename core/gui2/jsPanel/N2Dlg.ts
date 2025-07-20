@@ -1,3 +1,5 @@
+// noinspection JSUnusedLocalSymbols,UnnecessaryLocalVariableJS
+
 export interface StateN2DlgRef extends StateN2BasicRef {
     widget?: N2Dlg;
 }
@@ -118,6 +120,15 @@ export interface StateN2Dlg<DATA_TYPE = any> extends StateN2Basic {
      */
     repositionOnOpen?: boolean;
 
+    /**
+     * Defaults to false.
+     *
+     * If **true**, the dialog cannot be closed by the user. This includes clicking any close icons/buttons
+     * or pressing keys like the Escape key. The dialog can only be closed programmatically via the `close()` method.
+     * When enabled, both the standard jsPanel close control and the custom `N2DlgCloseIcon` are hidden.
+     */
+    preventUserClose?: boolean;
+
 } // N2DlgState
 
 // noinspection JSMismatchedCollectionQueryUpdate
@@ -127,6 +138,15 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
     static newN2Dlg_Modal(state ?: StateN2Dlg): N2Dlg {
         return null; // will be overridden by the N2Dlg_Modal class
     }
+
+    /**
+     * Special constant to indicate a programmatic close for dialogs with preventUserClose enabled.
+     * Use this as the argument to .close() to guarantee the dialog will close even if preventUserClose is true.
+     *
+     * @example
+     *   dlg.close(N2Dlg.PROGRAMMATIC_CLOSE_TOKEN);
+     */
+    static readonly PROGRAMMATIC_CLOSE_TOKEN: symbol = Symbol('N2DlgProgrammaticClose');
 
     /**
      * True by default but will be set to false if the close needs to be called by the onBeforeOpen event
@@ -142,6 +162,12 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
      */
     private _opacity_user_defined: number;
 
+    /**
+     * Internal flag to indicate a programmatic close is in progress.
+     * @private
+     */
+    private _programmaticCloseInProgress = false;
+
 
     constructor(state ?: STATE) {
         super(state);
@@ -155,41 +181,96 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         let thisX = this;
         addN2Class(state.deco, N2Dlg.CLASS_IDENTIFIER);
 
-        state.options = state.options || {};
+        // --- 1. Define Defaults & Store User Options ---
+        const userOptions: JsPanelOptions = state.options || {};
 
+        const defaultOptions: JsPanelOptions = {
+            container: 'window',
+            onwindowresize: true,
+            onparentresize: true,
+            theme: 'var(--app-dialog-header-background-color)',
+            borderRadius: CSS_VARS_CORE.app_dialog_border_radius,
+            closeOnEscape: true,
+            content: '<p>No content to display</p>',
+            panelSize: {
+                width: '99%',
+                height: '99%',
+            },
+            dragit: {
+                cursor: 'move',
+                handles: thisX.dragit_handles_string,
+                opacity: 0.8,
+                disableOnMaximized: true,
+            }
+        };
+
+        // --- 2. Deep Merge User Options Over Defaults ---
+        // A simple deep merge utility to handle nested objects like headerControls, dragit, etc.
+        function deepMerge(target: any, source: any) {
+            for (const key in source) {
+                if (Object.prototype.hasOwnProperty.call(source, key) && source[key] !== undefined) {
+                    if (isObject(source[key]) && !isArray(source[key]) && isObject(target[key])) {
+                        target[key] = deepMerge(target[key] || {}, source[key]);
+                    } else {
+                        target[key] = source[key];
+                    }
+                }
+            }
+            return target;
+        }
+
+        state.options = deepMerge(defaultOptions, userOptions);
         let options: JsPanelOptions = state.options;
 
-        options.container = options.container || 'window';
 
-        if (options.onwindowresize == null)
-            options.onwindowresize = true;
-
-        if (options.onparentresize == null)
-            options.onparentresize = true;
+        // --- 3. Apply N2Dlg-specific logic ---
 
         //if not set to anything, default to true
         state.destroyN2HeaderOnClose = state.destroyN2HeaderOnClose == null ? true : state.destroyN2HeaderOnClose;
-
-        //if not set to anything, default to true
         state.destroyN2ContentOnClose = state.destroyN2ContentOnClose == null ? true : state.destroyN2ContentOnClose;
-
-        //callJspanelFront defaults to 'true'
         state.callFront = state.callFront == null ? true : state.callFront;
-
-
-        //autoContainment defaults to 'true'
         state.autoContainment = state.autoContainment == null ? true : state.autoContainment;
 
-        if (!options.theme)
-            options.theme = 'var(--app-dialog-header-background-color)';
-        //     options.theme = 'mdb-elegant-dark';
-        if (!options.borderRadius)
-            options.borderRadius = CSS_VARS_CORE.app_dialog_border_radius;
-        if (options.closeOnEscape == null)
-            options.closeOnEscape = true;
-        if (!options.content)
-            options.content = '<p>No content to display</p>';
 
+        //---------------- handle preventUserClose configuration ------------------
+        if (state.preventUserClose) {
+            // Disable ESC key closing, but only if the user did not explicitly set it.
+            if (userOptions.closeOnEscape === undefined) {
+                options.closeOnEscape = false;
+            }
+
+            // Remove the close button, but only if the user did not explicitly configure it.
+            if ((userOptions.headerControls as any)?.close === undefined) {
+                if (typeof options.headerControls !== 'object' || options.headerControls === null) {
+                    options.headerControls = {};
+                }
+                (options.headerControls as any).close = 'remove';
+            }
+
+            // Add onbeforeclose handler to prevent closing by user
+            let existingOnBeforeClose = options.onbeforeclose;
+            let preventCloseHandler = (panel: JsPanel, status: string, closedByUser?: boolean) => {
+                // Only allow close if programmatic flag is set
+                if (thisX._programmaticCloseInProgress) {
+                    thisX._programmaticCloseInProgress = false;
+                    return true;
+                }
+                return false;
+            };
+
+            if (existingOnBeforeClose) {
+                if (Array.isArray(existingOnBeforeClose)) {
+                    // Prevent adding it multiple times if logic is re-run
+                    if (existingOnBeforeClose[0] !== preventCloseHandler) {
+                        existingOnBeforeClose.unshift(preventCloseHandler);
+                    }
+                } else {
+                    options.onbeforeclose = [preventCloseHandler, existingOnBeforeClose];
+                }
+            } else {
+                options.onbeforeclose = preventCloseHandler;
+            }
+        }
 
         //---------------- add openDialogs header control ------------------
 
@@ -286,19 +367,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
 
 
         //----------------------- Custom N2Dlg dragit options that include the whole headerbar ---------------
-        if (options.dragit == null) {
-            options.dragit = {
-                cursor: 'move',
-                handles: thisX.dragit_handles_string,
-                opacity: 0.8,
-                disableOnMaximized: true,
-            }; // enable dragging by default
-        } else {
-            if (isObject(options.dragit)) {
-                if (options.dragit?.handles == null)
-                    options.dragit.handles = thisX.dragit_handles_string;
-            }
-        }
+        // This is now handled by the defaultOptions merge logic above. This block can be removed.
 
 
         //------------- autoContainment  (one more section under the main callback) ----------------
@@ -612,12 +681,7 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
             return true;
         });
 
-        if (options.panelSize == null) {
-            options.panelSize = {
-                width: '99%', // width: 'min(99%,800px)',
-                height: '99%',  // height: 'min(99%, 600px)',
-            }
-        }
+        // This is now handled by the defaultOptions merge logic above. This block can be removed.
 
 
         super.onStateInitialized(state);
@@ -882,8 +946,24 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
         }
     }
 
-    close(callback?: (id: string) => any | boolean): void {
-        this.jsPanel?.close(callback);
+    /**
+     * Closes the dialog. If preventUserClose is true, only closes if called programmatically.
+     * @param token If you pass N2Dlg.PROGRAMMATIC_CLOSE_TOKEN, the dialog will close even if preventUserClose is true.
+     * @example
+     *   dlg.close(N2Dlg.PROGRAMMATIC_CLOSE_TOKEN); // always closes
+     *   dlg.close(); // closes only if preventUserClose is not true
+     */
+    close(token?: unknown): void {
+        if (this.state.preventUserClose) {
+            if (token === N2Dlg.PROGRAMMATIC_CLOSE_TOKEN) {
+                this._programmaticCloseInProgress = true;
+                this.jsPanel?.close();
+                return;
+            }
+            // If preventUserClose is true and no token, do not close
+            return;
+        }
+        this.jsPanel?.close();
     }
 
 
@@ -946,47 +1026,61 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
     }// refreshHeaderTitle
 
     refreshHeaderLogo(): void {
-        // ----------------- header logo (back arrow) ------------
+        // ----------------- header logo (close icon) ------------
 
         let state = this.state;
-        /*
-         The back arrow is always the first element in the logo and its cursor is a pointer.
-         Any headerLogo specified in the
-         */
-        let n2DlgCloseIcon = new N2DlgCloseIcon({value: null, dialog: this});
+
+        let headerElements: HTMLElement[] = [];
+
+        // Only add the close icon if preventUserClose is not enabled
+        if (!state.preventUserClose) {
+            /*
+             The close icon is always the first element in the logo and its cursor is a pointer.
+             Any headerLogo specified in the options will be placed after it.
+             */
+            let n2DlgCloseIcon = new N2DlgCloseIcon({value: null, dialog: this});
+            n2DlgCloseIcon.initLogic();
+            headerElements.push(n2DlgCloseIcon.htmlElement);
+        } // if !state.preventUserClose
 
         let ohl: string | HTMLElement = state.options.headerLogo;
-        let existingElem: HTMLElement = null;
+        let logoElem: HTMLElement = null;
         if (ohl) {
             if (isString(ohl)) {
                 if (!ohl.startsWith('<')) {
                     // documentations says that if it starts with '<' it's HTML, otherwise it's a image url
                     let imgElem = document.createElement('img');
                     imgElem.src = ohl;
-                    existingElem = imgElem;
+                    logoElem = imgElem;
                 } else {
-                    existingElem = htmlToElement(ohl as string)
+                    logoElem = htmlToElement(ohl as string)
                 }
             } else {
                 // HTMLElement
-                existingElem = ohl as HTMLElement;
+                logoElem = ohl as HTMLElement;
             } // if isString(ohl)
         } // if ohl
 
+        if (logoElem) {
+            headerElements.push(logoElem);
+        }
 
         let headerLogoElem: HTMLElement;
 
-        if (existingElem) {
-            let logoRow = new N2Row({children: [n2DlgCloseIcon, existingElem]});
+        if (headerElements.length > 1) {
+            let logoRow = new N2Row({children: headerElements});
             logoRow.initLogic();
             headerLogoElem = logoRow.htmlElement;
+        } else if (headerElements.length === 1) {
+            headerLogoElem = headerElements[0];
         } else {
-            n2DlgCloseIcon.initLogic();
-            headerLogoElem = n2DlgCloseIcon.htmlElement;
+            // No elements to display
+            headerLogoElem = null;
         }
 
-        // state.options.headerLogo = ;
-        this.jsPanel.setHeaderLogo(headerLogoElem);
+        if (headerLogoElem) {
+            this.jsPanel.setHeaderLogo(headerLogoElem);
+        }
     } //    refreshHeaderLogo
 
 
