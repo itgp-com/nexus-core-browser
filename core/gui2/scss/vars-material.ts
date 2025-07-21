@@ -11,6 +11,7 @@ export interface CoreCssVariables extends CssVariables {
     app_button_color_accent: string,
     app_color_blue: string;
     app_color_blue_01: string;
+    app_color_blue_02: string;
     app_color_cyan: string;
     app_color_gray_text1: string;
     app_color_gray_text2: string;
@@ -79,6 +80,7 @@ const coreCssCommonVariables: CoreCssVariables = {
     app_button_color_accent: undefined,
     app_color_blue: '#10669F',
     app_color_blue_01: '#2174af',
+    app_color_blue_02: '#4a90e2',
     app_color_coral_dark: '#EF5350',
     app_color_coral_light: '#F8BBD0',
     app_color_coral_medium: '#FF799C',
