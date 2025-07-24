@@ -1,6 +1,6 @@
 {
   "name": "nexus-core-browser",
-  "version": "4.6.6",
+  "version": "4.6.7",
   "private": true,
   "description": "nexus-core-browser",
   "author": "InsiTech",
@@ -18,6 +18,7 @@
     "base32-encode": "2.0.0",
     "bootstrap": "5.3.7",
     "chart.js": "4.5.0",
+    "chartjs-plugin-datalabels": "2.2.0",
     "chartjs-plugin-trendline": "3.0.1",
     "crypto-js": "4.2.0",
     "css-element-queries": "1.2.3",
