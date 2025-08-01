@@ -81,6 +81,8 @@ const coreCssCommonVariables: CoreCssVariables = {
     app_color_blue: '#10669F',
     app_color_blue_01: '#2174af',
     app_color_blue_02: '#4a90e2',
+    app_color_blue_midnight: '#191970', // midnight blue
+    app_color_blue_dark: '#00008b', // dark blue
     app_color_coral_dark: '#EF5350',
     app_color_coral_light: '#F8BBD0',
     app_color_coral_medium: '#FF799C',
