@@ -1,4 +1,4 @@
-import {DataManager, Query} from '@syncfusion/ej2-data';
+import {Query} from '@syncfusion/ej2-data';
 
 export abstract class EJBase {
 

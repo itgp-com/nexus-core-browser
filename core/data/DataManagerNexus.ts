@@ -1,6 +1,7 @@
 import {AdaptorOptions, DataManager, DataOptions, Query} from "@syncfusion/ej2-data";
 import {Ajax}                                from "@syncfusion/ej2-base";
 import {applyGlobalHttpHeadersToHttpRequest} from "../HttpUtils";
+import {NexusDataManager} from "./NexusDataManager";
 
 function customizeUrlAdaptor(dataSource: DataOptions | JSON[] | Object[]): (DataOptions | JSON[] | Object[]) {
    if (dataSource && !Array.isArray(dataSource)) {
@@ -23,7 +24,7 @@ function customizeUrlAdaptor(dataSource: DataOptions | JSON[] | Object[]): (Data
    return dataSource;
 }
 
-export class DataManagerNexus extends DataManager {
+export class DataManagerNexus extends NexusDataManager {
    constructor(dataSource?: DataOptions | JSON[] | Object[], query?: Query, adaptor?: AdaptorOptions | string) {
       super(customizeUrlAdaptor(dataSource), query, adaptor);
    }

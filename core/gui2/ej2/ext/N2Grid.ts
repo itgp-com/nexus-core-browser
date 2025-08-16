@@ -28,9 +28,9 @@ export interface N2ExcelExportSettings {
 } // N2ExcelExportSettings
 
 export interface N2PreExcelExport {
-    cancel : boolean;
-    n2Grid : N2Grid;
-    state : StateN2Grid;
+    cancel: boolean;
+    n2Grid: N2Grid;
+    state: StateN2Grid;
 } // N2PreExcelExport
 
 export interface N2PostExcelExport {
@@ -183,7 +183,7 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * It also allows one to cancel the export by setting args.cancel = true
      * @param args N2PreExcelExport
      */
-    onPreExcelExport ?: (args:N2PreExcelExport) => void | Promise<void>;
+    onPreExcelExport?: (args: N2PreExcelExport) => void | Promise<void>;
 
     /**
      * Called from ExcelExportNexus.doExcelExport after the actual export is performed.
@@ -193,7 +193,7 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      * It also allows the developer to look at the result of calling grid.excelExport(...)
      * @param args N2PostExcelExport
      */
-    onPostExcelExport ?: (args:N2PostExcelExport) => void | Promise<void>;
+    onPostExcelExport?: (args: N2PostExcelExport) => void | Promise<void>;
 
 } // StateN2Grid
 
@@ -211,6 +211,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     private _ddmenu: N2DropDownMenu;
     private _f_existing_actionFailure: (args: FailureEventArgs) => void;
     private _f_existing_queryCellInfo: (args: ExcelQueryCellInfoEventArgs) => void;
+    private _f_existing_beforeDataBound: (args: BeforeDataBoundArgs) => void;
     readonly _isN2Grid: boolean = true;
 
     constructor(state ?: STATE) {
@@ -282,6 +283,12 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             this._f_existing_queryCellInfo = gridModel.queryCellInfo; // existing function in place
         gridModel.queryCellInfo = this.queryCellInfo;
 
+
+        if (state?.ej.beforeDataBound)
+            this._f_existing_beforeDataBound = state.ej.beforeDataBound; //this takes precedence over the gridModel standard implementation
+        if (!this._f_existing_beforeDataBound)
+            this._f_existing_beforeDataBound = gridModel.beforeDataBound; // existing function in place
+        gridModel.beforeDataBound = this.beforeDataBound;
 
         //---------------- Column Menu start ---------------------
         if (state.ej.showColumnMenu) { // only add the column menu if it's not disabled
@@ -847,6 +854,36 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } // if if (f_actionFailure && this.obj)
     } // actionFailure
 
+    protected beforeDataBound = (args: BeforeDataBoundArgs) => {
+        try {
+            if (args.cancel == null || args.cancel == false) {
+                let req_id: string = (args.actual as any)?.params?._req_id_;
+                if (req_id != null) {
+                    if (isNexusDataManager(this?.obj?.dataSource)) {
+                        let nexusDM: NexusDataManager = this?.obj?.dataSource as NexusDataManager;
+                        let req_id_dm = nexusDM.nexus_settings.req_id
+                        if (req_id_dm != null) {
+                            if (req_id != req_id_dm) {
+                                // cancel if both req_id exist and are different. Ignore if any of them is null (does not exist)
+                                args.cancel = true;
+                            }
+                        } // if req_id_dm
+                    } // if isNexusDataManager
+                } // if req_id
+            } // if args.cancel == null || args.cancel == false
+        } catch (e) {
+            console.error(e);
+        }
+
+        try {
+            if (this._f_existing_beforeDataBound) {
+                this._f_existing_beforeDataBound.call(this.obj, args);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    } // beforeDataBound
+
     protected queryCellInfo = (args: QueryCellInfoEventArgs) => {
 
         try {
@@ -879,7 +916,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             return;
 
         let cell: HTMLElement = qArgs.cell as HTMLElement;
-        if ( !cell)
+        if (!cell)
             return;
 
         let isBlurred = false;
@@ -938,21 +975,20 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         // fill in the innerHTML if it was not set by the user
         if (textElem == null) {
             if (isDataAnArray) {
+                textElem = document.createElement('div');
                 if (isRowDetailPanel) {
                     // in row detail, the content is <br> delimited so we can see the list better
-                    let multiLineString:string = (content as string[]).map(v => v.replace(/,/g, '&#44;')).join('<br>'); // format array as multi-line string for each array entry
-                    textElem = document.createElement('div');
+                    let multiLineString: string = (content as string[]).map(v => (v != null ? v.replace(/,/g, '&#44;') : '')).join('<br>'); // format array as multi-line string for each array entry
                     textElem.innerHTML = multiLineString;
                 } else {
                     // grid cell for array is ', ' delimited
-                    let singleLineCommaDelimitedCell = (content as string[]).map(v => v.replace(/,/g, '&#44;')).join(', ') // format array as comma delimited string
-                    textElem = document.createElement('div');
+                    let singleLineCommaDelimitedCell = (content as string[]).map(v => v != null ? v.replace(/,/g, '&#44;') : '').join(', '); // format array as comma delimited string, handle nulls                   textElem = document.createElement('div');
                     textElem.innerHTML = singleLineCommaDelimitedCell;
                 }
             } else { // isDataAnArray
                 if (isHighlightedHTML) {
                     // highlighted content is already formatted as HTML, so just set it
-                    let highlightedCellContent:string  = content as string;
+                    let highlightedCellContent: string = content as string;
                     textElem = document.createElement('div');
                     textElem.innerHTML = highlightedCellContent;
                 } else {
@@ -980,7 +1016,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
         let existing_tippy_tooltip = findElementWithTippyTooltip(cell);
-        if ( existing_tippy_tooltip == null) {
+        if (existing_tippy_tooltip == null) {
 
             let userHandlesTooltip = false;
             if (isDataAnArray) {
@@ -1053,7 +1089,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         /**
          * Optional. If null, the data will be read from the 'field' (allows for substituting the data from this field with the data from another)
          */
-        recFieldVal ?: RecFieldVal
+        recFieldVal?: RecFieldVal
     }): void {
         // this method is overwritten by the extending application from app_specific/Nexus_Overwrites
         // creates application-specific tooltips for data arrays
@@ -1346,11 +1382,11 @@ font-size: var(--app-font-size-regular);`
         color: ${gridHoverFontColor} !important;
     `);
 
-  //   // Grid cell font type and size
-  //   cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell`, `
-  // font-family: var(--app-font-family);
-  // font-size: var(--app-font-size-regular);
-  //   `);
+    //   // Grid cell font type and size
+    //   cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell`, `
+    // font-family: var(--app-font-family);
+    // font-size: var(--app-font-size-regular);
+    //   `);
 
 
     // left divider color for row cell, header and filter cells
@@ -1696,7 +1732,7 @@ import {RowDD} from '@syncfusion/ej2-grids/src/grid/actions/row-reorder';
 import {Scroll} from '@syncfusion/ej2-grids/src/grid/actions/scroll';
 import {Search} from '@syncfusion/ej2-grids/src/grid/actions/search';
 import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
-import {ExcelExportProperties} from "@syncfusion/ej2-grids/src/grid/base/interface";
+import {BeforeDataBoundArgs, ExcelExportProperties} from "@syncfusion/ej2-grids/src/grid/base/interface";
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {NumericTextBox} from '@syncfusion/ej2-inputs';
 import {MenuEventArgs} from '@syncfusion/ej2-navigations';
@@ -1704,20 +1740,16 @@ import {DialogModel} from '@syncfusion/ej2-popups';
 import DOMPurify from 'dompurify';
 import {isArray, isFunction} from 'lodash';
 import {DOMPurifyNexus, getRandomString} from '../../../BaseUtils';
-import {
-    CSS_CLASS_detail_long_text,
-    CSS_CLASS_ellipsis_container,
-    CSS_CLASS_grid_cell_detail,
-    CSS_CLASS_grid_cell_highlight_container
-} from "../../../Constants";
+import {CSS_CLASS_detail_long_text, CSS_CLASS_ellipsis_container, CSS_CLASS_grid_cell_detail} from "../../../Constants";
 import {findElementWithTippyTooltip, fontColor, isDev} from '../../../CoreUtils';
 import {cssAdd, cssAddSelector} from '../../../CssUtils';
 import {EJBase} from '../../../data/Ej2Comm';
 import {HttpRequestEvtDataManager} from '../../../data/NexusComm';
+import {isNexusDataManager, NexusDataManager} from "../../../data/NexusDataManager";
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {nexusMain} from '../../../NexusMain';
 import {N2Html} from '../../generic/N2Html';
-import {CSS_CLASS_N2_HIGHLIGHT_SURROUNDINGS, rec_field_value, RecFieldVal} from '../../highlight/N2Highlight';
+import {rec_field_value, RecFieldVal} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded, N2Evt_Resized} from '../../N2';
 import {N2GridAuth} from '../../N2Auth';

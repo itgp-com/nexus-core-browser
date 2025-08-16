@@ -1,6 +1,6 @@
 /// <reference path="./global.d.ts" />
 import {Component} from "@syncfusion/ej2-base";
-import {DataManager, Query} from "@syncfusion/ej2-data";
+import {Query} from "@syncfusion/ej2-data";
 import {ColumnModel} from '@syncfusion/ej2-grids';
 import * as _ from "lodash";
 import {isArray} from "lodash";
@@ -9,6 +9,7 @@ import {tModel, urlTableEj2} from "./AppPathUtils";
 import {getErrorHandler} from "./CoreErrorHandling";
 import {EJList} from "./data/Ej2Comm";
 import {NexusAdaptor} from "./data/NexusAdaptor";
+import {NexusDataManager} from "./data/NexusDataManager";
 
 export const NEXUS_WINDOW_ROOT_PATH = 'com.itgp.nexus';
 export const IMMEDIATE_MODE_DELAY = 1000;
@@ -583,7 +584,7 @@ export interface Ej2QueryOptions {
  *   });
  */
 export async function ej2Query(tablename: string, query?: Query, options?: Ej2QueryOptions): Promise<any[]> {
-    let dataManager = new DataManager({
+    let dataManager = new NexusDataManager({
         url: (options?. tablenameisDirectURL ? tablename : urlTableEj2(tablename) ),
         adaptor: (options?.adaptor ? options.adaptor : new NexusAdaptor()),
         crossDomain: true
