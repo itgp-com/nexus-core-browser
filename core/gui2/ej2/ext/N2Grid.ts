@@ -195,6 +195,9 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      */
     onPostExcelExport?: (args: N2PostExcelExport) => void | Promise<void>;
 
+    dropDownMenuState?: StateN2DropDownMenu | (() => StateN2DropDownMenu);
+
+
 } // StateN2Grid
 
 export function isN2Grid(widget: any): boolean {
@@ -322,65 +325,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 let f_user_columnMenuOpen = gridModel.columnMenuOpen;
                 gridModel.columnMenuOpen = (ev: ColumnMenuOpenEventArgs) => {
 
-
                     let grid: Grid = getFirstEj2FromModel(gridModel);
-
-
-                    // //--------------------- Syncfusion suggested hack to move the filter items to the main column menu (no more filter sub-menu) ---------------------
-                    // let args = ev;
-                    // args.items[5].text = args.column.type.replace(/\w+/g,
-                    //     function (w) {
-                    //         return w[0].toUpperCase() + w.slice(1).toLowerCase();
-                    //     }) + ' Filters';
-                    // args.element.querySelectorAll('li')[5].classList.add('e-submenu');
-                    // args.items[5].iconCss = 'e-submenu';
-                    // grid.filterModule.setFilterModel(args.column);
-                    // let options: IFilterArgs = grid.filterModule.createOptions(args.column, args.element) as IFilterArgs;
-                    // let excelFilterModule: ExcelFilterBase = grid.filterModule.filterModule['excelFilterBase'];
-                    // const filterLength: number = (excelFilterModule['existingPredicate'][options.field] && excelFilterModule['existingPredicate'][options.field].length) ||
-                    //     options.filteredColumns.filter((col: Predicate) => {
-                    //         return options.field === col.field;
-                    //     }).length;
-                    //
-                    // if (filterLength === 0) {
-                    //     grid.columnMenuModule['disableItems'].push('Clear Filter');
-                    // } else {
-                    //     // remove the clear filter option from the column menu
-                    //     grid.columnMenuModule['disableItems'] = grid.columnMenuModule['disableItems'].filter((item: string) => {
-                    //         return item !== 'Clear Filter';
-                    //     });
-                    // }
-                    // excelFilterModule['updateModel'](options);
-                    // excelFilterModule['menu'] = args.element;
-                    // excelFilterModule['dlg'] = args.element;
-                    // excelFilterModule['cmenu'] = grid.createElement('ul', {className: 'e-excel-menu'}) as HTMLUListElement;
-                    // EventHandler.add(args.element, 'mouseover', (e: any) => {
-                    //     setTimeout(() => {
-                    //         if (!e.target || e.target.id !== 'gridcustomfilter') {
-                    //             if (excelFilterModule['isCMenuOpen']) {
-                    //                 const submenu: Element = excelFilterModule['menu'].querySelector('.e-submenu');
-                    //                 if (!isNullOrUndefined(submenu)) {
-                    //                     submenu.classList.remove('e-selected');
-                    //                 }
-                    //                 excelFilterModule['destroyCMenu']();
-                    //             }
-                    //             return;
-                    //         } else {
-                    //             if (!e.target.classList.contains('e-selected')) {
-                    //                 excelFilterModule['hoverHandler'](e);
-                    //             }
-                    //             // else {
-                    //             //     const submenu: Element = args.element.querySelector('.e-submenu');
-                    //             //     if (!isNullOrUndefined(submenu)) {
-                    //             //         submenu.classList.remove('e-selected');
-                    //             //     }
-                    //             //     excelFilterModule['destroyCMenu']();
-                    //             // }
-                    //         }
-                    //     }, 0);
-                    // }, grid.filterModule.filterModule['excelFilterBase']);
-                    // //-------------------- end Syncfusion suggested hack ---------------------
-
 
                     let clearSortItem = ev.items.find((elem) => elem.id.endsWith(clearSortSuffix));
                     if (clearSortItem) {
@@ -1108,7 +1053,6 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         // creates application-specific tooltips for regular data
     }
 
-
     /**
      * The function is used to generate updated Query from Grid model.
      *
@@ -1122,17 +1066,62 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         return new Data(this.obj).generateQuery(skipPage, isAutoCompleteCall);
     } // generateQuery
 
-    protected createDropDownMenu(): void {
-        if (this._ddmenu)
-            return;
+    //------------- DropDownMenu section start -----------------
 
-        this._ddmenu = new N2DropDownMenu(this.dropDownMenuState());
+
+    /**
+     * Create or overwrite the drop down menu for the grid based on either the current
+     * dropDownMenuState in this.state if defined or the default menu for every N2Grid otherwise.
+     *
+     * If a menu already exists, it is destroyed first.
+     */
+    public createDropDownMenu(): void {
+        if (this.dropDownMenu) {
+
+            try {
+                this.dropDownMenu.destroy();
+            } catch (e) { console.error(e);  }
+
+        } // if (this._ddmenu)
+
+
+        let dropDownState: StateN2DropDownMenu = null;
+        if ( this.state.dropDownMenuState ) {
+            if ( isFunction(this.state.dropDownMenuState) ) {
+                try {
+                    dropDownState = this.state.dropDownMenuState.call(this);
+                } catch (e) {
+                    console.error(e);
+                }
+            } else {
+                dropDownState = this.state.dropDownMenuState;
+            }
+        } // if ( this.state.dropDownMenuState )
+
+        if (dropDownState == null) {
+            dropDownState = this.defaultDropDownMenuState();
+        }
+
+        if (dropDownState.target == null)
+            dropDownState.target = this.defaultDropDownMenuTarget();
+
+        if (dropDownState.dropdown_state == null)
+            dropDownState.dropdown_state = {};
+
+        if (dropDownState.dropdown_state.ej == null)
+            dropDownState.dropdown_state.ej = {};
+
+        if (dropDownState.dropdown_state.ej.items == null)
+            dropDownState.dropdown_state.ej.items = this.defaultDropDownMenuItems();
+
+
+        this.dropDownMenu = new N2DropDownMenu(dropDownState);
     } // createDropDownMenu
 
-    protected dropDownMenuState(): StateN2DropDownMenu {
+    public defaultDropDownMenuState(): StateN2DropDownMenu {
 
         let menu_items = this.defaultDropDownMenuItems();
-        let menu_target = this.dropDownMenuTarget();
+        let menu_target = this.defaultDropDownMenuTarget();
         return {
             target: menu_target,
             dropdown_state: {
@@ -1143,11 +1132,11 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } as StateN2DropDownMenu;
     } // dropDownMenuState
 
-    protected dropDownMenuTarget(): HTMLElement {
+    public defaultDropDownMenuTarget(): HTMLElement {
         return this.obj.element as HTMLElement;
     }
 
-    protected defaultDropDownMenuItems(): ItemModel_N2DropDownMenu[] {
+    public defaultDropDownMenuItems(): ItemModel_N2DropDownMenu[] {
         // not guaranteed that this.obj grid is created yet. TODO Might want to call this from onAfterInitLogic again and add a semaphore that it was not called twice
         let menu_items: ItemModel_N2DropDownMenu[] = [];
 
@@ -1167,6 +1156,17 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         }
         return menu_items;
     } // defaultDropDownMenuItems
+
+
+    get dropDownMenu(): N2DropDownMenu {
+        return this._ddmenu;
+    }
+
+    set dropDownMenu(value: N2DropDownMenu) {
+        this._ddmenu = value;
+    }
+
+//------------- DropDownMenu section end -----------------
 
     protected defaultGroupSettings(): GroupSettingsModel {
         return {
@@ -1735,10 +1735,11 @@ import {Toolbar} from '@syncfusion/ej2-grids/src/grid/actions/toolbar';
 import {BeforeDataBoundArgs, ExcelExportProperties} from "@syncfusion/ej2-grids/src/grid/base/interface";
 import {Column} from '@syncfusion/ej2-grids/src/grid/models/column';
 import {NumericTextBox} from '@syncfusion/ej2-inputs';
-import {MenuEventArgs} from '@syncfusion/ej2-navigations';
 import {DialogModel} from '@syncfusion/ej2-popups';
+import {MenuEventArgs} from "@syncfusion/ej2-splitbuttons";
 import DOMPurify from 'dompurify';
 import {isArray, isFunction} from 'lodash';
+import * as console from "node:console";
 import {DOMPurifyNexus, getRandomString} from '../../../BaseUtils';
 import {CSS_CLASS_detail_long_text, CSS_CLASS_ellipsis_container, CSS_CLASS_grid_cell_detail} from "../../../Constants";
 import {findElementWithTippyTooltip, fontColor, isDev} from '../../../CoreUtils';

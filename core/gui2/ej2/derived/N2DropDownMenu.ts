@@ -1,18 +1,3 @@
-import {DropDownButton, MenuEventArgs, BeforeOpenCloseMenuEventArgs, OpenCloseMenuEventArgs, DropDownButtonModel} from '@syncfusion/ej2-splitbuttons';
-import {ItemModel} from '@syncfusion/ej2-splitbuttons/src/common/common-model';
-import {isString} from 'lodash';
-import {voidFunction} from '../../../BaseUtils';
-import {isDev} from '../../../CoreUtils';
-import {cssAddSelector} from '../../../CssUtils';
-import {N2Html} from '../../generic/N2Html';
-import {N2, N2Evt_OnHtml} from '../../N2';
-import {N2Basic, StateN2Basic} from '../../N2Basic';
-import {addClassesToClassList, addN2Class, decoMergeStyles, decoToCssStyle, decoToHtmlElement, IHtmlUtils, N2HtmlDecorator} from '../../N2HtmlDecorator';
-import {isN2} from '../../N2Utils';
-import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
-import {N2DropDownButton, StateN2DropDownButton} from '../ext/N2DropDownButton';
-
-
 export interface StateN2DropDownMenu extends StateN2Basic {
 
     /**
@@ -115,6 +100,30 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
         return this.n2Anchor.htmlElement;
     }
 
+
+    destroy() {
+        super.destroy();
+        try {
+
+            if ( this.n2DropDownButton) {
+                let elem = this.n2DropDownButton.htmlElement;
+                this.n2DropDownButton.destroy();
+                elem.remove();
+            } // if n2DropDownButton
+        } catch (e) {
+            console.error(e);
+        }
+
+        try {
+            if ( this.n2Anchor ) {
+                let elem = this.n2Anchor.htmlElement;
+                this.n2Anchor.destroy();
+                elem.remove();
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    } // destroy
 
     protected createN2Anchor(): void {
         if ( this._n2Anchor)
@@ -676,3 +685,31 @@ themeChangeListeners().add((_ev: ThemeChangeEvent) => {
         box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
 `);
 }); // normal priority
+
+import {
+    BeforeOpenCloseMenuEventArgs,
+    DropDownButton,
+    DropDownButtonModel,
+    MenuEventArgs,
+    OpenCloseMenuEventArgs
+} from '@syncfusion/ej2-splitbuttons';
+import {ItemModel} from '@syncfusion/ej2-splitbuttons/src/common/common-model';
+import {isString} from 'lodash';
+import {voidFunction} from '../../../BaseUtils';
+import {isDev} from '../../../CoreUtils';
+import {cssAddSelector} from '../../../CssUtils';
+import {N2Html} from '../../generic/N2Html';
+import {N2, N2Evt_OnHtml} from '../../N2';
+import {N2Basic, StateN2Basic} from '../../N2Basic';
+import {
+    addClassesToClassList,
+    addN2Class,
+    decoMergeStyles,
+    decoToCssStyle,
+    decoToHtmlElement,
+    IHtmlUtils,
+    N2HtmlDecorator
+} from '../../N2HtmlDecorator';
+import {isN2} from '../../N2Utils';
+import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
+import {N2DropDownButton, StateN2DropDownButton} from '../ext/N2DropDownButton';
