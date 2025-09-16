@@ -1739,7 +1739,6 @@ import {DialogModel} from '@syncfusion/ej2-popups';
 import {MenuEventArgs} from "@syncfusion/ej2-splitbuttons";
 import DOMPurify from 'dompurify';
 import {isArray, isFunction} from 'lodash';
-import * as console from "node:console";
 import {DOMPurifyNexus, getRandomString} from '../../../BaseUtils';
 import {CSS_CLASS_detail_long_text, CSS_CLASS_ellipsis_container, CSS_CLASS_grid_cell_detail} from "../../../Constants";
 import {findElementWithTippyTooltip, fontColor, isDev} from '../../../CoreUtils';
