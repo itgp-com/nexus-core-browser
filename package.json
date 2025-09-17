@@ -1,6 +1,6 @@
 {
   "name": "nexus-core-browser",
-  "version": "4.7.3",
+  "version": "4.7.4",
   "private": true,
   "description": "nexus-core-browser",
   "author": "InsiTech",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@stomp/stompjs": "7.1.1",
-    "@syncfusion/ej2": "30.2.7",
+    "@syncfusion/ej2": "31.1.20",
     "@types/chart.js": "2.9.41",
     "@types/collections": "5.1.5",
     "@types/sockjs-client": "1.5.4",
