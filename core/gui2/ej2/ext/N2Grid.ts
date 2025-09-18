@@ -195,6 +195,17 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      */
     onPostExcelExport?: (args: N2PostExcelExport) => void | Promise<void>;
 
+    /**
+     * Provides a custom state or a function returning a custom state for the drop down menu.
+     *
+     * If set, this will override the default drop down menu for the grid.
+     *
+     * The provided state does not need to be fully specified. The following defaults will be applied if properties are missing:
+     * - If `state.target` is not provided, `this.defaultDropDownMenuTarget()` (the grid's HTML element) will be used.
+     * - If `state.dropdown_state.ej.items` is not provided, `this.defaultDropDownMenuItems()` will be used.
+     *
+     * @type {StateN2DropDownMenu | (() => StateN2DropDownMenu)}
+     */
     dropDownMenuState?: StateN2DropDownMenu | (() => StateN2DropDownMenu);
 
 
