@@ -1,5 +1,22 @@
 nexusMain.UIStartedListeners.add((ev: any) => {
     link_widget_dataSource_NexusDataManager(Grid.prototype);
+
+
+    // Add these lines to modify refreshColumns to recreate the drop down menu after columns are refreshed
+    const originalRefreshColumns = Grid.prototype.refreshColumns;
+    Grid.prototype.refreshColumns = function (...args: any[]) {
+        originalRefreshColumns.apply(this, args);
+        const n2grid = (this as any)[N2_CLASS] as N2Grid;
+        if (n2grid && isN2Grid(n2grid)) {
+            try {
+                n2grid.createDropDownMenu();
+            } catch (e) {
+                console.error('Error calling createDropDownMenu in refreshColumns', e);
+            }
+        } // if n2grid
+    }; // override refreshColumns
+
+
 }); // normal priority
 
 themeChangeListeners().add((_ev: ThemeChangeEvent) => {
@@ -1779,7 +1796,12 @@ import {MenuEventArgs} from "@syncfusion/ej2-splitbuttons";
 import DOMPurify from 'dompurify';
 import {isArray, isFunction} from 'lodash';
 import {DOMPurifyNexus, getRandomString} from '../../../BaseUtils';
-import {CSS_CLASS_detail_long_text, CSS_CLASS_ellipsis_container, CSS_CLASS_grid_cell_detail} from "../../../Constants";
+import {
+    CSS_CLASS_detail_long_text,
+    CSS_CLASS_ellipsis_container,
+    CSS_CLASS_grid_cell_detail,
+    N2_CLASS
+} from "../../../Constants";
 import {findElementWithTippyTooltip, fontColor, isDev} from '../../../CoreUtils';
 import {cssAdd, cssAddSelector} from '../../../CssUtils';
 import {EJBase} from '../../../data/Ej2Comm';
