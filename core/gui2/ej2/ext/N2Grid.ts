@@ -934,11 +934,30 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                 textElem = document.createElement('div');
                 if (isRowDetailPanel) {
                     // in row detail, the content is <br> delimited so we can see the list better
-                    let multiLineString: string = (content as string[]).map(v => (v != null ? v.replace(/,/g, '&#44;') : '')).join('<br>'); // format array as multi-line string for each array entry
+                    let multiLineString: string = (content as string[]).map(v => {
+                        if (v == null)
+                            return '';
+
+                        if (typeof v !== 'string')
+                            return String(v).replace(/,/g, '&#44;');
+
+                        return v.replace(/,/g, '&#44;');
+                    }).join('<br>'); // format array as multi-line string for each array entry
+
+
                     textElem.innerHTML = multiLineString;
                 } else {
                     // grid cell for array is ', ' delimited
-                    let singleLineCommaDelimitedCell = (content as string[]).map(v => v != null ? v.replace(/,/g, '&#44;') : '').join(', '); // format array as comma delimited string, handle nulls                   textElem = document.createElement('div');
+
+                    let singleLineCommaDelimitedCell = (content as any[]).map(v => {
+                        if (v == null)
+                            return '';
+
+                        if (typeof v !== 'string')
+                            return String(v).replace(/,/g, ',');
+
+                        return v.replace(/,/g, ',');
+                    }).join(', '); // format array as comma delimited string, handle nulls
                     textElem.innerHTML = singleLineCommaDelimitedCell;
                 }
             } else { // isDataAnArray
@@ -1091,14 +1110,16 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
             try {
                 this.dropDownMenu.destroy();
-            } catch (e) { console.error(e);  }
+            } catch (e) {
+                console.error(e);
+            }
 
         } // if (this._ddmenu)
 
 
         let dropDownState: StateN2DropDownMenu = null;
-        if ( this.state.dropDownMenuState ) {
-            if ( isFunction(this.state.dropDownMenuState) ) {
+        if (this.state.dropDownMenuState) {
+            if (isFunction(this.state.dropDownMenuState)) {
                 try {
                     dropDownState = this.state.dropDownMenuState.call(this);
                 } catch (e) {
@@ -1110,11 +1131,11 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } // if ( this.state.dropDownMenuState )
 
         if (dropDownState == null) {
-            dropDownState = this.defaultDropDownMenuState();
+            dropDownState = this.defaultDropDownMenuState.call(this);
         }
 
         if (dropDownState.target == null)
-            dropDownState.target = this.defaultDropDownMenuTarget();
+            dropDownState.target = this.defaultDropDownMenuTarget.call(this);
 
         if (dropDownState.dropdown_state == null)
             dropDownState.dropdown_state = {};
@@ -1123,7 +1144,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             dropDownState.dropdown_state.ej = {};
 
         if (dropDownState.dropdown_state.ej.items == null)
-            dropDownState.dropdown_state.ej.items = this.defaultDropDownMenuItems();
+            dropDownState.dropdown_state.ej.items = this.defaultDropDownMenuItems.call(this);
 
 
         this.dropDownMenu = new N2DropDownMenu(dropDownState);
@@ -1131,8 +1152,8 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
     public defaultDropDownMenuState(): StateN2DropDownMenu {
 
-        let menu_items = this.defaultDropDownMenuItems();
-        let menu_target = this.defaultDropDownMenuTarget();
+        let menu_items = this.defaultDropDownMenuItems.call(this);
+        let menu_target = this.defaultDropDownMenuTarget.call(this);
         return {
             target: menu_target,
             dropdown_state: {
@@ -1143,10 +1164,17 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } as StateN2DropDownMenu;
     } // dropDownMenuState
 
+
+    /**
+     * Overwritten in Nexus_Overwrites
+     */
     public defaultDropDownMenuTarget(): HTMLElement {
         return this.obj.element as HTMLElement;
     }
 
+    /**
+     * Overwritten in Nexus_Overwrites to add application specific menu items
+     */
     public defaultDropDownMenuItems(): ItemModel_N2DropDownMenu[] {
         // not guaranteed that this.obj grid is created yet. TODO Might want to call this from onAfterInitLogic again and add a semaphore that it was not called twice
         let menu_items: ItemModel_N2DropDownMenu[] = [];

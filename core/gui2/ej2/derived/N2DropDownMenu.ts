@@ -6,13 +6,13 @@ export interface StateN2DropDownMenu extends StateN2Basic {
      * If you leave it empty, nothing will happen until you set it and call {@link showInTarget}
      *
      */
-    target ?: HTMLElement | N2;
+    target?: HTMLElement | N2;
 
 
     /**
      * This overrides the default anchor innerHTML. You are responsible for the size of the anchor circle and any other styling.
      */
-    anchor_innerHTML ?: string | HTMLElement;
+    anchor_innerHTML?: string | HTMLElement;
 
     /**
      * IF (and only if) we're using the default anchor innerHTML, you can specify the size of the anchor circle.
@@ -27,7 +27,7 @@ export interface StateN2DropDownMenu extends StateN2Basic {
      *         size: 25px w/ fa-lg
      *         size: 30px w/ fa-xl
      */
-    anchor_default_size ?: 'sm' | 'md' | 'lg' | 'xl'
+    anchor_default_size?: 'sm' | 'md' | 'lg' | 'xl'
 
     /**
      * Deco for the **default** anchor innerHTML. If you provide your own innerHTML, this will be ignored.
@@ -37,18 +37,15 @@ export interface StateN2DropDownMenu extends StateN2Basic {
      */
     anchor_default_fa_deco?: N2HtmlDecorator;
 
-    dropdown_state ?: StateN2DropDownButton_Extension1;
+    dropdown_state?: StateN2DropDownButton_Extension1;
 
     /**
      * By default, the DropDownButton appends itself to the target (only mandatory property) as soon
      */
-    disable_auto_show_in_target ?: boolean;
+    disable_auto_show_in_target?: boolean;
 
 
 } // StateN2DropDownMenu
-
-
-
 
 
 export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownMenu> extends N2Basic<STATE, DropDownButton> {
@@ -74,7 +71,7 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
             return;
 
         // if we have a target, attach and show
-        if ( this.state.target) {
+        if (this.state.target) {
             this.showInTarget();
         }
 
@@ -84,9 +81,9 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco, N2DropDownMenu.CLASS_IDENTIFIER);
 
-        if ( isString(state.anchor_default_size)) {
+        if (isString(state.anchor_default_size)) {
             let sizeSetting = size_map.get(state.anchor_default_size);
-            if ( sizeSetting) {
+            if (sizeSetting) {
                 this._sizeSettings = sizeSetting;
             }
         }
@@ -105,7 +102,7 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
         super.destroy();
         try {
 
-            if ( this.n2DropDownButton) {
+            if (this.n2DropDownButton) {
                 let elem = this.n2DropDownButton.htmlElement;
                 this.n2DropDownButton.destroy();
                 elem.remove();
@@ -115,7 +112,7 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
         }
 
         try {
-            if ( this.n2Anchor ) {
+            if (this.n2Anchor) {
                 let elem = this.n2Anchor.htmlElement;
                 this.n2Anchor.destroy();
                 elem.remove();
@@ -126,7 +123,7 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
     } // destroy
 
     protected createN2Anchor(): void {
-        if ( this._n2Anchor)
+        if (this._n2Anchor)
             return;
 
         let state = this.state;
@@ -134,7 +131,7 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
         let buttonAnchorElem = document.createElement('button');
         buttonAnchorElem.classList.add(N2DropDownMenu.CLASS_IDENTIFIER);
 
-        if ( state.anchor_innerHTML ) {
+        if (state.anchor_innerHTML) {
             if (typeof state.anchor_innerHTML === 'string') {
                 buttonAnchorElem.innerHTML = state.anchor_innerHTML;
             } else {
@@ -144,26 +141,26 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
 
             // Example buttonAnchorElem.innerHTML = '<i class="fa-solid fa-circle-chevron-down  fa-lg"></i>';
 
-            let default_classes :string[] = ['fa-solid', 'fa-circle-chevron-down'];
+            let default_classes: string[] = ['fa-solid', 'fa-circle-chevron-down'];
             let contentElem = document.createElement('i');
 
-            if ( state.anchor_default_fa_deco){
+            if (state.anchor_default_fa_deco) {
                 let fa_deco = state.anchor_default_fa_deco;
-                 IHtmlUtils.init(fa_deco);
+                IHtmlUtils.init(fa_deco);
                 if (fa_deco.classes.length == 0) {
                     fa_deco.classes = [...default_classes]; // default to these 2 classes
                 }
 
-                addClassesToClassList(fa_deco.classes as string[],this._sizeSettings.fa_size);
+                addClassesToClassList(fa_deco.classes as string[], this._sizeSettings.fa_size);
 
 
-                decoToHtmlElement(state.deco,contentElem);
+                decoToHtmlElement(state.deco, contentElem);
             } else {
                 // real default
-                let deco:N2HtmlDecorator = {
+                let deco: N2HtmlDecorator = {
                     classes: [...default_classes, this._sizeSettings.fa_size],
                 }
-                decoToHtmlElement(deco,contentElem);
+                decoToHtmlElement(deco, contentElem);
             }
             buttonAnchorElem.appendChild(contentElem);
         } // if anchor_innerHTML or not
@@ -180,28 +177,28 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
         IHtmlUtils.init(state.deco);
         let anchor_style = decoToCssStyle(decoMergeStyles(state.deco.style, style_local));
 
-        if ( this._sizeSettings.top && anchor_style.top == null && anchor_style.bottom == null)
+        if (this._sizeSettings.top && anchor_style.top == null && anchor_style.bottom == null)
             anchor_style.top = this._sizeSettings.top;
-        if ( this._sizeSettings.bottom && anchor_style.bottom == null && anchor_style.top == null)
+        if (this._sizeSettings.bottom && anchor_style.bottom == null && anchor_style.top == null)
             anchor_style.bottom = this._sizeSettings.bottom;
-        if ( this._sizeSettings.right && anchor_style.right == null && anchor_style.left == null)
+        if (this._sizeSettings.right && anchor_style.right == null && anchor_style.left == null)
             anchor_style.right = this._sizeSettings.right;
-        if ( this._sizeSettings.left && anchor_style.left == null && anchor_style.right == null)
+        if (this._sizeSettings.left && anchor_style.left == null && anchor_style.right == null)
             anchor_style.left = this._sizeSettings.left;
-        if ( this._sizeSettings.padding_top && anchor_style['padding-top'] == null && anchor_style.padding == null)
+        if (this._sizeSettings.padding_top && anchor_style['padding-top'] == null && anchor_style.padding == null)
             anchor_style['padding-top'] = this._sizeSettings.padding_top;
 
         state.deco.style = anchor_style;
 
-        this._n2Anchor =  new N2Html({
+        this._n2Anchor = new N2Html({
             deco: state.deco,
-            value:buttonAnchorElem,
+            value: buttonAnchorElem,
         });
     } // createN2Anchor
 
 
     protected createN2DropDownButton(): void {
-        if ( !this.n2Anchor){
+        if (!this.n2Anchor) {
             console.error('Anchor not created yet');
             throw new Error('Anchor not created yet');
         }
@@ -210,12 +207,14 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
 
         // let dropdown_deco = state.dropdown_deco || {};
         state.dropdown_state = state.dropdown_state || {};
-        let dropdown_state : StateN2DropDownButton_Extension1 = state.dropdown_state;
+        let dropdown_state: StateN2DropDownButton_Extension1 = state.dropdown_state;
         dropdown_state.skipAppendEjToHtmlElement = true; // needed so we can append to the anchor element with the correct timing
 
         try {
             this.beforeDropDownCreated({widget: this, dropdown_state: dropdown_state});
-        } catch(e) { console.error('Error in beforeDropDownCreated', e)}
+        } catch (e) {
+            console.error('Error in beforeDropDownCreated', e)
+        }
 
         this.addItemMethodCalls(dropdown_state);
 
@@ -235,32 +234,35 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
 
         try {
             this.afterDropDownCreated(ev_afterDropDownCreated);
-        } catch(e) { console.error('Error in afterDropDownCreated', e)}
+        } catch (e) {
+            console.error('Error in afterDropDownCreated', e)
+        }
 
-        if ( ev_afterDropDownCreated.override_custom_init_append_to_anchor == null) {
+        if (ev_afterDropDownCreated.override_custom_init_append_to_anchor == null) {
             // if no override
             try {
                 n2DropDownButton.initLogic();
                 let ejDropDownButton = n2DropDownButton.obj;
                 if (ejDropDownButton)
                     ejDropDownButton.appendTo(this.n2Anchor.htmlElement);
-            } catch (e) { console.error('Error in n2DropDownButton.initLogic', e)}
+            } catch (e) {
+                console.error('Error in n2DropDownButton.initLogic', e)
+            }
         } else {
             ev_afterDropDownCreated.override_custom_init_append_to_anchor.call(this);
         } // if no override
 
-        if ( ev_afterDropDownCreated.override_disable_removal_of_e_btn_icon !== true) {
+        if (ev_afterDropDownCreated.override_disable_removal_of_e_btn_icon !== true) {
             // if no override, remove default ej2 drop down button content
             let ejDropDownButton = n2DropDownButton.obj;
-            if ( ejDropDownButton)
+            if (ejDropDownButton)
                 ejDropDownButton.element.querySelector('.e-btn-icon').remove(); // remove default ej2 drop down button content
         } // if no override
 
 
-
         // now copy all the implemented functions from the beforeItemRender, beforeOpen, beforeClose, close, open, select into the actual items
         let ejDropDownButton: DropDownButton = n2DropDownButton.obj;
-        if ( ejDropDownButton) {
+        if (ejDropDownButton) {
             let items_current = ejDropDownButton.items; // these have been transformed to Item from ItemModel (actual instances)
             for (let i = 0; i < items_current.length; i++) {
                 let current_item = items_current[i];
@@ -294,12 +296,12 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
     } // createN2DropDownButton
 
 
-    beforeDropDownCreated(ev:{widget: N2DropDownMenu, dropdown_state:StateN2DropDownButton}): void {
+    beforeDropDownCreated(ev: { widget: N2DropDownMenu, dropdown_state: StateN2DropDownButton }): void {
         // override in subclass
     }
 
 
-    afterDropDownCreated(ev:Ev_afterDropDownCreated): void {
+    afterDropDownCreated(ev: Ev_afterDropDownCreated): void {
         // override in subclass
     }
 
@@ -323,14 +325,14 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
             return; // only do this once
 
 
-        if ( this.state.target) {
+        if (this.state.target) {
             this.initLogic(); // make sure we're initialized first
         } // if target
 
 
-        let targetElem:HTMLElement;
-        if ( isN2(this.state.target)) {
-            if ( !this.state.target.initialized) {
+        let targetElem: HTMLElement;
+        if (isN2(this.state.target)) {
+            if (!this.state.target.initialized) {
                 console.error('Cannot attach DropDownMenu since target not initialized yet ', this.state.target);
                 return;
             }
@@ -341,17 +343,17 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
             targetElem = this.state.target;
         }
 
-        if ( isDev()){
+        if (isDev()) {
             const computedStyle = getComputedStyle(targetElem);
             if (computedStyle.position !== 'relative' && computedStyle.position !== 'absolute' && computedStyle.position !== 'fixed') {
-                let msg:string = 'Parent element must have position relative, absolute, or fixed for the child element to be positioned correctly. See console';
+                let msg: string = 'Parent element must have position relative, absolute, or fixed for the child element to be positioned correctly. See console';
                 console.error(msg, targetElem, 'child:', this._n2Anchor);
                 alert(msg + '\n\nSee console for details.');
             } // if position not conducive to absolute positioning of a child element
         } // if isDev
 
 
-        if ( targetElem ) {
+        if (targetElem) {
             targetElem.appendChild(this.htmlElement); // could be moving the existing element to a different target
 
             this.createN2DropDownButton();
@@ -369,32 +371,38 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
         let thisX = this;
 
         let existing_beforeItemRender = dropdown_state.ej.beforeItemRender;
-        dropdown_state.ej.beforeItemRender = (args:MenuEventArgs) => {
+        dropdown_state.ej.beforeItemRender = (args: MenuEventArgs) => {
 
             let ev = {n2ddm: thisX, args: args, cancelDefault: false};
             let item = args.item as ItemModel_N2DropDownMenu;
             if (item.beforeItemRender) {
                 try {
                     item.beforeItemRender.call(thisX.obj, ev);
-                } catch(e) { console.error('Error in beforeItemRender', e)}
+                } catch (e) {
+                    console.error('Error in beforeItemRender', e)
+                }
             }
 
             if (!ev.cancelDefault) {
                 if (existing_beforeItemRender) {
                     try {
                         existing_beforeItemRender.call(thisX.obj, args);
-                    } catch(e) { console.error('Error in existing_beforeItemRender', e)}
+                    } catch (e) {
+                        console.error('Error in existing_beforeItemRender', e)
+                    }
                 }
             }
         } // beforeItemRender
 
         let existing_beforeOpen = dropdown_state.ej.beforeOpen;
-        dropdown_state.ej.beforeOpen = (args:BeforeOpenCloseMenuEventArgs) => {
+        dropdown_state.ej.beforeOpen = (args: BeforeOpenCloseMenuEventArgs) => {
             let ev = {n2ddm: thisX, args: args, cancelDefault: false};
             if (existing_beforeOpen) {
                 try {
                     existing_beforeOpen.call(thisX.obj, args);
-                } catch(e) { console.error('Error in existing_beforeOpen', e)}
+                } catch (e) {
+                    console.error('Error in existing_beforeOpen', e)
+                }
             }
             if (!ev.cancelDefault) {
                 let items = args.items;
@@ -403,19 +411,23 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
                     if (itemState.beforeOpen) {
                         try {
                             itemState.beforeOpen.call(thisX.obj, ev);
-                        } catch(e) { console.error('Error in beforeOpen', e)}
+                        } catch (e) {
+                            console.error('Error in beforeOpen', e)
+                        }
                     }
                 } // for items
             }
         } // beforeOpen
 
         let existing_beforeClose = dropdown_state.ej.beforeClose;
-        dropdown_state.ej.beforeClose = (args:BeforeOpenCloseMenuEventArgs) => {
+        dropdown_state.ej.beforeClose = (args: BeforeOpenCloseMenuEventArgs) => {
             let ev = {n2ddm: thisX, args: args, cancelDefault: false};
             if (existing_beforeClose) {
                 try {
                     existing_beforeClose.call(thisX.obj, args);
-                } catch(e) { console.error('Error in existing_beforeClose', e)}
+                } catch (e) {
+                    console.error('Error in existing_beforeClose', e)
+                }
             }
             if (!ev.cancelDefault) {
                 let items = args.items;
@@ -424,19 +436,23 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
                     if (itemState.beforeClose) {
                         try {
                             itemState.beforeClose.call(thisX.obj, ev);
-                        } catch(e) { console.error('Error in beforeClose', e)}
+                        } catch (e) {
+                            console.error('Error in beforeClose', e)
+                        }
                     }
                 } // for items
             }
         } // beforeClose
 
         let existing_close = dropdown_state.ej.close;
-        dropdown_state.ej.close = (args:OpenCloseMenuEventArgs) => {
+        dropdown_state.ej.close = (args: OpenCloseMenuEventArgs) => {
             let ev = {n2ddm: thisX, args: args, cancelDefault: false};
             if (existing_close) {
                 try {
                     existing_close.call(thisX.obj, args);
-                } catch(e) { console.error('Error in existing_close', e)}
+                } catch (e) {
+                    console.error('Error in existing_close', e)
+                }
             }
             if (!ev.cancelDefault) {
                 let items = args.items;
@@ -445,19 +461,23 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
                     if (itemState.close) {
                         try {
                             itemState.close.call(thisX.obj, ev);
-                        } catch(e) { console.error('Error in close', e)}
+                        } catch (e) {
+                            console.error('Error in close', e)
+                        }
                     }
                 } // for items
             }
         } // close
 
         let existing_open = dropdown_state.ej.open;
-        dropdown_state.ej.open = (args:OpenCloseMenuEventArgs) => {
+        dropdown_state.ej.open = (args: OpenCloseMenuEventArgs) => {
             let ev = {n2ddm: thisX, args: args, cancelDefault: false};
             if (existing_open) {
                 try {
                     existing_open.call(thisX.obj, args);
-                } catch(e) { console.error('Error in existing_open', e)}
+                } catch (e) {
+                    console.error('Error in existing_open', e)
+                }
             }
             if (!ev.cancelDefault) {
                 let items = args.items;
@@ -466,26 +486,32 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
                     if (itemState.open) {
                         try {
                             itemState.open.call(thisX.obj, ev);
-                        } catch(e) { console.error('Error in open', e)}
+                        } catch (e) {
+                            console.error('Error in open', e)
+                        }
                     }
                 } // for items
             }
         } // open
 
         let existing_select = dropdown_state.ej.select;
-        dropdown_state.ej.select = (args:MenuEventArgs) => {
+        dropdown_state.ej.select = (args: MenuEventArgs) => {
             let ev = {n2ddm: thisX, args: args, cancelDefault: false};
             if (existing_select) {
                 try {
                     existing_select.call(thisX.obj, args);
-                } catch(e) { console.error('Error in existing_select', e)}
+                } catch (e) {
+                    console.error('Error in existing_select', e)
+                }
             }
             if (!ev.cancelDefault) {
                 let item = args.item as ItemModel_N2DropDownMenu;
                 if (item.select) {
                     try {
                         item.select.call(thisX.obj, ev);
-                    } catch(e) { console.error('Error in select', e)}
+                    } catch (e) {
+                        console.error('Error in select', e)
+                    }
                 }
             }
         } // select
@@ -497,17 +523,17 @@ export class N2DropDownMenu<STATE extends StateN2DropDownMenu = StateN2DropDownM
 /**
  * Extends the DropDownButtonModel to allow items to be of type ItemModel or ItemModel_N2DropDownMenu.
  *
- * @interface DropDownButtonModel_Extention1
+ * @interface DropDownButtonModel_Extension1
  * @extends {DropDownButtonModel}
  */
-interface DropDownButtonModel_Extention1 extends DropDownButtonModel {
+interface DropDownButtonModel_Extension1 extends DropDownButtonModel {
     /**
      * Array of items in the DropDownButton, which can be of type ItemModel or ItemModel_N2DropDownMenu.
      *
      * @type {(ItemModel | ItemModel_N2DropDownMenu)[]}
-     * @memberof DropDownButtonModel_Extention1
+     * @memberof DropDownButtonModel_Extension1
      */
-    items ?: (ItemModel | ItemModel_N2DropDownMenu)[];
+    items?: (ItemModel | ItemModel_N2DropDownMenu)[];
 }
 
 /**
@@ -516,16 +542,53 @@ interface DropDownButtonModel_Extention1 extends DropDownButtonModel {
  * @interface StateN2DropDownButton_Extension1
  * @extends {Omit<StateN2DropDownButton, 'ej'>}
  */
-interface StateN2DropDownButton_Extension1 extends Omit< Omit<StateN2DropDownButton, 'ej'>, 'children'> {
+interface StateN2DropDownButton_Extension1 extends Omit<Omit<StateN2DropDownButton, 'ej'>, 'children'> {
     /**
      * Extended DropDownButton model which allows items to be of type ItemModel or ItemModel_N2DropDownMenu.
      * Remove the 'children' property that doesn't apply here
      *
-     * @type {DropDownButtonModel_Extention1}
+     * @type {DropDownButtonModel_Extension1}
      * @memberof StateN2DropDownButton_Extension1
      */
-    ej ?: DropDownButtonModel_Extention1;
+    ej?: DropDownButtonModel_Extension1;
 }
+
+
+export type Args_ItemModel_N2DropDownMenu_Select = {
+    n2ddm: N2DropDownMenu,
+    args: MenuEventArgs,
+    cancelDefault?: boolean
+};
+export type Args_ItemModel_N2DropDownMenu_BeforeItemRender = {
+    n2ddm: N2DropDownMenu,
+    args: MenuEventArgs,
+    cancelDefault?: boolean
+};
+
+export type Args_ItemModel_N2DropDownMenu_BeforeOpen = {
+    n2ddm: N2DropDownMenu,
+    args: BeforeOpenCloseMenuEventArgs,
+    cancelDefault?: boolean
+};
+
+export type Args_ItemModel_N2DropDownMenu_BeforeClose = {
+    n2ddm: N2DropDownMenu,
+    args: BeforeOpenCloseMenuEventArgs,
+    cancelDefault?: boolean
+};
+
+export type Args_ItemModel_N2DropDownMenu_Close = {
+    n2ddm: N2DropDownMenu,
+    args: OpenCloseMenuEventArgs,
+    cancelDefault?: boolean
+};
+
+export type Args_ItemModel_N2DropDownMenu_Open = {
+    n2ddm: N2DropDownMenu,
+    args: OpenCloseMenuEventArgs,
+    cancelDefault?: boolean
+};
+
 
 export interface ItemModel_N2DropDownMenu extends ItemModel {
     /**
@@ -533,41 +596,41 @@ export interface ItemModel_N2DropDownMenu extends ItemModel {
      *
      * @event beforeItemRender
      */
-    beforeItemRender?: ( ev:{n2ddm: N2DropDownMenu, args:MenuEventArgs, cancelDefault?:boolean}, )=>void;
+    beforeItemRender?: (ev: Args_ItemModel_N2DropDownMenu_BeforeItemRender) => void;
 
     /**
      * Triggers before opening the DropDownButton popup.
      *
      * @event beforeOpen
      */
-    beforeOpen?: (  ev:{n2ddm: N2DropDownMenu, args:BeforeOpenCloseMenuEventArgs, cancelDefault?:boolean})=>void;
+    beforeOpen?: (ev: Args_ItemModel_N2DropDownMenu_BeforeOpen) => void;
 
     /**
      * Triggers before closing the DropDownButton popup.
      *
      * @event beforeClose
      */
-    beforeClose?: (  ev:{n2ddm: N2DropDownMenu, args:BeforeOpenCloseMenuEventArgs, cancelDefault?:boolean})=>void;
+    beforeClose?: (ev: Args_ItemModel_N2DropDownMenu_BeforeClose) => void;
 
     /**
      * Triggers while closing the DropDownButton popup.
      *
      * @event close
      */
-    close?: (  ev:{n2ddm: N2DropDownMenu, args:OpenCloseMenuEventArgs, cancelDefault?:boolean})=>void;
+    close?: (ev: Args_ItemModel_N2DropDownMenu_Close) => void;
 
     /**
      * Triggers while opening the DropDownButton popup.
      *
      * @event open
      */
-    open?: (  ev:{n2ddm: N2DropDownMenu, args:OpenCloseMenuEventArgs, cancelDefault?:boolean})=>void;
+    open?: (ev: Args_ItemModel_N2DropDownMenu_Open) => void;
     /**
      * Triggers while selecting action item in DropDownButton popup.
      *
      * @event select
      */
-    select?: (  ev:{n2ddm: N2DropDownMenu, args:MenuEventArgs, cancelDefault?:boolean})=>void;
+    select?: (ev: Args_ItemModel_N2DropDownMenu_Select) => void;
 
 } // ItemModel_N2DropDownMenu
 
@@ -576,7 +639,7 @@ export interface ItemModel_N2DropDownMenu extends ItemModel {
 
 export interface Ev_afterDropDownCreated {
     widget: N2DropDownMenu,
-    dropdown_state:StateN2DropDownButton,
+    dropdown_state: StateN2DropDownButton,
     n2DropDownButton: N2DropDownButton,
     /**
      * If you set to true, the 'e-btn-icon' default DropDownButton content in the anchor is not removed any longer
@@ -592,7 +655,7 @@ export interface Ev_afterDropDownCreated {
      *              ejDropDownButton.element.querySelector('.e-btn-icon').remove(); // remove default ej2 drop down button content
      * }
      */
-    override_custom_init_append_to_anchor ?: voidFunction,
+    override_custom_init_append_to_anchor?: voidFunction,
 } // Ev_afterDropDownCreated
 
 
@@ -606,22 +669,22 @@ interface SizeSettings {
     /**
      *Defaults to 'px', but can be set to 'em', 'rem', etc.
      */
-    circle_size_unit:string;
+    circle_size_unit: string;
 
     /**
      * The font-awesome size class to use for the anchor circle.
      */
-    fa_size: 'fa-sm' | 'fa-md' | 'fa-lg' | 'fa-xl' ;
+    fa_size: 'fa-sm' | 'fa-md' | 'fa-lg' | 'fa-xl';
 
-    top ?: string;
+    top?: string;
 
-    bottom ?: string;
+    bottom?: string;
 
-    right ?: string;
+    right?: string;
 
-    left ?: string;
+    left?: string;
 
-    padding_top ?: string;
+    padding_top?: string;
 
 }
 
