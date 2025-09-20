@@ -277,7 +277,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         this.obj = new Grid(this.state.ej);
     } // createEjObj
 
-    protected onStateInitialized(state: STATE) {
+    public onStateInitialized(state: STATE) {
         addN2Class(state.deco, N2Grid.CLASS_IDENTIFIER);
         // Ensure the state has an API to add pre-EJ Grid creation listeners
         if (!state.preEjGridCreation) state.preEjGridCreation = [];
@@ -793,7 +793,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     }
 
 
-    protected actionFailure = (args: FailureEventArgs) => {
+    public actionFailure = (args: FailureEventArgs) => {
         let retVal: EJBase = (args?.error as any)?.error as EJBase
         if (retVal == null) {
 
@@ -858,7 +858,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } // if if (f_actionFailure && this.obj)
     } // actionFailure
 
-    protected beforeDataBound = (args: BeforeDataBoundArgs) => {
+    public beforeDataBound = (args: BeforeDataBoundArgs) => {
         try {
             if (args.cancel == null || args.cancel == false) {
                 let req_id: string = (args.actual as any)?.params?._req_id_;
@@ -888,7 +888,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         }
     } // beforeDataBound
 
-    protected queryCellInfo = (args: QueryCellInfoEventArgs) => {
+    public queryCellInfo = (args: QueryCellInfoEventArgs) => {
 
         try {
             this.pre_existing_QueryCellInfo(args);
@@ -913,7 +913,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
     } // queryCellInfo
 
-    protected pre_existing_QueryCellInfo = (qArgs: QueryCellInfoEventArgs) => {
+    public pre_existing_QueryCellInfo = (qArgs: QueryCellInfoEventArgs) => {
         let rec: any = qArgs.data;
         let field: string = qArgs.column.field;
         if (!field)
@@ -1095,7 +1095,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     } // queryCellInfo
 
 
-    protected post_existing_QueryCellInfo = (args: QueryCellInfoEventArgs) => {
+    public post_existing_QueryCellInfo = (args: QueryCellInfoEventArgs) => {
 
     } // post_existing_QueryCellInfo
 
@@ -1255,7 +1255,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 //------------- DropDownMenu section end -----------------
 
-    protected defaultGroupSettings(): GroupSettingsModel {
+    public defaultGroupSettings(): GroupSettingsModel {
         return {
             allowReordering: true,
             showDropArea: true,
