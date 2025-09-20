@@ -176,7 +176,27 @@ export interface StateN2 {
     * };
     */
    validationRule?: N2Validator<N2, any>;
-}
+
+
+
+    /**
+     * Optional key that will be used when saving user settings for this grid.
+     *
+     * If not provided, no user settings will can saved.
+     *
+     * Whether this is used depends on the developer code, it is not populated by Nexus.
+     */
+    user_settings_key?: string;
+
+    /**
+     * Optional container element for this element.
+     *
+     * Whether this is used depends on the developer code, it is not populated by Nexus.
+     */
+    container ?: Elem_or_N2;
+
+
+} // StateN2
 
 export interface StateN2Ref {
 
