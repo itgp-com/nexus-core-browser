@@ -225,6 +225,16 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      */
     dropDownMenuState?: StateN2DropDownMenu | (() => StateN2DropDownMenu);
 
+    /**
+     * Listeners called right before the underlying Syncfusion Grid instance is created.
+     * Use addPreEjGridCreationListener to add listeners at runtime.
+     */
+    preEjGridCreation?: Array<(n2: N2Grid) => void>;
+    /**
+     * Adds a listener that will be invoked before the Syncfusion Grid is created.
+     * The listener receives the N2Grid instance and returns void.
+     */
+    addPreEjGridCreationListener?: (listener: (n2: N2Grid) => void) => void;
 
 } // StateN2Grid
 
@@ -255,11 +265,32 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
     }
 
     createEjObj(): void {
+        // Call any pre-EJ Grid creation listeners before instantiating the Syncfusion Grid
+        const listeners = this.state.preEjGridCreation || [];
+        for (const listener of listeners) {
+            try {
+                listener?.(this);
+            } catch (e) {
+                console.error(e);
+            }
+        }
         this.obj = new Grid(this.state.ej);
     } // createEjObj
 
     protected onStateInitialized(state: STATE) {
         addN2Class(state.deco, N2Grid.CLASS_IDENTIFIER);
+        // Ensure the state has an API to add pre-EJ Grid creation listeners
+        if (!state.preEjGridCreation) state.preEjGridCreation = [];
+        //define the function to add a listener
+        if (!state.addPreEjGridCreationListener) {
+            state.addPreEjGridCreationListener = (listener: (n2: N2Grid) => void) => {
+                try {
+                    state.preEjGridCreation!.push(listener);
+                } catch (e) {
+                    console.error(e);
+                }
+            };
+        }
         let thisX = this;
         state.ej = state.ej || {};
         let gridModel: GridModel = state.ej;
