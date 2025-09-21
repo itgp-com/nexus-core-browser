@@ -11,6 +11,8 @@ export interface StateN2EjRef extends StateN2Ref {
     widget?: N2Ej;
 }
 
+export interface N2Evt_onEjObj<W extends N2Ej = N2Ej> { widget: W; }
+
 export interface StateN2Ej<WIDGET_LIBRARY_MODEL = any> extends StateN2 {
     ej?: WIDGET_LIBRARY_MODEL;
 
@@ -27,6 +29,18 @@ export interface StateN2Ej<WIDGET_LIBRARY_MODEL = any> extends StateN2 {
      * If true, that call must be made manually by the developer
      */
     skipAppendEjToHtmlElement?: boolean;
+
+    /**
+     * Listener(s) that fire at the end of onLogic() after the EJ object is created (and appended unless skipped).
+     * You can set a single function or an array of functions. Each receives an event object with the N2Ej instance
+     * as the 'widget' property (for future expansion).
+     */
+    onEjObj?: ((ev: N2Evt_onEjObj) => void) | Array<(ev: N2Evt_onEjObj) => void>;
+
+    /**
+     * Helper to register an additional onEjObj listener at runtime.
+     */
+    addOnEjObjListener?: (listener: (ev: N2Evt_onEjObj) => void) => void;
 }
 
 export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any>
@@ -49,6 +63,32 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
         state = state || {} as STATE;
         state.ej = state.ej || {};
         super._constructor(state);
+
+        // Initialize onEjObj listener support without requiring interface changes
+        try {
+            const st: any = state as any;
+            // Normalize existing onEjObj into an array of functions
+            let listeners: Function[] = [];
+            const existing = st.onEjObj;
+            if (existing) {
+                if (Array.isArray(existing)) {
+                    listeners = existing.filter((fn: any) => typeof fn === 'function');
+                } else if (typeof existing === 'function') {
+                    listeners = [existing];
+                }
+            }
+            st.onEjObj = listeners; // ensure it's an array going forward
+
+            // Provide a registration helper on the state
+            if (typeof st.addOnEjObjListener !== 'function') {
+                st.addOnEjObjListener = (listener: (ev: N2Evt_onEjObj) => void) => {
+                    try {
+                        if (!st.onEjObj || !Array.isArray(st.onEjObj)) st.onEjObj = [];
+                        if (typeof listener === 'function') st.onEjObj.push(listener);
+                    } catch (e) { console.error(e); }
+                };
+            }
+        } catch (e) { console.error(e); }
     }
 
     get classIdentifier(): string { return N2Ej.CLASS_IDENTIFIER; }
@@ -61,7 +101,21 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
         if (!this.state.skipAppendEjToHtmlElement) {
             this.appendEjToHtmlElement();
         }
-    }
+
+        // Fire onEjObj listeners at the very end
+        try {
+            const st: any = this.state as any;
+            const listeners = st?.onEjObj;
+            const ev:N2Evt_onEjObj = { widget: this };
+            if (Array.isArray(listeners)) {
+                listeners.forEach((fn: any) => {
+                    try { if (typeof fn === 'function') fn(ev); } catch (e) { console.error(e); }
+                });
+            } else if (typeof listeners === 'function') {
+                try { listeners(ev); } catch (e) { console.error(e); }
+            }
+        } catch (e) { console.error(e); }
+    } // onLogic
 
 
     abstract createEjObj(): void ;
