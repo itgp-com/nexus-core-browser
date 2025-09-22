@@ -2,7 +2,7 @@ import {AbstractGridButton} from "../abstract/AbstractGridButton";
 import {ColumnModel, QueryCellInfoEventArgs} from "@syncfusion/ej2-grids";
 import {GridWidgetCallBack} from "../../WidgetUtils";
 
-
+export const GRID_BUTTON_GEAR_FIELD:string = '__GridButtonGear__';
 export class GridButtonGear extends AbstractGridButton {
     static readonly CLASS_NAME: string = 'GridButtonGear';
 
@@ -24,7 +24,7 @@ const GRID_BUTTON_GEAR: GridButtonGear = new GridButtonGear();
 export function gridButtonGearColumnModel(override ?: ColumnModel): ColumnModel {
     override = override || {};
     let columnModel: ColumnModel = GRID_BUTTON_GEAR.columnModel();
-    columnModel.field = '_GridButtonGear_'
+    columnModel.field = GRID_BUTTON_GEAR_FIELD
     columnModel = Object.assign(columnModel, override);
     return columnModel;
 }
