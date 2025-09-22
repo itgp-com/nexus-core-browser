@@ -236,6 +236,13 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
      */
     addPreEjGridCreationListener?: (listener: (n2: N2Grid) => void) => void;
 
+    /**
+     * the original columns as provided in the grid model (only if overridden by user layout for this grid). Null otherwise.
+     *
+     * Note: The user settings for grid layout code is application specific and not part of nexus-core-browser.
+     */
+    columns_original ?: ColumnModel[];
+
 } // StateN2Grid
 
 export function isN2Grid(widget: any): boolean {
@@ -1785,7 +1792,7 @@ import {DropDownList} from '@syncfusion/ej2-dropdowns';
 import {Workbook} from "@syncfusion/ej2-excel-export";
 import {
     ColumnMenuItemModel,
-    ColumnMenuOpenEventArgs,
+    ColumnMenuOpenEventArgs, ColumnModel,
     EJ2Intance,
     ExcelQueryCellInfoEventArgs,
     FailureEventArgs,

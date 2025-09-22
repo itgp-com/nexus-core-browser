@@ -1,5 +1,7 @@
 import {Component} from '@syncfusion/ej2-base';
-import {Grid} from "@syncfusion/ej2-grids";
+import {ColumnModel, Grid} from "@syncfusion/ej2-grids";
+import {prepareColumns} from "@syncfusion/ej2-grids/src/grid/base/util";
+import {Column} from "@syncfusion/ej2-grids/src/grid/models/column";
 import {isArray} from 'lodash';
 import {EJINSTANCES, N2_CLASS} from '../../Constants';
 import {N2} from '../N2';
@@ -351,3 +353,42 @@ export function getN2FromEJ2(ej2Instance: any): N2 | null {
     } // if ej2Instance
     return null;
 } // getN2FromEJ2
+
+
+/**
+ * Converts an array of ColumnModel or Column to an array of new ColumnModel objects,
+ * copying only the common properties.
+ * Result can be cloned deeply without issues.
+ *
+ * @param {(ColumnModel[] | Column[])} cols - The array of ColumnModel or Column objects to convert.
+ * @returns {ColumnModel[]} A new array of ColumnModel objects with copied properties.
+ */
+export function f_convert_to_ColumnModel(cols: (ColumnModel[] | Column[])): ColumnModel[] {
+    if (!Array.isArray(cols)) return [];
+
+    prepareColumns(cols); // initialize any missing properties and convert to Column (Syncfusion utility method)
+
+    // List of common properties between Column and ColumnModel
+    const commonProps = [
+        'field', 'uid', 'index', 'headerText', 'width', 'minWidth', 'maxWidth', 'textAlign', 'clipMode',
+        'headerTextAlign', 'disableHtmlEncode', 'type', 'format', 'visible', 'enableRowSpan', 'enableColumnSpan',
+        'template', 'headerTemplate', 'isFrozen', 'allowSorting', 'allowResizing', 'allowFiltering', 'allowGrouping',
+        'allowReordering', 'showColumnMenu', 'enableGroupByFormat', 'allowEditing', 'customAttributes',
+        'displayAsCheckBox', 'dataSource', 'formatter', 'valueAccessor', 'headerValueAccessor', 'filterBarTemplate',
+        'filter', 'columns', 'toolTip', 'isPrimaryKey', 'hideAtMedia', 'showInColumnChooser', 'editType',
+        'validationRules', 'defaultValue', 'edit', 'isIdentity', 'foreignKeyValue', 'foreignKeyField',
+        'commandsTemplate', 'commands', 'columnData', 'editTemplate', 'filterTemplate', 'lockColumn',
+        'allowSearching', 'autoFit', 'freeze', 'sortComparer', 'templateOptions'
+    ];
+    return cols.map(col => {
+        const obj: ColumnModel = {};
+        if (col != null) {
+            for (const key of commonProps) {
+                if (Object.prototype.hasOwnProperty.call(col, key)) {
+                    (obj as any)[key] = (col as any)[key];
+                }
+            }
+        }
+        return obj;
+    });
+} // f_convert_to_ColumnModel
