@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@stomp/stompjs": "7.2.0",
-    "@syncfusion/ej2": "31.1.20",
+    "@syncfusion/ej2": "31.1.21",
     "@types/chart.js": "2.9.41",
     "@types/collections": "5.1.5",
     "@types/sockjs-client": "1.5.4",
