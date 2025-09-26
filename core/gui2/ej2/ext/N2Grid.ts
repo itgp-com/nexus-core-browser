@@ -1467,6 +1467,11 @@ font-size: var(--app-font-size-regular);`
     padding-right: 0.5em;
     `);
 
+    // Selected row background color
+    cssAddSelector(`.${n2GridClass}.${eGridClass} td.e-active`,`
+    background:var(--app-grid-selected-row-background-color);
+    `);
+
     // Make row hovered over readable by turning the font color to the contrasting color of the background
     cssAddSelector(`.${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-editedrow):not(.e-detailrow):hover .e-rowcell:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
 .${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-detailrow):hover .e-detailrowcollapse:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
