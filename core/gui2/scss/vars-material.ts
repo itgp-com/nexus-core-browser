@@ -12,6 +12,19 @@ export interface CoreCssVariables extends CssVariables {
     app_color_blue: string;
     app_color_blue_01: string;
     app_color_blue_02: string;
+    app_color_blue_lighter_10: string,
+    app_color_blue_lighter_20: string,
+    app_color_blue_lighter_30: string,
+    app_color_blue_lighter_40: string,
+    app_color_blue_lighter_50: string,
+    app_color_blue_lighter_60: string,
+    app_color_blue_lighter_70: string,
+    app_color_blue_lighter_80: string,
+    app_color_blue_lighter_90: string,
+    app_color_blue_lighter_95: string,
+    app_color_blue_lighter_96: string,
+    app_color_blue_lighter_97: string,
+    app_color_blue_lighter_98: string,
     app_color_cyan: string;
     app_color_gray_text1: string;
     app_color_gray_text2: string;
@@ -31,6 +44,19 @@ export interface CoreCssVariables extends CssVariables {
     app_color_yellow_02: string;
     app_color_yellow_03: string;
     app_color_yellow_04: string;
+    app_color_orangedark_darker_20: string;
+    app_color_orangedark_darker_10: string;
+    app_color_orangedark: string;
+    app_color_orangedark_lighter_10: string;
+    app_color_orangedark_lighter_20: string;
+    app_color_orangedark_lighter_30: string;
+    app_color_orangedark_lighter_40: string;
+    app_color_orangedark_lighter_50: string;
+    app_color_orangedark_lighter_60: string;
+    app_color_orangedark_lighter_70: string;
+    app_color_orangedark_lighter_80: string;
+    app_color_orangedark_lighter_90: string;
+    app_color_orangedark_lighter_95: string;
     app_custom_excel_filter_width_number: string;
     app_dashboard_button_background_color: string;
     app_dashboard_button_text_color: string;
@@ -51,6 +77,7 @@ export interface CoreCssVariables extends CssVariables {
     app_font_size_regular: string;
     app_font_size_section_title: string;
     app_gray_input_background: string;
+    app_grid_selected_row_background_color: string;
     app_header_text_color_dark_gray: string;
     app_header_text_color_dark_green: string;
     app_label_color: string;
@@ -168,6 +195,7 @@ const coreCssCommonVariables: CoreCssVariables = {
     app_font_size_plus_2: '14px',
     app_font_size_regular: '12px',
     app_font_size_section_title: '14.25px',
+    app_grid_selected_row_background_color: undefined,
     app_gray_input_background: undefined,
     app_header_text_color_dark_gray: undefined,
     app_header_text_color_dark_green: undefined,
@@ -205,6 +233,7 @@ const coreCssLightThemeVariables: CoreCssVariables = {
     app_dialog_header_background_color: '#000',
     app_dialog_header_font_color: '#fff',
     app_filter_text_background_color: '#F2F8FF',
+    app_grid_selected_row_background_color: '#e1f1fc',
     app_gray_input_background: '#F3F3F3',
     app_header_text_color_dark_gray: '#4D4D4D',
     app_header_text_color_dark_green: '#6C7E7F',
@@ -234,6 +263,7 @@ const coreCssDarkThemeVariables: CoreCssVariables = {
     app_dialog_header_background_color: '#000',
     app_dialog_header_font_color: '#fff',
     app_filter_text_background_color: '#0d2133',
+    app_grid_selected_row_background_color: '#1e4a6e',
     app_gray_input_background: '#424242',
     app_header_text_color_dark_gray: '#b2b2b2',
     app_header_text_color_dark_green: '#93a7a8',
