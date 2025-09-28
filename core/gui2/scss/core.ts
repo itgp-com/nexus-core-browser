@@ -48,6 +48,8 @@ export const CSS_CLASS_N2_DISPLAY_NONE = 'n2-display-none';
 export const CSS_CLASS_N2_DISPLAY_BLOCK = 'n2-display-block';
 export const CSS_CLASS_N2_DISPLAY_FLEX = 'n2-display-flex';
 
+export const CSS_CLASS_N2_ROUNDED_BUTTON = 'n2-rounded-button';
+
 
 
 themeChangeListeners().add((ev) => {
@@ -86,8 +88,28 @@ themeChangeListeners().add((ev) => {
 .${CSS_CLASS_N2_DISPLAY_FLEX}{
     display: flex;
 }
+
+
+.${CSS_CLASS_N2_ROUNDED_BUTTON} {
+    display:flex;
+    justify-content:center;
+    padding:2px 10px;
+    border: 1px solid var(--app-color-blue-01);
+    border-radius: 15px;
+    flex-shrink: 1;
+    flex-grow: 0;
+    cursor: pointer;
+    transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}    
+
+.${CSS_CLASS_N2_ROUNDED_BUTTON}:hover {
+    transform: scale(1.01);
+    font-size: var(--app-font-size-plus-1);
+    border-width: 1.25px;
+}
+
  
-    `)
+    `);
 
 
 
