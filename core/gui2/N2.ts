@@ -1,6 +1,6 @@
 import {DialogUtility} from '@syncfusion/ej2-popups';
 import {AxiosResponse} from "axios";
-import {ResizeSensor} from "css-element-queries/src/ResizeSensor";
+import {ResizeSensor} from "css-element-queries";
 import {ResizeSensorCallback} from "css-element-queries/src/ResizeSensor";
 import {debounce, throttle} from "lodash";
 import {getRandomString} from "../BaseUtils";
