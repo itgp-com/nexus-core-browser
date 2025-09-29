@@ -26,10 +26,8 @@ export function link_widget_dataSource_NexusDataManager(widgetPrototype: any): v
             // Get the original descriptor of the dataSource property
             const originalDescriptor = Object.getOwnPropertyDescriptor(widgetPrototype, 'dataSource');
 
-            if (!originalDescriptor) {
-                console.error('Original dataSource descriptor not found', widgetPrototype);
+            if (!originalDescriptor)
                 return;
-            }
 
             // Intercept the dataSource property
             Object.defineProperty(widgetPrototype, 'dataSource', {
