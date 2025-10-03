@@ -1,14 +1,26 @@
-import {ClassArg, classArgArrayVal, StringArg, stringArgVal}           from "../../../BaseUtils";
-import {AbstractWidget}                                                from "../../AbstractWidget";
-import {CoreOnly_Grid_FilterPage}                                      from "../../coreonly/CoreOnly_Grid_FilterPage";
-import {Args_CoreOnly_PopupDialogContent, CoreOnly_PopupDialogContent} from "../../coreonly/CoreOnly_PopupDialogContent";
-import {GridWidgetCallBack}                                            from "../../WidgetUtils";
-import {AbstractDialogWindow, Args_AbstractDialogWindow}               from "./AbstractDialogWindow";
-import {DialogWindow}                                                  from "./DialogWindow";
-import {GridLinkButton}                                                from "./GridLinkButton";
-import {DataManager, DataResult, Query}                                from "@syncfusion/ej2-data";
-import {ColumnModel, Grid, GridModel, PredicateModel, QueryCellInfoEventArgs, RecordDoubleClickEventArgs, RowSelectEventArgs, SortSettingsModel} from "@syncfusion/ej2-grids";
-import {DialogModel}                                                                                                                             from '@syncfusion/ej2-popups';
+import {DataManager, DataResult, Query} from "@syncfusion/ej2-data";
+import {
+    ColumnModel,
+    Grid,
+    GridModel,
+    PredicateModel,
+    QueryCellInfoEventArgs,
+    RecordDoubleClickEventArgs,
+    RowSelectEventArgs,
+    SortSettingsModel
+} from "@syncfusion/ej2-grids";
+import {DialogModel} from '@syncfusion/ej2-popups';
+import {ClassArg, classArgArrayVal, StringArg, stringArgVal} from "../../../BaseUtils";
+import {AbstractWidget} from "../../AbstractWidget";
+import {CoreOnly_Grid_FilterPage} from "../../coreonly/CoreOnly_Grid_FilterPage";
+import {
+    Args_CoreOnly_PopupDialogContent,
+    CoreOnly_PopupDialogContent
+} from "../../coreonly/CoreOnly_PopupDialogContent";
+import {GridWidgetCallBack} from "../../WidgetUtils";
+import {AbstractDialogWindow, Args_AbstractDialogWindow} from "./AbstractDialogWindow";
+import {DialogWindow} from "./DialogWindow";
+import {GridLinkButton} from "./GridLinkButton";
 
 
 export interface Args_PopupDialog_Abstract {

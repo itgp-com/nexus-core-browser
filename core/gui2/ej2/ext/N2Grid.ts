@@ -381,7 +381,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     } as ColumnMenuItemModel,
                     'Group',
                     'Ungroup',
-                    'ColumnChooser',
+                    // 'ColumnChooser',
                     'Filter'
                 ] as any[];
             } // if ! gridModel.columnMenuItems
@@ -1399,7 +1399,109 @@ export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
     let gridHoverFontColor = fontColor(gridHoverBgColor); // the contrast color to the current background
 
 
-    cssAdd(`
+    const STYLE_CENTER_VERTICAL: string = `
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto 2px;
+        height: 16px;`;
+
+cssAdd(`
+/* Removes blue background from grid editable checkbox and restores border and font color */
+.${n2GridClass} .e-checkbox-wrapper .e-frame.e-check, .${n2GridClass} .e-css.e-checkbox-wrapper .e-frame.e-check {
+    background-color: transparent;
+    border-color: unset;
+    color: black;
+}
+
+/* Make tops of grid filters change colors for enabled filters */
+.${n2GridClass} .e-filtertext:not(.e-disable) {
+    background-color: $app-filter-text-background-color !important;
+    padding-left: 1ch !important;
+}
+
+.${n2GridClass} .e-tbar-btn, .e-tbtn-txt {
+  background-color: ${accent} !important;
+}
+
+.${n2GridClass} .e-tbar-btn-text, .${n2GridClass} .e-btn-icon.e-excelexport {
+  color: ${accentContrastColor} !important;
+}
+
+.${n2GridClass}.e-control .e-toolbar .e-tbar-btn .e-tbar-btn-text {
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size-regular);
+}
+
+/* Make tops of grid filters change colors for enabled filters */
+.${n2GridClass} .e-filtertext:not(.e-disable) {
+  background-color: var(--app-filter-text-background-color) !important;
+  padding-left: 1ch !important;
+}
+
+/* Grid opacity */
+.${n2GridClass}.e-control.${eGridClass} .e-rowcell:not(.e-editedbatchcell), .e-control.${eGridClass} .e-detailrowcollapse:not(.e-editedbatchcell), .e-control.${eGridClass} .e-detailrowexpand:not(.e-editedbatchcell), .e-control.${eGridClass} .e-gridcontent .e-rowdragdrop:not(.e-editedbatchcell), .e-control.${eGridClass} .e-emptyrow:not(.e-editedbatchcell) {
+  opacity: 1 !important;
+}
+
+/* Reduce the padding of the header grid cells from 1.8em default */
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-headercelldiv, .${eGridClass} .e-gridheader .e-stackedheadercelldiv,
+.${n2GridClass}.${eGridClass} .e-gridheader .e-headercell .e-headercelldiv.e-headerchkcelldiv,
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-headercelldiv, 
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-stackedheadercelldiv, 
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-headercelldiv, 
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-stackedheadercelldiv {
+  padding-right: 0.5em;
+}
+
+/* Selected row background color */
+.${n2GridClass}.${eGridClass} td.e-active {
+  background: var(--app-grid-selected-row-background-color);
+}
+
+/* Make row hovered over readable by turning the font color to the contrasting color of the background */
+.${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-editedrow):not(.e-detailrow):hover .e-rowcell:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-detailrow):hover .e-detailrowcollapse:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):hover .e-rowdragdrop:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.${n2GridClass}.${eGridClass}.e-rtl .e-gridhover tr[role=row]:not(.e-disable-gridhover):hover .e-rowdragdrop:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
+.${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-detailrow):hover .e-detailrowexpand:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell) {
+  color: ${gridHoverFontColor} !important;
+}
+
+/* left divider color for row cell, header and filter cells */
+.${n2GridClass}.e-control.${eGridClass} .e-rowcell, .${n2GridClass}.e-control.${eGridClass} .e-filterbarcell, .${n2GridClass}.e-control.${eGridClass} .e-headercell {
+  border-left: 1px solid var(--grid-header-border-color);
+}
+
+/* eliminate resize handler cell visible border */
+.${n2GridClass}.e-control.${eGridClass} .e-headercell .e-rhandler {
+  border-right-width: 0px !important;
+  border-right-style: solid !important;
+  border-right-color: var(--grid-table-background-color) !important;
+}
+
+.${n2GridClass}.e-control.${eGridClass} .e-tableborder {
+  border-right-color: var(--grid-header-border-color) !important;
+}
+
+/* Controls the left/right padding in grid cells */
+.${n2GridClass}.${eGridClass} .e-rowcell, .${eGridClass} .e-filterbarcell, .${eGridClass} .e-filterbarcelldisabled, .${eGridClass} .e-headercell, .${eGridClass} .e-detailheadercell {
+  padding: 5px;
+}
+
+.${n2GridClass}.${eGridClass} .e-gridheader tr th:first-child:has(.e-headerchkcelldiv) {
+  padding-left: 5px;
+}
+
+/* this selector is used to denote a disabled row in the grid */
+.${n2GridClass}.${eGridClass} .e-rowcell.screen-grid-col-disabled {
+  background-color: ${CSS_VARS_CORE.app_row_disabled_background_color_lightgray};
+}
+/* this selector is used to denote a disabled row in the grid */
+.${n2GridClass}.${eGridClass} .e-headercell.screen-grid-col-disabled {
+  background-color: ${CSS_VARS_CORE.app_row_disabled_background_color_lightgray} !important;
+}
+/* ------------------- General sorting - disable color change for sorted columns ------------- */
 .${CSS_CLASS_ellipsis_container}, .${N2Grid.CLASS_IDENTIFIER} .e-rowcell .${CSS_CLASS_ellipsis_container} {
   width: 100%; 
   white-space: nowrap;
@@ -1412,383 +1514,217 @@ export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
   font-size: var(--app-font-size-regular);        
 }
  
- 
-    `); // CSS for N2Grid and N2TreeGrid
+/* Ej2 defaults the width to 57px for some strange reason */
+.${n2GridClass}.${eGridClass} .e-grouptext {
+   width: unset;
+}
 
+/* group area background color */
+.${n2GridClass}.${eGridClass} .e-groupdroparea {
+        background-color: var(--app-filter-text-background-color);     
+        color: #000;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        border-top-color: #e0e0e0;
+}
 
-    // Removes blue background from grid editable checkbox and restores border and font color
-    cssAddSelector(`.${n2GridClass} .e-checkbox-wrapper .e-frame.e-check, .${n2GridClass} .e-css.e-checkbox-wrapper .e-frame.e-check`,
-        `
-    background-color: transparent;
-    border-color: unset;
-    color: black;`);
-
-    // Make tops of grid filters change colors for enabled filters
-    cssAddSelector(`.${n2GridClass} .e-filtertext:not(.e-disable)`, `
-        background-color: $app-filter-text-background-color !important;
-        padding-left: 1ch !important;`);
-
-
-    cssAddSelector(`.${n2GridClass} .e-tbar-btn, .e-tbtn-txt`,
-        `  background-color: ${accent} !important;`
-    );
-
-
-    cssAddSelector(`.${n2GridClass} .e-tbar-btn-text, .${n2GridClass} .e-btn-icon.e-excelexport`,
-        `color: ${accentContrastColor} !important;`
-    );
-
-
-    cssAddSelector(`.${n2GridClass}.e-control .e-toolbar .e-tbar-btn .e-tbar-btn-text`,
-        `font-family: var(--app-font-family);
-font-size: var(--app-font-size-regular);`
-    );
-
-    //Make tops of grid filters change colors for enabled filters
-    cssAddSelector(`.${n2GridClass} .e-filtertext:not(.e-disable) `, `
-     background-color: var(--app-filter-text-background-color) !important;
-  padding-left: 1ch !important;
-    `);
-
-
-    //  Grid opacity
-    cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell:not(.e-editedbatchcell), .e-control.${eGridClass} .e-detailrowcollapse:not(.e-editedbatchcell), .e-control.${eGridClass} .e-detailrowexpand:not(.e-editedbatchcell), .e-control.${eGridClass} .e-gridcontent .e-rowdragdrop:not(.e-editedbatchcell), .e-control.${eGridClass} .e-emptyrow:not(.e-editedbatchcell)`, `
-     opacity: 1 !important;
-    `);
-
-    // Reduce the padding of the header grid cells from 1.8em default
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-headercelldiv, .${eGridClass} .e-gridheader .e-stackedheadercelldiv,
-.${n2GridClass}.${eGridClass} .e-gridheader .e-headercell .e-headercelldiv.e-headerchkcelldiv,
-.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-headercelldiv, 
-.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell[aria-sort=none] .e-stackedheadercelldiv, 
-.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-headercelldiv, 
-.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-centeralign.e-headercell:not([aria-sort]) .e-stackedheadercelldiv
-`, `
-    padding-right: 0.5em;
-    `);
-
-    // Selected row background color
-    cssAddSelector(`.${n2GridClass}.${eGridClass} td.e-active`,`
-    background:var(--app-grid-selected-row-background-color);
-    `);
-
-    // Make row hovered over readable by turning the font color to the contrasting color of the background
-    cssAddSelector(`.${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-editedrow):not(.e-detailrow):hover .e-rowcell:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
-.${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-detailrow):hover .e-detailrowcollapse:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
-.${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):hover .e-rowdragdrop:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
-.${n2GridClass}.${eGridClass}.e-rtl .e-gridhover tr[role=row]:not(.e-disable-gridhover):hover .e-rowdragdrop:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell),
-.${n2GridClass}.${eGridClass}.e-gridhover tr[role=row]:not(.e-disable-gridhover):not(.e-detailrow):hover .e-detailrowexpand:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell)`, `
-        color: ${gridHoverFontColor} !important;
-    `);
-
-    //   // Grid cell font type and size
-    //   cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell`, `
-    // font-family: var(--app-font-family);
-    // font-size: var(--app-font-size-regular);
-    //   `);
-
-
-    // left divider color for row cell, header and filter cells
-    cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-rowcell, .${n2GridClass}.e-control.${eGridClass} .e-filterbarcell, .${n2GridClass}.e-control.${eGridClass} .e-headercell`, `
-  border-left: 1px solid var(--grid-header-border-color);
-    `);
-
-    // eliminate resize handler cell visible border
-    cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-headercell .e-rhandler`, `
-  border-right-width: 0px !important;
-  border-right-style: solid !important;
-  border-right-color: var(--grid-table-background-color) !important;    
-    `);
-
-    cssAddSelector(`.${n2GridClass}.e-control.${eGridClass} .e-tableborder `, `
-      border-right-color: var(--grid-header-border-color) !important;
-    `);
-
-    // Controls the left/right padding in grid cells
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-rowcell, .${eGridClass} .e-filterbarcell, .${eGridClass} .e-filterbarcelldisabled, .${eGridClass} .e-headercell, .${eGridClass} .e-detailheadercell`, `
-      padding: 5px;
-    `);
-
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader tr th:first-child:has(.e-headerchkcelldiv)`, `
-      padding-left: 5px;
-    `);
-
-
-    // this selector is used to denote a disabled row in the grid
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-rowcell.screen-grid-col-disabled `, `
-      background-color: ${CSS_VARS_CORE.app_row_disabled_background_color_lightgray};
-    `);
-    // this selector is used to denote a disabled row in the grid
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-headercell.screen-grid-col-disabled `, `
-   background-color: ${CSS_VARS_CORE.app_row_disabled_background_color_lightgray} !important;   
-    `);
-
-    // Ej2 defaults the width to 57px for some strange reason
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-grouptext`, `
-    width: unset;
-    `);
-
-    // group area background color
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-groupdroparea`, `
-            background-color: var(--app-filter-text-background-color);     
-            color: #000;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-            border-top-color: #e0e0e0;
-    `);
-
-// This is here for the grid cell to not wrap on <br>
-    cssAddSelector(`.${n2GridClass} td.e-rowcell br`, `
+/* This is here for the grid cell to not wrap on <br> */
+.${n2GridClass} td.e-rowcell br {
      display: none;
-    `);
+}
 
+/* General sorting - disable color change for sorted columns */
 
-    //------------------- General sorting - disable color change for sorted columns -------------
-    cssAddSelector(`.${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=ascending] .e-headertext, 
+.${n2GridClass}.${eGridClass} .e-gridheader .e-icons:not(.e-icon-hide):not(.e-check):not(.e-stop):not(.e-icon-reorderuparrow):not(.e-icon-reorderdownarrow) {
+    margin-bottom: unset;
+}    
+
+.${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=ascending] .e-headertext, 
 .${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=descending] .e-headertext, 
 .${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=ascending] .e-sortfilterdiv, 
-.${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=descending] .e-sortfilterdiv`, `
+.${n2GridClass}.${eGridClass} th.e-headercell[aria-sort=descending] .e-sortfilterdiv {
         color: unset;
         opacity: unset;
-    `);
+}
 
-    //--------------- Custom Excel filter --------------------
-
-    const STYLE_CENTER_VERTICAL: string = `
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        margin: auto 2px;
-        height: 16px;`;
-
-    // Move the hidden div that the floating dialog opening next to to the left if the menu is on the left side (if text is right justified)
-    cssAddSelector(`.${n2GridClass}.e-control.${eGridClass}  .e-rightalign .e-filtermenudiv`, `
+/* --------------- Custom Excel filter -------------------- */
+    
+/* Move the hidden div that the floating dialog opening next to to the left if the menu is on the left side (if text is right justified) */
+.${n2GridClass}.e-control.${eGridClass}  .e-rightalign .e-filtermenudiv {
     float: unset;
     width: 40px;
-	`);
+}
 
+/* Reverse the space reservation and reserve 32px to the front of the header cell for the filter and sort icon */
+.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-rightalign.e-fltr-icon .e-headercelldiv {
+    margin: -7px -7px -7px 32px;
+}
 
-    // Reverse the space reservation and reserve 32px to the front of the header cell for the filter and sort icon
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-gridheader .e-sortfilter .e-rightalign.e-fltr-icon .e-headercelldiv`, `
-            margin: -7px -7px -7px 32px;
-    `);
+/* This is the filter icon that appears in the right of the header of a column that has a filter applied (e-filtered exists). */
+.${n2GridClass}.${eGridClass} .e-filtermenudiv.e-filtered::before {
+    color: var(--material-accent-font-color);
+    background-color: var(--material-accent-color);
+    padding: 3px;
+    border: solid 1px var(--grid-header-border-color);
+    border-radius: 5px;
+    ${STYLE_CENTER_VERTICAL}
+    right: 0;
+}
 
-    /**
-     * This is the filter icon that appears in the right of the header of a column that has a filter applied (e-filtered exists).
-     */
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-filtermenudiv.e-filtered::before`, `
-        color: var(--material-accent-font-color);
-        background-color: var(--material-accent-color);
-        padding: 3px;
-        border: solid 1px var(--grid-header-border-color);
-        border-radius: 5px;
-        ${STYLE_CENTER_VERTICAL}
-        right: 0;
-   `);
+/* This is the filter icon that appears on the left of the header of a column that has a filter applied (e-filtered exists) and the header is right justified. */
+.${n2GridClass}.${eGridClass} .e-rightalign .e-filtermenudiv.e-filtered::before {
+    right: unset;
+    left: 0;
+}
 
-    /**
-     * This is the filter icon that appears on the left of the header of a column that has a filter applied (e-filtered exists) and the header is right justified.
-     */
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-rightalign .e-filtermenudiv.e-filtered::before`, `
-        right: unset;
-        left: 0;
-    `);
+/* This is the filter icon that appears in the right of the header of a column that has no filter (e-filtered doesn't exist). */
+.${n2GridClass}.${eGridClass} .e-filtermenudiv:not(.e-filtered)::before {
+    padding: 3px;
+    border: solid 1px var(--grid-header-border-color);
+    border-radius: 5px;
+    ${STYLE_CENTER_VERTICAL}
+    right: 0;
+}
 
+/* This is the filter icon that appears on the left of the header of a column that has no filter (e-filtered doesn't exist) and the header is right justified. */
+.${n2GridClass}.${eGridClass} .e-rightalign .e-filtermenudiv:not(.e-filtered)::before {
+    right: unset;
+    left: 0;
+}
 
-    /**
-     * This is the filter icon that appears in the right of the header of a column that has no filter (e-filtered doesn't exist).
-     */
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-filtermenudiv:not(.e-filtered)::before`, `
-        padding: 3px;
-        border: solid 1px var(--grid-header-border-color);
-        border-radius: 5px;
-        ${STYLE_CENTER_VERTICAL}
-        right: 0;
-    `);
+/* when right-align the left padding was 1.8em by default. Now it's 17px, exactly 1px less than the size of the sort bubble so things line up */
+.${n2GridClass}.${eGridClass}  .e-gridheader .e-sortfilter .e-rightalign .e-headercelldiv, .${n2GridClass}.${eGridClass} .e-gridheader .e-rightalign .e-stackedheadercelldiv {
+    padding: 0 0.6em 0 17px;
+}
 
-    /**
-     * This is the filter icon that appears on the left of the header of a column that has no filter (e-filtered doesn't exist) and the header is right justified.
-     */
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-rightalign .e-filtermenudiv:not(.e-filtered)::before`, `
-        right: unset;
-        left: 0;
-    `);
+/* sort icons if there's a filter menu present: sort number position */
+.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-gridheader .e-sortnumber {
+    margin: 2px 15px 2px 0;
+    ${STYLE_CENTER_VERTICAL}
+    width: 16px;
+    right: 36px;
+}
 
-    // when right-align the left padding was 1.8em by default. Now it's 17px, exactly 1px less than the size of the sort bubble so things line up
-    cssAddSelector(`.${n2GridClass}.${eGridClass}  .e-gridheader .e-sortfilter .e-rightalign .e-headercelldiv, .${n2GridClass}.${eGridClass} .e-gridheader .e-rightalign .e-stackedheadercelldiv`, `
-        padding: 0 0.6em 0 17px;
-    `);
+/* if the header is right justified and there's a filter menu present, move the sort number to the left */
+.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-gridheader  .e-rightalign .e-sortnumber {
+    right: unset;
+    left: 36px;
+}
 
+/* sort filter icon when filter menu present */
+.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-sortfilterdiv.e-ascending::before,
+.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-sortfilterdiv.e-descending::before {
+    margin-left: -10px;
+    padding: 2px 3px 4px 3px;
+    border: solid 1px var(--grid-header-border-color);
+    border-radius: 5px;
+    ${STYLE_CENTER_VERTICAL}
+    right: ${app_custom_excel_filter_width_number}px;
+}
 
-    //-------------------- sort icons if there's a filter menu present ---------------------------
-    // this has right=36px because there's a filter menu present amd the filtersort icon
-    cssAddSelector(`.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-gridheader .e-sortnumber`, `
-        margin: 2px 15px 2px 0;
-        ${STYLE_CENTER_VERTICAL}
-        width: 16px;
-        right: 36px;
-        `
-    );
+/* if the header is right justified and there's a filter menu present, move the sort filter icon to the left */
+.${n2GridClass}.${eGridClass}.grid_filter_menu_present  .e-rightalign .e-sortfilterdiv.e-ascending::before,
+.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-headercelldiv[style*="text-align: right;"] + .e-sortfilterdiv.e-descending::before {
+    right: unset;
+    left: ${app_custom_excel_filter_width_number}px;
+}
 
-    // if the header is right justified and there's a filter menu present, move the sort number to the left, still 36px just like the right above
-    cssAddSelector(`.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-gridheader  .e-rightalign .e-sortnumber`, `
-        right: unset;
-        left: 36px;
-    `);
+/* sort icons if a filter menu IS NOT present: sort number position */
+.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-gridheader .e-sortnumber {
+    margin: 1px ${app_custom_excel_filter_width_number}px 0px 0px;
+    ${STYLE_CENTER_VERTICAL}
+    width: 16px;
+    right: ${app_custom_excel_filter_width_number}px;
+}
 
+/* if the header is right justified and no filter menu present, move the sort number to the left */
+.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-gridheader .e-rightalign .e-sortnumber {
+    right: unset;
+    left: ${app_custom_excel_filter_width_number}px;
+}
 
-    // this has right=0 because there's a filter menu present
-    cssAddSelector(`.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-sortfilterdiv.e-ascending::before,
-.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-sortfilterdiv.e-descending::before`,
-        `
-        margin-left: -10px;
-        padding: 2px 3px 4px 3px;
-        border: solid 1px var(--grid-header-border-color);
-        border-radius: 5px;
-        ${STYLE_CENTER_VERTICAL}
-        right: ${app_custom_excel_filter_width_number}px;
-    `);
+/* sort filter icon when no filter menu present */
+.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-sortfilterdiv.e-ascending::before,
+.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-sortfilterdiv.e-descending::before {
+    margin-left: 2px;
+    padding: 3px;
+    border: 1px solid var(--grid-header-border-color);
+    border-radius: 5px;
+    ${STYLE_CENTER_VERTICAL}
+    right: 0px;
+}
 
-    // if the header is right justified and there's a filter menu present, move the sort filter icon to the left
-    cssAddSelector(`.${n2GridClass}.${eGridClass}.grid_filter_menu_present  .e-rightalign .e-sortfilterdiv.e-ascending::before,
-.${n2GridClass}.${eGridClass}.grid_filter_menu_present .e-headercelldiv[style*="text-align: right;"] + .e-sortfilterdiv.e-descending::before`,
-        `
-        right: unset;
-        left: ${app_custom_excel_filter_width_number}px;
-    `);
+/* if the header is right justified and no filter menu present, move the sort icon to the left */
+.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-rightalign .e-sortfilterdiv.e-ascending::before,
+.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-rightalign .e-sortfilterdiv.e-descending::before {
+    right: unset;
+    left: 0px;
+}
 
+/* frozen table right border color */
+.${n2GridClass}.${eGridClass} .e-frozenheader > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent .e-virtualtable > .e-table, .${n2GridClass}.${eGridClass} .e-frozenheader .e-virtualtable > .e-table {
+    border-right-color: var(--grid-header-border-color);
+}
 
-    //-------------------- sort icons if there's a filter menu IS NOT PRESENT ---------------------------
-    // this has right=18px because there's no filter menu present, but there is the filtersort icon
-    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-gridheader .e-sortnumber`, `
-        margin: 1px ${app_custom_excel_filter_width_number}px 0px 0px;
-        ${STYLE_CENTER_VERTICAL}
-        width: 16px;
-        right: ${app_custom_excel_filter_width_number}px;
-        `
-    );
+/* align sort and menu vertically */
+.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-columnheader.e-wrap .e-sortfilterdiv, .${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-columnheader .e-sortfilterdiv {
+    margin: -19px 10px;
+}
 
-    // if the header is right justified, move the sort icon to the left, still 18px just like the right above
-    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-gridheader .e-rightalign .e-sortnumber`, `
-        right: unset;
-        left: ${app_custom_excel_filter_width_number}px;
-    `);
+/* center the menu character in the menufilter div ::before */
+.${n2GridClass}.${eGridClass} .e-icon-filter::before,
+.${n2GridClass}.${eGridClass} .e-icon-filter.e-filtered::before,
+.${n2GridClass}.${eGridClass} .e-grid-menu .e-icon-filter::before,
+.${n2GridClass}.${eGridClass} .e-grid-menu .e-icon-filter.e-filtered::before {
+    line-height: 8px;
+}
 
+/* disable excel sort menu items in the filter menu specific to excel filters (the sort exists on the main column already) */
+.${n2GridClass}.${eGridClass} .e-menu-item.e-excel-ascending,
+.${n2GridClass}.${eGridClass} .e-menu-item.e-excel-descending,
+.${n2GridClass}.${eGridClass} .e-menu-item.e-separator.e-excel-separator {
+    display: none;
+}
 
-    // this has right=0 because there's no filter menu present
-    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-sortfilterdiv.e-ascending::before,
-.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-sortfilterdiv.e-descending::before`,
-        `
-        margin-left: 2px;
-        padding: 3px;
-        border: 1px solid var(--grid-header-border-color);
-        border-radius: 5px;
-        ${STYLE_CENTER_VERTICAL}
-        right: 0px;
-    `);
+/* grid rounded corners */
+.${n2GridClass}.${eGridClass}.e-control.e-lib {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius:10px;
+    border-bottom-right-radius:10px;
+}
 
-    // if the header is right justified, move the sort icon to the left
-    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-rightalign .e-sortfilterdiv.e-ascending::before,
-.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-rightalign .e-sortfilterdiv.e-descending::before`,
-        `
-        right: unset;
-        left: 0px;
-    `);
+/* pager rounded corners (matches grid) */
+.${n2GridClass}.${eGridClass}.e-control.e-lib .e-gridpager.e-pager {
+    border-bottom-left-radius:10px;
+    border-bottom-right-radius:10px;
+}
 
+/* grid header background and rounding */
+.${n2GridClass}.${eGridClass} .e-gridheader.e-lib, .${n2GridClass} .e-columnheader {
+    background-color: var(--app-color-panel-background);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
 
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-frozenheader > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent > .e-table, .${n2GridClass}.${eGridClass} .e-frozencontent .e-virtualtable > .e-table, .${n2GridClass}.${eGridClass} .e-frozenheader .e-virtualtable > .e-table`, `
-        border-right-color: var(--grid-header-border-color);
-    `);
-    //---------------------
+/* column header background */
+.${n2GridClass}.${eGridClass} .e-columnheader .e-headercell {
+    background-color: var(--app-color-panel-background);
+}
 
-    // align sort and menu vertically
-    cssAddSelector(`.${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-columnheader.e-wrap .e-sortfilterdiv, .${n2GridClass}.${eGridClass}:not(.grid_filter_menu_present) .e-columnheader .e-sortfilterdiv`, `
-        margin: -19px 10px;    
-    `);
+/* Ensure positioning context for the span in e-headertext below */
+.${n2GridClass}.${eGridClass} .e-headercelldiv {
+    position:relative;
+    line-height: 1.1;
+}
 
-
-    // now center the menu character in the menufilter div ::before
-    cssAddSelector(`
-    .${n2GridClass}.${eGridClass} .e-icon-filter::before, 
-    .${n2GridClass}.${eGridClass} .e-icon-filter.e-filtered::before, 
-    .${n2GridClass}.${eGridClass} .e-grid-menu .e-icon-filter::before, 
-    .${n2GridClass}.${eGridClass} .e-grid-menu .e-icon-filter.e-filtered::before`, `
-line-height: 8px;
+/* regular text header cells center vertically */
+.${n2GridClass}.${eGridClass} .e-headercelldiv .e-headertext {
+    display: inline-flex; /* Use inline-flex to make it work with text-align */
+    align-items: center; /* Vertically center content inside the span */
+    height: 100%; /* Ensure it takes the full height of the parent */
+}
 `);
-
-
-    // disable excel sort menu items in the filter menu specific to excel filters (the sort exists on the main column already)
-    // .e-excel-ascending,
-    // .e-excel-descending,
-    // .e-separator.e-excel-separator {
-    //   display: none;
-    // }
-    cssAddSelector(`
-    .${n2GridClass}.${eGridClass} .e-menu-item.e-excel-ascending, 
-    .${n2GridClass}.${eGridClass} .e-menu-item.e-excel-descending, 
-    .${n2GridClass}.${eGridClass} .e-menu-item.e-separator.e-excel-separator`,
-        `display: none;`);
-
-
-    let cridClasslist: string[]
-
-    cssAddSelector(
-        `.${n2GridClass}.${eGridClass}.e-control.e-lib`,
-        `
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
-        border-bottom-left-radius:10px;
-        border-bottom-right-radius:10px;
-        `);
-
-    // this needs to match the grid above
-    cssAddSelector(
-        `.${n2GridClass}.${eGridClass}.e-control.e-lib .e-gridpager.e-pager`,
-        `
-  border-bottom-left-radius:10px; 
-  border-bottom-right-radius:10px;
-  `);
-
-    cssAddSelector(
-        `.${n2GridClass}.${eGridClass} .e-gridheader.e-lib, .${n2GridClass} .e-columnheader`,
-        `
-  background-color: var(--app-color-panel-background);
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  `);
-
-
-    cssAddSelector(
-        `.${n2GridClass}.${eGridClass} .e-columnheader .e-headercell`,
-        `
-  background-color: var(--app-color-panel-background);
-  `);
-
-    //   cssAddSelector(
-    //       `.${n2GridClass}.${eGridClass} .e-columnheader .e-headercelldiv span`,
-    //       `
-    // font-weight: bold;
-    // `);
-
-    /* Ensure positioning context for the span in e-headertext below */
-    cssAddSelector(
-        `.${n2GridClass}.${eGridClass} .e-headercelldiv`, `
-         position:relative; 
-            line-height: 1.1;
-  `);
-
-    // this applies to regular text header cells so they center vertically
-    cssAddSelector(`.${n2GridClass}.${eGridClass} .e-headercelldiv .e-headertext`, `
-        display: inline-flex; /* Use inline-flex to make it work with text-align */
-        align-items: center; /* Vertically center content inside the span */
-        height: 100%; /* Ensure it takes the full height of the parent */
-    `);
-
-
-    // cssAddSelector(
-    //     ``,
-    //     ``);
-
 } // cssForN2Grid
 
 import {isNullOrUndefined, KeyboardEvents} from '@syncfusion/ej2-base';
@@ -1797,7 +1733,8 @@ import {DropDownList} from '@syncfusion/ej2-dropdowns';
 import {Workbook} from "@syncfusion/ej2-excel-export";
 import {
     ColumnMenuItemModel,
-    ColumnMenuOpenEventArgs, ColumnModel,
+    ColumnMenuOpenEventArgs,
+    ColumnModel,
     EJ2Intance,
     ExcelQueryCellInfoEventArgs,
     FailureEventArgs,
@@ -1846,7 +1783,7 @@ import {
     N2_CLASS
 } from "../../../Constants";
 import {findElementWithTippyTooltip, fontColor, isDev} from '../../../CoreUtils';
-import {cssAdd, cssAddSelector} from '../../../CssUtils';
+import {cssAdd} from '../../../CssUtils';
 import {EJBase} from '../../../data/Ej2Comm';
 import {HttpRequestEvtDataManager} from '../../../data/NexusComm';
 import {isNexusDataManager, NexusDataManager} from "../../../data/NexusDataManager";
