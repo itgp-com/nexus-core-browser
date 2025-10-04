@@ -291,7 +291,6 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
                 // now we add the openDialogs control as the first control (addArray is already added to headerControls so we just modify it here)
 
                 let openDialogsControl: JsPanelHeaderControlsAdd = {
-                    //<i class="fa-solid fa-rectangle-list"></i>
                     html: '<i class="fa-regular fa-rectangle-list fa-lg" style="margin: 0 5px;"></i>',
                     name: 'openDialogs',
                     position: 1,

@@ -36,11 +36,17 @@ export class N2Dlg_Modal<STATE extends StateN2Dlg_Modal = StateN2Dlg_Modal> exte
     onStateInitialized(state: STATE) {
         let thisX = this;
 
+        //------- do thisbefore  super.onStateInitialized(state) and regular N2Dlg get to populate the state -----
         addN2Class(state.deco, N2Dlg_Modal.CLASS_IDENTIFIER);
+        if ( state.hideOpenDialogsIcon == null )
+            state.hideOpenDialogsIcon = true; // modals should not show the open dialogs list button
+
+
         super.onStateInitialized(state);
 
         //--------------- modal -----------------
         let mo = state.options
+
 
         // default to false
         if (mo.closeOnBackdrop == null)
