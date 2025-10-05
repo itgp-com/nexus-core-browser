@@ -1,4 +1,4 @@
-export interface StateEditForm<T extends any = any> extends StateN2PanelLayout {
+export interface StateN2EditForm<T extends any = any> extends StateN2PanelLayout {
     record?: T;
     /**
      * If true, pressing the Enter key will trigger the save button if it is enabled.
@@ -8,7 +8,7 @@ export interface StateEditForm<T extends any = any> extends StateN2PanelLayout {
 } // StateEditForm
 
 
-export abstract class EditForm<REC extends any = any, STATE extends StateEditForm<REC> = StateEditForm<REC>> extends N2PanelLayout<STATE> implements N2Interface_Dialog<N2Dialog | N2Dlg, EditForm<REC>> {
+export abstract class N2EditForm<REC extends any = any, STATE extends StateN2EditForm<REC> = StateN2EditForm<REC>> extends N2PanelLayout<STATE> implements N2Interface_Dialog<N2Dialog | N2Dlg, N2EditForm<REC>> {
     protected record_clone: REC;
     protected dialog: N2Dialog | N2Dlg;
     closeAfterSave: boolean = true;
@@ -164,7 +164,7 @@ export abstract class EditForm<REC extends any = any, STATE extends StateEditFor
         } // try-catch
     } // mergeRecord
 
-    public onDialogBeforeClose(evt: N2Evt_Dialog_Cancellable<N2Dialog | N2Dlg, EditForm<REC>>): void {
+    public onDialogBeforeClose(evt: N2Evt_Dialog_Cancellable<N2Dialog | N2Dlg, N2EditForm<REC>>): void {
         if (this.allowForceClose)
             return; // no more checking (after confirming save without change for example)
         if (this.isChanged()) {
@@ -177,14 +177,14 @@ export abstract class EditForm<REC extends any = any, STATE extends StateEditFor
         } // if
     } // onDialogBeforeClose
 
-    public onDialogBeforeOpen(evt?: N2Evt_Dialog_Cancellable<N2Dialog | N2Dlg, EditForm<REC>>): void {
+    public onDialogBeforeOpen(evt?: N2Evt_Dialog_Cancellable<N2Dialog | N2Dlg, N2EditForm<REC>>): void {
     } // onDialogBeforeOpen
 
-    public onDialogClose(evt?: N2Evt_Dialog<N2Dialog | N2Dlg, EditForm<REC>>): void {
+    public onDialogClose(evt?: N2Evt_Dialog<N2Dialog | N2Dlg, N2EditForm<REC>>): void {
     } // onDialogClose
 
-    public onDialogOpen(evt?: N2Evt_Dialog<N2Dialog | N2Dlg, EditForm<REC>>): void {
-        let thisX: EditForm<any> = evt.widget; // this is the actual EditForm
+    public onDialogOpen(evt?: N2Evt_Dialog<N2Dialog | N2Dlg, N2EditForm<REC>>): void {
+        let thisX: N2EditForm<any> = evt.widget; // this is the actual EditForm
         thisX.dialog = evt.dialog;
         thisX.allowForceClose = false; // just in case we're reusing a form in a dialog
 
@@ -456,7 +456,7 @@ export abstract class EditForm<REC extends any = any, STATE extends StateEditFor
     public doCancel(): void {
         if (this.isChanged()) {
             // Simulate the dialog close event to trigger confirmation
-            const mockEvent: N2Evt_Dialog_Cancellable<N2Dialog | N2Dlg, EditForm<REC>> = {
+            const mockEvent: N2Evt_Dialog_Cancellable<N2Dialog | N2Dlg, N2EditForm<REC>> = {
                 cancel: false,
                 dialog: this.dialog,
                 widget: this,
