@@ -558,7 +558,6 @@ export enum EditFormStatus {
 
 import {DialogUtility} from '@syncfusion/ej2-popups';
 import _ from 'lodash';
-import * as console from "node:console";
 import {N2Button} from '../ej2/ext/N2Button';
 import {N2Dialog} from '../ej2/ext/N2Dialog';
 import {N2Dlg} from '../jsPanel/N2Dlg';
