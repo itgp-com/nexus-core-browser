@@ -343,6 +343,8 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
                 headerTemplate: '<div style="background: transparent;opacity: 0"></div> ',
                 displayAsCheckBox: true,
                 width: 50,
+                maxWidth: 50,
+                minWidth: 40,
                 allowSorting: false,
                 allowFiltering: false,
                 allowGrouping: false,
