@@ -28,6 +28,16 @@ export interface StateN2Popup<T = any> extends StateN2Dlg {
     // Search hook and options
     onSearch?: (popup: N2Popup<T>, text: string) => Promise<Query>;
     searchPlaceholder?: string;
+    /** initial value for the search box; can be a string, a promise that resolves to string, or a function returning string or promise */
+    initialSearch?: string | Promise<string> | (() => string | Promise<string>);
+    /** properties to override the default N2TextField state used for the search input */
+    searchTextFieldProps?: StateN2TextField;
+    /** optional tooltip model for the search input (tippy.js props or string content) */
+    searchTooltip?: Props;
+    /** optional tooltip model for the search button (tippy.js props or string content) */
+    searchButtonTooltip?: Props;
+    /** icon css for the search button; defaults to 'fas fa-search' */
+    searchButtonIconCss?: string;
 
     // right panel/content customization
     // If provided, takes precedence over buttonsFactory
@@ -46,9 +56,9 @@ export interface StateN2Popup<T = any> extends StateN2Dlg {
 }
 
 /**
- * N2OldPopup is a dialog-centric component that presents a grid and returns
+ * N2Popup is a dialog-centric component that presents a grid and returns
  * either a single selected record or multiple records based on configuration.
- * It supports cross-page selection caching and a switch to toggle between
+ * It supports cross-page selection caching and a switch to toggle between the
  * current data source and the selected-records view.
  */
 export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> extends N2Dlg<STATE> {
@@ -83,6 +93,11 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
 
 
     private spinnerInitialized: boolean = false;
+
+    // Track last search value sent to the server to avoid duplicate requests
+    private lastSearchSent?: string;
+    // When true, the next change event from the search field will be ignored (used for search button/init)
+    private suppressNextChange: boolean = false;
 
     constructor(state?: STATE) {
         super(state);
@@ -191,7 +206,7 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
 
         try {
             let previous = state.onDialogOpen;
-            state.onDialogOpen = (evt) => {
+            state.onDialogOpen = async (evt) => {
 
                 // wire selection listeners after grid is created
                 try {
@@ -205,6 +220,12 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
                         }, 100);
                     }
                 }
+
+                // apply initial search if provided
+                try {
+                    await this.applyInitialSearchIfAny();
+                } catch (e) { console.error(e); }
+
                 if (previous)
                     previous.call(this, evt);
             };
@@ -348,58 +369,62 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
 
         let children: Elem_or_N2[] = []
 
-        // Search field
-        const f_doSearch = debounce((txt: string) => {
-            // if txt is empty or just blank spaces, treat as empty
-            if (txt == null || txt.trim().length === 0) txt = '';
-            // perform search via user hook
-            // reset to first page and show spinner while searching
+        // helper to get current search box value
+        const getSearchValue = (): string => {
+            const v = (this.searchField?.obj as any)?.value ?? this.searchField?.htmlInputElement?.value ?? '';
+            return (v ?? '').toString();
+        };
 
-            let ejGrid: Grid = this.mainGrid.obj as Grid;
-
-
-            let realDataSource = ejGrid.dataSource;
-            ejGrid.dataSource = []; // all the changes below will be instantaneaous and invisible
-            setTimeout(() => {
-                this.showSpinner();
-                setTimeout(async () => {
-                    try {
-                        ejGrid.pageSettings.currentPage = 1; // reset to first page
-                        let query: Query = null;
-
-                        // only call onSearch if txt is non-blank. If blank, we want to reset to original DS
-                        if (txt !== '')
-                            query = await state.onSearch?.(this, txt ?? '');
-
-                        ejGrid.query = query ?? null;
-                    } catch (e) {
-                        console.error(e);
-                    } finally {
-                        setTimeout(() => {
-                            ejGrid.dataSource = realDataSource; // restore the datasource and in the process finally issue the correct query (ONCE!)
-                            this.hideSpinner();
-                        }, 50);
-                    }
-                }, 100);
-            }, 100)
+        // Debounced handler for input changes
+        // Intentionally non-async: event handlers won't await a debounced function.
+        // Delegate to async performSearch(), which handles its own async/UX flow.
+        const f_doSearch: (txt: string) => void = debounce(async (txt: string) => {
+            await this.performSearch(txt);
         }, 250);
 
-        this.searchField = new N2TextField({
-            wrapper: {
-                classes: [CSS_CORE_FLEX_CENTER_ALL_FULL]
-            },
+
+        // Build search field with optional user overrides
+        const defaultTextFieldState: StateN2TextField = {
+            wrapper: { classes: [CSS_CORE_FLEX_CENTER_ALL_FULL] },
             ej: {
                 placeholder: this.state.searchPlaceholder ?? 'Search...',
                 change: (args: ChangedEventArgs) => {
-                    let value: string = args.value;
+                    const value: string = (args as any).value;
+                    if (this.suppressNextChange) {
+                        // consume one change event (usually following a button-triggered search)
+                        this.suppressNextChange = false;
+                        if (value === this.lastSearchSent) return;
+                    }
                     f_doSearch(value);
                 },
                 showClearButton: true,
                 autocomplete: 'off',
             }
-        });
+        } as any;
+
+        const mergedTfState: StateN2TextField = {
+            ...defaultTextFieldState,
+            ...(state.searchTextFieldProps as any || {}),
+            ej: {
+                ...defaultTextFieldState.ej,
+                ...((state.searchTextFieldProps as any)?.ej || {}),
+            } as any,
+        } as any;
+
+        this.searchField = new N2TextField(mergedTfState);
         children.push(this.searchField);
 
+        // Add a round search button
+        const searchBtnIcon = state.searchButtonIconCss ?? `fas fa-search ${CSS_CLASS_N2POPUP_BTN_ICON}`;
+        const searchBtn = new N2Html({
+            deco: { classes: [CSS_CLASS_N2_ROUNDED_BUTTON, CSS_CLASS_N2POPUP_BTN_SEARCH] },
+            value: `<i class="${searchBtnIcon}"></i>`,
+            onClick: () => {
+                this.suppressNextChange = true; // avoid double-trigger via change
+                f_doSearch(getSearchValue());
+            }
+        });
+        children.push(searchBtn);
 
         // hidden input htmlelement to capture the focusout event
         const hiddenFocusCatcher = document.createElement('input');
@@ -435,6 +460,23 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
             deco: {classes: [CSS_CLASS_N2POPUP_TOPBAR]},
             children: children,
         })
+
+        // Apply tooltips if provided
+        try {
+            // Defer until elements exist in DOM
+            setTimeout(() => {
+                try {
+                    const fieldElem = this.searchField?.htmlElement;
+                    if (fieldElem && (state as any).searchTooltip) {
+                        htmlElement_addTooltip(fieldElem, state.searchTooltip as any);
+                    }
+                    const btnElem = (searchBtn as any)?.htmlElement as HTMLElement;
+                    if (btnElem && (state as any).searchButtonTooltip) {
+                        htmlElement_addTooltip(btnElem, state.searchButtonTooltip as any);
+                    }
+                } catch (_) { }
+            }, 0);
+        } catch { }
 
         return bar;
     }
@@ -519,6 +561,58 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
         return wrapper;
     }
 
+    private async performSearch(rawTxt: string) {
+        let state = this.state;
+        if (!state?.onSearch) return;
+        let txt = (rawTxt ?? '').toString();
+        if (txt.trim().length === 0) txt = '';
+        // Skip duplicate searches (same value as last time)
+        if (this.lastSearchSent === txt) return;
+        this.lastSearchSent = txt;
+
+        const ejGrid: Grid = this.mainGrid.obj as Grid;
+        const realDataSource = ejGrid.dataSource;
+        ejGrid.dataSource = [];
+        setTimeout(() => {
+            this.showSpinner();
+            setTimeout(async () => {
+                try {
+                    ejGrid.pageSettings.currentPage = 1; // reset to first page
+                    let query: Query = null;
+                    if (txt !== '') {
+                        query = await state.onSearch?.(this, txt ?? '');
+                    }
+                    ejGrid.query = query ?? null;
+                } catch (e) {
+                    console.error(e);
+                } finally {
+                    setTimeout(() => {
+                        ejGrid.dataSource = realDataSource;
+                        this.hideSpinner();
+                    }, 50);
+                }
+            }, 100);
+        }, 100);
+    }
+
+    private async applyInitialSearchIfAny() {
+        const init = this.state?.initialSearch as any;
+        if (!init) return;
+        try {
+            let val: any = init;
+            if (typeof init === 'function') val = await init();
+            else if (init && typeof init.then === 'function') val = await init; // promise
+            const s = (val ?? '').toString();
+            // set the textbox value without triggering duplicate search
+            try {
+                if (this.searchField?.obj) (this.searchField.obj as any).value = s;
+                const inp = this.searchField?.htmlInputElement; if (inp) inp.value = s;
+            } catch {}
+            this.suppressNextChange = true;
+            await this.performSearch(s);
+        } catch (e) { console.error(e); }
+    }
+
     private wireSelectionHandlers(grid: N2Grid) {
         const ej: Grid = grid.obj;
         ej.rowSelected = (args: RowSelectEventArgs) => {
@@ -534,6 +628,20 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
             }
             this.updateSwitchState();
         };
+        // Double click returns the row when single selection is configured
+        if (!this.state.allowMultiple) {
+            (ej as any).rowDoubleClick = (args: any) => {
+                try {
+                    const data = (args && (args.data || args.rowData)) as T;
+                    if (data) {
+                        this.addToSelectionCache(grid, data);
+                        this._okPressed = true;
+                        this._cancelPressed = false;
+                        this.close();
+                    }
+                } catch (e) { console.error(e); }
+            };
+        }
         // when paging/sorting reloads, reselect rows if on page
         ej.dataBound = () => {
             // attempt to mark selected items on page (best-effort)
@@ -711,6 +819,7 @@ export const CSS_CLASS_N2POPUP_BTN_OK = 'n2popup-btn-ok';
 export const CSS_CLASS_N2POPUP_BTN_CANCEL = 'n2popup-btn-cancel';
 export const CSS_CLASS_N2POPUP_BTN_ICON = 'n2popup-btn-icon';
 export const CSS_CLASS_N2POPUP_BTN_LABEL = 'n2popup-btn-label';
+export const CSS_CLASS_N2POPUP_BTN_SEARCH = 'n2popup-btn-search';
 
 let cssLoaded = false;
 
@@ -765,6 +874,11 @@ function loadCSS(): void {
     width: 6ch;
 }
 
+.${CSS_CLASS_N2POPUP_BTN_SEARCH} {
+    height: 2em;
+    padding: 0 10px;
+}
+
 
     `,
             'N2Popup'
@@ -792,10 +906,12 @@ import {ChangedEventArgs} from "@syncfusion/ej2-inputs/src/textbox/textbox";
 import {createSpinner, hideSpinner, showSpinner} from "@syncfusion/ej2-popups";
 import DOMPurify from 'dompurify';
 import {clone, debounce} from "lodash";
+import {Props} from "tippy.js";
 import {cssAdd} from "../../CssUtils";
+import {htmlElement_addTooltip} from "../../utils/TippyUtils";
 import {N2PanelGrid, StateN2PanelGrid} from "../ej2/derived/N2PanelGrid";
 import {N2Grid, StateN2Grid} from "../ej2/ext/N2Grid";
-import {N2TextField} from "../ej2/ext/N2TextField";
+import {N2TextField, StateN2TextField} from "../ej2/ext/N2TextField";
 import {N2Column} from "../generic/N2Column";
 import {N2Html} from "../generic/N2Html";
 import {N2Panel} from "../generic/N2Panel";
