@@ -518,6 +518,10 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
 
 
         this.okBtn = new N2Html({
+            wrapper: {
+                classes: [CSS_CLASS_N2POPUP_BTN_RIGHT_WRAPPER]
+
+            },
             deco: {
                 classes: [CSS_CLASS_N2_ROUNDED_BUTTON, CSS_CLASS_N2POPUP_BTN_OK],
             },
@@ -535,6 +539,10 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
 
 
         this.cancelBtn = new N2Html({
+            wrapper: {
+                classes: [CSS_CLASS_N2POPUP_BTN_RIGHT_WRAPPER]
+
+            },
             deco: {
                 classes: [CSS_CLASS_N2_ROUNDED_BUTTON
                     , CSS_CLASS_N2POPUP_BTN_CANCEL
@@ -597,7 +605,7 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
 
     private async applyInitialSearchIfAny() {
         const init = this.state?.initialSearch as any;
-        if (!init) return;
+        if (!init) return; // if null or '' or undefined skip
         try {
             let val: any = init;
             if (typeof init === 'function') val = await init();
@@ -630,9 +638,9 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
         };
         // Double click returns the row when single selection is configured
         if (!this.state.allowMultiple) {
-            (ej as any).rowDoubleClick = (args: any) => {
+            ej.recordDoubleClick = (args: RecordDoubleClickEventArgs) => {
                 try {
-                    const data = (args && (args.data || args.rowData)) as T;
+                    const data = (args && args.rowData) as T;
                     if (data) {
                         this.addToSelectionCache(grid, data);
                         this._okPressed = true;
@@ -641,26 +649,12 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
                     }
                 } catch (e) { console.error(e); }
             };
-        }
+        } // if !allowMultiple
+
         // when paging/sorting reloads, reselect rows if on page
         ej.dataBound = () => {
-            // attempt to mark selected items on page (best-effort)
-            const keySel = this.state.rowKey;
-            if (!keySel) return;
-            const current = (ej.getRowsObject?.() || []) as any[];
-            const toSelect: number[] = [];
-            // no paging-based cache
-            current.forEach((rowObj, idx) => {
-                const item = rowObj?.data as T;
-                const key = String(keySel(item));
-                if (this.selectedMap.has(key)) toSelect.push(idx);
-            });
-            if (toSelect.length) {
-                try {
-                    ej.selectRows(toSelect);
-                } catch {
-                }
-            }
+            // Re-apply selection on the grid that triggered dataBound
+            this.reapplySelectionOnGrid(grid);
         };
     }
 
@@ -769,6 +763,8 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
             centerElemHost.replaceChildren(this.selectedGrid.htmlElement);
         } else {
             centerElemHost.replaceChildren(this.mainGrid.htmlElement);
+            // Re-apply selection on the current page to reflect any changes made in the selected-only view
+            try { this.reapplySelectionOnGrid(this.mainGrid); } catch (e) { console.error(e); }
         }
         // Ask panel to resize the grid to fit
         this.panel.resizeGrid();
@@ -790,6 +786,30 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
             return null;
         }
     }
+
+    /** Re-applies selection on a given grid from the cross-page cache for the current page/rows. */
+    private reapplySelectionOnGrid(grid: N2Grid) {
+        try {
+            // Only re-apply if a stable rowKey function is provided
+            if (!this.state?.rowKey) return;
+            const ej: Grid = grid?.obj as Grid;
+            if (!ej || !(ej as any).getRowsObject) return;
+            const rowsObj: any[] = (ej as any).getRowsObject() || [];
+            const indices: number[] = [];
+            rowsObj.forEach((rowObj, idx) => {
+                const item = rowObj?.data as T;
+                const key = this.rowKey(item);
+                if (this.selectedMap.has(key)) indices.push(idx);
+            });
+            try { ej.clearSelection(); } catch {}
+            if (indices.length) {
+                try { ej.selectRows(indices); } catch {}
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
 
     showSpinner() {
         const centerElemHost = this.panel.centerContainer.htmlElement;
@@ -815,6 +835,7 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
 export const CSS_CLASS_N2POPUP_TOPBAR = 'n2popup-topbar';
 export const CSS_CLASS_N2POPUP_RIGHT_BUTTON_PANEL = 'n2popup-right-button-panel';
 export const CSS_CLASS_N2POPUP_RIGHT = 'n2popup-right';
+export const CSS_CLASS_N2POPUP_BTN_RIGHT_WRAPPER = 'n2-popup-btn-right-wrapper';
 export const CSS_CLASS_N2POPUP_BTN_OK = 'n2popup-btn-ok';
 export const CSS_CLASS_N2POPUP_BTN_CANCEL = 'n2popup-btn-cancel';
 export const CSS_CLASS_N2POPUP_BTN_ICON = 'n2popup-btn-icon';
@@ -850,6 +871,14 @@ function loadCSS(): void {
     gap: 10px;
 }
 
+.${CSS_CLASS_N2POPUP_BTN_RIGHT_WRAPPER} {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: 30px;
+}
+
 .${CSS_CLASS_N2POPUP_BTN_OK}, .${CSS_CLASS_N2POPUP_BTN_CANCEL} {
     display: flex;
     flex-direction: row;
@@ -859,9 +888,10 @@ function loadCSS(): void {
     gap: 8px;
     padding: 0 12px;    
     font-size: 14px;
-    height: 2em;
+    height: 26px;
     
 }
+
 .${CSS_CLASS_N2POPUP_BTN_OK}:hover, .${CSS_CLASS_N2POPUP_BTN_CANCEL}:hover {
    font-size: 15px;
 }
@@ -875,8 +905,12 @@ function loadCSS(): void {
 }
 
 .${CSS_CLASS_N2POPUP_BTN_SEARCH} {
-    height: 2em;
-    padding: 0 10px;
+    height: 24px;
+    width: 36px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -896,7 +930,7 @@ import {Query} from "@syncfusion/ej2-data";
 import {
     ColumnModel,
     Grid,
-    GridModel,
+    GridModel, RecordDoubleClickEventArgs,
     RowDeselectEventArgs,
     RowSelectEventArgs,
     SelectionSettingsModel
