@@ -8,24 +8,22 @@ import {CSS_CLASS_N2_ROUNDED_BUTTON} from '../scss/core';
 import {N2Dlg} from './N2Dlg';
 import {N2Dlg_Modal, StateN2Dlg_Modal, StateN2Dlg_ModalRef} from './N2Dlg_Modal';
 
-export interface StateN2Dlg_ConfirmRef extends StateN2Dlg_ModalRef {
-    widget?: N2Dlg_Confirm;
+export interface StateN2Dlg_InfoRef extends StateN2Dlg_ModalRef {
+    widget?: N2Dlg_Info;
 }
 
-export interface StateN2Dlg_Confirm<DATA_TYPE = any> extends StateN2Dlg_Modal<DATA_TYPE> {
-    /** Message to display in the confirmation dialog. */
+export interface StateN2Dlg_Info<DATA_TYPE = any> extends StateN2Dlg_Modal<DATA_TYPE> {
+    /** Message to display in the info dialog. */
     message?: string | HTMLElement | N2;
     /** Optional title shown in header (overrides options.headerTitle if set) */
     title?: string | HTMLElement | N2;
-    /** Label for the affirmative button (default: 'Yes') */
-    yesLabel?: string;
-    /** Label for the negative button (default: 'No') */
-    noLabel?: string;
+    /** Label for the OK button (default: 'OK') */
+    okLabel?: string;
     /**
-     * Called when the user makes a choice. If provided, it will be called before the dialog is destroyed.
-     * Return value is ignored; for async usage prefer the static confirm() helper.
+     * Called when the user closes the dialog. If provided, it will be called before the dialog is destroyed.
+     * Return value is ignored; for async usage prefer the static open() helper.
      */
-    onChoice?: (result: boolean) => void;
+    onClose?: () => void;
     /** Additional CSS classes to apply to the panel container */
     panelClasses?: string | string[];
     /** Additional CSS classes to apply to the message element */
@@ -33,13 +31,13 @@ export interface StateN2Dlg_Confirm<DATA_TYPE = any> extends StateN2Dlg_Modal<DA
     /** Additional CSS classes to apply to the button row */
     buttonRowClasses?: string | string[];
     /** Override with specific type used in code completion */
-    ref?: StateN2Dlg_ConfirmRef;
+    ref?: StateN2Dlg_InfoRef;
 }
 
-export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm> extends N2Dlg_Modal<STATE> {
-    static readonly CLASS_IDENTIFIER: string = 'N2Dlg_Confirm';
+export class N2Dlg_Info<STATE extends StateN2Dlg_Info = StateN2Dlg_Info> extends N2Dlg_Modal<STATE> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Dlg_Info';
 
-    private _resolve?: (value: boolean) => void;
+    private _resolve?: () => void;
 
     protected constructor(state?: STATE) {
         super(state as STATE);
@@ -47,19 +45,18 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
     }
 
     get classIdentifier(): string {
-        return N2Dlg_Confirm.CLASS_IDENTIFIER;
+        return N2Dlg_Info.CLASS_IDENTIFIER;
     }
 
     onStateInitialized(state: STATE): void {
-        addN2Class(state.deco, N2Dlg_Confirm.CLASS_IDENTIFIER);
+        addN2Class(state.deco, N2Dlg_Info.CLASS_IDENTIFIER);
 
         // Defaults
-        state.yesLabel = state.yesLabel ?? 'Yes';
-        state.noLabel = state.noLabel ?? 'No';
+        state.okLabel = state.okLabel ?? 'OK';
         state.repositionOnOpen = state.repositionOnOpen ?? true;
         state.options = (state.options || {}) as any;
 
-        // Provide compact modal defaults suitable for a confirm dialog
+        // Provide compact modal defaults suitable for an info dialog
         const mo = state.options as JsPanelOptionsModal;
         mo.closeOnEscape = mo.closeOnEscape ?? true;
         mo.closeOnBackdrop = mo.closeOnBackdrop ?? true;
@@ -74,36 +71,29 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
 
         // Build content using N2 components
         const messageElem = this.messageToN2(state.message);
-        const yesBtn = new N2Html({
-            value: this.wrapButtonLabel(state.yesLabel!),
+        const okBtn = new N2Html({
+            value: this.wrapButtonLabel(state.okLabel!),
             deco: {
                 classes: CSS_CLASS_N2_ROUNDED_BUTTON
             },
-            onClick: () => this.choose(true)
-        });
-        const noBtn = new N2Html({
-            deco: {
-                classes: [CSS_CLASS_N2_ROUNDED_BUTTON],
-            },
-            value: this.wrapButtonLabel(state.noLabel!),
-            onClick: () => this.choose(false)
+            onClick: () => this.closeDialog()
         });
 
         let panel = new N2PanelLayout({
             deco: {
-                 classes: [CSS_CLASS_N2DLG_CONFIRM_PANEL, ...(Array.isArray(state.panelClasses) ? state.panelClasses : (state.panelClasses ? [state.panelClasses] : []))]
+                 classes: [CSS_CLASS_N2DLG_INFO_PANEL, ...(Array.isArray(state.panelClasses) ? state.panelClasses : (state.panelClasses ? [state.panelClasses] : []))]
             },
             // top: null,
             // left: null,
             // right: null,
-            bottom: this.makeButtonsRow(yesBtn, noBtn),
+            bottom: this.makeButtonsRow(okBtn),
             center: messageElem,
             center_overflow_auto: false,
         });
 
         state.content = panel; // N2 content
 
-        // If user dismisses via Esc/backdrop/close, treat as No
+        // If user dismisses via Esc/backdrop/close, treat as closing normally
         const originalOnBeforeClose = mo.onbeforeclose;
         mo.onbeforeclose = (panelObj: JsPanel, status: string) => {
             // If a programmatic close already decided, allow it
@@ -111,12 +101,12 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
                     ? originalOnBeforeClose.some(fn => fn(panelObj as any, status) === true)
                     : (originalOnBeforeClose(panelObj as any, status) === true))
                 : false;
-            // If not explicitly allowed and no prior resolution, resolve as false and allow close
+            // If not explicitly allowed and no prior resolution, resolve and allow close
             if (this._resolve) {
-                // Only resolve if no decision recorded yet; resolve false on user dismiss
-                this.choose(false, /*fromUser*/true);
+                // Resolve the promise on user dismiss
+                this.closeDialog(/*fromUser*/true);
             }
-            return true; // Always allow close for confirm dialogs
+            return true; // Always allow close for info dialogs
         };
 
         super.onStateInitialized(state);
@@ -128,7 +118,7 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
         const additionalClasses = Array.isArray(this.state.messageClasses) ? this.state.messageClasses : (this.state.messageClasses ? [this.state.messageClasses] : []);
         return new N2Html({
                 deco: {
-                    classes: [CSS_CLASS_N2DLG_CONFIRM_MESSAGE, ...additionalClasses]
+                    classes: [CSS_CLASS_N2DLG_INFO_MESSAGE, ...additionalClasses]
                 },
                 value: message ?? ''
             }
@@ -139,25 +129,24 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
         return `<div style="white-space: nowrap;">${label}</div>`;
     }
 
-    private makeButtonsRow(yesBtn: N2Html, noBtn: N2Html): N2 {
+    private makeButtonsRow(okBtn: N2Html): N2 {
         const additionalClasses = Array.isArray(this.state.buttonRowClasses) ? this.state.buttonRowClasses : (this.state.buttonRowClasses ? [this.state.buttonRowClasses] : []);
         let container: N2Row = new N2Row({
             deco: {
-                classes: [CSS_CLASS_N2DLG_CONFIRM_BUTTON_ROW, ...additionalClasses]
+                classes: [CSS_CLASS_N2DLG_INFO_BUTTON_ROW, ...additionalClasses]
             },
             children: [
-                yesBtn,
-                noBtn
+                okBtn
             ]
         });
 
         return container;
     }
 
-    private choose(result: boolean, fromUser?: boolean) {
+    private closeDialog(fromUser?: boolean) {
         // Call optional callback
         try {
-            this.state.onChoice?.(result);
+            this.state.onClose?.();
         } catch (e) {
             console.error(e);
         }
@@ -166,7 +155,7 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
             const r = this._resolve;
             this._resolve = undefined;
             try {
-                r(result);
+                r();
             } catch (e) {
                 console.error(e);
             }
@@ -177,19 +166,17 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
 
     static open(message: string | HTMLElement | N2, opts?: {
         title?: string | N2 | HTMLElement,
-        yesLabel?: string,
-        noLabel?: string,
+        okLabel?: string,
         panelClasses?: string | string[],
         messageClasses?: string | string[],
         buttonRowClasses?: string | string[],
         options?: Partial<JsPanelOptionsModal>
-    }): Promise<boolean> {
-        return new Promise<boolean>((resolve) => {
-            const dlg = new N2Dlg_Confirm({
-                title: opts?.title ?? 'Confirm',
+    }): Promise<void> {
+        return new Promise<void>((resolve) => {
+            const dlg = new N2Dlg_Info({
+                title: opts?.title ?? 'Info',
                 message: message,
-                yesLabel: opts?.yesLabel ?? 'Yes',
-                noLabel: opts?.noLabel ?? 'No',
+                okLabel: opts?.okLabel ?? 'OK',
                 panelClasses: opts?.panelClasses,
                 messageClasses: opts?.messageClasses,
                 buttonRowClasses: opts?.buttonRowClasses,
@@ -202,10 +189,10 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
                     },
                     ...(opts?.options as any || {}),
                 } as any,
-                onChoice: (res) => {
-                    // resolve will also be called in choose() but keep for completeness
+                onClose: () => {
+                    // resolve will also be called in closeDialog() but keep for completeness
                 }
-            } as StateN2Dlg_Confirm as any);
+            } as StateN2Dlg_Info as any);
             // Attach resolver
             (dlg as any)._resolve = resolve;
             dlg.show();
@@ -213,9 +200,9 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
     }
 }
 
-const CSS_CLASS_N2DLG_CONFIRM_PANEL: string = `n2dlg_confirm_panel`;
-const CSS_CLASS_N2DLG_CONFIRM_MESSAGE: string = `n2dlg_confirm_message`;
-const CSS_CLASS_N2DLG_CONFIRM_BUTTON_ROW: string = `n2dlg_confirm_button_row`;
+const CSS_CLASS_N2DLG_INFO_PANEL: string = `n2dlg_info_panel`;
+const CSS_CLASS_N2DLG_INFO_MESSAGE: string = `n2dlg_info_message`;
+const CSS_CLASS_N2DLG_INFO_BUTTON_ROW: string = `n2dlg_info_button_row`;
 
 
 let registered = false;
@@ -225,14 +212,14 @@ function registerThis() {
 
     cssAdd(`
     
-.${CSS_CLASS_N2DLG_CONFIRM_PANEL} {
+.${CSS_CLASS_N2DLG_INFO_PANEL} {
     padding: 8px;
 }    
-.${CSS_CLASS_N2DLG_CONFIRM_MESSAGE}  {  
+.${CSS_CLASS_N2DLG_INFO_MESSAGE}  {  
     padding: 16px;
 }
 
-.${CSS_CLASS_N2DLG_CONFIRM_BUTTON_ROW} {
+.${CSS_CLASS_N2DLG_INFO_BUTTON_ROW} {
     display: flex;
     justify-content: flex-end;
     align-items: center;
