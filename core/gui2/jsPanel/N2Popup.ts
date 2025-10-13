@@ -53,6 +53,11 @@ export interface StateN2Popup<T = any> extends StateN2Dlg {
     onOK?: (popup: N2Popup<T>, selected: T[] | T | null) => boolean | void | Promise<boolean | void>;
     // Hook when Cancel is pressed
     onCancel?: (popup: N2Popup<T>) => void;
+
+    /**
+     * Delay in milliseconds after user stops typing before triggering search.
+     */
+    searchDelayMs?: number; // default: 500ms
 }
 
 /**
@@ -109,22 +114,13 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
     }
 
     onStateInitialized(state: STATE) {
+        let thisX: N2Popup = this;
         if (state.header == null && state.popupTitle != null) state.header = state.popupTitle;
         // Default size similar to SimpleN2Popup
         const jsOpts: JsPanelOptions = state.options || {};
         if (jsOpts.panelSize == null && jsOpts.contentSize == null) {
             jsOpts.panelSize = {width: '85%', height: '85%'};
         }
-
-
-        // if ( jsOpts.headerControls == null ) {
-        //     jsOpts.headerControls = {
-        //         smallify: "remove",
-        //         maximize: "remove",
-        //         normalize: "remove",
-        //         minimize: "remove",
-        //     }
-        // } // if headerControls == null
 
         state.options = jsOpts;
 
@@ -141,6 +137,9 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
                 } finally {
 
                     ev.element.setAttribute('tabindex', '-1'); // not focusable
+                    setTimeout(() => {
+                        thisX.searchField.htmlInputElement?.focus(); // focus on the search field
+                    });
                 }
             } // onDOMAdded
         } catch (e) {
@@ -377,12 +376,13 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
             return (v ?? '').toString();
         };
 
+        let delay_ms: number = state.searchDelayMs ?? 500;
         // Debounced handler for input changes
         // Intentionally non-async: event handlers won't await a debounced function.
         // Delegate to async performSearch(), which handles its own async/UX flow.
         const f_doSearch: (txt: string) => void = debounce(async (txt: string) => {
             await this.performSearch(txt);
-        }, 250);
+        }, delay_ms);
 
 
         // Build search field with optional user overrides
@@ -391,7 +391,16 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
             ej: {
                 placeholder: this.state.searchPlaceholder ?? 'Search...',
                 change: (args: ChangedEventArgs) => {
-                    const value: string = (args as any).value;
+                    const value: string = args.value;
+                    if (this.suppressNextChange) {
+                        // consume one change event (usually following a button-triggered search)
+                        this.suppressNextChange = false;
+                        if (value === this.lastSearchSent) return;
+                    }
+                    f_doSearch(value);
+                },
+                input : (args: InputEventArgs) => {
+                    const value = args.value;
                     if (this.suppressNextChange) {
                         // consume one change event (usually following a button-triggered search)
                         this.suppressNextChange = false;
@@ -401,7 +410,8 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
                 },
                 showClearButton: true,
                 autocomplete: 'off',
-            }
+
+            } as TextBoxModel,
         } as any;
 
         const mergedTfState: StateN2TextField = {
@@ -938,7 +948,8 @@ import {
     SelectionSettingsModel
 } from "@syncfusion/ej2-grids";
 import {RowSelectingEventArgs} from "@syncfusion/ej2-grids/src/grid/base/interface";
-import {ChangedEventArgs} from "@syncfusion/ej2-inputs/src/textbox/textbox";
+import {TextBoxModel} from "@syncfusion/ej2-inputs";
+import {ChangedEventArgs, InputEventArgs} from "@syncfusion/ej2-inputs/src/textbox/textbox";
 import {createSpinner, hideSpinner, showSpinner} from "@syncfusion/ej2-popups";
 import DOMPurify from 'dompurify';
 import {clone, debounce} from "lodash";
