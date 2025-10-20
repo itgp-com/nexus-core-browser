@@ -708,13 +708,13 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
      * If this is overridden in a child class, it will be called when the html element for this N2 widget is added to the DOM
      * @param {N2Evt_DomAdded} ev
      */
-    onDOMAdded(ev: N2Evt_DomAdded): void {}
+    onDOMAdded(ev: N2Evt_DomAdded): void | Promise<void> {}
 
     /**
      * If this is overridden in a child class, it will be called when the html element for this N2 widget is removed from the DOM
      * @param {N2Evt_DomRemoved} ev
      */
-    onDOMRemoved(ev: N2Evt_DomRemoved): void {}
+    onDOMRemoved(ev: N2Evt_DomRemoved): void | Promise<void> {}
 
 
     private _initLogicIfNeeded() {
@@ -845,9 +845,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 try {
                     ObserverManager.addOnAdded({
                         identifier: this.state.tagId,
-                        onAdded: (element: HTMLElement) => {
+                        onAdded: async (element: HTMLElement) => {
                             try {
-                                this.state.onDOMAdded.call(this, {widget: this, element: element});
+                                await this.state.onDOMAdded.call(this, {widget: this, element: element});
                             } catch (e) { console.error('Error calling this.state.onDOMAdded(...)', e, element, this); }
                         },
                         autoRemove: true,
@@ -861,9 +861,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 try {
                     ObserverManager.addOnAdded({
                         identifier: this.state.tagId,
-                        onAdded: (element: HTMLElement) => {
+                        onAdded: async (element: HTMLElement) => {
                             try {
-                                this.onDOMAdded.call(this, {widget: this, element: element});
+                                await this.onDOMAdded.call(this, {widget: this, element: element});
                             } catch (e) { console.error('Error calling this.onDOMAdded(...)', e, element, this); }
                         },
                         autoRemove: true,
@@ -890,9 +890,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 try {
                     ObserverManager.addOnRemoved({
                         identifier: this.state.tagId,
-                        onRemoved: (element: HTMLElement) => {
+                        onRemoved: async (element: HTMLElement) => {
                             try {
-                                this.state.onDOMRemoved.call(this, {widget: this, element: element});
+                                await this.state.onDOMRemoved.call(this, {widget: this, element: element});
                             } catch (e) { console.error('Error calling this.state.onDOMRemoved(...)', e, element, this); }
                         },
                         autoRemove: true,
@@ -907,9 +907,9 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
                 try {
                     ObserverManager.addOnRemoved({
                         identifier: this.state.tagId,
-                        onRemoved: (element: HTMLElement) => {
+                        onRemoved: async (element: HTMLElement) => {
                             try {
-                                this.onDOMRemoved.call(this, {widget: this, element: element});
+                                await this.onDOMRemoved.call(this, {widget: this, element: element});
                             } catch (e) { console.error('Error calling this.onDOMRemoved(...)', e, element, this); }
                         },
                         autoRemove: true,

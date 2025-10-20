@@ -58,13 +58,13 @@ export interface StateN2 {
     * If this is specified, it will be called when the html element for this N2 widget is added to the DOM
     * @param {N2Evt_DomAdded} ev
     */
-   onDOMAdded ?: (ev: N2Evt_DomAdded) => void;
+   onDOMAdded ?: (ev: N2Evt_DomAdded) => void | Promise<void>;
 
    /**
     * If this is specified, it will be called when the html element for this N2 widget is removed from the DOM
     * @param {N2Evt_DomRemoved} ev
     */
-   onDOMRemoved ?: (ev: N2Evt_DomRemoved) => void;
+   onDOMRemoved ?: (ev: N2Evt_DomRemoved) => void | Promise<void>;
 
    /**
     * The HTML decoration for the HTML element that of the widget
