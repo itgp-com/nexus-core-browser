@@ -773,6 +773,14 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } // if state.disableContainsAtTopOfFilter
 
 
+        try {
+            N2GridAuth.applyExcelExport({state});
+        } catch (e) { console.error(e); }
+
+        try {
+            N2GridAuth.applyGrouping({state});
+        } catch (e) { console.error(e); }
+
         //----------------- end contains at top of filter -----------------
 
         super.onStateInitialized(state)
@@ -1793,7 +1801,7 @@ import {N2Html} from '../../generic/N2Html';
 import {rec_field_value, RecFieldVal} from '../../highlight/N2Highlight';
 import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded, N2Evt_Resized} from '../../N2';
-import {N2GridAuth} from '../../N2Auth';
+import {N2Auth, N2GridAuth} from '../../N2Auth';
 import {addClassesToElement, addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';

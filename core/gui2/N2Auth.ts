@@ -15,7 +15,7 @@ export class N2GridAuth {
 
 
     /**
-     * Modify the state to allow Excel export depeding on the user's permissions.
+     * Modify the state to allow Excel export depending on the user's permissions.
      * @param {Args_N2GridAllow} args
      */
     public static applyExcelExport(args:Args_N2GridAllow): void {
