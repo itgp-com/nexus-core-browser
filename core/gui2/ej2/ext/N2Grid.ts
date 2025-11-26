@@ -778,7 +778,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
         } catch (e) { console.error(e); }
 
         try {
-            N2GridAuth.applyGrouping({state});
+            N2GridAuth.applyDisableGroupingInDropDownMenu({state});
         } catch (e) { console.error(e); }
 
         //----------------- end contains at top of filter -----------------

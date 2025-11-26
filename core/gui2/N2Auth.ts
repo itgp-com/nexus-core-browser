@@ -26,13 +26,17 @@ export class N2GridAuth {
         } // if state
     } //static applyExcelExport
 
-    public static allowGrouping(args:Args_N2GridAllow): boolean { return true; }
+    /**
+     * Determine if the grid dropdown should allow grouping.
+     * @param args
+     */
+    public static disableGroupingInDropDownMenu(args:Args_N2GridAllow): boolean { return true; }
 
-    public static applyGrouping(args:Args_N2GridAllow): void {
+    public static applyDisableGroupingInDropDownMenu(args:Args_N2GridAllow): void {
         let state = args?.state;
         if (state) {
             state.ej = state.ej || {};
-            state.ej.allowGrouping = N2GridAuth.allowGrouping(args);
+            state.disableDefaultGroupingInDropDownMenu = N2GridAuth.disableGroupingInDropDownMenu(args);
         } // if state
     } //static applyGrouping
 
