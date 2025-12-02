@@ -283,18 +283,20 @@ export class N2Popup<T = any, STATE extends StateN2Popup<T> = StateN2Popup<T>> e
         return N2Popup.CLASS_IDENTIFIER;
     }
 
+    // @ts-ignore
     /**
      * Shows the dialog and returns a Promise with the chosen records or null.
      */
-    async show(): Promise<N2PopupResult<T>> {
+    async show() : Promise<N2PopupResult<T>> {
         // Reset intent flags each time we show
         this._okPressed = false;
         this._cancelPressed = false;
         return new Promise<N2PopupResult<T>>((resolve) => {
             this._resolve = resolve;
-            super.show();
+
+            setTimeout(async () =>  await super.show());
         });
-    }
+    } // show
 
     private ensureSelectionMode() {
         let thisX: N2Popup = this;

@@ -1,20 +1,21 @@
 import {WidgetErrorHandler} from "../gui/WidgetErrorHandler";
 import {N2Validator} from './ej2/StateN2Validator';
 import {
-   N2,
-   N2Evt,
-   N2Evt_AfterLogic,
-   N2Evt_BeforeLogic,
-   N2Evt_Destroy, N2Evt_DomAdded, N2Evt_DomRemoved,
-   N2Evt_OnHtml,
-   N2Evt_OnLogic,
-   N2Evt_Resized
+    N2,
+    N2Evt,
+    N2Evt_AfterLogic,
+    N2Evt_BeforeLogic,
+    N2Evt_Destroy, N2Evt_DomAdded, N2Evt_DomRemoved, N2Evt_OnAsyncDlgShow,
+    N2Evt_OnHtml,
+    N2Evt_OnLogic,
+    N2Evt_Resized
 } from "./N2";
 import {N2HtmlDecorator} from "./N2HtmlDecorator";
 import {Elem_or_N2} from './N2Utils';
 
 export interface StateN2 {
 
+    onAsyncDlgShow?:(ev:N2Evt_OnAsyncDlgShow) => Promise<void>;
 
    /**
     * This method assumes that the state is completely initialized and ready to be used.

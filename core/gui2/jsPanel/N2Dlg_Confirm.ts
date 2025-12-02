@@ -208,7 +208,8 @@ export class N2Dlg_Confirm<STATE extends StateN2Dlg_Confirm = StateN2Dlg_Confirm
             } as StateN2Dlg_Confirm as any);
             // Attach resolver
             (dlg as any)._resolve = resolve;
-            dlg.show();
+            setTimeout(async () =>  await dlg.show());
+
         });
     }
 }

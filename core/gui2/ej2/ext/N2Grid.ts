@@ -834,7 +834,8 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                     closeOnBackdrop: true,
                 }, // options
             }); // dlg
-            dlg.show();
+
+            setTimeout(async () =>  await dlg.show());
 
         } else {
             if (retVal.i_d && retVal.v_e_r) {
@@ -857,7 +858,7 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
                             closeOnBackdrop: true,
                         }, // options
                     }); // dlg
-                    dlg.show();
+                    setTimeout(async () => await dlg.show());
                 }
             } else {
                 console.error(args?.error);

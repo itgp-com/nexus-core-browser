@@ -195,7 +195,7 @@ export class N2Dlg_Info<STATE extends StateN2Dlg_Info = StateN2Dlg_Info> extends
             } as StateN2Dlg_Info as any);
             // Attach resolver
             (dlg as any)._resolve = resolve;
-            dlg.show();
+            setTimeout(async () =>  await dlg.show());
         });
     }
 }
