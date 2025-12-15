@@ -237,9 +237,41 @@ export interface StateN2Grid<WIDGET_LIBRARY_MODEL extends GridModel = GridModel>
     addPreEjGridCreationListener?: (listener: (n2: N2Grid) => void) => void;
 
     /**
+     * List of listeners to be called when the underlying Syncfusion Grid raises an `actionFailure` event.
+     *
+     * Each listener will receive the original Syncfusion `FailureEventArgs` augmented with `n2grid`,
+     * the current `N2Grid` instance, via the `N2Evt_ActionFailure` type.
+     *
+     * Use {@link addActionFailureListener} to register listeners at runtime.
+     */
+    actionFailureListeners?: Array<(args: N2Evt_ActionFailure) => void | Promise<void>>;
+
+    /**
+     * Convenience single-handler for the `actionFailure` event. If provided, it will be invoked along with
+     * any listeners registered in {@link actionFailureListeners}.
+     *
+     * The invocation is asynchronous and scheduled with `setTimeout(async () => ...)`.
+     */
+    onActionFailure?: (args: N2Evt_ActionFailure) => void | Promise<void>;
+
+    /**
+     * Adds a new listener for the `actionFailure` event on this `N2Grid` instance.
+     *
+     * Example usage:
+     * ```ts
+     * state.addActionFailureListener?.(async (ev) => {
+     *   // inspect ev.error, ev.n2grid, etc.
+     * });
+     * ```
+     *
+     * @param listener the function to invoke when `actionFailure` occurs
+     */
+    addActionFailureListener?: (listener: (args: N2Evt_ActionFailure) => void | Promise<void>) => void;
+
+    /**
      * the original columns as provided in the grid model (only if overridden by user layout for this grid). Null otherwise.
      *
-     * Note: The user settings for grid layout code is application specific and not part of nexus-core-browser.
+     * Note: The user settings for grid layout code are application-specific and not part of nexus-core-browser.
      */
     columns_original ?: ColumnModel[];
 
@@ -293,6 +325,18 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
             state.addPreEjGridCreationListener = (listener: (n2: N2Grid) => void) => {
                 try {
                     state.preEjGridCreation!.push(listener);
+                } catch (e) {
+                    console.error(e);
+                }
+            };
+        }
+
+        // Ensure the state has an API to add actionFailure listeners
+        if (!state.actionFailureListeners) state.actionFailureListeners = [];
+        if (!state.addActionFailureListener) {
+            state.addActionFailureListener = (listener: (args: N2Evt_ActionFailure) => void | Promise<void>) => {
+                try {
+                    state.actionFailureListeners!.push(listener);
                 } catch (e) {
                     console.error(e);
                 }
@@ -809,61 +853,28 @@ export class N2Grid<STATE extends StateN2Grid = StateN2Grid> extends N2EjBasic<S
 
 
     public actionFailure = (args: FailureEventArgs) => {
-        let retVal: EJBase = (args?.error as any)?.error as EJBase
-        if (retVal == null) {
+        // augment args with a reference to this N2Grid instance
+        (args as N2Evt_ActionFailure).n2grid = this;
 
-            console.error('Server Error: ', retVal, ' Grid:', this, ' actionFailure args:', args)
+        // Gather listeners from state and optional single handler
+        const listeners: Array<(a: N2Evt_ActionFailure) => void | Promise<void>> = [];
+        if (this.state.actionFailureListeners?.length) listeners.push(...this.state.actionFailureListeners);
+        if (this.state.onActionFailure) listeners.push(this.state.onActionFailure);
 
-            let dlg = new N2Dlg_Modal({
-                noStringWrapper: true,
-                content: new N2Html({
-                    deco: {style: {padding: '2em'}},
-                    value: `
-<div style="margin:20px;border:solid 1px #d0d0d0; padding:10px;">
-<pre>${args.error}</pre>
-</div>
-`,
-                }),
-                options: {
-                    headerTitle: 'Server Error',
-                    panelSize: {
-                        width: 'auto',
-                        height: 'auto',
-                    },
-                    closeOnEscape: true,
-                    closeOnBackdrop: true,
-                }, // options
-            }); // dlg
-
-            setTimeout(async () =>  await dlg.show());
-
-        } else {
-            if (retVal.i_d && retVal.v_e_r) {
-                if (retVal) {
-                    console.error('Server Error: ', retVal, ' Grid:', this, ' actionFailure args:', args)
-
-                    let dlg = new N2Dlg_Modal({
-                        noStringWrapper: true,
-                        content: new N2Html({
-                            deco: {style: {padding: '2em'}},
-                            value: retVal.errMsgDisplay,
-                        }),
-                        options: {
-                            headerTitle: 'Server Error',
-                            panelSize: {
-                                width: 'auto',
-                                height: 'auto',
-                            },
-                            closeOnEscape: true,
-                            closeOnBackdrop: true,
-                        }, // options
-                    }); // dlg
-                    setTimeout(async () => await dlg.show());
+        setTimeout(async () => {
+            // Fire all listeners asynchronously
+            for (const listener of listeners) {
+                try {
+                        try {
+                            await listener(args as N2Evt_ActionFailure);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                } catch (e) {
+                    console.error(e);
                 }
-            } else {
-                console.error(args?.error);
             }
-        } // if retVal == null
+        });
 
         if (this._f_existing_actionFailure && this.obj) {
             try {
@@ -1793,16 +1804,13 @@ import {
 } from "../../../Constants";
 import {findElementWithTippyTooltip, fontColor, isDev} from '../../../CoreUtils';
 import {cssAdd} from '../../../CssUtils';
-import {EJBase} from '../../../data/Ej2Comm';
 import {HttpRequestEvtDataManager} from '../../../data/NexusComm';
 import {isNexusDataManager, NexusDataManager} from "../../../data/NexusDataManager";
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';
 import {nexusMain} from '../../../NexusMain';
-import {N2Html} from '../../generic/N2Html';
 import {rec_field_value, RecFieldVal} from '../../highlight/N2Highlight';
-import {N2Dlg_Modal} from '../../jsPanel/N2Dlg_Modal';
 import {N2Evt_DomAdded, N2Evt_Resized} from '../../N2';
-import {N2Auth, N2GridAuth} from '../../N2Auth';
+import {N2GridAuth} from '../../N2Auth';
 import {addClassesToElement, addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
 import {CSS_VARS_CORE} from '../../scss/vars-material';

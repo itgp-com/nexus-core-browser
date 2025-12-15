@@ -936,22 +936,18 @@ export class N2Dlg<STATE extends StateN2Dlg = StateN2Dlg> extends N2Basic<STATE,
     async show(callback ?: (panel: JsPanel, status: string) => void) :Promise<any> {
         let thisX = this;
 
-         // ---------- handle asyncInitPromise if any -------------
         try{
-            let content_any = this.state.content ;
-            if (content_any && isN2(content_any)){
-                let content_n2 = content_any as N2;
-                let state_content = content_n2.state;
-                let ev :N2Evt_OnAsyncDlgShow = {
-                    widget: content_n2,
-                    widget_N2Dlg: thisX
-                } as N2Evt_OnAsyncDlgShow
-                if (state_content && isFunction(state_content.asyncInitPromise)){
-                    await state_content.asyncInitPromise.call( state_content, ev);
-                } else {
-                    await content_n2.onAsyncDlgShow.call(content_n2, state_content, ev);
-                }
-            } // if content is N2
+            let inner_widget = this.state.content ;
+            if (isOnAsyncDlgShow(inner_widget)) {
+
+                        let ev :N2Evt_OnAsyncDlgShow = {
+                            widget: inner_widget ,
+                            widget_N2Dlg: thisX
+                        } as N2Evt_OnAsyncDlgShow
+
+                        await (inner_widget as OnAsyncDlgShow).onAsyncDlgShow.call(inner_widget, (inner_widget as any)?.state as any, ev);
+
+            } // if the content is OnAsyncDlgShow
         } catch(e){ console.error(e); }
 
 
@@ -1268,7 +1264,7 @@ import {
     N2Evt_Dialog_Cancellable
 } from '../generic/N2Interface_Dialog';
 import {N2Row} from '../generic/N2Row';
-import {N2, N2Evt_Destroy, N2Evt_OnAsyncDlgShow, N2Evt_OnLogic} from '../N2';
+import {N2, N2Evt_Destroy, N2Evt_OnLogic} from '../N2';
 import {N2Basic, StateN2Basic, StateN2BasicRef} from '../N2Basic';
 import {addN2Class, decoToHtmlElement} from '../N2HtmlDecorator';
 import {Elem_or_N2, isN2} from '../N2Utils';
@@ -1277,3 +1273,4 @@ import {themeChangeListeners} from '../Theming';
 import {jsPanel} from './jsPanelLib';
 import {N2DlgBackArrow} from './N2DlgBackArrow';
 import {N2DlgCloseIcon} from "./N2DlgCloseIcon";
+import {isOnAsyncDlgShow, N2Evt_OnAsyncDlgShow, OnAsyncDlgShow} from './OnAsyncDlgShow';

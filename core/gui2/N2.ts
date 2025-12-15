@@ -71,8 +71,6 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     } // _constructor
 
 
-    async onAsyncDlgShow(state:STATE, ev:N2Evt_OnAsyncDlgShow): Promise<void> {
-    } // onAsyncDlgShow
 
     /**
      * This method assumes that the state is completely initialized and ready to be used.
@@ -962,13 +960,6 @@ export interface N2Evt_OnHtml<WIDGET extends N2 = N2> extends N2Evt<WIDGET> {
 export interface N2Evt_OnLogic<WIDGET extends N2 = N2> extends N2Evt<WIDGET> {
 }
 
-export interface N2Evt_OnAsyncDlgShow<WIDGET extends N2 = N2> extends N2Evt<WIDGET> {
-    /**
-     * instance of the N2Dlg that is calling the onAsyncDlgShow
-     * Defined as 'any' here to avoid circular dependency between N2 and N2Dlg
-     */
-    widget_N2Dlg: any;
-}
 
 
 
