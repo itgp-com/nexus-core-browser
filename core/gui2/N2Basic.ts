@@ -1,3 +1,5 @@
+import * as console from "node:console";
+import {N2Evt_OnAsyncDlgShow, OnAsyncDlgShow} from "./jsPanel/OnAsyncDlgShow";
 import {N2, N2Evt_Destroy, N2Evt_OnHtml, N2Evt_OnLogic} from "./N2";
 import {addN2Class} from './N2HtmlDecorator';
 import {createN2HtmlBasic, isN2} from "./N2Utils";
@@ -15,7 +17,7 @@ export interface StateN2Basic extends StateN2 {
     ref ?: StateN2BasicRef;
 }
 
-export class N2Basic<STATE extends StateN2Basic = StateN2Basic, JS_COMPONENT = any> extends N2<STATE, JS_COMPONENT> {
+export class N2Basic<STATE extends StateN2Basic = StateN2Basic, JS_COMPONENT = any> extends N2<STATE, JS_COMPONENT> implements OnAsyncDlgShow{
     static readonly CLASS_IDENTIFIER: string = 'N2Basic';
 
     protected constructor(state?: STATE) {
@@ -26,6 +28,19 @@ export class N2Basic<STATE extends StateN2Basic = StateN2Basic, JS_COMPONENT = a
         addN2Class(state.deco,  N2Basic.CLASS_IDENTIFIER);
         super.onStateInitialized(state)
     }
+
+    /**
+     * No-op implementation for interface OnAsyncDlgShow. Meant as no-op placeholder implementation at this level.
+     *
+     * Called when the dialog is shown asynchronously from N2Dlg
+     *
+     *
+     * @param state the state of this widget
+     * @param ev the event parameters including the N2Dlg instance
+     */
+    async onAsyncDlgShow(state: any, ev: N2Evt_OnAsyncDlgShow): Promise<void> {
+    }
+
 
 
     onHtml(args: N2Evt_OnHtml): HTMLElement {
