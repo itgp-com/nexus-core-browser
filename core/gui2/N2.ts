@@ -1,26 +1,6 @@
-import {DialogUtility} from '@syncfusion/ej2-popups';
-import {AxiosResponse} from "axios";
-import {ResizeSensor} from "css-element-queries";
-import {ResizeSensorCallback} from "css-element-queries/src/ResizeSensor";
-import {debounce, throttle} from "lodash";
-import {getRandomString} from "../BaseUtils";
-import {N2_CLASS} from '../Constants';
-import {Err} from "../Core";
-import {getErrorHandler} from "../CoreErrorHandling";
-import {isDev} from '../CoreUtils';
-import {cssAdd} from '../CssUtils';
-import {ExceptionEvent} from "../ExceptionEvent";
-import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
-import {ObserverManager} from '../ObserverManager';
-import {addN2Child, removeN2Child} from './ej2/Ej2Utils';
-import {addN2Class, IHtmlUtils} from "./N2HtmlDecorator";
-import {Elem_or_N2, getFirstHTMLElementChild, isN2, toProperHtmlId} from './N2Utils';
-import {CSS_VARS_CORE} from './scss/vars-material';
-import {StateN2} from "./StateN2";
-import {ThemeChangeEvent, themeChangeListeners} from './Theming';
+export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any>
+    implements OnAsyncDlgShow<STATE> {
 
-
-export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
     static readonly CLASS_IDENTIFIER: string = 'N2';
 
     /**
@@ -167,8 +147,22 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any> {
         this._className = value;
     }
 
-    //---------------- resize section ----------------
+    //----------------- Interface OnAsyncDlgShow ----------------
 
+    /**
+     * No-op implementation for interface OnAsyncDlgShow at this level.
+     *
+     * Called when the dialog is shown asynchronously from N2Dlg
+     *
+     *
+     * @param state the state of this widget
+     * @param ev the event parameters including the N2Dlg instance
+     */
+    async onAsyncDlgShow(state: STATE, ev: N2Evt_OnAsyncDlgShow<N2<STATE>>): Promise<void> {
+    }
+
+
+    //---------------- resize section ----------------
 
     /**
      *
@@ -1118,3 +1112,25 @@ textarea.e-input.${N2.CLASS_IDENTIFIER},
 
 
 }); // normal priority
+
+import {DialogUtility} from '@syncfusion/ej2-popups';
+import {AxiosResponse} from "axios";
+import {ResizeSensor} from "css-element-queries";
+import {ResizeSensorCallback} from "css-element-queries/src/ResizeSensor";
+import {debounce, throttle} from "lodash";
+import {getRandomString} from "../BaseUtils";
+import {N2_CLASS} from '../Constants';
+import {Err} from "../Core";
+import {getErrorHandler} from "../CoreErrorHandling";
+import {isDev} from '../CoreUtils';
+import {cssAdd} from '../CssUtils';
+import {ExceptionEvent} from "../ExceptionEvent";
+import {WidgetErrorHandlerStatus} from "../gui/WidgetErrorHandler";
+import {ObserverManager} from '../ObserverManager';
+import {addN2Child, removeN2Child} from './ej2/Ej2Utils';
+import {N2Evt_OnAsyncDlgShow, OnAsyncDlgShow} from "./jsPanel/OnAsyncDlgShow";
+import {addN2Class, IHtmlUtils} from "./N2HtmlDecorator";
+import {Elem_or_N2, getFirstHTMLElementChild, isN2, toProperHtmlId} from './N2Utils';
+import {CSS_VARS_CORE} from './scss/vars-material';
+import {StateN2} from "./StateN2";
+import {ThemeChangeEvent, themeChangeListeners} from './Theming';
