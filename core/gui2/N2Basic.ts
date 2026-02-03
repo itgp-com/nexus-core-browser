@@ -1,4 +1,3 @@
-import * as console from "node:console";
 import {N2, N2Evt_Destroy, N2Evt_OnHtml, N2Evt_OnLogic} from "./N2";
 import {addN2Class} from './N2HtmlDecorator';
 import {createN2HtmlBasic, isN2} from "./N2Utils";
