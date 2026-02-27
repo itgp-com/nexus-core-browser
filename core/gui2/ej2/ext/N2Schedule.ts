@@ -1,4 +1,3 @@
-
 export interface StateN2ScheduleRef extends StateN2EjBasicRef {
     widget?: N2Schedule;
 }
@@ -19,7 +18,7 @@ export class N2Schedule<STATE extends StateN2Schedule = StateN2Schedule> extends
     }
 
     protected onStateInitialized(state: STATE) {
-        addN2Class(state.deco,  N2Schedule.CLASS_IDENTIFIER);
+        addN2Class(state.deco, N2Schedule.CLASS_IDENTIFIER);
         super.onStateInitialized(state);
     }
 
@@ -28,44 +27,58 @@ export class N2Schedule<STATE extends StateN2Schedule = StateN2Schedule> extends
         this.obj = new Schedule(this.state.ej);
     }
 
-    get classIdentifier(): string { return N2Schedule.CLASS_IDENTIFIER; }
+    get classIdentifier(): string {
+        return N2Schedule.CLASS_IDENTIFIER;
+    }
 
 } // N2Schedule
 
-import {Agenda, Day, Month, Schedule, ScheduleModel, Week, WorkWeek} from '@syncfusion/ej2-schedule';
-import {Resize} from '@syncfusion/ej2-schedule/src/schedule/actions/resize';
-import {Scroll} from '@syncfusion/ej2-schedule/src/schedule/actions/scroll';
-import {InlineEdit} from '@syncfusion/ej2-schedule/src/schedule/event-renderer/inline-edit';
-import {ICalendarExport} from '@syncfusion/ej2-schedule/src/schedule/exports/calendar-export';
-import {ICalendarImport} from '@syncfusion/ej2-schedule/src/schedule/exports/calendar-import';
-import {ExcelExport} from '@syncfusion/ej2-schedule/src/schedule/exports/excel-export';
-import {Print} from '@syncfusion/ej2-schedule/src/schedule/exports/print';
-import {HeaderRenderer} from '@syncfusion/ej2-schedule/src/schedule/renderer/header-renderer';
-import {MonthAgenda} from '@syncfusion/ej2-schedule/src/schedule/renderer/month-agenda';
-import {TimelineMonth} from '@syncfusion/ej2-schedule/src/schedule/renderer/timeline-month';
-import {TimelineViews} from '@syncfusion/ej2-schedule/src/schedule/renderer/timeline-view';
-import {TimelineYear} from '@syncfusion/ej2-schedule/src/schedule/renderer/timeline-year';
-import {Year} from '@syncfusion/ej2-schedule/src/schedule/renderer/year';
-import {addN2Class} from '../../N2HtmlDecorator';
-import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
-
-Schedule.Inject(
+import {
     Agenda,
     Day,
+    DragAndDrop,
     ExcelExport,
     HeaderRenderer,
     ICalendarExport,
     ICalendarImport,
-    InlineEdit,
     Month,
     MonthAgenda,
     Print,
     Resize,
-    Scroll,
+    RecurrenceEditor,
+    Schedule,
+    ScheduleModel,
     TimelineMonth,
     TimelineViews,
     TimelineYear,
     Week,
     WorkWeek,
     Year,
+} from '@syncfusion/ej2-schedule';
+
+import {addN2Class} from '../../N2HtmlDecorator';
+import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
+
+Schedule.Inject(
+
+    Day,
+    Week,
+    WorkWeek,
+    Month,
+    Year,
+    Agenda,
+    MonthAgenda,
+    TimelineViews,
+    TimelineMonth,
+    TimelineYear,
+
+    DragAndDrop,
+
+    Resize,
+    ExcelExport,
+
+    ICalendarExport,
+    ICalendarImport,
+
+    Print
 );

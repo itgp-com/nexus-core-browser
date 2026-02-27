@@ -1,11 +1,15 @@
-import {DetailsView, FileManager, FileManagerModel, NavigationPane, Toolbar} from '@syncfusion/ej2-filemanager';
-import {BreadCrumbBar} from '@syncfusion/ej2-filemanager/src/file-manager/actions/breadcrumb-bar';
-import {Virtualization} from '@syncfusion/ej2-filemanager/src/file-manager/actions/virtualization';
-import {LargeIconsView} from '@syncfusion/ej2-filemanager/src/file-manager/layout/large-icons-view';
+import {
+    ContextMenu,
+    DetailsView,
+    FileManager,
+    FileManagerModel,
+    NavigationPane,
+    Toolbar
+} from '@syncfusion/ej2-filemanager';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
 
-FileManager.Inject(DetailsView, BreadCrumbBar, LargeIconsView, NavigationPane, Toolbar, Virtualization)
+FileManager.Inject(Toolbar, NavigationPane, DetailsView, ContextMenu,)
 
 export interface StateN2FileManagerRef extends StateN2EjBasicRef {
     widget?: N2FileManager;
@@ -27,16 +31,17 @@ export class N2FileManager<STATE extends StateN2FileManager = StateN2FileManager
     }
 
     protected onStateInitialized(state: STATE) {
-        addN2Class(state.deco,  N2FileManager.CLASS_IDENTIFIER);
+        addN2Class(state.deco, N2FileManager.CLASS_IDENTIFIER);
         super.onStateInitialized(state)
     }
-
 
 
     createEjObj(): void {
         this.obj = new FileManager(this.state.ej);
     }
 
-    get classIdentifier() { return N2FileManager.CLASS_IDENTIFIER; }
+    get classIdentifier() {
+        return N2FileManager.CLASS_IDENTIFIER;
+    }
 
 }
