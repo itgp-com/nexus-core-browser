@@ -1440,7 +1440,7 @@ cssAdd(`
     padding-left: 1ch !important;
 }
 
-.${n2GridClass} .e-tbar-btn, .e-tbtn-txt {
+.${n2GridClass} .e-tbar-btn, .${n2GridClass} .e-tbtn-txt {
   background-color: ${accent} !important;
 }
 

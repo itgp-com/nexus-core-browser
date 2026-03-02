@@ -3,4 +3,4 @@ $tippy-bg-color:  #FFFFED !default; // // light yellow
 $tippy-font-color: #787878 !default; // gray text
 $tippy-border-color: gray !default;
 $tippy-arrow-fill: #333 !default;
-@import 'tippy-common';
+@use 'tippy-common';
