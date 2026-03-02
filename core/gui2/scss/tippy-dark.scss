@@ -1,5 +1,6 @@
-$tippy-bg-color: #55552e !default;
-$tippy-font-color: #FFFFED !default; // light yellow
-$tippy-border-color:  var(--grid-header-border-color) !default;
-$tippy-arrow-fill: lighten(#616161, 10%) !default;
-@use 'tippy-common';
+@use 'tippy-common' with (
+  $tippy-bg-color: #55552e,
+  $tippy-font-color: #FFFFED,
+  $tippy-border-color: var(--grid-header-border-color),
+  $tippy-arrow-fill: #7b7b7b, // lighten(#616161, 10%) = #7b7b7b (approx)
+);

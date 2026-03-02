@@ -1,3 +1,8 @@
+$tippy-bg-color: #55552e !default;
+$tippy-font-color: #FFFFED !default;
+$tippy-border-color: gray !default;
+$tippy-arrow-fill: #333 !default;
+
 :root {
   --tippy-bg-color: #{$tippy-bg-color};
   --tippy-font-color: #{$tippy-font-color};

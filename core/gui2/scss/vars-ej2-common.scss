@@ -1,4 +1,6 @@
 
+@use '@syncfusion/ej2-base/styles/material-definition.scss' as *;
+
 // export syncfusion variables based on @syncfusion/ej2-base/styles/_material-definition.scss
 :root {
   --font-family: #{$font-family};

@@ -1,6 +1,7 @@
 
-$tippy-bg-color:  #FFFFED !default; // // light yellow
-$tippy-font-color: #787878 !default; // gray text
-$tippy-border-color: gray !default;
-$tippy-arrow-fill: #333 !default;
-@use 'tippy-common';
+@use 'tippy-common' with (
+  $tippy-bg-color: #FFFFED,
+  $tippy-font-color: #787878,
+  $tippy-border-color: gray,
+  $tippy-arrow-fill: #333
+);
