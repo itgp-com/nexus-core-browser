@@ -1,4 +1,4 @@
-import {cssAddClass} from '../../../CssUtils';
+import {cssAdd, cssStyleToString} from '../../../CssUtils';
 import {AnyScreen, Args_AnyScreen}                            from "../../AnyScreen";
 import {createMenuStructures, filterByString, MenuStructures} from "../../menu/MenuStructures";
 import {MenuTreeNode}                                         from "../../menu/MenuTreeNode";
@@ -12,17 +12,6 @@ import {WxPanel}                     from "../ext/WxPanel";
 import {WxSpacer_Vertical}                                    from "../ext/WxSpacer_Vertical";
 
 const WGT_TREE_MENU_CLASS = 'WGT_TREE_MENU';
-
-cssAddClass(`.${WGT_TREE_MENU_CLASS}.e-treeview .e-icon-collapsible`, {
-   float:  "right",
-   margin: '3px'
-});
-
-cssAddClass(`.${WGT_TREE_MENU_CLASS}.e-treeview .e-icon-expandable`, {
-   float:  "right",
-   margin: '3px'
-});
-
 
 export class WxPanelSearchableTreeMenu extends AnyScreen<any> {
    static readonly CLASS_NAME:string = 'WxPanelSearchableTreeMenu';
@@ -112,6 +101,21 @@ export class WxPanelSearchableTreeMenu extends AnyScreen<any> {
 
 
 } // main class
+
+let cssContent = `
+.${WGT_TREE_MENU_CLASS}.e-treeview .e-icon-collapsible { ${cssStyleToString({
+    float:  "right",
+    margin: '3px'
+})} }
+
+.${WGT_TREE_MENU_CLASS}.e-treeview .e-icon-expandable { ${cssStyleToString({
+    float:  "right",
+    margin: '3px'
+})} }
+`;
+
+cssAdd(cssContent, WxPanelSearchableTreeMenu.CLASS_NAME);
+
 
 
 export class Args_WgtTreeMenu extends Args_AnyScreen {

@@ -1,4 +1,132 @@
 
+@use '@syncfusion/ej2-base/styles/material-definition.scss' as *;
+@use "core-theme-material" as core_theme;
+
+
+/*--------- Start variables that are passed in from the outside based on light/dark theme ---------*/
+$panel-box-shadow: null !default; /* must be passed in from outside */
+
+/*--------- End variables that are passed in from the outside based on light/dark theme ---------*/
+
+
+$font-family: 'Roboto', 'Segoe UI', 'GeezaPro', 'DejaVu Serif', 'sans-serif', '-apple-system', 'BlinkMacSystemFont' !global;
+$font-size: 12px !global;
+$font-weight: normal !global;
+$font-path: 'common-images' !global;
+
+$header-bg-color: #fff !global;
+$grey-white: #fff !global;
+$grey-black: #000 !global;
+$grey-light-font: #000 !global;
+
+$header-gradient-color: none !global;
+$header-border-color: $grey-black !global;
+$header-font-color: $grey-light-font !global;
+$header-icon-color: $grey-light-font !global;
+
+$content-bg-color: $grey-white !global;
+$content-border-color: $grey-black !global;
+$content-font-color: $grey-light-font !global;
+
+$default-bg-color: $grey-white !global;
+$default-gradient-color: none !global;
+$default-border-color: $grey-black !global;
+$default-font-color: $grey-light-font !global;
+$default-icon-color: $grey-light-font !global;
+
+$grey-200: #eee !global;
+$hover-bg-color: $grey-200 !global;
+$hover-gradient-color: none !global;
+$hover-border-color: $grey-black !global;
+$hover-font-color: $grey-light-font !global;
+$hover-icon-color: $grey-light-font !global;
+
+$grey-100: #f5f5f5 !global;
+$active-bg-color: $grey-100 !global;
+$active-gradient-color: none !global;
+$active-border-color: $grey-black !global;
+$active-font-color: $grey-light-font !global;
+$active-icon-color: $grey-light-font !global;
+
+$error-font-color: #f44336 !global; // Default light error
+$warning-font-color: #ffca1c !global;
+$success-font-color: #22b24b !global;
+$information-font-color: #489bd5 !global;
+$overlay-bg-color: #383838 !global;
+$shadow-color: rgba(0, 0, 0, .4) !global;
+
+$primary: core_theme.$primary !global;
+$primary-font: core_theme.$primary-font !global;
+$accent: core_theme.$accent !global;
+$accent-font: core_theme.$accent-font !global;
+
+$border-size: 1px !global;
+$border-type: solid !global;
+$border-radius: 0 !global;
+$border-left-radius: 0 !global;
+$border-right-radius: 0 !global;
+$border-top-radius: 0 !global;
+$border-bottom-radius: 0 !global;
+
+
+// export syncfusion variables based on @syncfusion/ej2-base/styles/_material-definition.scss
+:root {
+  --font-family: #{$font-family};
+  --font-size: #{$font-size};
+  --font-weight: #{$font-weight};
+  --font-path: #{$font-path};
+  --header-bg-color: #{$header-bg-color};
+  --header-gradient-color: #{$header-gradient-color};
+  --header-border-color: #{$header-border-color};
+  --header-font-color: #{$header-font-color};
+  --header-icon-color: #{$header-icon-color};
+  --content-bg-color: #{$content-bg-color};
+  --content-border-color: #{$content-border-color};
+  --content-font-color: #{$content-font-color};
+  --default-bg-color: #{$default-bg-color};
+  --default-gradient-color: #{$default-gradient-color};
+  --default-border-color: #{$default-border-color};
+  --default-font-color: #{$default-font-color};
+  --default-icon-color: #{$default-icon-color};
+  --hover-bg-color: #{$hover-bg-color};
+  --hover-gradient-color: #{$hover-gradient-color};
+  --hover-border-color: #{$hover-border-color};
+  --hover-font-color: #{$hover-font-color};
+  --hover-icon-color: #{$hover-icon-color};
+  --active-bg-color: #{$active-bg-color};
+  --active-gradient-color: #{$active-gradient-color};
+  --active-border-color: #{$active-border-color};
+  --active-font-color: #{$active-font-color};
+  --active-icon-color: #{$active-icon-color};
+  --error-font-color: #{$error-font-color};
+  --warning-font-color: #{$warning-font-color};
+  --success-font-color: #{$success-font-color};
+  --information-font-color: #{$information-font-color};
+  --overlay-bg-color: #{$overlay-bg-color};
+  --shadow-color: #{$shadow-color};
+  --border-size: #{$border-size};
+  --border-type: #{$border-type};
+  --border-radius: #{$border-radius};
+  --border-left-radius: #{$border-left-radius};
+  --border-right-radius: #{$border-right-radius};
+  --border-top-radius: #{$border-top-radius};
+  --border-bottom-radius: #{$border-bottom-radius};
+
+
+  --grid-table-background-color: #{$content-bg-color};
+  --grid-header-border-color: #e0e0e0;
+
+
+  --grid-header-font-weight:500;
+  --grid-header-font-size: 12px;
+  --grid-header-height: 29px;
+
+  --panel-box-shadow: #{$panel-box-shadow};
+  --chip-bg-color:  #e0e0e0;
+}
+
+/*----------------- Core CSS ------------------------*/
+
 .core-alert-bottom {
   z-index: 999999;
   position: absolute !important;

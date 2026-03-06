@@ -1,4 +1,4 @@
-import {cssAddClass} from '../../CssUtils';
+import {cssAdd, cssStyleToString} from '../../CssUtils';
 import {N2Basic, StateN2Basic, StateN2BasicRef} from "../N2Basic";
 import {addN2Class} from "../N2HtmlDecorator";
 import {CSS_FLEX_ROW_DIRECTION} from "../scss/core";
@@ -37,18 +37,22 @@ export class N2Row<STATE extends StateN2Row = any> extends N2Basic<STATE> {
 export const CSS_CLASS_N2Row_scrollable :string = 'N2Row_scrollable';
 export const CSS_CLASS_N2Row_scrollable_item:string = 'N2Row_scrollable_item';
 
+let cssContent = `
 /**
  * Apply to a parent component that needs to scroll its children horizontally. Use in conjunction with N2_Row_Scrollable_Item
  */
-cssAddClass(CSS_CLASS_N2Row_scrollable, {
+.${CSS_CLASS_N2Row_scrollable} { ${cssStyleToString({
     display: 'flex',
     'flex-wrap': 'nowrap',
     'overflow-x': 'auto',
-});
+})} }
 
 /**
  * Apply to a child component of N2_Row_Scrollable
  */
-cssAddClass(CSS_CLASS_N2Row_scrollable_item, {
+.${CSS_CLASS_N2Row_scrollable_item} { ${cssStyleToString({
     flex: '0 0 auto',// don't adjust size as parent adjusts, therefore allow scrolling
-})
+})} }
+`;
+
+cssAdd(cssContent, N2Row.CLASS_IDENTIFIER);

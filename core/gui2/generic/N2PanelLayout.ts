@@ -261,49 +261,53 @@ export const CLASS_N2_PANEL_LAYOUT_RIGHT = N2PanelLayout.CLASS_IDENTIFIER + '_ri
 export const CLASS_N2_PANEL_LAYOUT_BOTTOM = N2PanelLayout.CLASS_IDENTIFIER + '_bottom';
 
 themeChangeListeners().add((_ev) => {
-    cssAddClass(N2PanelLayout.CLASS_IDENTIFIER, {
+    let cssContent = `
+.${N2PanelLayout.CLASS_IDENTIFIER} { ${cssStyleToString({
         display: 'grid',
         'grid-template-rows': 'auto 1fr auto',
         'grid-template-columns': 'auto 1fr auto',
         height: '100%',
         width: '100%',
-    });
+    })} }
 
 
-    cssAddClass(CLASS_N2_PANEL_LAYOUT_TOP, {
+.${CLASS_N2_PANEL_LAYOUT_TOP} { ${cssStyleToString({
         'grid-row': '1',
         'grid-column': '1 / span 3',
-    });
+    })} }
 
 
-    cssAddClass(CLASS_N2_PANEL_LAYOUT_LEFT, {
+.${CLASS_N2_PANEL_LAYOUT_LEFT} { ${cssStyleToString({
         'grid-row': 2,
         'grid-column': 1,
-    });
+    })} }
 
 
-    cssAddClass(CLASS_N2_PANEL_LAYOUT_CENTER, {
+.${CLASS_N2_PANEL_LAYOUT_CENTER} { ${cssStyleToString({
         'grid-row': 2,
         'grid-column': 2,
         // overflow: 'auto',
-    });
+    })} }
 
 
-    cssAddClass(CLASS_N2_PANEL_LAYOUT_RIGHT, {
+.${CLASS_N2_PANEL_LAYOUT_RIGHT} { ${cssStyleToString({
         'grid-row': 2,
         'grid-column': 3,
-    });
+    })} }
 
-    cssAddClass(CLASS_N2_PANEL_LAYOUT_BOTTOM, {
+.${CLASS_N2_PANEL_LAYOUT_BOTTOM} { ${cssStyleToString({
         'grid-row': '3',
         'grid-column': '1 / span 3',
-    });
+    })} }
+`;
+
+    cssAdd(cssContent, N2PanelLayout.CLASS_IDENTIFIER);
 
 });
 
 import {N2_CLASS} from '../../Constants';
 import {isDev} from '../../CoreUtils';
-import {cssAddClass, CssStyle} from '../../CssUtils';
+import {cssAdd, cssStyleToString, CssStyle} from '../../CssUtils';
 import {N2Evt_OnHtml} from '../N2';
 import {N2Basic, StateN2Basic} from '../N2Basic';
 import {addN2Class, decoToCssStyle, IHtmlUtils} from '../N2HtmlDecorator';

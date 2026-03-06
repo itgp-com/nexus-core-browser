@@ -1,8 +1,7 @@
 import * as CSS from 'csstype';
 import {isString} from 'lodash';
-import {getErrorHandler} from './CoreErrorHandling';
 
-const defaultStyleId = '___nexus_default_style___';
+const defaultStyleId = 'NexusCoreCSS';
 
 
 /**
@@ -207,166 +206,8 @@ export function cssRemoveElementVariable(element_or_selector: string | Element |
 let cachedStyle: HTMLStyleElement;
 let ruleMap: Map<string, number> = new Map<string, number>();
 
-/**
- * Adds a CSS class with specified rules to a cached stylesheet.
- * If the class already exists, it will be overwritten.
- *
- * @export
- * @param {string} className - The name of the class to be added, without the preceding dot.
- * @param {string | CssLikeObject} rules - The rules to be applied to the class. Can be a simple string or a CssLikeObject.
- *
- * @example
- * // To add a simple CSS class:
- * cssAddClass('whatever', 'background-color: green;');
- *
- * // To add a CSS class using a CssLikeObject:
- * const rulesObj = { backgroundColor: 'green', fontSize: '16px' };
- * cssAddClass('whatever', rulesObj);
- */
-export function cssAddClass(className: string, rules: string | CssLikeObject) {
-
-    // Remove starting periods and spaces from the class name
-    while (className.startsWith('.') || className.startsWith(' ')) {
-        className = className.substring(1);
-    }
-
-    // Prepend a period to the class name
-    className = `.${className}`;
-
-    // Add the class with the given rules
-    cssAddSelector(className, rules);
-} // cssAddClass
-/**
- * Removes the first instance of the specified class from the cached stylesheet.
- *
- * @export
- * @param {string} className - The name of the class to be removed.
- * @returns {boolean} - Returns true if the class was successfully removed, otherwise returns false.
- *
- * @example
- * // To remove a CSS class:
- * cssRemoveClass('.whatever');
- */
-export function cssRemoveClass(className: string): boolean {
-    return cssRemoveSelector(className);
-} // cssRemoveClass
-/**
- * @deprecated Use cssAdd instead.
- * Adds a CSS selector with specified rules to a cached stylesheet. If the selector already exists, it is first removed.
- *
- * @export
- * @param {string} cssSelectorName - The CSS selector name to be added.
- * @param {string | CssLikeObject} rules - The rules to be applied to the selector. Can be a simple string or a CssLikeObject.
- * @returns {void}
- * @throws {Error} - Throws an error if there's an issue accessing or modifying the stylesheet, or if the input parameters are not valid.
- *
- * @example
- * // To add a simple CSS selector:
- * cssAddSelector('.myClass', 'color: red;');
- *
- * // To add a CSS selector using a CssLikeObject:
- * const rulesObj = { color: 'red', fontSize: '16px' };
- * cssAddSelector('.myClass', rulesObj);
- */
-export function cssAddSelector(cssSelectorName: string, rules: string | CssLikeObject) {
-
-    if (!cssSelectorName) {
-        getErrorHandler().displayExceptionToUser(`CoreUtils.cssAddClass method was passed an empty className parameter! className = ${cssSelectorName}`);
-        return;
-    }
-
-    while (cssSelectorName.startsWith(' ')) {
-        cssSelectorName = cssSelectorName.substr(1); // eliminate starting periods and spaces
-    }
-
-    if (!rules) {
-        getErrorHandler().displayExceptionToUser(`CoreUtils.cssAddSelector method was passed an empty rules parameter! rules = ${rules}`);
-        return;
-    }
-
-    let classArray: CssRule[];
-    let t = typeof rules;
-    if ((t === 'string')) {
-        classArray = [{className: cssSelectorName, body: rules as string}];
-    } else {
-        classArray = cssNestedDeclarationToRuleStrings(cssSelectorName, rules as CssLikeObject);
-    }
-
-    let cssContent = '';
-    for (const cssRule of classArray) {
-        cssContent += `${cssRule.className}{${cssRule.body}}\n`;
-    }
-
-    cssAdd(cssContent, 'NexusCoreCssAddSelector');
-} // cssAddSelector
-/**
- * Removes the specified CSS selector from the stylesheets.
- *
- * @export
- * @param {string} cssSelectorName - The CSS selector name to be removed.
- * @param {boolean} [global=false] - If true, the function searches all stylesheets. If false, it searches only the cached stylesheet.
- * @returns {boolean} - Returns true if the selector was successfully removed, otherwise returns false.
- * @throws {Error} - Throws an error if there's an issue accessing or modifying the stylesheet(s).
- *
- * @example
- * // To remove a selector from all stylesheets:
- * cssRemoveSelector('.myClass', true);
- *
- * // To remove a selector from the cached stylesheet:
- * cssRemoveSelector('.myClass');
- */
-export function cssRemoveSelector(cssSelectorName: string, global: boolean = false): boolean {
-    let removed: boolean = false;
-
-    if (global) {
-        // Loop through all stylesheets
-        for (let i = 0; i < document.styleSheets.length; i++) {
-            const styleSheet = document.styleSheets[i] as CSSStyleSheet;
-            try {
-                const rules = styleSheet.cssRules || styleSheet.rules;
-                for (let j = 0; j < rules.length; j++) {
-                    const rule = rules[j] as CSSStyleRule;
-                    if (rule.selectorText === cssSelectorName) {
-                        styleSheet.deleteRule(j);
-                        removed = true;
-                        // do not exit just in case the selector exists in multiple styleSheets
-                        // break;
-                    }
-                } // for j
-            } catch (ex) {
-                console.error(ex);
-                // Your custom error handler
-                getErrorHandler().displayExceptionToUser(ex);
-            } // catch
-
-            // do not exit just in case the selector exists in multiple styleSheets
-            // if (removed) break;
-
-        } // for
-    } else { // if global
-        let cachedSheet: CSSStyleSheet = cachedStyle.sheet;
-        if (cachedSheet) {
 
 
-            for (let j = 0; j < cachedSheet.cssRules.length; j++) {
-                if ((cachedSheet.cssRules[j] as CSSStyleRule).selectorText == `${cssSelectorName}`) {
-                    try {
-                        cachedSheet.deleteRule(j);
-                        removed = true;
-                        break;
-                    } catch (ex) {
-                        console.error(ex);
-                        getErrorHandler().displayExceptionToUser(ex);
-                    }
-                } // if
-            } //for
-        } // cssRemoveClass
-    } // if global
-
-    if (removed)
-        ruleMap.delete(cssSelectorName);
-    return removed;
-} // cssRemoveSelector
 /**
  * Dynamically adds an @media query to the cached stylesheet.
  * Use {@link cssRemoveQuery} to remove the media query.
@@ -490,80 +331,6 @@ export class CssRule {
     body: string;
 }
 
-/**
- * Converts a nested CSS declaration object into an array of CSS rules.
- * The function handles nested CSS properties by generating appropriate selectors.
- * This is an implementation inspired by CSS-in-JS methodologies.
- *
- * @export
- * @param {string} rootClassName - The root class name to which the CSS properties should be applied.
- * @param {CssLikeObject} declaration - A nested object representing CSS properties and their values.
- * @returns {CssRule[]} - An array of CSS rules where each rule has a `className` and a `body`.
- *
- * @see {@link https://yyjhao.com/posts/roll-your-own-css-in-js/} for more details on the inspiration.
- *
- * @example
- * const cssObj = {
- *   color: 'red',
- *   '&:hover': {
- *     color: 'blue'
- *   }
- * };
- *
- * cssNestedDeclarationToRuleStrings('.myClass', cssObj);
- * // Outputs:
- * // [
- * //   { className: '.myClass', body: 'color:red;' },
- * //   { className: '.myClass:hover', body: 'color:blue;' }
- * // ]
- */
-function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: CssLikeObject): CssRule[] {
-    const result: CssRule[] = [];
-
-    // We use a helper here to walk through the tree recursively
-    function _helper(selector: string, declaration: CssLikeObject) {
-        // We split the props into either nested css rules
-        // or plain css props.
-        const nestedNames: string[] = [];
-        const cssProps: CSS.PropertiesHyphen = {};
-
-        for (let prop in declaration) {
-            const value = (<any>declaration)[prop];
-
-            if (value instanceof Object) {
-                nestedNames.push(prop);
-            } else {
-                (<any>cssProps)[prop] = value;
-            }
-        }
-
-        const lines: string[] = [];
-        // Collect all generated css rules.
-        // lines.push(`${selector} {`);
-        for (let prop in cssProps) {
-            // collect the topContainer level css rules
-            lines.push(`${prop}:${(<any>cssProps)[prop]};`);
-        }
-        // lines.push("}");
-
-        // Each string has to be a complete rule, not just a single
-        // property
-        result.push({className: selector, body: lines.join("\n")});
-
-        // Go through all nested css rules, generate string css rules
-        // and collect them
-        nestedNames.forEach((nestedSelector) =>
-            _helper(
-                joinSelectors(selector, nestedSelector),
-                (<any>declaration)[nestedSelector]
-            )
-        );
-    }
-
-    _helper(rootClassName, declaration);
-    return result;
-}
-
 
 //---------------------------- end CSS global variables definition ------------------------
 /**
@@ -584,7 +351,7 @@ function cssNestedDeclarationToRuleStrings(rootClassName: string, declaration: C
  * cssStyleToString(cssObj, ' ');
  * // Outputs: 'color:red; font-size:16px;'
  */
-export function cssStyleToString(cssStyle: CssStyle, cssDelimiter: string = ''): string {
+export function cssStyleToString(cssStyle: CssStyle | string | CssLikeObject, cssDelimiter: string = ''): string {
     const cssProps: CSS.PropertiesHyphen = {};
     let style = '';
 

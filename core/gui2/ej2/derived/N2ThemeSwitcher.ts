@@ -1,10 +1,11 @@
 import {ChangeEventArgs} from '@syncfusion/ej2-buttons/src/common/common';
 
-import {cssAddClass} from '../../../CssUtils';
+import {cssAdd, cssStyleToString} from '../../../CssUtils';
 import {ChartTheme, switchTheme, themeChangeListeners} from '../../../gui2/Theming';
 import {N2Html} from '../../generic/N2Html';
 import {N2Panel, StateN2Panel} from '../../generic/N2Panel';
 import {N2Switch} from '../ext/N2Switch';
+import {addN2Class} from "../../N2HtmlDecorator";
 
 const CLASS_N2ThemeSwitcher_cssClass = 'N2ThemeSwitcher_cssClass';
 
@@ -13,15 +14,16 @@ const CLASS_N2ThemeSwitcher_cssClass = 'N2ThemeSwitcher_cssClass';
  */
 themeChangeListeners().add((ev) => {
     // group area background color
-    cssAddClass(CLASS_N2ThemeSwitcher_cssClass, {
+    cssAdd(`.${CLASS_N2ThemeSwitcher_cssClass} { ${cssStyleToString({
         'align-self': 'stretch',
         display: 'flex',
         'align-items': 'center',
-    });
+    })} }`, N2ThemeSwitcher.CLASS_IDENTIFIER);
 });
 
 
 export class N2ThemeSwitcher extends N2Panel {
+    static readonly CLASS_IDENTIFIER: string = 'N2ThemeSwitcher';
     themeSwitch: N2Switch;
     labelThemeLight: N2Html;
     labelThemeDark: N2Html;
@@ -40,6 +42,7 @@ export class N2ThemeSwitcher extends N2Panel {
             'align-items': 'center',
             margin: '5px 5px'
         }
+        addN2Class(state.deco, N2ThemeSwitcher.CLASS_IDENTIFIER);
 
         themeChangeListeners().add((ev) => {
             // simply update the state of the UI component if the theme state has changed somewhere else
