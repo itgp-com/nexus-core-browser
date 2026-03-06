@@ -1,4 +1,4 @@
-import {cssAdd, cssAddClass, cssAddSelector} from '../../CssUtils';
+import {cssAdd} from '../../CssUtils';
 import {themeChangeListeners} from '../Theming';
 
 export const CSS_FLEX_MAX_XY: string = "flex-component-max flex-full-height";
@@ -109,7 +109,7 @@ themeChangeListeners().add((ev) => {
 }
 
  
-    `);
+    `, 'NexusCoreCSS');
 
 
 

@@ -10,7 +10,7 @@ import {Audio} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/rendere
 import {Table} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/table-module';
 import {Video} from '@syncfusion/ej2-richtexteditor/src/rich-text-editor/renderer/video-module';
 
-import {cssAddSelector} from '../../../CssUtils';
+import {cssAdd} from '../../../CssUtils';
 import {StateN2PropertyName} from '../../generic/StateN2PropertyName';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {CSS_VARS_EJ2} from '../../scss/vars-ej2-common';
@@ -75,7 +75,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     let widgetClass = N2RichTextEditor.CLASS_IDENTIFIER
 
     // $grey-300 for light and grey-700 for dark
-    cssAddSelector(`.${widgetClass} .e-tbar-btn, .${widgetClass} .e-tbtn-txt`,`
+    cssAdd(`.${widgetClass} .e-tbar-btn, .${widgetClass} .e-tbtn-txt {
   background-color: ${CSS_VARS_EJ2.chip_bg_color} !important;
-    `);
+    }`, 'N2RichTextEditorCSS');
 }); // normal priority

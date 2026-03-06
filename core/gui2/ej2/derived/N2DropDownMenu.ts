@@ -728,10 +728,10 @@ const size_map: Map<'sm' | 'md' | 'lg' | 'xl', SizeSettings> = new Map([
 themeChangeListeners().add((_ev: ThemeChangeEvent) => {
     let size: number = 25;
 
-    cssAddSelector(`.${N2DropDownMenu.CLASS_IDENTIFIER},
+    cssAdd(`.${N2DropDownMenu.CLASS_IDENTIFIER},
     .${N2DropDownMenu.CLASS_IDENTIFIER}.e-btn.e-active, 
     .${N2DropDownMenu.CLASS_IDENTIFIER}.e-btn:focus,
-    .${N2DropDownMenu.CLASS_IDENTIFIER}.e-btn:hover`, `
+    .${N2DropDownMenu.CLASS_IDENTIFIER}.e-btn:hover {
     position : absolute;
     padding : initial;
     color : var(--app-color-blue-01);
@@ -740,13 +740,11 @@ themeChangeListeners().add((_ev: ThemeChangeEvent) => {
     border : solid 0.1px var(--app-color-gray-500);
     display : flex;
     justify-content : center;
-    align-items : center;
-`);
+    align-items : center;}`, 'N2DropDownMenuCSS');
 
-    cssAddSelector(`.${N2DropDownMenu.CLASS_IDENTIFIER}.e-btn:hover`, `
+    cssAdd(`.${N2DropDownMenu.CLASS_IDENTIFIER}.e-btn:hover {
         border : solid 1px var(--app-color-blue-01);
-        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
-`);
+        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);}`, 'N2DropDownMenuCSS');
 }); // normal priority
 
 import {
@@ -760,7 +758,7 @@ import {ItemModel} from '@syncfusion/ej2-splitbuttons/src/common/common-model';
 import {isString} from 'lodash';
 import {voidFunction} from '../../../BaseUtils';
 import {isDev} from '../../../CoreUtils';
-import {cssAddSelector} from '../../../CssUtils';
+import {cssAdd} from '../../../CssUtils';
 import {N2Html} from '../../generic/N2Html';
 import {N2, N2Evt_OnHtml} from '../../N2';
 import {N2Basic, StateN2Basic} from '../../N2Basic';

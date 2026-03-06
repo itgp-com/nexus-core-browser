@@ -1,7 +1,7 @@
 import {Tab, TabModel} from '@syncfusion/ej2-navigations';
 import {SelectEventArgs} from '@syncfusion/ej2-navigations/src/tab/tab';
 
-import {cssAddSelector} from '../../../CssUtils';
+import {cssAdd} from '../../../CssUtils';
 import {N2, N2Evt_OnLogic} from '../../N2';
 import {addClassesToElement, addN2Class, removeClassesFromElement} from '../../N2HtmlDecorator';
 import {getN2FromHtmlElement} from '../../N2Utils';
@@ -248,25 +248,21 @@ export const TabOption_FillContent: TabModel = {
 
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
-    cssAddSelector(`app-tab-no-text-transform`, `
-    text-transform: unset !important;`
-    );
+    cssAdd(`app-tab-no-text-transform {
+    text-transform: unset !important;}`, 'N2TabCSS');
 
     // rounded light gray borders for the top left and right of the tab
-    cssAddSelector(
-        `.${N2Tab.CLASS_IDENTIFIER}.e-tab.e-fill .e-tab-header .e-toolbar-item .e-tab-wrap`,
-        `
+    cssAdd(`.${N2Tab.CLASS_IDENTIFIER}.e-tab.e-fill .e-tab-header .e-toolbar-item .e-tab-wrap {
         border: solid 0.1px var(--app-color-gray-200);
         border-top-left-radius: 12px;
         border-top-right-radius: 12px;
-        `);
+        }`, 'N2TabCSS');
 
     // active tab rounded borders for the top left and right of the tab
-    cssAddSelector(
-        `.${N2Tab.CLASS_IDENTIFIER}.e-tab.e-fill .e-tab-header .e-toolbar-item.e-active .e-tab-wrap `,
-        `        border-top-left-radius: 12px;
+    cssAdd(`.${N2Tab.CLASS_IDENTIFIER}.e-tab.e-fill .e-tab-header .e-toolbar-item.e-active .e-tab-wrap {
+        border-top-left-radius: 12px;
         border-top-right-radius: 12px;
-        border-color: unset;`);
+        border-color: unset;}`, 'N2TabCSS');
 
     // cssAddSelector(
     //     ``,

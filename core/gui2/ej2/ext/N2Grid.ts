@@ -1426,6 +1426,7 @@ export function cssForN2Grid(n2GridClass: string, eGridClass: string) {
         margin: auto 2px;
         height: 16px;`;
 
+
 cssAdd(`
 /* Removes blue background from grid editable checkbox and restores border and font color */
 .${n2GridClass} .e-checkbox-wrapper .e-frame.e-check, .${n2GridClass} .e-css.e-checkbox-wrapper .e-frame.e-check {
@@ -1744,7 +1745,7 @@ cssAdd(`
     align-items: center; /* Vertically center content inside the span */
     height: 100%; /* Ensure it takes the full height of the parent */
 }
-`);
+`, n2GridClass+'CSS', true);
 } // cssForN2Grid
 
 import {isNullOrUndefined, KeyboardEvents} from '@syncfusion/ej2-base';
@@ -1803,7 +1804,7 @@ import {
     N2_CLASS
 } from "../../../Constants";
 import {findElementWithTippyTooltip, fontColor, isDev} from '../../../CoreUtils';
-import {cssAdd} from '../../../CssUtils';
+import {cssAdd, cssRemove} from '../../../CssUtils';
 import {HttpRequestEvtDataManager} from '../../../data/NexusComm';
 import {isNexusDataManager, NexusDataManager} from "../../../data/NexusDataManager";
 import {QUERY_OPERATORS} from '../../../gui/WidgetUtils';

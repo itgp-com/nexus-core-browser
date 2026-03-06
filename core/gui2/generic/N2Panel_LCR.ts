@@ -1,3 +1,5 @@
+import {cssAdd} from "../../CssUtils";
+import {nexusMain} from "../../NexusMain";
 import {N2Basic, StateN2Basic, StateN2BasicRef} from '../N2Basic';
 import {addN2Class, decoToCssStyle, IHtmlUtils} from '../N2HtmlDecorator';
 import {Elem_or_N2} from '../N2Utils';
@@ -58,6 +60,7 @@ export interface StateN2Panel_LCR extends StateN2Basic {
     ref ?: StateN2Panel_LCRRef;
 }
 export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> extends N2Basic<STATE> {
+    static readonly CLASS_IDENTIFIER: string = 'N2Panel_LCR';
 
     _leftContainer: N2Panel;
     _centerContainer:N2Panel;
@@ -71,25 +74,25 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
     protected onStateInitialized(state: STATE): void {
         addN2Class(state.deco, N2Panel_LCR.CLASS_IDENTIFIER);
 
-        let style = state.deco.style || {};
-        style = {
-            display: 'flex',
-            'flex-direction': 'row',
-            'justify-content': 'space-between',
-            'background-color': 'var(--app-color-panel-background)',
-            ...decoToCssStyle( style )
-        }
-        state.deco.style = style;
+        // let style = state.deco.style || {};
+        // style = {
+        //     display: 'flex',
+        //     'flex-direction': 'row',
+        //     'justify-content': 'space-between',
+        //     'background-color': 'var(--app-color-panel-background)',
+        //     ...decoToCssStyle( style )
+        // }
+        // state.deco.style = style;
 
 
         let leftState: StateN2Panel = state.stateLeftContainer || {};
         IHtmlUtils.initForN2(leftState);
 
-        leftState.deco.style = {
-            'min-width': '0',
-            'background-color': 'transparent',
-            'justify-content': 'left',
-        }
+        // leftState.deco.style = {
+        //     'min-width': '0',
+        //     'background-color': 'transparent',
+        //     'justify-content': 'left',
+        // }
         leftState.tagId = state.tagId + '_left';
         addN2Class(leftState.deco, CLASS_N2_PANEL_LAYOUT_LEFT);
         if (state.left)
@@ -100,12 +103,12 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
 
         let centerState: StateN2Panel = state.stateCenterContainer || {};
         IHtmlUtils.initForN2(centerState);
-        centerState.deco.style = {
-            flex: 1, // expand to take all available space
-            'min-width': '0',
-            'background-color': 'transparent',
-            'justify-content': 'center',
-        }
+        // centerState.deco.style = {
+        //     flex: 1, // expand to take all available space
+        //     'min-width': '0',
+        //     'background-color': 'transparent',
+        //     'justify-content': 'center',
+        // }
         centerState.tagId = state.tagId + '_center';
         addN2Class(centerState.deco, CLASS_N2_PANEL_LAYOUT_CENTER);
         if (state.center)
@@ -115,11 +118,11 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
 
         let rightState: StateN2Panel = state.stateRightContainer || {};
         IHtmlUtils.initForN2(rightState);
-        rightState.deco.style = {
-            'min-width' : '0',
-            'background-color': 'transparent',
-            'justify-content': 'right',
-        }
+        // rightState.deco.style = {
+        //     'min-width' : '0',
+        //     'background-color': 'transparent',
+        //     'justify-content': 'right',
+        // }
         rightState.tagId = state.tagId + '_right';
         addN2Class(rightState.deco, CLASS_N2_PANEL_LAYOUT_RIGHT);
         if (state.right)
@@ -130,3 +133,38 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
         super.onStateInitialized(state);
     }
 }
+
+
+nexusMain.UIStartedListeners.add( () => {
+    cssAdd(`
+    
+.${N2Panel_LCR.CLASS_IDENTIFIER} {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+} 
+
+.${N2Panel_LCR.CLASS_IDENTIFIER} .${CLASS_N2_PANEL_LAYOUT_LEFT}{
+            min-width: 0;
+            background-color: transparent;
+            justify-content: left;
+}
+
+.${N2Panel_LCR.CLASS_IDENTIFIER} .${CLASS_N2_PANEL_LAYOUT_CENTER}{
+            flex: 1;
+            min-width: 0;
+            background-color: transparent;
+            justify-content: center;
+}
+
+.${N2Panel_LCR.CLASS_IDENTIFIER} .${CLASS_N2_PANEL_LAYOUT_RIGHT}{
+            min-width: 0;
+            background-color: transparent;
+            justify-content: right;
+}
+
+
+  
+`, N2Panel_LCR.CLASS_IDENTIFIER); // no need to remove this CSS, it does not change with the theme
+
+});

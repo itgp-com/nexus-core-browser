@@ -2,7 +2,7 @@ import {Button, ButtonModel} from '@syncfusion/ej2-buttons';
 import {throttle} from 'lodash';
 import {StringArg, stringArgVal} from '../../../BaseUtils';
 
-import {cssAddSelector} from '../../../CssUtils';
+import {cssAdd} from '../../../CssUtils';
 import {N2Evt_OnLogic} from '../../N2';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
@@ -108,8 +108,8 @@ export class N2Button<STATE extends StateN2Button = StateN2Button> extends N2EjB
 
 themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
-    cssAddSelector(`.${N2Button.CLASS_IDENTIFIER}.e-btn, .${N2Button.CLASS_IDENTIFIER}.e-css.e-btn,
-.N2DropDownButton.e-btn, .N2DropDownButton.e-css.e-btn`, `
+    cssAdd(`.${N2Button.CLASS_IDENTIFIER}.e-btn, .${N2Button.CLASS_IDENTIFIER}.e-css.e-btn,
+.N2DropDownButton.e-btn, .N2DropDownButton.e-css.e-btn {
   font-size: var(--app-font-size-regular);
-  text-transform: unset !important;`);
+  text-transform: unset !important;}`, 'N2ButtonCSS');
 }); // normal priority

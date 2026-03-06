@@ -1,6 +1,6 @@
 import {ListBox, ListBoxModel} from '@syncfusion/ej2-dropdowns';
 
-import {cssAddSelector} from '../../../CssUtils';
+import {cssAdd} from '../../../CssUtils';
 import {addN2Class} from '../../N2HtmlDecorator';
 import {ThemeChangeEvent, themeChangeListeners} from '../../Theming';
 import {N2EjBasic, StateN2EjBasic, StateN2EjBasicRef} from '../N2EjBasic';
@@ -65,8 +65,8 @@ export class N2ListBox<STATE extends StateN2ListBox = StateN2ListBox> extends N2
 const row_height: number = 30;
 
 export function cssForN2ListBox(n2ListBoxClass: string, eListBoxClass: string) {
-    cssAddSelector(`.e-listbox-wrapper.${N2ListBox.N2LISTBBOX_WRAPPER}`, `
-            font-size: var(--app-font-size-regular);`);
+    cssAdd(`.e-listbox-wrapper.${N2ListBox.N2LISTBBOX_WRAPPER} {
+            font-size: var(--app-font-size-regular);}`, 'N2ListBoxCSS');
 
     let sel1 = `
     .${N2ListBox.N2LISTBBOX_WRAPPER}.e-listbox-wrapper:not(.e-list-template) .e-list-item,
@@ -78,11 +78,11 @@ export function cssForN2ListBox(n2ListBoxClass: string, eListBoxClass: string) {
     .${N2ListBox.N2LISTBBOX_WRAPPER} .e-listboxtool-wrapper:not(.e-list-template) .e-list-item,
     .${N2ListBox.N2LISTBBOX_WRAPPER} .e-listboxtool-wrapper .e-list-nrt,
     .${N2ListBox.N2LISTBBOX_WRAPPER} .e-listboxtool-wrapper .e-selectall-parent `;
-    cssAddSelector(sel1, `
+    cssAdd(`${sel1} {
         height: ${row_height}px;
         line-height: 1;
         padding: 10px 10px;
-        position: relative;`);
+        position: relative;}`, 'N2ListBoxCSS');
 
     // let sel2 = `.e-listbox-wrapper:has(.e-list-parent.e-ul)`
     // cssAddSelector(sel2, `

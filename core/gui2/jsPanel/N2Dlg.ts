@@ -1151,53 +1151,53 @@ themeChangeListeners().add((ev) => {
     }
 
 
-    cssAddSelector(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-hdr`, `
+    cssAdd(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-hdr {
        font-family: var(--app-font-family);
        font-size: var(--app-font-size-regular);
-    `);
+    }`, 'N2DlgCSS');
 
-    cssAddSelector(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-content`, `
+    cssAdd(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-content {
        font-family: var(--app-font-family);
        font-size: var(--app-font-size-regular);
-    `);
+    }`, 'N2DlgCSS');
 
 
-    cssAddSelector(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-headerbar`, `
+    cssAdd(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-headerbar {
         padding: 0;
         border-bottom: 5px solid var(--material-accent-color);
-    `);
+    }`, 'N2DlgCSS');
 
-    cssAddSelector(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-titlebar`, `
+    cssAdd(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-titlebar {
         font-size: var(--app-font-size-regular) !important;
-    `);
+    }`, 'N2DlgCSS');
 
-    cssAddSelector(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-titlebar .jsPanel-title`, `
+    cssAdd(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-titlebar .jsPanel-title {
         font-variant: unset,
-    `);
+    }`, 'N2DlgCSS');
 
     // make the back arrow invisible when the dialog is minimized
-    cssAddSelector(`.jsPanel-replacement .jsPanel-headerlogo .${N2DlgBackArrow.CLASS_IDENTIFIER}`, `
+    cssAdd(`.jsPanel-replacement .jsPanel-headerlogo .${N2DlgBackArrow.CLASS_IDENTIFIER} {
         display:none
-    `);
+    }`, 'N2DlgCSS');
 
 
-    cssAddSelector(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-controlbar`, `
+    cssAdd(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-controlbar {
         margin: 3px 0;
-    `);
+    }`, 'N2DlgCSS');
 
-    cssAddSelector(`.${CSS_CLASS_N2DLG_HEADERBAR_FRONT_SPACER}`, `
+    cssAdd(`.${CSS_CLASS_N2DLG_HEADERBAR_FRONT_SPACER} {
         min-width:5px;
         min-height: 20px;
-    `);
-    cssAddSelector(`.${CSS_CLASS_N2DLG_HEADERBAR_END_SPACER}`, `
+    }`, 'N2DlgCSS');
+    cssAdd(`.${CSS_CLASS_N2DLG_HEADERBAR_END_SPACER} {
         min-width:6px;
         min-height: 20px;
-    `);
+    }`, 'N2DlgCSS');
 
     // gray border around black header so that when borders overlap we can tell which window is which
-    cssAddSelector(`.${CSS_CLASS_N2DLG_HEADERBAR} .jsPanel-hdr-dark`, `
+    cssAdd(`.${CSS_CLASS_N2DLG_HEADERBAR} .jsPanel-hdr-dark {
         border: solid 0.1px var(--app-color-gray-600);
-    `);
+    }`, 'N2DlgCSS');
 
 }, 10); // themeChangeListeners().add
 
@@ -1252,7 +1252,7 @@ import {isArray, isFunction, isObject, isString} from 'lodash';
 import {htmlToElement} from '../../BaseUtils';
 import {CSS_CLASS_N2Dlg_empty_header, N2_CLASS} from '../../Constants';
 import {isHTMLElement} from '../../CoreUtils';
-import {cssAddSelector} from '../../CssUtils';
+import {cssAdd} from '../../CssUtils';
 import {N2Column} from '../generic/N2Column';
 import {N2Html} from '../generic/N2Html';
 import {

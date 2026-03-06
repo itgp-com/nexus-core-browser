@@ -16,13 +16,16 @@ export type CssStyle = CSS.PropertiesHyphen;
  *
  * @param {string} cssContent - The CSS content to be added.
  * @param {string} [styleId] - The ID of the style element to add the CSS content to. If not specified, the default style element '___nexus_default_style___' is used.
+ * @param {boolean} [removePrevious=false] - If true and a styleId is provided, any existing style element with the same ID will be removed before adding the new CSS content. This helps to avoid duplicates and ensures that the new content is added cleanly.
  * @returns {void}
  */
-export function cssAdd(cssContent: string, styleId?: string): void {
+export function cssAdd(cssContent: string, styleId?: string, removePrevious?:boolean): void {
     if (!cssContent) {
         console.error("cssAdd function was passed an empty cssContent parameter!");
         return;
     }
+    if ( styleId && removePrevious )
+        cssRemove(styleId); // remove any existing style element with the same id to avoid duplicates and ensure the new content is added cleanly
 
     let styleElement: HTMLStyleElement | null;
     if ( !styleId)
@@ -34,7 +37,10 @@ export function cssAdd(cssContent: string, styleId?: string): void {
         if (!styleElement) {
             styleElement = document.createElement('style');
             styleElement.id = styleId;
+            styleElement.setAttribute('data-nexus-css-add', 'true');
             document.head.appendChild(styleElement);
+        } else {
+            styleElement.setAttribute('data-nexus-css-add', 'true');
         }
     }
     // Append the CSS content to the specified or default style element
@@ -42,56 +48,21 @@ export function cssAdd(cssContent: string, styleId?: string): void {
 } // end cssAdd
 
 /**
- * Removes a CSS selector from a specified or default style element ('___nexus_default_style___').
+ * Removes a style element that was previously added with cssAdd().
  *
- * @param {string} cssSelector - The CSS selector to be removed.
- * @param {string} [styleId] - The ID of the style element to remove the CSS selector from. If not specified, the default style element is checked first, and then all other styles are traversed.
- * @returns {boolean} - Returns true if the selector was successfully removed, otherwise false.
+ * @param {string} [styleId] - The ID of the style element to remove. If not specified, the default style element '___nexus_default_style___' is used.
+ * @returns {boolean} - Returns true if the style element was successfully removed, otherwise false.
  */
-export function cssRemove(cssSelector: string, styleId?: string): boolean {
-    if (!cssSelector) {
-        console.error("cssRemoveSelector function was passed an empty cssSelector parameter!");
-        return false;
+export function cssRemove(styleId?: string): boolean {
+    if (!styleId)
+        styleId = defaultStyleId;
+
+    const styleElement = document.getElementById(styleId);
+    if (styleElement && styleElement.getAttribute('data-nexus-css-add') === 'true') {
+        styleElement.remove();
+        return true;
     }
 
-    const removeRule = (styleElement: HTMLStyleElement): boolean => {
-        if (!styleElement.sheet) return false;
-
-        const rules = styleElement.sheet.cssRules;
-        for (let i = 0; i < rules.length; i++) {
-            const rule = rules[i] as CSSStyleRule;
-            if (rule.selectorText === cssSelector) {
-                styleElement.sheet.deleteRule(i);
-                return true;
-            }
-        }
-        return false;
-    };
-
-    if (styleId) {
-        const styleElement = document.getElementById(styleId) as HTMLStyleElement;
-        if (styleElement && removeRule(styleElement)) {
-            return true;
-        }
-    } else {
-        const defaultStyleElement = document.getElementById(defaultStyleId) as HTMLStyleElement;
-        if (defaultStyleElement && removeRule(defaultStyleElement)) {
-            return true;
-        }
-    }
-
-    // Traverse all style elements if not found in the specified or default style element
-    const styleElements = document.getElementsByTagName('style');
-    for (let i = 0; i < styleElements.length; i++) {
-        const styleElement = styleElements[i];
-        if (styleElement.id !== styleId && styleElement.id !== defaultStyleId) {
-            if (removeRule(styleElement as HTMLStyleElement)) {
-                return true;
-            }
-        }
-    }
-
-    console.warn(`cssRemove: Selector ${cssSelector} not found in any style element.`);
     return false;
 } // end cssRemove
 
@@ -280,6 +251,7 @@ export function cssRemoveClass(className: string): boolean {
     return cssRemoveSelector(className);
 } // cssRemoveClass
 /**
+ * @deprecated Use cssAdd instead.
  * Adds a CSS selector with specified rules to a cached stylesheet. If the selector already exists, it is first removed.
  *
  * @export
@@ -320,32 +292,12 @@ export function cssAddSelector(cssSelectorName: string, rules: string | CssLikeO
         classArray = cssNestedDeclarationToRuleStrings(cssSelectorName, rules as CssLikeObject);
     }
 
-    if (!cachedStyle) {
-        // Create it the first time through
-        cachedStyle = document.createElement('style');
-        // noinspection JSDeprecatedSymbols
-        cachedStyle.type = 'text/css';
-        document.getElementsByTagName('head')[0].appendChild(cachedStyle);
-    }
-
-
-    if (ruleMap.get(cssSelectorName)) {
-        let removed = cssRemoveSelector(cssSelectorName);
-    }
-
-
+    let cssContent = '';
     for (const cssRule of classArray) {
-        if (!(cachedStyle.sheet || {}).insertRule) {
-            // noinspection JSDeprecatedSymbols
-            (((cachedStyle as any).styleSheet || cachedStyle.sheet) as any).addRule(`${cssRule.className}`, cssRule.body);
-        } else {
-            // Modern browsers use this path
-            let n: number = cachedStyle.sheet?.cssRules.length; // insert at the end
-            cachedStyle.sheet.insertRule(`${cssRule.className}{${cssRule.body}}`, n); // insert at the end
-            ruleMap.set(cssRule.className, 1); // keep track of the fact that it's already been added
-        }
-    } // for CssRule
+        cssContent += `${cssRule.className}{${cssRule.body}}\n`;
+    }
 
+    cssAdd(cssContent, 'NexusCoreCssAddSelector');
 } // cssAddSelector
 /**
  * Removes the specified CSS selector from the stylesheets.

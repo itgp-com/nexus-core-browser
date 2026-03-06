@@ -2,7 +2,7 @@ import {Dialog, DialogModel} from '@syncfusion/ej2-popups';
 import {BeforeCloseEventArgs, BeforeOpenEventArgs} from '@syncfusion/ej2-popups/src/dialog/dialog';
 import {isArray, isString} from 'lodash';
 import {isHTMLElement} from '../../../CoreUtils';
-import {cssAddSelector} from '../../../CssUtils';
+import {cssAdd} from '../../../CssUtils';
 import {N2Html} from '../../generic/N2Html';
 import {
     isN2_Interface_Dialog_BeforeClose,
@@ -466,25 +466,25 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
 
     if (isDarkTheme) {
         // dialog itself gets the background color
-        cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog`, `
+        cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog {
         background-color: var(--app-color-panel-background);
         border: 1px solid var(--grid-header-border-color);
-    `);
+    }`, 'N2DialogCSS');
     } // if ( isDarkTheme)
 
 
     // color of text in dialog box header
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header {
         color: ${CSS_VARS_CORE.app_dialog_header_font_color}; 
-    `);
+    }`, 'N2DialogCSS');
 
     // color of text in dialog box header
     // remove border from all buttons and other elements
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header, .${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header *`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header, .${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header * {
         color: ${CSS_VARS_CORE.app_dialog_header_font_color}; 
         font-size: var(--app-font-size-regular);
         border: none;         
-`);
+}`, 'N2DialogCSS');
 
 
     // dialog header gets background color
@@ -495,7 +495,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
         border-bottom: 5px solid ${CSS_VARS_CORE.app_color_blue};
         background-color: ${CSS_VARS_CORE.app_dialog_header_background_color}; 
     `;
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-dlg-header-content`, rules);
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-dlg-header-content {${rules}}`, 'N2DialogCSS');
 
 
     rules = `
@@ -507,52 +507,52 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
         `;
     }
     // dialog content gets background color
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-content`, rules);
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-content {${rules}}`, 'N2DialogCSS');
 
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header-content .e-dlg-header`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER} .e-dlg-header-content .e-dlg-header {
         font-size: var(--app-font-size-regular);
-    `);
+    }`, 'N2DialogCSS');
 
 
 // Size the dialog heading component to be the whole width of the dialog minus the width of the close button
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header {
         width: calc(100% - ${CSS_VARS_CORE.app_dialog_header_close_button_size}px)
-    `);
+    }`, 'N2DialogCSS');
 
 
 //----------------- Size close button and X inside properly -----------
 // See https://support.syncfusion.com/support/tickets/358806
 
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn {
         display: inline-flex;
         margin-top: 5px;
         height: ${CSS_VARS_CORE.app_dialog_header_close_button_size}px;
         width: ${CSS_VARS_CORE.app_dialog_header_close_button_size}px;
         padding-top: 3px;
-    `);
+    }`, 'N2DialogCSS');
     // This makes the close button visible at all times, not just when being hovered over
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-btn.e-dlg-closeicon-btn`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-lib.e-dialog .e-btn.e-dlg-closeicon-btn {
         background-color: #e0e0e0;
         border-color: rgba(0, 0, 0, 0);
         box-shadow: 0 0 0 rgba(0, 0, 0, 0)
-    `);
+    }`, 'N2DialogCSS');
     // black x on gray #e0e0e0 background
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn .e-icon-dlg-close`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn .e-icon-dlg-close {
         color:#000;
-    `);
+    }`, 'N2DialogCSS');
 
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon {
         margin-top: 0px;
-    `);
+    }`, 'N2DialogCSS');
 
     //changed
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close {
         font-size: 10px;
-    `);
+    }`, 'N2DialogCSS');
 
     // by default the N2Dialog has 5px padding
-    cssAddSelector(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog.no-padding .e-dlg-content`, `
+    cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog.no-padding .e-dlg-content {
     padding: 0;
-    `);
+    }`, 'N2DialogCSS');
 
 }); // normal priority
