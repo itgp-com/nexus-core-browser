@@ -57,7 +57,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     
 .${CSS_CLASS_N2_HIGHLIGHT_STRONG} {
     background-color: ${(ev.newState.theme_type === 'dark' ? CSS_VARS_CORE.app_color_yellow_02 : CSS_VARS_CORE.app_color_yellow_01)};
-    color: black;
+    color: var(--app-label-color);
     padding: 1px 4px;
     border: 1px dashed var(--app-color-gray-400);
     border-radius: 10px;

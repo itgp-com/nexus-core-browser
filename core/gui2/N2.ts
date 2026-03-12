@@ -1082,7 +1082,7 @@ textarea.e-input.${N2.CLASS_IDENTIFIER},
 /* float label inside the input element */
 .${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top),
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-focus):not(.e-disabled) input:not(:focus):not(:valid) ~ label.e-float-text:not(.e-label-top) {
-    color: ${CSS_VARS_CORE.app_label_color_coolgray} !important;
+    color: var(--app_label_color_coolgray)!important;
 }
 
 /* change the border color while focus the input element */
@@ -1090,20 +1090,20 @@ textarea.e-input.${N2.CLASS_IDENTIFIER},
 .${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-input-group) .e-float-line::after,
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-group) .e-float-line::before,
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-input-group) .e-float-line::after {
-    background: ${CSS_VARS_CORE.app_label_color_coolgray} !important;
+    background: var(--app_label_color_coolgray) !important;
 }
 
 /* float label color on top of the input element while focus the input */
 .${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-error) input:focus ~ label.e-float-text,
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-error) input:focus ~ label.e-float-text {
-    color: ${CSS_VARS_CORE.app_label_color_coolgray} !important;
+    color: var(--app_label_color_coolgray) !important;
     font-size: ${CSS_VARS_CORE.app_font_size_plus_2}px !important;
 }
 
 /* float label color on top of the input element */
 .${N2.CLASS_IDENTIFIER} .e-float-input:not(.e-error) input:valid ~ label.e-float-text,
 .e-float-input.${N2.CLASS_IDENTIFIER}:not(.e-error) input:valid ~ label.e-float-text {
-    color: ${CSS_VARS_CORE.app_label_color_coolgray};
+    color: var(--app_label_color_coolgray);
 }
 `;
 
