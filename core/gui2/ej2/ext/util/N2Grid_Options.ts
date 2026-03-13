@@ -174,7 +174,7 @@ export function rowNumberCol(): ColumnModel {
         headerTextAlign: "Center",
         type: "number",
         textAlign: "Center",
-        width: 9 * N2Grid_Options_Utils.getPixelCharWidth(),
+        width: 10 * N2Grid_Options_Utils.getPixelCharWidth(),
         allowFiltering: false,
         allowGrouping: false,
         allowSorting: false,
