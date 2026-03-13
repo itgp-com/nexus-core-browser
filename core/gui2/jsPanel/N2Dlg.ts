@@ -1159,8 +1159,8 @@ themeChangeListeners().add((ev) => {
     cssAdd(`.${N2Dlg.CLASS_IDENTIFIER} .jsPanel-content {
        font-family: var(--app-font-family);
        font-size: var(--app-font-size-regular);
-       background-color: var(--app-color-panel-background);
-       color: var(--app-label-color);
+       background-color: var(--material-background-color);
+       color: var(--material-text-color);
     }`, 'N2DlgCSS');
 
 

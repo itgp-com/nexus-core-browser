@@ -467,7 +467,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     if (isDarkTheme) {
         // dialog itself gets the background color
         cssAdd(`.${N2Dialog.CLASS_IDENTIFIER}.e-dialog {
-        background-color: var(--app-color-panel-background);
+        background-color: var(--material-background-color);
         border: 1px solid var(--grid-header-border-color);
     }`, 'N2DialogCSS');
     } // if ( isDarkTheme)
@@ -503,7 +503,7 @@ themeChangeListeners().add((ev: ThemeChangeEvent) => {
     `
     if (isDarkTheme) {
         rules += `
-        background-color: var(--app-color-panel-background); 
+        background-color: var(--material-background-color); 
         `;
     }
     // dialog content gets background color

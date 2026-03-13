@@ -93,6 +93,10 @@ export interface CoreCssVariables extends CssVariables {
     font_family: string;
     grey_dark: string;
     island_background_color: string;
+
+
+    material_text_color: string;
+    material_background_color: string;
     material_accent_color: string;
     material_accent_font_color: string;
     material_primary_color: string;
@@ -212,6 +216,9 @@ const coreCssCommonVariables: CoreCssVariables = {
     font_family: 'Roboto-Regular, sans-serif',
     grey_dark: '#303030',
     island_background_color: undefined,
+
+    material_text_color: null,
+    material_background_color: null,
     material_accent_color: '#10669F',
     material_accent_font_color: '#fff',
     material_primary_color: '#37474f',
@@ -246,6 +253,9 @@ const coreCssLightThemeVariables: CoreCssVariables = {
     app_text_highlight_warn_background_color: '#f73b2a',
     app_text_highlight_warn_text_color: '#fff',
     island_background_color: '#FFFFFF',
+
+    material_text_color: 'black',
+    material_background_color: 'white',
 } as CoreCssVariables;
 
 const app_dark_color_accent = '#03a9f4';
@@ -256,7 +266,7 @@ const coreCssDarkThemeVariables: CoreCssVariables = {
     app_color_green_02: '#1c3d2c',
     app_color_panel_background: '#303030',
     app_color_red_02: '#3d1c1c',
-    app_color_yellow_02: '#3d3d20',
+    app_color_yellow_02: '#fcfcb3', //'#3d3d20',
     app_color_yellow_03: '#4d4d2c',
     app_dashboard_button_background_color: '#1e4a6e',
     app_dashboard_button_text_color: '#fff',
@@ -276,6 +286,9 @@ const coreCssDarkThemeVariables: CoreCssVariables = {
     app_text_highlight_warn_background_color: '#8f2319',
     app_text_highlight_warn_text_color: '#fff',
     island_background_color: 'rgba(48, 48, 48, 0.6)',
+
+    material_text_color: 'white',
+    material_background_color: '#303030',
 } as CoreCssVariables;
 
 export const CSS_VARS_CORE: CoreCssVariables = {...coreCssCommonVariables, ...coreCssLightThemeVariables} as CoreCssVariables;

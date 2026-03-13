@@ -74,25 +74,9 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
     protected onStateInitialized(state: STATE): void {
         addN2Class(state.deco, N2Panel_LCR.CLASS_IDENTIFIER);
 
-        // let style = state.deco.style || {};
-        // style = {
-        //     display: 'flex',
-        //     'flex-direction': 'row',
-        //     'justify-content': 'space-between',
-        //     'background-color': 'var(--app-color-panel-background)',
-        //     ...decoToCssStyle( style )
-        // }
-        // state.deco.style = style;
-
-
         let leftState: StateN2Panel = state.stateLeftContainer || {};
         IHtmlUtils.initForN2(leftState);
 
-        // leftState.deco.style = {
-        //     'min-width': '0',
-        //     'background-color': 'transparent',
-        //     'justify-content': 'left',
-        // }
         leftState.tagId = state.tagId + '_left';
         addN2Class(leftState.deco, CLASS_N2_PANEL_LAYOUT_LEFT);
         if (state.left)
@@ -103,12 +87,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
 
         let centerState: StateN2Panel = state.stateCenterContainer || {};
         IHtmlUtils.initForN2(centerState);
-        // centerState.deco.style = {
-        //     flex: 1, // expand to take all available space
-        //     'min-width': '0',
-        //     'background-color': 'transparent',
-        //     'justify-content': 'center',
-        // }
+
         centerState.tagId = state.tagId + '_center';
         addN2Class(centerState.deco, CLASS_N2_PANEL_LAYOUT_CENTER);
         if (state.center)
@@ -118,11 +97,7 @@ export class N2Panel_LCR<STATE extends StateN2Panel_LCR = StateN2Panel_LCR> exte
 
         let rightState: StateN2Panel = state.stateRightContainer || {};
         IHtmlUtils.initForN2(rightState);
-        // rightState.deco.style = {
-        //     'min-width' : '0',
-        //     'background-color': 'transparent',
-        //     'justify-content': 'right',
-        // }
+
         rightState.tagId = state.tagId + '_right';
         addN2Class(rightState.deco, CLASS_N2_PANEL_LAYOUT_RIGHT);
         if (state.right)

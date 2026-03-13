@@ -85,8 +85,8 @@ export abstract class N2EditForm<REC extends any = any, STATE extends StateN2Edi
                 style: {
                     // 'background-color': `var(--app-color-gray-700)`, // very light green
                     // 'color': 'white',
-                    'background-color': `var(--app-color-panel-background)`,
-                    'color': `var(--app-color-text)`,
+                    'background-color': `var(--material-background-color)`,
+                    'color': `var(--material-text-color)`,
                 }
             }
         };
