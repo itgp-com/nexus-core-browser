@@ -1739,14 +1739,17 @@ cssAdd(`
     line-height: 1.1;
 }
 
-/* regular text header cells center vertically */
-.${n2GridClass}.${eGridClass} .e-headercelldiv .e-headertext {
-    display: inline-flex; /* Use inline-flex to make it work with text-align */
-    align-items: center; /* Vertically center content inside the span */
-    height: 100%; /* Ensure it takes the full height of the parent */
-}
 `, n2GridClass+'CSS', true);
 } // cssForN2Grid
+
+
+// /* regular text header cells center vertically */
+// .${n2GridClass}.${eGridClass} .e-headercelldiv .e-headertext {
+//     display: inline-flex; /* Use inline-flex to make it work with text-align */
+//     align-items: center; /* Vertically center content inside the span */
+//     height: 100%; /* Ensure it takes the full height of the parent */
+// }
+
 
 import {isNullOrUndefined, KeyboardEvents} from '@syncfusion/ej2-base';
 import {Query} from '@syncfusion/ej2-data';
