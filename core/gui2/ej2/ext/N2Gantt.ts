@@ -56,8 +56,6 @@ import {
     Toolbar,
     VirtualScroll
 } from '@syncfusion/ej2-gantt';
-import {ConnectorLineEdit} from '@syncfusion/ej2-gantt/src/gantt/actions/connector-line-edit';
-import {Dependency} from '@syncfusion/ej2-gantt/src/gantt/actions/dependency';
 import {FocusModule} from '@syncfusion/ej2-gantt/src/gantt/actions/keyboard';
 import {TaskbarEdit} from '@syncfusion/ej2-gantt/src/gantt/actions/taskbar-edit';
 import {DateProcessor} from '@syncfusion/ej2-gantt/src/gantt/base/date-processor';
@@ -65,7 +63,6 @@ import {GanttChart} from '@syncfusion/ej2-gantt/src/gantt/base/gantt-chart';
 import {Splitter} from '@syncfusion/ej2-gantt/src/gantt/base/splitter';
 import {GanttTreeGrid} from '@syncfusion/ej2-gantt/src/gantt/base/tree-grid';
 import {ChartRows} from '@syncfusion/ej2-gantt/src/gantt/renderer/chart-rows';
-import {ConnectorLine} from '@syncfusion/ej2-gantt/src/gantt/renderer/connector-line';
 import {Timeline} from '@syncfusion/ej2-gantt/src/gantt/renderer/timeline';
 import {Tooltip} from '@syncfusion/ej2-gantt/src/gantt/renderer/tooltip';
 import {nexusMain} from '../../../NexusMain';
@@ -76,11 +73,8 @@ import {link_widget_dataSource_NexusDataManager} from './util/N2Wrapper_dataSour
 
 // From https://ej2.syncfusion.com/documentation/gantt/module/
 Gantt.Inject(
-    Dependency,
     ChartRows,
     ColumnMenu,
-    ConnectorLine,
-    ConnectorLineEdit,
     ContextMenu,
     CriticalPath,
     DateProcessor,
