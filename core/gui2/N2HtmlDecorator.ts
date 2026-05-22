@@ -5,6 +5,45 @@ import {CssStyle, cssStyleToString} from '../CssUtils';
 import {StateN2} from "./StateN2";
 
 
+/**
+ * Declarative description of an HTML element's attributes.
+ *
+ * Instead of writing HTML strings or making DOM API calls, widgets describe their
+ * anchor element (and optional wrapper) through an N2HtmlDecorator on the state.
+ * The library serialises the decorator into a real DOM element during `onHtml()`.
+ *
+ * ## How it's used
+ *
+ * Every `StateN2` has a `deco` property of this type, and an optional `wrapper`
+ * of the same type. During `createN2HtmlBasic(state)`:
+ *
+ * 1. The `deco` is serialised into the **anchor element** (e.g. `<div id="..." class="...">`).
+ * 2. If `state.wrapper` is present, a **wrapper element** is created around the anchor.
+ * 3. `state.children` are appended inside the anchor.
+ * 4. `state.siblings` / `state.prefixSiblings` are placed inside the wrapper.
+ *
+ * ## Default values (applied by `IHtmlUtils.init()`)
+ *
+ * - `tag` defaults to `'div'`
+ * - `classes` defaults to `[]`
+ * - `style` defaults to `{}`
+ * - `otherAttr` defaults to `{}`
+ *
+ * ## Example
+ *
+ * ```typescript
+ * state.deco = {
+ *     tag: 'button',
+ *     classes: ['e-primary', 'my-btn'],
+ *     style: { width: '100px' },
+ *     otherAttr: { type: 'button', 'data-role': 'submit' },
+ *     text: 'Click Me',
+ *     escapeText: false,
+ * };
+ * ```
+ *
+ * Produces: `<button id="tagId" class="e-primary my-btn" style="width:100px" type="button" data-role="submit">Click Me</button>`
+ */
 export interface N2HtmlDecorator<STATE extends StateN2 = StateN2> {
     /**
      * the tag type of the HTMLElement

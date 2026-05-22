@@ -15,6 +15,21 @@ export interface StateN2Basic extends StateN2 {
     ref ?: StateN2BasicRef;
 }
 
+/**
+ * Base class for **standalone** (non-EJ2) N2 widgets.
+ *
+ * Provides default implementations for the three abstract methods from {@link N2}:
+ * - `onHtml` — generates a DOM element from the state's N2HtmlDecorator via
+ *   {@link createN2HtmlBasic}
+ * - `onLogic` — no-op (no JS component to instantiate)
+ * - `onDestroy` — destroys all N2 children
+ *
+ * Use this as the base for layout widgets ({@link N2Row}, {@link N2Panel},
+ * {@link N2PanelLayout}), display widgets ({@link N2Html}), or any custom
+ * non-Syncfusion component.
+ *
+ * For Syncfusion-wrapping widgets, use {@link N2EjBasic} instead.
+ */
 export class N2Basic<STATE extends StateN2Basic = StateN2Basic, JS_COMPONENT = any> extends N2<STATE, JS_COMPONENT> {
     static readonly CLASS_IDENTIFIER: string = 'N2Basic';
 

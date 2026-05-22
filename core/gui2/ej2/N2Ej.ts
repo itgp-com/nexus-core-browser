@@ -13,36 +13,116 @@ export interface StateN2EjRef extends StateN2Ref {
 
 export interface N2Evt_onEjObj<W extends N2Ej = N2Ej> { widget: W; }
 
+/**
+ * State interface for EJ2-wrapping N2 widgets. Extends {@link StateN2} with the
+ * Syncfusion component model (`ej`) and EJ2-specific configuration.
+ *
+ * ## The `ej` property
+ *
+ * `state.ej` holds the **Syncfusion model object** — e.g. `GridModel`, `ButtonModel`,
+ * `DialogModel`, `TextBoxModel`.  When `createEjObj()` runs, this object is passed
+ * directly to the Syncfusion component constructor:
+ *
+ * ```typescript
+ * // Inside createEjObj():
+ * this.obj = new Grid(this.state.ej);   // state.ej is the GridModel
+ * ```
+ *
+ * Modifications to `state.ej` made **before** `initLogic()` runs will take
+ * effect on the created component.  After the component is created, the live
+ * Syncfusion instance is available as `this.obj` and can be manipulated directly.
+ *
+ * ## The `ejInstances` tagging system
+ *
+ * When `this.obj` is assigned, the EJ2 instance is automatically tagged on
+ * `state.ej` under two keys:
+ *
+ * - `state.ej['ejInstances']` — array of ALL EJ2 component instances created from this model.
+ *   Retrieved via `N2Ej.ejInstances(ejModel)`.
+ * - `state.ej['_n2_']` — array of ALL N2 widget instances referencing this model.
+ *   Retrieved via `N2.instances(model)`.
+ *
+ * This allows navigating model→instance(s) and instance→model.
+ *
+ * @typeParam WIDGET_LIBRARY_MODEL - The Syncfusion model type (e.g. `GridModel`, `ButtonModel`)
+ */
 export interface StateN2Ej<WIDGET_LIBRARY_MODEL = any> extends StateN2 {
+    /**
+     * The Syncfusion component model. Passed to the EJ2 constructor during `createEjObj()`.
+     * Properties set here configure the Syncfusion component (columns, dataSource, width, etc.).
+     */
     ej?: WIDGET_LIBRARY_MODEL;
 
     /**
-     * Override with specific type used in code completion
-     * Contains all the fields that have references to this instance and are usually created by the widget initialization code
+     * Override with specific type used in code completion.
+     * Contains all the fields that have references to this instance and are usually
+     * created by the widget initialization code.
      */
     ref?: StateN2EjRef
 
 
     /**
-     * Allows the disabling of automatic appendTo call after instantiation an Ej2 Component
-     * If false (default), appendEjToHtmlElement will be called automatically from inside onLogic(args)
-     * If true, that call must be made manually by the developer
+     * When false (default), `appendEjToHtmlElement()` is called automatically from
+     * inside `onLogic()` after the EJ2 component is created.
+     * When true, the developer must call `appendEjToHtmlElement()` manually.
      */
     skipAppendEjToHtmlElement?: boolean;
 
     /**
-     * Listener(s) that fire at the end of onLogic() after the EJ object is created (and appended unless skipped).
-     * You can set a single function or an array of functions. Each receives an event object with the N2Ej instance
-     * as the 'widget' property (for future expansion).
+     * Listener(s) that fire at the end of `onLogic()` after the EJ2 object is
+     * created (and appended, unless `skipAppendEjToHtmlElement` is true).
+     *
+     * Accepts a single function or an array of functions. Each receives an event
+     * object with `{ widget: N2Ej_instance }`.
+     *
+     * Use this to perform post-creation setup that needs the live EJ2 component.
      */
     onEjObj?: ((ev: N2Evt_onEjObj) => void) | Array<(ev: N2Evt_onEjObj) => void>;
 
     /**
-     * Helper to register an additional onEjObj listener at runtime.
+     * Registers an additional `onEjObj` listener at runtime. Initialised automatically
+     * by `N2Ej._constructor`.
      */
     addOnEjObjListener?: (listener: (ev: N2Evt_onEjObj) => void) => void;
 }
 
+/**
+ * Abstract base for all N2 widgets that wrap a Syncfusion Essential JS 2 (EJ2) component.
+ * Extends {@link N2} with EJ2-specific lifecycle steps: `createEjObj()`, automatic
+ * `appendTo`, and bi-directional tagging between the state model and the EJ2 instance.
+ *
+ * ## Key additions over N2
+ *
+ * - `state.ej` — holds the Syncfusion **model** (e.g. `GridModel`, `ButtonModel`).
+ *   This is what gets passed to the Syncfusion component constructor.
+ * - `this.obj` — the **live Syncfusion component instance** (e.g. `Grid`, `Button`).
+ * - `createEjObj()` — abstract; subclasses instantiate the Syncfusion component here.
+ * - `appendEjToHtmlElement()` — calls `obj.appendTo(htmlElementAnchor)` automatically
+ *   (unless `state.skipAppendEjToHtmlElement` is true).
+ *
+ * ## onLogic flow (implemented here, called by N2.initLogic)
+ *
+ * ```
+ * createEjObj()                       ← subclass instantiates the EJ2 component
+ * obj[N2_CLASS] = this                ← tag the EJ2 instance → back to N2 widget
+ * if !skipAppend: appendEjToHtmlElement()  ← obj.appendTo(htmlElementAnchor)
+ * fire state.onEjObj listeners        ← notify listeners the EJ2 obj is ready
+ * ```
+ *
+ * ## Model↔instance tagging
+ *
+ * When `obj` is set, `tagEjWithEJComponent` stores:
+ * - `state.ej['ejInstances']` — array of EJ2 component instances created from this model
+ * - `state.ej['_n2_']` — array of N2 widget instances referencing this model
+ *
+ * These can be retrieved with the static helpers:
+ * - `N2Ej.ejInstances(ejModel)` → array of EJ2 components
+ * - `N2Ej.ejInstance(ejModel)` → first EJ2 component or null
+ * - `N2.instances(model)` → array of N2 widgets (inherited from N2)
+ *
+ * @typeParam STATE - State type extending {@link StateN2Ej}
+ * @typeParam EJ2COMPONENT - The Syncfusion Component subclass (e.g. `Grid`, `Button`, `Dialog`)
+ */
 export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any>
     extends N2<STATE, EJ2COMPONENT> {
     static readonly CLASS_IDENTIFIER: string = 'N2Ej';
@@ -94,6 +174,18 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
     get classIdentifier(): string { return N2Ej.CLASS_IDENTIFIER; }
 
 
+    /**
+     * Called by `onLogic()` to execute the EJ2-specific logic. Default implementation:
+     *
+     * 1. `createEjObj()` — instantiate the Syncfusion component
+     * 2. Tag the EJ2 instance with `this` (the N2 widget)
+     * 3. If `state.skipAppendEjToHtmlElement` is NOT true, call `appendEjToHtmlElement()`
+     *    which calls `obj.appendTo(this.htmlElementAnchor)`
+     * 4. Fire all `state.onEjObj` listeners
+     *
+     * Override to add custom logic before or after the EJ2 creation. Call
+     * `super.onLogic(args)` at the appropriate point (typically after your setup).
+     */
     onLogic(args: N2Evt_OnLogic): void {
         this.createEjObj();
         if (this.obj)
@@ -118,6 +210,26 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
     } // onLogic
 
 
+    /**
+     * Instantiate the Syncfusion EJ2 component and assign it to `this.obj`.
+     *
+     * This is the **only** method that MUST be implemented by every EJ2 widget subclass.
+     *
+     * ## Implementation pattern
+     *
+     * ```typescript
+     * createEjObj(): void {
+     *     this.obj = new SyncfusionComponent(this.state.ej);
+     * }
+     * ```
+     *
+     * The `state.ej` object is the Syncfusion model (e.g. `GridModel`, `ButtonModel`)
+     * and is passed directly to the Syncfusion constructor. After this method returns,
+     * the base `onLogic` automatically:
+     * - Tags the EJ2 instance with the N2 widget (`obj['_n2_'] = this`)
+     * - Calls `appendEjToHtmlElement()` (unless `state.skipAppendEjToHtmlElement`)
+     * - Fires `state.onEjObj` listeners
+     */
     abstract createEjObj(): void ;
 
     /**

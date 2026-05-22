@@ -15,6 +15,35 @@ import {
 import {N2HtmlDecorator} from "./N2HtmlDecorator";
 import {Elem_or_N2} from './N2Utils';
 
+/**
+ * Base state interface for all N2 widgets.
+ *
+ * ## The state callback override pattern
+ *
+ * For most lifecycle events, if a callback is set on the state object
+ * (e.g. `state.onHtml`, `state.onLogic`, `state.onDestroy`), that callback
+ * is invoked **instead of** the corresponding method on the N2 class.
+ *
+ * This allows complete behaviour customisation without subclassing:
+ *
+ * ```typescript
+ * const state: StateN2 = {
+ *     tagId: 'my-widget',
+ *     onHtml: (ev) => { return document.createElement('span'); },
+ *     onDestroy: (ev) => { console.log('cleanup'); },
+ * };
+ * ```
+ *
+ * ## HTML generation model
+ *
+ * The HTML element is described declaratively through:
+ * - `deco` — {@link N2HtmlDecorator} for the anchor element (defaults to `<div>`)
+ * - `wrapper` — optional decorator for a wrapper element around the anchor
+ * - `children` — child widgets / elements appended inside the anchor
+ * - `siblings` / `prefixSiblings` — elements placed after/before the anchor (inside wrapper)
+ *
+ * See {@link createN2HtmlBasic} for the DOM tree structure that is produced.
+ */
 export interface StateN2 {
 
    /**

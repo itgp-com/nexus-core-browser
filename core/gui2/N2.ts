@@ -1,3 +1,40 @@
+/**
+ * Root abstract class for all Nexus 2 (N2) widgets. Every UI component in the
+ * gui2 library extends N2, either directly or through one of its subclasses
+ * ({@link N2Basic} for standalone widgets, {@link N2Ej} for Syncfusion EJ2 wrappers).
+ *
+ * ## Architecture
+ *
+ * Each N2 widget pairs a **state object** (typed by the STATE generic) with
+ * generated **DOM** and an optional **JS component** (`obj`). The state is the
+ * single source of truth — it holds HTML decoration, the EJ2 model (if applicable),
+ * children, and lifecycle callbacks.
+ *
+ * ## Lifecycle (overview)
+ *
+ * 1. `constructor(state)` → `_constructor(state)` — initialise defaults, generate tagId
+ * 2. `onStateInitialized(state)` — first-time setup; fires once, lazily (may be deferred)
+ * 3. `onBeforeInitHtml()` → `onHtml()` → HTML element created
+ * 4. `initLogic()` → `onBeforeInitLogic()` → `onLogic()` → children's `initLogic()` → `onAfterInitLogic()`
+ * 5. `destroy()` → `onDestroy()`
+ *
+ * ## State callback override pattern
+ *
+ * Every lifecycle method has a corresponding optional callback on `state`
+ * (e.g. `state.onHtml`, `state.onLogic`, `state.onDestroy`). When set, the
+ * **state callback takes precedence** and the class method is NOT called.
+ * This allows complete behaviour customisation without subclassing.
+ *
+ * ## HTML element model
+ *
+ * - `htmlElement` — outermost DOM element (wrapper if present, otherwise anchor)
+ * - `htmlElementAnchor` — the element the JS component attaches to (inside wrapper)
+ * - `state.deco` — N2HtmlDecorator describing the anchor element
+ * - `state.wrapper` — optional N2HtmlDecorator for a wrapper around the anchor
+ *
+ * @typeParam STATE - The state type (must extend {@link StateN2})
+ * @typeParam JS_COMPONENT - The underlying JS component type (e.g. a Syncfusion Component)
+ */
 export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any>
     implements OnAsyncDlgShow<STATE> {
 
@@ -533,6 +570,30 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any>
         this._registerOnDOMRemoved(); // register the onDOMRemoved event
     } // initHtml
 
+    /**
+     * Initialises the widget logic: creates the JS component, initialises children,
+     * and fires all lifecycle events.
+     *
+     * **Idempotent** — if `this.initialized` is already true, returns immediately.
+     *
+     * ## Execution order
+     *
+     * 1. `_triggerOnStateInitialized()` — ensure `onStateInitialized` has fired
+     * 2. `onBeforeInitLogic(args)` — can set `args.cancel = true` to abort
+     * 3. `this.initialized = true`
+     * 4. `initHtml()` — ensure HTML element exists
+     * 5. `onLogic(args)` — instantiate JS component (for N2Ej: createEjObj + appendTo)
+     * 6. `onAfterInitWidgetOnly()` — this widget done, children not yet
+     * 7. **For each child:** `child.initLogic()` — recursive initialisation
+     * 8. `onAfterChildrenInit()` — all children done
+     * 9. `onAfterInitLogic()` — all done
+     * 10. If `state.resizeTracked`: attach `ResizeSensor`
+     *
+     * ## State callback override
+     *
+     * At steps 2, 5, 6, and 9, if the corresponding callback is set on `state`
+     * (e.g. `state.onLogic`), that callback is called **instead of** the class method.
+     */
     initLogic(): void {
         if (this.initialized)
             return;

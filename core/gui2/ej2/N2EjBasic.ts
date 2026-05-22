@@ -17,6 +17,19 @@ export interface StateN2EjBasic< WIDGET_LIBRARY_MODEL = any> extends StateN2Ej<W
 }
 
 
+/**
+ * Convenience base for EJ2-wrapping widgets that use the standard HTML generation.
+ *
+ * Combines:
+ * - {@link N2Ej}'s EJ2 lifecycle (`createEjObj()`, automatic `appendTo`, tagging)
+ * - {@link N2Basic}'s default `onHtml()` (generates DOM from N2HtmlDecorator)
+ *
+ * This is the recommended base class for most leaf EJ2 widget wrappers
+ * (e.g. {@link N2Button}, {@link N2TextField}, {@link N2Grid}, {@link N2Dialog}).
+ *
+ * Subclasses only need to implement `createEjObj()` and optionally customise
+ * `onStateInitialized()`, `onHtml()`, or `onLogic()`.
+ */
 export abstract class N2EjBasic<STATE extends StateN2EjBasic = StateN2EjBasic, EJ2COMPONENT extends (Component<HTMLElement> | HTMLElement | any) = any>
     extends N2Ej<STATE, EJ2COMPONENT> {
 
