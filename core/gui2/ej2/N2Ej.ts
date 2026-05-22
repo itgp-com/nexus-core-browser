@@ -35,12 +35,17 @@ export interface N2Evt_onEjObj<W extends N2Ej = N2Ej> { widget: W; }
  * ## The `ejInstances` tagging system
  *
  * When `this.obj` is assigned, the EJ2 instance is automatically tagged on
- * `state.ej` under two keys:
+ * `state.ej` under two keys (using constants from `Constants.ts`):
  *
- * - `state.ej['ejInstances']` — array of ALL EJ2 component instances created from this model.
+ * - `state.ej[EJINSTANCES]` — array of ALL EJ2 component instances created from this model.
  *   Retrieved via `N2Ej.ejInstances(ejModel)`.
- * - `state.ej['_n2_']` — array of ALL N2 widget instances referencing this model.
+ * - `state.ej[N2_CLASS]` — array of ALL N2 widget instances referencing this model.
  *   Retrieved via `N2.instances(model)`.
+ *
+ * **Always import and use the constants:**
+ * ```typescript
+ * import { N2_CLASS, EJINSTANCES } from '../../Constants';
+ * ```
  *
  * This allows navigating model→instance(s) and instance→model.
  *
@@ -111,14 +116,25 @@ export interface StateN2Ej<WIDGET_LIBRARY_MODEL = any> extends StateN2 {
  *
  * ## Model↔instance tagging
  *
- * When `obj` is set, `tagEjWithEJComponent` stores:
- * - `state.ej['ejInstances']` — array of EJ2 component instances created from this model
- * - `state.ej['_n2_']` — array of N2 widget instances referencing this model
+ * When `obj` is set, `tagEjWithEJComponent` stores back-references using the
+ * {@link N2_CLASS} and {@link EJINSTANCES} constants (from `Constants.ts`):
+ * - `state.ej[N2_CLASS]` — array of N2 widget instances referencing this model.
+ *   Retrieved via `N2.instances(model)`.
+ * - `state.ej[EJINSTANCES]` — array of EJ2 component instances created from this model.
+ *   Retrieved via `N2Ej.ejInstances(ejModel)`.
  *
- * These can be retrieved with the static helpers:
+ * **Always use the constants, never raw strings:**
+ * ```typescript
+ * import { N2_CLASS, EJINSTANCES } from '../../Constants';
+ * let n2Widget = (ejModel as any)[N2_CLASS][0];         // ✅ correct
+ * let ej2Comp  = (ejModel as any)[EJINSTANCES][0];      // ✅ correct
+ * ```
+ *
+ * Static helpers for retrieval:
  * - `N2Ej.ejInstances(ejModel)` → array of EJ2 components
  * - `N2Ej.ejInstance(ejModel)` → first EJ2 component or null
  * - `N2.instances(model)` → array of N2 widgets (inherited from N2)
+ * - `N2.instance(model)` → first N2 widget or null (inherited from N2)
  *
  * @typeParam STATE - State type extending {@link StateN2Ej}
  * @typeParam EJ2COMPONENT - The Syncfusion Component subclass (e.g. `Grid`, `Button`, `Dialog`)
@@ -226,7 +242,8 @@ export abstract class N2Ej<STATE extends StateN2Ej = StateN2Ej, EJ2COMPONENT ext
      * The `state.ej` object is the Syncfusion model (e.g. `GridModel`, `ButtonModel`)
      * and is passed directly to the Syncfusion constructor. After this method returns,
      * the base `onLogic` automatically:
-     * - Tags the EJ2 instance with the N2 widget (`obj['_n2_'] = this`)
+     * - Tags the EJ2 instance with the N2 widget using the {@link N2_CLASS} constant:
+     *   `obj[N2_CLASS] = this`
      * - Calls `appendEjToHtmlElement()` (unless `state.skipAppendEjToHtmlElement`)
      * - Fires `state.onEjObj` listeners
      */

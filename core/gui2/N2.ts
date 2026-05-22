@@ -761,14 +761,73 @@ export abstract class N2<STATE extends StateN2 = any, JS_COMPONENT = any>
 
 
     /**
-     * If this is overridden in a child class, it will be called when the html element for this N2 widget is added to the DOM
-     * @param {N2Evt_DomAdded} ev
+     * Called automatically when this widget's HTML element is **inserted into the DOM**.
+     *
+     * ## How it works
+     *
+     * During `initHtml()`, `_registerOnDOMAdded()` checks whether this method has been
+     * overridden (or `state.onDOMAdded` has been set). If so, it registers an observer
+     * via {@link ObserverManager.addOnAdded} that watches for the element with
+     * `state.tagId` appearing in the DOM. When the element is detected, this callback
+     * fires automatically.
+     *
+     * ## Key behavior
+     *
+     * - Fires **each time** the element is added to the DOM (unless `autoRemove: true`
+     *   is passed to the ObserverManager — default in the built-in registration).
+     * - Supports **async** (`Promise<void>`). The caller awaits the observer callback.
+     * - The event provides both `widget` (this N2) and `element` (the HTMLElement).
+     *
+     * ## Common use cases
+     *
+     * - Post-attach setup that requires the element to be in the document (e.g. creating
+     *   dropdown menus that need to measure layout, as in {@link N2Grid.onDOMAdded}).
+     * - Triggering `initLogic()` for lazily-initialised widgets (see the chaining pattern
+     *   in N2CtxMenu where `state.onDOMAdded` is wrapped to call `widget.onLogic()`).
+     * - Initialising third-party libraries that need a live DOM node (leaflet maps, etc.).
+     *
+     * ## Registration mechanism
+     *
+     * The `_registerOnDOMAdded()` method in N2 checks two conditions (in order):
+     * 1. If `state.onDOMAdded` is set → registers the state callback
+     * 2. Else if the class has overridden `onDOMAdded` (compared against
+     *    `N2.prototype.onDOMAdded`) → registers the class method
+     * 3. Otherwise → nothing is registered (the default no-op is not observed)
+     *
+     * ## Chaining pattern (preserve existing handler)
+     *
+     * When you need to add logic while preserving an existing `state.onDOMAdded`:
+     * ```typescript
+     * let previousHandler = state.onDOMAdded;
+     * state.onDOMAdded = async (ev: N2Evt_DomAdded) => {
+     *     await previousHandler?.call(this, ev);  // call original first
+     *     widget.onLogic({widget});                // your added logic
+     * };
+     * ```
+     *
+     * @param ev - Event with `widget` (this N2) and `element` (the added HTMLElement)
      */
     onDOMAdded(ev: N2Evt_DomAdded): void | Promise<void> {}
 
     /**
-     * If this is overridden in a child class, it will be called when the html element for this N2 widget is removed from the DOM
-     * @param {N2Evt_DomRemoved} ev
+     * Called automatically when this widget's HTML element is **removed from the DOM**.
+     *
+     * Mirror of {@link onDOMAdded}. Registered via `_registerOnDOMRemoved()` during
+     * `initHtml()`, using {@link ObserverManager.addOnRemoved} with the same
+     * identifier-resolution and override-detection logic.
+     *
+     * ## Common use cases
+     *
+     * - Cleanup of external resources when the widget is detached from the document.
+     * - Pausing timers, disconnecting observers, or releasing subscriptions.
+     *
+     * ## Registration mechanism
+     *
+     * Same priority as `onDOMAdded`:
+     * 1. `state.onDOMRemoved` takes precedence over the class method
+     * 2. Only registered if state callback is set OR the class overrides the no-op base
+     *
+     * @param ev - Event with `widget` (this N2) and `element` (the removed HTMLElement)
      */
     onDOMRemoved(ev: N2Evt_DomRemoved): void | Promise<void> {}
 

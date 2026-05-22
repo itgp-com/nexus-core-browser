@@ -85,14 +85,36 @@ export interface StateN2 {
    onBeforeInitLogic?: (ev ?: N2Evt_BeforeLogic) => (void|Promise<void>);
 
    /**
-    * If this is specified, it will be called when the html element for this N2 widget is added to the DOM
-    * @param {N2Evt_DomAdded} ev
+    * If specified, called when this widget's HTML element (identified by `tagId`) is
+    * **inserted into the live DOM**. Registered via {@link ObserverManager.addOnAdded}
+    * during `initHtml()`.
+    *
+    * Supports `async` / `Promise<void>`. Fires each time the element is added
+    * (with `autoRemove: true` by default, it fires once then unregisters).
+    *
+    * **Takes precedence over the class `onDOMAdded` method** — when this callback
+    * is set on state, the class method is NOT called.
+    *
+    * Common uses: post-attach setup requiring live DOM (dropdown menus, third-party
+    * libs), lazy `initLogic()` triggering, layout-sensitive initialisation.
+    *
+    * See {@link N2._registerOnDOMAdded} for the registration mechanism.
+    *
+    * @param ev - `{ widget, element }` where element is the HTMLElement that was added
     */
    onDOMAdded ?: (ev: N2Evt_DomAdded) => void | Promise<void>;
 
    /**
-    * If this is specified, it will be called when the html element for this N2 widget is removed from the DOM
-    * @param {N2Evt_DomRemoved} ev
+    * If specified, called when this widget's HTML element is **removed from the DOM**.
+    * Mirror of `onDOMAdded`. Registered via {@link ObserverManager.addOnRemoved}
+    * during `initHtml()` with the same identifier-resolution and override logic.
+    *
+    * Supports `async` / `Promise<void>`.
+    *
+    * Common uses: cleanup of external subscriptions, pausing timers, disconnecting
+    * observers when the widget is detached from the document.
+    *
+    * @param ev - `{ widget, element }` where element is the HTMLElement that was removed
     */
    onDOMRemoved ?: (ev: N2Evt_DomRemoved) => void | Promise<void>;
 
