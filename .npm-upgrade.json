@@ -1,0 +1,8 @@
+{
+  "ignore": {
+    "typescript": {
+      "versions": "6.0.3",
+      "reason": ""
+    }
+  }
+}
