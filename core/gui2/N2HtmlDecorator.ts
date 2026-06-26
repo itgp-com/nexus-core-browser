@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import _ from "lodash";
 import {IKeyValueString} from "../BaseUtils";
 
 import {CssStyle, cssStyleToString} from '../CssUtils';
@@ -10,14 +10,14 @@ import {StateN2} from "./StateN2";
  *
  * Instead of writing HTML strings or making DOM API calls, widgets describe their
  * anchor element (and optional wrapper) through an N2HtmlDecorator on the state.
- * The library serialises the decorator into a real DOM element during `onHtml()`.
+ * The library serializes the decorator into a real DOM element during `onHtml()`.
  *
  * ## How it's used
  *
  * Every `StateN2` has a `deco` property of this type, and an optional `wrapper`
  * of the same type. During `createN2HtmlBasic(state)`:
  *
- * 1. The `deco` is serialised into the **anchor element** (e.g. `<div id="..." class="...">`).
+ * 1. The `deco` is serialized into the **anchor element** (e.g. `<div id="..." class="...">`).
  * 2. If `state.wrapper` is present, a **wrapper element** is created around the anchor.
  * 3. `state.children` are appended inside the anchor.
  * 4. `state.siblings` / `state.prefixSiblings` are placed inside the wrapper.
@@ -132,7 +132,6 @@ export class IHtmlUtils {
         decorator = IHtmlUtils.init(decorator);
         let c: string = '';
         if ( decorator?.classes) {
-            let classes = decorator.classes;
             let classArray = (decorator?.classes ? Array.isArray(decorator.classes) ? decorator.classes : [decorator.classes] : [])
             if (classArray.length > 0)
                 c = `class="${classArray.join(' ')}"`; // no space prefix
@@ -412,14 +411,12 @@ export function removeClassesFromElement(htmlElement: HTMLElement | null | undef
 
 /**
  * Transfers classes, style, and other attributes from the source N2HtmlDecorator to the target HTMLElement.
- * Optionally, changes the tag type of the target HTMLElement.
  *
  * @param {N2HtmlDecorator} source - The source N2HtmlDecorator instance from which to transfer the attributes.
  * @param {HTMLElement} target - The target HTMLElement to which the attributes will be transferred.
- * @param {string=} changeTagType - The new tag type to change the target HTMLElement. If specified and different from the source tag type, the function will replace the target element with a new element of the specified tag type.
  * @returns {void}
  */
-export function decoToHtmlElement(source: N2HtmlDecorator, target: HTMLElement, changeTagType?: string): void {
+export function decoToHtmlElement(source: N2HtmlDecorator, target: HTMLElement): void {
     if (!source || !target) {
         return;
     }
